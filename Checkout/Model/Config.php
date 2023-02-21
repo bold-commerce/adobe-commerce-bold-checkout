@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model;
 
+use Bold\Checkout\Api\ConfigInterface;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 
-class Config
+/**
+ * Bold checkout config service.
+ */
+class Config implements ConfigInterface
 {
     private const PATH_ENABLED = 'checkout/bold_checkout_base/enabled';
     private const PATH_ENABLED_FOR = 'checkout/bold_checkout_advanced/enabled_for';
@@ -26,44 +30,36 @@ class Config
     private const PATH_SHOP_IDENTIFIER = 'checkout/bold_checkout_base/shop_identifier';
 
     /**
-     * Values for self::PATH_ENABLED_FOR field.
+     * @var ScopeConfigInterface
      */
-    public const VALUE_ENABLED_FOR_ALL = 0;
-    public const VALUE_ENABLED_FOR_IP = 1;
-    public const VALUE_ENABLED_FOR_CUSTOMER = 2;
-    public const VALUE_ENABLED_FOR_PERCENTAGE = 3;
+    private $scopeConfig;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var EncryptorInterface
      */
-    private ScopeConfigInterface $scopeConfig;
+    private $encryptor;
 
     /**
-     * @var \Magento\Framework\Encryption\EncryptorInterface
+     * @var WriterInterface
      */
-    private EncryptorInterface $encryptor;
+    private $configWriter;
 
     /**
-     * @var \Magento\Framework\App\Config\Storage\WriterInterface
+     * @var TypeListInterface
      */
-    private WriterInterface $configWriter;
+    private $cacheTypeList;
 
     /**
-     * @var \Magento\Framework\App\Cache\TypeListInterface
-     */
-    private TypeListInterface $cacheTypeList;
-
-    /**
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Framework\App\Config\Storage\WriterInterface $configWriter
-     * @param \Magento\Framework\Encryption\EncryptorInterface $encryptor
-     * @param \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
+     * @param ScopeConfigInterface $scopeConfig
+     * @param WriterInterface $configWriter
+     * @param EncryptorInterface $encryptor
+     * @param TypeListInterface $cacheTypeList
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        WriterInterface      $configWriter,
-        EncryptorInterface   $encryptor,
-        TypeListInterface    $cacheTypeList
+        WriterInterface $configWriter,
+        EncryptorInterface $encryptor,
+        TypeListInterface $cacheTypeList
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->configWriter = $configWriter;
@@ -72,20 +68,16 @@ class Config
     }
 
     /**
-     * Check if bold functionality enabled.
-     *
-     * @return bool
+     * @inheritDoc
      */
-    public function isCheckoutEnabled()
+    public function isCheckoutEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::PATH_ENABLED);
 //            && Mage::helper('core')->isModuleOutputEnabled('Bold_Checkout');
     }
 
     /**
-     * Show if Bold functionality is enabled for specific customers.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getEnabledFor(): int
     {
@@ -93,9 +85,7 @@ class Config
     }
 
     /**
-     * Get IP whitelist.
-     *
-     * @return string[]
+     * @inheritDoc
      */
     public function getIpWhitelist(): array
     {
@@ -105,9 +95,7 @@ class Config
     }
 
     /**
-     * Get Customer email whitelist.
-     *
-     * @return string[]
+     * @inheritDoc
      */
     public function getCustomerWhitelist(): array
     {
@@ -117,9 +105,7 @@ class Config
     }
 
     /**
-     * Get Orders percentage.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getOrdersPercentage(): int
     {
@@ -127,9 +113,7 @@ class Config
     }
 
     /**
-     * Check if real-time synchronization is enabled.
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function isRealtimeEnabled(): bool
     {
@@ -137,9 +121,7 @@ class Config
     }
 
     /**
-     * Get shared secret key (decrypted).
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function getSharedSecret(): ?string
     {
@@ -149,9 +131,7 @@ class Config
     }
 
     /**
-     * Get api token (decrypted).
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function getApiToken(): ?string
     {
@@ -161,9 +141,7 @@ class Config
     }
 
     /**
-     * Get configured weight unit to grams conversion rate.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function getWeightConversionRate(): float
     {
@@ -171,9 +149,7 @@ class Config
     }
 
     /**
-     * Get configured weight unit.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getWeightUnit(): string
     {
@@ -181,9 +157,7 @@ class Config
     }
 
     /**
-     * Get Bold API url.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getApiUrl(): string
     {
@@ -191,9 +165,7 @@ class Config
     }
 
     /**
-     * Get Bold Checkout url.
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getCheckoutUrl(): string
     {
@@ -201,9 +173,7 @@ class Config
     }
 
     /**
-     * Retrieve Bold shop identifier.
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function getShopIdentifier(): ?string
     {
@@ -211,14 +181,12 @@ class Config
     }
 
     /**
-     * Retrieve Bold shop identifier.
-     *
-     * @param string $shopIdentifier
-     * @return void
+     * @inheritDoc
      */
-    public function saveShopIdentifier($shopIdentifier): void
+    public function setShopIdentifier(string $shopIdentifier): void
     {
         $this->configWriter->save(self::PATH_SHOP_IDENTIFIER, $shopIdentifier);
         $this->cacheTypeList->cleanType('config');
+        $this->scopeConfig->clean();
     }
 }

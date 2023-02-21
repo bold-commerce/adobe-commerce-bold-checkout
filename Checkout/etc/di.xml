@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Bold\Checkout\Api\ConfigInterface" type="Bold\Checkout\Model\Config"/>
+    <preference for="Bold\Checkout\Api\Http\ClientInterface" type="Bold\Checkout\Model\Http\BoldClient"/>
+    <preference for="Bold\Checkout\Api\Http\ResponseInterface" type="Bold\Checkout\Model\Http\Response"/>
+</config>
