@@ -8,6 +8,8 @@
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
                     <label>Enable Bold Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Replace native checkout with Bold Checkout’s three-page checkout.
+                             Refer to the <a target='_blank' href="https://developer.boldcommerce.com/default/guides/platform-integration/magento-1">documentation</a> for more details.]]></comment>
                 </field>
                 <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="1">
                     <label>API Token</label>
