@@ -2,6 +2,9 @@
 
 namespace Bold\Checkout\Model\Http\Client;
 
+use Bold\Checkout\Api\Http\ResponseInterface;
+use Bold\Checkout\Api\Http\ResponseInterfaceFactory;
+use Exception;
 use Magento\Framework\HTTP\Client\Curl as FrameworkCurl;
 use Psr\Log\LoggerInterface;
 
@@ -16,19 +19,35 @@ class Curl extends FrameworkCurl
     private $logger;
 
     /**
+     * @var ResponseInterfaceFactory
+     */
+    private $responseFactory;
+
+    /**
      * @param LoggerInterface $logger
+     * @param ResponseInterfaceFactory $responseFactory
      * @param int|null $sslVersion
      */
-    public function __construct(LoggerInterface $logger, int $sslVersion = null)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        ResponseInterfaceFactory $responseFactory,
+        int $sslVersion = null
+    ) {
         parent::__construct($sslVersion);
         $this->logger = $logger;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
-     * @inheritDoc
+     * Perform https request
+     *
+     * @param string $method
+     * @param string $url
+     * @param array $headers
+     * @param array|null $data
+     * @return ResponseInterface
      */
-    public function sendRequest(string $method, string $url, array $headers, array $data = null): string
+    public function sendRequest(string $method, string $url, array $headers, array $data = null): ResponseInterface
     {
         $this->logger->debug('Outgoing Call: ' . $method . ' ' . $url);
         $this->logger->debug('Outgoing Call Headers: ' . json_encode($headers));
@@ -38,8 +57,19 @@ class Curl extends FrameworkCurl
         $this->makeRequest($method, $url, $data);
         $this->logger->debug('Outgoing call code: ' . $this->_responseStatus);
         $this->logger->debug('Outgoing call result: ' . $this->_responseBody);
-
-        return $this->_responseBody;
+        try {
+            $body = json_decode($this->_responseBody, true);
+        } catch (Exception $e) {
+            $body = [];
+        }
+        $errors = $this->getErrors($body);
+        return $this->responseFactory->create(
+            [
+                'status' => (int)$this->_responseStatus,
+                'body' => $errors ? [] : $body,
+                'errors' => $errors,
+            ]
+        );
     }
 
     /**
@@ -75,5 +105,22 @@ class Curl extends FrameworkCurl
         }
 
         return $url;
+    }
+
+    /**
+     * Retrieve errors from response body.
+     *
+     * @param array $body
+     * @return array
+     */
+    private function getErrors(array $body): array
+    {
+        $errors = $body['errors'] ?? [];
+        if (isset($body['error'])) {
+            $errors = [
+                $body['error_description'] ?? $body['error'],
+            ];
+        }
+        return $errors;
     }
 }

@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Http;
 
 use Bold\Checkout\Api\ConfigInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
+use Bold\Checkout\Api\Http\ResponseInterface;
 use Bold\Checkout\Model\BoldShopIdentifier;
 use Bold\Checkout\Model\Http\Client\Curl;
 use Bold\Checkout\Model\Http\Client\UserAgent;
@@ -56,7 +57,7 @@ class BoldClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function call(string $method, string $url, array $data = null): stdClass
+    public function call(string $method, string $url, array $data = null): ResponseInterface
     {
         $apiToken = $this->config->getApiToken();;
         $shopId = $this->boldShopIdentifier->getShopIdentifier();
@@ -68,6 +69,6 @@ class BoldClient implements ClientInterface
         ];
         $url = $this->config->getApiUrl() . '/' . ltrim(str_replace('{{shopId}}', $shopId, $url), '/');
 
-        return json_decode($this->client->sendRequest($method, $url, $headers, $data));
+        return $this->client->sendRequest($method, $url, $headers, $data);
     }
 }

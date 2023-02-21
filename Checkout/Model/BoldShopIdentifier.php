@@ -7,7 +7,7 @@ use Bold\Checkout\Api\ConfigInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\Http\Client\Curl;
 use Bold\Checkout\Model\Http\Client\UserAgent;
-use Magento\Framework\Exception\LocalizedException;
+use Exception;
 
 /**
  * Retrieve shop identifier from Bold.
@@ -47,7 +47,7 @@ class BoldShopIdentifier
      * Retrieve shop identifier from Bold.
      *
      * @return string
-     * @throws LocalizedException
+     * @throws Exception
      */
     public function getShopIdentifier(): string
     {
@@ -63,11 +63,12 @@ class BoldShopIdentifier
             'Bold-API-Version-Date' => ClientInterface::BOLD_API_VERSION_DATE,
         ];
         $url = $this->config->getApiUrl() . self::SHOP_INFO_URL;
-        $shopInfo = json_decode($this->curl->sendRequest('GET', $url, $headers));
-        if (isset($shopInfo->error)) {
-            throw new LocalizedException(__($shopInfo->error_description));
+        $shopInfo = $this->curl->sendRequest('GET', $url, $headers);
+        if ($shopInfo->getErrors()) {
+            $error = current($shopInfo->getErrors());
+            throw new Exception($error);
         }
-        $this->config->setShopIdentifier($shopInfo->shop_identifier);
+        $this->config->setShopIdentifier($shopInfo->getBody()['shop_identifier']);
 
         return $this->config->getShopIdentifier();
     }

@@ -16,8 +16,8 @@ interface ClientInterface
      * @param string $method
      * @param string $url
      * @param array|null $data
-     * @return \stdClass
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return \Bold\Checkout\Api\Http\ResponseInterface
+     * @throws \Exception
      */
-    public function call(string $method, string $url, array $data = null): \stdClass;
+    public function call(string $method, string $url, array $data = null): ResponseInterface;
 }
