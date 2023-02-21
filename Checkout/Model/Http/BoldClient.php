@@ -9,7 +9,6 @@ use Bold\Checkout\Api\Http\ResponseInterface;
 use Bold\Checkout\Model\BoldShopIdentifier;
 use Bold\Checkout\Model\Http\Client\Curl;
 use Bold\Checkout\Model\Http\Client\UserAgent;
-use stdClass;
 
 /**
  * Client to perform http request to Bold.
