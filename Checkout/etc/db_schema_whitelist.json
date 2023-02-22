@@ -1,0 +1,14 @@
+{
+    "bold_checkout_order": {
+        "column": {
+            "order_id": true,
+            "public_id": true,
+            "fulfillment_status": true,
+            "financial_status": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "BOLD_CHECKOUT_ORDER_ID_MAGENTO_SALES_ORDER_ENTITY_ID": true
+        }
+    }
+}

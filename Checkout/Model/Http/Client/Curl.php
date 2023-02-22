@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http\Client;
 
@@ -49,6 +50,7 @@ class Curl extends FrameworkCurl
      */
     public function sendRequest(string $method, string $url, array $headers, array $data = null): ResponseInterface
     {
+        $data = json_encode($data);
         $this->logger->debug('Outgoing Call: ' . $method . ' ' . $url);
         $this->logger->debug('Outgoing Call Headers: ' . json_encode($headers));
         $this->logger->debug('Outgoing Call Data: ' . $data);

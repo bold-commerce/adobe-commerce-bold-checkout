@@ -13,18 +13,18 @@ use Magento\Framework\Controller\ResultInterface;
 class RedirectToBold
 {
     /**
-     * @var \Magento\Framework\Controller\Result\RedirectFactory
+     * @var RedirectFactory
      */
-    private RedirectFactory $redirectFactory;
+    private $redirectFactory;
 
     /**
-     * @var \Bold\Checkout\Model\Config
+     * @var Config
      */
-    private Config $config;
+    private $config;
 
     /**
-     * @param \Magento\Framework\Controller\Result\RedirectFactory $redirectFactory
-     * @param \Bold\Checkout\Model\Config $config
+     * @param RedirectFactory $redirectFactory
+     * @param Config $config
      */
     public function __construct(
         RedirectFactory $redirectFactory,

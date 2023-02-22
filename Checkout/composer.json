@@ -4,7 +4,10 @@
   "description": "N/A",
   "type": "magento2-module",
   "require": {
-    "magento/framework": "*"
+    "magento/framework": "*",
+    "magento/module-payment": "*",
+    "magento/module-sales": "*",
+    "psr/log": "*"
   },
   "license": [
     "Proprietary"
