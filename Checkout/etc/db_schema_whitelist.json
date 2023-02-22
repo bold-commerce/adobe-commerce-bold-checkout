@@ -3,7 +3,7 @@
         "column": {
             "order_id": true,
             "public_id": true,
-            "fulfilment_status": true,
+            "fulfillment_status": true,
             "financial_status": true
         },
         "constraint": {

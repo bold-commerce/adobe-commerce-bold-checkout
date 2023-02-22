@@ -11,7 +11,7 @@
         <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false" comment="Magento Order ID"/>
         <column xsi:type="varchar" name="public_id" nullable="true" length="255" comment="Bold Order Public ID"/>
         <column xsi:type="varchar" name="financial_status" nullable="true" length="255" comment="Bold Order Financial Status"/>
-        <column xsi:type="varchar" name="fulfilment_status" nullable="true" length="255" comment="Bold Order Fulfilment Status"/>
+        <column xsi:type="varchar" name="fulfillment_status" nullable="true" length="255" comment="Bold Order Fulfilment Status"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="order_id"/>
         </constraint>

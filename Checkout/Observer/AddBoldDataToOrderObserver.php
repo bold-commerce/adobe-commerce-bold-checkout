@@ -24,6 +24,11 @@ class AddBoldDataToOrderObserver implements ObserverInterface
     private $orderExtensionDataResource;
 
     /**
+     * @var array
+     */
+    private $orderExtensionData = [];
+
+    /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionData $orderExtensionDataResource
      */
@@ -44,10 +49,14 @@ class AddBoldDataToOrderObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getOrder();
-        $orderExtensionData = $this->orderExtensionDataFactory->create();
-        $this->orderExtensionDataResource->load($orderExtensionData, $order->getId());
+        $orderExtensionData = $this->orderExtensionData[$order->getId()] ?? null;
+        if (!$orderExtensionData) {
+            $orderExtensionData = $this->orderExtensionDataFactory->create();
+            $this->orderExtensionDataResource->load($orderExtensionData, $order->getId());
+            $this->orderExtensionData[$order->getId()] = $orderExtensionData;
+        }
         $order->getExtensionAttributes()->setPublicId($orderExtensionData->getPublicId());
-        $order->getExtensionAttributes()->setFulfilmentStatus($orderExtensionData->getFulfulmentStatus());
+        $order->getExtensionAttributes()->setFulfilmentStatus($orderExtensionData->getFulfillmentStatus());
         $order->getExtensionAttributes()->setFinancialStatus($orderExtensionData->getFinancialStatus());
     }
 }

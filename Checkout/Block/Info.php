@@ -7,7 +7,7 @@ use Magento\Framework\Phrase;
 use Magento\Payment\Block\ConfigurableInfo;
 
 /**
- *
+ * Bold Payment info block.
  */
 class Info extends ConfigurableInfo
 {
