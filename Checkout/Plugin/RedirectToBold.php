@@ -42,7 +42,6 @@ class RedirectToBold
      */
     public function aroundDispatch(Onepage $subject, callable $proceed, RequestInterface $request): ResultInterface
     {
-        return $proceed($request);
         if (!$this->config->isCheckoutEnabled()) {
             return $proceed($request);
         }
