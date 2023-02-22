@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model;
 
-use Bold\Checkout\Api\ConfigInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\Http\Client\Curl;
 use Bold\Checkout\Model\Http\Client\UserAgent;

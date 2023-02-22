@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http;
 
-use Bold\Checkout\Api\Http\ResponseInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 
 /**
  * Http client response data model.

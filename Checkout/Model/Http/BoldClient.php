@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http;
 
-use Bold\Checkout\Api\ConfigInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
-use Bold\Checkout\Api\Http\ResponseInterface;
 use Bold\Checkout\Model\BoldShopIdentifier;
+use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Curl;
 use Bold\Checkout\Model\Http\Client\UserAgent;
 

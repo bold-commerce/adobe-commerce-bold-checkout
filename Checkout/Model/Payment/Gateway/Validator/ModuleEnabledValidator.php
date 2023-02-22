@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Payment\Gateway\Validator;
 
-use Bold\Checkout\Api\ConfigInterface;
+use Bold\Checkout\Model\ConfigInterface;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;

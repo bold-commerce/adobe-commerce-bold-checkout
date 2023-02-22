@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model;
 
-use Bold\Checkout\Api\ConfigInterface;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;

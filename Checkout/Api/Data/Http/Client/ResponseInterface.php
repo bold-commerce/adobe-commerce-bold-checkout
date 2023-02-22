@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Api\Http;
+namespace Bold\Checkout\Api\Data\Http\Client;
 
 /**
  * Https client response data model interface.

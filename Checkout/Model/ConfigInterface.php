@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Api;
+namespace Bold\Checkout\Model;
 
 /**
  * Bold config model interface.

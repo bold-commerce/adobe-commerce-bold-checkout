@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http\Client;
 
-use Bold\Checkout\Api\Http\ResponseInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 use Bold\Checkout\Api\Http\ResponseInterfaceFactory;
 use Exception;
 use Magento\Framework\HTTP\Client\Curl as FrameworkCurl;
@@ -50,10 +50,9 @@ class Curl extends FrameworkCurl
      */
     public function sendRequest(string $method, string $url, array $headers, array $data = null): ResponseInterface
     {
-        $data = json_encode($data);
         $this->logger->debug('Outgoing Call: ' . $method . ' ' . $url);
         $this->logger->debug('Outgoing Call Headers: ' . json_encode($headers));
-        $this->logger->debug('Outgoing Call Data: ' . $data);
+        $this->logger->debug('Outgoing Call Data: ' . json_encode($data));
         $this->setHeaders($headers);
         $url = $this->prepareRequest($method, $url, $data);
         $this->makeRequest($method, $url, $data);
@@ -87,11 +86,14 @@ class Curl extends FrameworkCurl
         switch ($method) {
             case "PUT":
                 $this->curlOption(CURLOPT_PUT, 1);
+                if ($data) {
+                    $this->curlOption(CURLOPT_POSTFIELDS, http_build_query($data));
+                }
                 break;
             case 'PATCH':
                 $this->curlOption(CURLOPT_CUSTOMREQUEST, 'PATCH');
                 if ($data) {
-                    $this->curlOption(CURLOPT_POSTFIELDS, $data);
+                    $this->curlOption(CURLOPT_POSTFIELDS, http_build_query($data));
                 }
                 break;
             case 'DELETE' :
