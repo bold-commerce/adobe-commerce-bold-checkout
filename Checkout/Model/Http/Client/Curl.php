@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Http\Client;
 
 use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
-use Bold\Checkout\Api\Http\ResponseInterfaceFactory;
+use Bold\Checkout\Api\Data\Http\Client\ResponseInterfaceFactory;
 use Exception;
 use Magento\Framework\HTTP\Client\Curl as FrameworkCurl;
 use Psr\Log\LoggerInterface;

@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="bold_checkout_product_save_update_attributes"
+                type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>
+    </type>
+    <type name="Bold\Platform\Model\Synchronizer\ProductSynchronizer\GetPreparedProducts">
+        <arguments>
+            <argument name="complexProductTypes" xsi:type="array">
+                <item name="configurable" xsi:type="const">
+                    Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE
+                </item>
+                <item name="grouped" xsi:type="const">Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE
+                </item>
+                <item name="bundle" xsi:type="const">Magento\Bundle\Model\Product\Type::TYPE_CODE</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Bold\Platform\Model\Synchronizer\ProductSynchronizer"
+                 type="Bold\Platform\Model\Synchronizer\EntitiesSynchronizer">
+        <arguments>
+            <argument name="getPreparedEntities" xsi:type="object">
+                Bold\Platform\Model\Synchronizer\ProductSynchronizer\GetPreparedProducts
+            </argument>
+            <argument name="synchronizationMethod" xsi:type="string">POST</argument>
+            <argument name="synchronizationUrl" xsi:type="string">/</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Model\Synchronizer\CategorySynchronizer"
+                 type="Bold\Platform\Model\Synchronizer\EntitiesSynchronizer">
+        <arguments>
+            <argument name="getPreparedEntities" xsi:type="object">
+                Bold\Platform\Model\Synchronizer\CategorySynchronizer\GetPreparedCategories
+            </argument>
+            <argument name="synchronizationMethod" xsi:type="string">POST</argument>
+            <argument name="synchronizationUrl" xsi:type="string">/</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Model\Synchronizer\CustomerSynchronizer"
+                 type="Bold\Platform\Model\Synchronizer\EntitiesSynchronizer">
+        <arguments>
+            <argument name="getPreparedEntities" xsi:type="object">
+                Bold\Platform\Model\Synchronizer\CustomerSynchronizer\GetPreparedCustomers
+            </argument>
+            <argument name="synchronizationMethod" xsi:type="string">POST</argument>
+            <argument name="synchronizationUrl" xsi:type="string">/</argument>
+        </arguments>
+    </virtualType>
+    <type name="Bold\Platform\Model\Synchronizer\EntitiesSynchronizer">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Platform\Model\Synchronizer">
+        <arguments>
+            <argument name="synchronizers" xsi:type="array">
+                <item name="catalog_product" xsi:type="object">Bold\Platform\Model\Synchronizer\ProductSynchronizer
+                </item>
+                <item name="catalog_category" xsi:type="object">Bold\Platform\Model\Synchronizer\CategorySynchronizer
+                </item>
+                <item name="customer" xsi:type="object">Bold\Platform\Model\Synchronizer\CustomerSynchronizer</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Bold\Platform\Observer\CategorySave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.categories</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Observer\ProductSave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.products</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Observer\CustomerSave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.customers</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Observer\CustomerAddressSave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.customers</argument>
+            <argument name="entityIdField" xsi:type="string">customer_id</argument>
+        </arguments>
+    </virtualType>
+</config>

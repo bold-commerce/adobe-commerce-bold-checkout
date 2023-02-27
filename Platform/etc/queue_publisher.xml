@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/publisher.xsd">
+    <publisher topic="bold.checkout.sync.products">
+        <connection name="amqp" exchange="bold"/>
+    </publisher>
+    <publisher topic="bold.checkout.sync.categories">
+        <connection name="amqp" exchange="bold"/>
+    </publisher>
+    <publisher topic="bold.checkout.sync.customers">
+        <connection name="amqp" exchange="bold"/>
+    </publisher>
+</config>
