@@ -5,8 +5,12 @@
   "type": "magento2-module",
   "require": {
     "magento/framework": "*",
+    "magento/module-catalog": "*",
+    "magento/module-configurable-product": "*",
     "magento/module-payment": "*",
+    "magento/module-quote": "*",
     "magento/module-sales": "*",
+    "magento/module-tax": "*",
     "psr/log": "*"
   },
   "license": [
