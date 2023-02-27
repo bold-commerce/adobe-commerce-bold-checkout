@@ -1,15 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Catalog\Api\Data\ProductInterface">
-        <plugin name="bold_checkout_product_save" type="Bold\Platform\Plugin\Product\SavePlugin"/>
-    </type>
-    <type name="Magento\Catalog\Api\Data\CategoryInterface">
-        <plugin name="bold_checkout_category_save" type="Bold\Platform\Plugin\Category\SavePlugin"/>
-    </type>
-    <type name="Magento\Customer\Model\Address\AddressModelInterface">
-        <plugin name="bold_checkout_customer_address_save" type="Bold\Platform\Plugin\Customer\Address\SavePlugin"/>
-    </type>
     <type name="Magento\Catalog\Model\Product\Action">
         <plugin name="bold_checkout_product_save_update_attributes"
                 type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>
@@ -72,4 +63,25 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="Bold\Platform\Observer\CategorySave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.categories</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Observer\ProductSave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.products</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Observer\CustomerSave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.customers</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Platform\Observer\CustomerAddressSave" type="\Bold\Platform\Observer\EntitySave">
+        <arguments>
+            <argument name="topicName" xsi:type="string">bold.checkout.sync.customers</argument>
+            <argument name="entityIdField" xsi:type="string">customer_id</argument>
+        </arguments>
+    </virtualType>
 </config>

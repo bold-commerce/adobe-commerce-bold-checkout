@@ -1,7 +1,16 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="customer_save_after_data_object">
-        <observer name="bold_platform_customer_save" instance="Bold\Platform\Observer\CustomerSave"/>
+    <event name="catalog_category_save_after">
+        <observer name="bold_platform_category_save" instance="Bold\Platform\Observer\CategorySave" />
+    </event>
+    <event name="catalog_product_save_after">
+        <observer name="bold_platform_product_save" instance="Bold\Platform\Observer\ProductSave" />
+    </event>
+    <event name="customer_save_after">
+        <observer name="bold_platform_customer_save" instance="Bold\Platform\Observer\CustomerSave" />
+    </event>
+    <event name="customer_address_save_after">
+        <observer name="bold_platform_customer_address_save" instance="Bold\Platform\Observer\CustomerAddressSave" />
     </event>
 </config>
