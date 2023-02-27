@@ -5,6 +5,14 @@
     <preference for="Bold\Checkout\Api\Http\ClientInterface" type="Bold\Checkout\Model\Http\BoldClient"/>
     <preference for="Bold\Checkout\Api\Data\Http\Client\ResponseInterface" type="Bold\Checkout\Model\Http\Response"/>
 
+    <type name="Bold\Checkout\Model\Quote\QuoteAction">
+        <arguments>
+            <argument name="quoteActions" xsi:type="array">
+                <item name="quote_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountCart</item>
+                <item name="quote_items_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem</item>
+            </argument>
+        </arguments>
+    </type>
     <!-- Gateway Service Logger Configuration.   -->
     <type name="Bold\Checkout\Model\Payment\Gateway\Service">
         <arguments>
