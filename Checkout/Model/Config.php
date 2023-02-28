@@ -15,13 +15,13 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Config implements ConfigInterface
 {
+    public const PATH_TOKEN = 'checkout/bold_checkout_base/api_token';
+    public const PATH_SECRET = 'checkout/bold_checkout_base/shared_secret';
     private const PATH_ENABLED = 'checkout/bold_checkout_base/enabled';
     private const PATH_ENABLED_FOR = 'checkout/bold_checkout_advanced/enabled_for';
     private const PATH_IP_WHITELIST = 'checkout/bold_checkout_advanced/ip_whitelist';
     private const PATH_CUSTOMER_WHITELIST = 'checkout/bold_checkout_advanced/customer_whitelist';
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
-    private const PATH_SECRET = 'checkout/bold_checkout_base/shared_secret';
-    private const PATH_TOKEN = 'checkout/bold_checkout_base/api_token';
     private const PATH_API_URL = 'checkout/bold_checkout_advanced/api_url';
     private const PATH_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
     private const PATH_WEIGHT_CONVERSION_RATE = 'checkout/bold_checkout_advanced/weight_conversion_rate';
