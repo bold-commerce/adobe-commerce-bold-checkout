@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/topology.xsd">
-    <exchange name="bold" type="topic" connection="amqp">
-        <binding id="BoldCheckoutProducts" topic="bold.checkout.sync.products" destinationType="queue"
-                 destination="bold.checkout.sync.products"/>
-        <binding id="BoldCheckoutCategories" topic="bold.checkout.sync.categories" destinationType="queue"
-                 destination="bold.checkout.sync.categories"/>
-        <binding id="BoldCheckoutCustomers" topic="bold.checkout.sync.customers" destinationType="queue"
-                 destination="bold.checkout.sync.customers"/>
+    <exchange name="magento">
+        <binding id="BoldCheckoutProducts" topic="bold.checkout.sync.products" destination="bold.checkout.sync.products"/>
+        <binding id="BoldCheckoutCategories" topic="bold.checkout.sync.categories" destination="bold.checkout.sync.categories"/>
+        <binding id="BoldCheckoutCustomers" topic="bold.checkout.sync.customers" destination="bold.checkout.sync.customers"/>
     </exchange>
 </config>

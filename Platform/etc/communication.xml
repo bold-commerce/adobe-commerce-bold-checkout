@@ -1,16 +1,13 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
-    <topic name="bold.checkout.sync.products" request="int[]">
-        <handler name="bold.checkout.sync.products.handler" type="Bold\Platform\Model\Queue\Handler\Product"
-                 method="handle"/>
+    <topic name="bold.checkout.sync.products" request="Bold\Platform\Model\Queue\RequestInterface">
+        <handler name="bold.checkout.sync.products" type="Bold\Platform\Model\Queue\Handler\Product" method="handle"/>
     </topic>
-    <topic name="bold.checkout.sync.categories" request="int[]">
-        <handler name="bold.checkout.sync.categories.handler" type="Bold\Platform\Model\Queue\Handler\Category"
-                 method="handle"/>
+    <topic name="bold.checkout.sync.categories" request="Bold\Platform\Model\Queue\RequestInterface">
+        <handler name="bold.checkout.sync.categories" type="Bold\Platform\Model\Queue\Handler\Category" method="handle"/>
     </topic>
-    <topic name="bold.checkout.sync.customers" request="int[]">
-        <handler name="bold.checkout.sync.customers.handler" type="Bold\Platform\Model\Queue\Handler\Customer"
-                 method="handle"/>
+    <topic name="bold.checkout.sync.customers" request="Bold\Platform\Model\Queue\RequestInterface">
+        <handler name="bold.checkout.sync.customers" type="Bold\Platform\Model\Queue\Handler\Customer" method="handle"/>
     </topic>
 </config>

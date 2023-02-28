@@ -42,7 +42,7 @@ class IsBoldCheckoutAllowedForCart
      */
     public function isAllowed(CartInterface $quote): bool
     {
-        if (!$this->config->isCheckoutEnabled()) {
+        if (!$this->config->isCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
             return false;
         }
         if (!$this->isEnabledFor($quote)) {
@@ -74,13 +74,14 @@ class IsBoldCheckoutAllowedForCart
      */
     private function isEnabledFor(CartInterface $quote): bool
     {
-        switch ($this->config->getEnabledFor()) {
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
+        switch ($this->config->getEnabledFor($websiteId)) {
             case ConfigInterface::VALUE_ENABLED_FOR_ALL:
                 return true;
             case ConfigInterface::VALUE_ENABLED_FOR_IP:
-                return in_array($quote->getRemoteIp(), $this->config->getIpWhitelist());
+                return in_array($quote->getRemoteIp(), $this->config->getIpWhitelist($websiteId));
             case ConfigInterface::VALUE_ENABLED_FOR_CUSTOMER:
-                return in_array($quote->getCustomerEmail(), $this->config->getCustomerWhitelist());
+                return in_array($quote->getCustomerEmail(), $this->config->getCustomerWhitelist($websiteId));
             case ConfigInterface::VALUE_ENABLED_FOR_PERCENTAGE:
                 return $this->resolveByPercentage($quote);
             default:
@@ -96,6 +97,7 @@ class IsBoldCheckoutAllowedForCart
      */
     private function resolveByPercentage(CartInterface $quote): bool
     {
-        return ($quote->getId() % 10) < ($this->config->getOrdersPercentage() / 10);
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
+        return ($quote->getId() % 10) < ($this->config->getOrdersPercentage($websiteId) / 10);
     }
 }

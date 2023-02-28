@@ -59,13 +59,14 @@ class Service
      */
     public function captureFull(OrderInterface $order): string
     {
+        $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
         $body = [
             'reauth' => true,
             'idempotent_key' => $this->random->getRandomString(10),
         ];
         $url = sprintf(self::CAPTURE_FULL_URL, $order->getExtensionAttributes()->getPublicId());
-        return $this->sendCaptureRequest($url, $order->getIncrementId(), $body);
+        return $this->sendCaptureRequest($websiteId, $url, $order->getIncrementId(), $body);
     }
 
     /**
@@ -78,6 +79,7 @@ class Service
      */
     public function capturePartial(OrderInterface $order, float $amount): string
     {
+        $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
         $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $body = [
@@ -87,7 +89,7 @@ class Service
         ];
         $url = sprintf(self::CAPTURE_PARTIALLY_URL, $orderPublicId);
 
-        return $this->sendCaptureRequest($url, $order->getIncrementId(), $body);
+        return $this->sendCaptureRequest($websiteId, $url, $order->getIncrementId(), $body);
     }
 
     /**
@@ -100,6 +102,7 @@ class Service
      */
     public function cancel(OrderInterface $order, string $operation = self::CANCEL)
     {
+        $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
         $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $url = sprintf(self::CANCEL_URL, $orderPublicId);
@@ -108,7 +111,7 @@ class Service
                 ? __('Order has been canceled.')
                 : __('Order payment has been voided.'),
         ];
-        $result = $this->httpClient->call('POST', $url, $body);
+        $result = $this->httpClient->call($websiteId, 'POST', $url, $body);
         $errors = $result->getErrors();
         $logMessage = sprintf('Order id: %s. Errors: ' . PHP_EOL, $order->getIncrementId());
         $errorMessage = $operation === self::CANCEL ? __('Cannot cancel the order') : __('Cannot void order payment.');
@@ -138,6 +141,7 @@ class Service
      */
     public function refundFull(OrderInterface $order): string
     {
+        $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
         $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $body = [
@@ -145,7 +149,7 @@ class Service
             'reason' => 'Magento credit memo created.',
         ];
         $url = sprintf(self::REFUND_FULL_URL, $orderPublicId);
-        return $this->sendRefundRequest($url, $order->getIncrementId(), $body);
+        return $this->sendRefundRequest($websiteId, $url, $order->getIncrementId(), $body);
     }
 
     /**
@@ -158,6 +162,7 @@ class Service
      */
     public function refundPartial(OrderInterface $order, float $amount): string
     {
+        $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
         $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $body = [
@@ -166,7 +171,7 @@ class Service
             'amount' => $amount * 100,
         ];
         $url = sprintf(self::REFUND_PARTIALLY_URL, $orderPublicId);
-        return $this->sendRefundRequest($url, $order->getIncrementId(), $body);
+        return $this->sendRefundRequest($websiteId, $url, $order->getIncrementId(), $body);
     }
 
     /**
@@ -178,9 +183,9 @@ class Service
      * @return string
      * @throws Exception
      */
-    private function sendCaptureRequest(string $url, string $orderId, array $body): string
+    private function sendCaptureRequest(int $websiteId, string $url, string $orderId, array $body): string
     {
-        $result = $this->httpClient->call('POST', $url, $body);
+        $result = $this->httpClient->call($websiteId, 'POST', $url, $body);
         $errors = $result->getErrors();
         $logMessage = sprintf('Order id: %s. Errors: ' . PHP_EOL, $orderId);
         $errorMessage = __('Cannot capture the order.');
@@ -213,9 +218,9 @@ class Service
      * @return string
      * @throws Exception
      */
-    private function sendRefundRequest(string $url, string $orderId, array $body): string
+    private function sendRefundRequest(int $websiteId, string $url, string $orderId, array $body): string
     {
-        $result = $this->httpClient->call('POST', $url, $body);
+        $result = $this->httpClient->call($websiteId, 'POST', $url, $body);
         $errors = $result->getErrors();
         $logMessage = sprintf('Order id: %s. Errors: ' . PHP_EOL, $orderId);
         $errorMessage = __('Cannot refund order.');

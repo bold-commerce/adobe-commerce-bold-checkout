@@ -8,6 +8,7 @@ use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Bold checkout config service.
@@ -19,7 +20,6 @@ class Config implements ConfigInterface
     private const PATH_IP_WHITELIST = 'checkout/bold_checkout_advanced/ip_whitelist';
     private const PATH_CUSTOMER_WHITELIST = 'checkout/bold_checkout_advanced/customer_whitelist';
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
-    private const PATH_REALTIME_ENABLED = 'checkout/bold_checkout_advanced/realtime_enabled';
     private const PATH_SECRET = 'checkout/bold_checkout_base/shared_secret';
     private const PATH_TOKEN = 'checkout/bold_checkout_base/api_token';
     private const PATH_API_URL = 'checkout/bold_checkout_advanced/api_url';
@@ -69,26 +69,25 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function isCheckoutEnabled(): bool
+    public function isCheckoutEnabled(int $websiteId): bool
     {
-        return $this->scopeConfig->isSetFlag(self::PATH_ENABLED);
-//            && Mage::helper('core')->isModuleOutputEnabled('Bold_Checkout');
+        return $this->scopeConfig->isSetFlag(self::PATH_ENABLED, ScopeInterface::SCOPE_WEBSITES, $websiteId);
     }
 
     /**
      * @inheritDoc
      */
-    public function getEnabledFor(): int
+    public function getEnabledFor(int $websiteId): int
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_ENABLED_FOR);
+        return (int)$this->scopeConfig->getValue(self::PATH_ENABLED_FOR, ScopeInterface::SCOPE_WEBSITES, $websiteId);
     }
 
     /**
      * @inheritDoc
      */
-    public function getIpWhitelist(): array
+    public function getIpWhitelist(int $websiteId): array
     {
-        $rawData = $this->scopeConfig->getValue(self::PATH_IP_WHITELIST);
+        $rawData = $this->scopeConfig->getValue(self::PATH_IP_WHITELIST, ScopeInterface::SCOPE_WEBSITES, $websiteId);
 
         return $rawData ? array_filter(array_map('trim', explode(',', $rawData))) : [];
     }
@@ -96,9 +95,13 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getCustomerWhitelist(): array
+    public function getCustomerWhitelist(int $websiteId): array
     {
-        $rawData = $this->scopeConfig->getValue(self::PATH_CUSTOMER_WHITELIST);
+        $rawData = $this->scopeConfig->getValue(
+            self::PATH_CUSTOMER_WHITELIST,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
 
         return $rawData ? array_filter(array_map('trim', explode(',', $rawData))) : [];
     }
@@ -106,25 +109,21 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getOrdersPercentage(): int
+    public function getOrdersPercentage(int $websiteId): int
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_ORDERS_PERCENTAGE);
+        return (int)$this->scopeConfig->getValue(
+            self::PATH_ORDERS_PERCENTAGE,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function isRealtimeEnabled(): bool
+    public function getSharedSecret(int $websiteId): ?string
     {
-        return $this->scopeConfig->isSetFlag(self::PATH_REALTIME_ENABLED);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSharedSecret(): ?string
-    {
-        $encryptedSecret = $this->scopeConfig->getValue(self::PATH_SECRET);
+        $encryptedSecret = $this->scopeConfig->getValue(self::PATH_SECRET, ScopeInterface::SCOPE_WEBSITES, $websiteId);
 
         return $this->encryptor->decrypt($encryptedSecret);
     }
@@ -132,9 +131,9 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getApiToken(): ?string
+    public function getApiToken(int $websiteId): ?string
     {
-        $encryptedToken = $this->scopeConfig->getValue(self::PATH_TOKEN);
+        $encryptedToken = $this->scopeConfig->getValue(self::PATH_TOKEN, ScopeInterface::SCOPE_WEBSITES, $websiteId);
 
         return $this->encryptor->decrypt($encryptedToken);
     }
@@ -142,49 +141,64 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getWeightConversionRate(): float
+    public function getWeightConversionRate(int $websiteId): float
     {
-        return (float)$this->scopeConfig->getValue(self::PATH_WEIGHT_CONVERSION_RATE) ?: 1000;
+        return (float)$this->scopeConfig->getValue(
+            self::PATH_WEIGHT_CONVERSION_RATE,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        ) ?: 1000;
     }
 
     /**
      * @inheritDoc
      */
-    public function getWeightUnit(): string
+    public function getWeightUnit(int $websiteId): string
     {
-        return $this->scopeConfig->getValue(self::PATH_WEIGHT_UNIT) ?: 'kg';
+        return $this->scopeConfig->getValue(self::PATH_WEIGHT_UNIT, ScopeInterface::SCOPE_WEBSITES, $websiteId) ?: 'kg';
     }
 
     /**
      * @inheritDoc
      */
-    public function getApiUrl(): string
+    public function getApiUrl(int $websiteId): string
     {
-        return rtrim($this->scopeConfig->getValue(self::PATH_API_URL), '/');
+        return rtrim($this->scopeConfig->getValue(self::PATH_API_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId), '/');
     }
 
     /**
      * @inheritDoc
      */
-    public function getCheckoutUrl(): string
+    public function getCheckoutUrl(int $websiteId): string
     {
-        return rtrim($this->scopeConfig->getValue(self::PATH_CHECKOUT_URL), '/');
+        return rtrim(
+            $this->scopeConfig->getValue(
+                self::PATH_CHECKOUT_URL,
+                ScopeInterface::SCOPE_WEBSITES,
+                $websiteId
+            ),
+            '/');
     }
 
     /**
      * @inheritDoc
      */
-    public function getShopIdentifier(): ?string
+    public function getShopIdentifier(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_SHOP_IDENTIFIER);
+        return $this->scopeConfig->getValue(self::PATH_SHOP_IDENTIFIER, ScopeInterface::SCOPE_WEBSITES, $websiteId);
     }
 
     /**
      * @inheritDoc
      */
-    public function setShopIdentifier(string $shopIdentifier): void
+    public function setShopIdentifier(int $websiteId, string $shopIdentifier): void
     {
-        $this->configWriter->save(self::PATH_SHOP_IDENTIFIER, $shopIdentifier);
+        $this->configWriter->save(
+            self::PATH_SHOP_IDENTIFIER,
+            $shopIdentifier,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
         $this->cacheTypeList->cleanType('config');
         $this->scopeConfig->clean();
     }
