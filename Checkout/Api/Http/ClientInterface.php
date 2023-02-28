@@ -15,11 +15,12 @@ interface ClientInterface
     /**
      * Perform http request to bold.
      *
+     * @param int $websiteId
      * @param string $method
      * @param string $url
      * @param array|null $data
-     * @return \Bold\Checkout\Api\Data\Http\Client\ResponseInterface
+     * @return ResponseInterface
      * @throws \Exception
      */
-    public function call(string $method, string $url, array $data = null): ResponseInterface;
+    public function call(int $websiteId, string $method, string $url, array $data = null): ResponseInterface;
 }

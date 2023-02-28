@@ -7,6 +7,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
+use Magento\Sales\Api\Data\OrderInterface;
 
 /**
  * Verify is bold checkout module is enabled.
@@ -33,8 +34,10 @@ class ModuleEnabledValidator extends AbstractValidator
      */
     public function validate(array $validationSubject): ResultInterface
     {
+        $payment = $validationSubject['payment'];
+        $order = $payment->getOrder();
         return $this->createResult(
-            $this->config->isCheckoutEnabled(),
+            $this->config->isCheckoutEnabled((int)$order->getStore()->getWebsiteId()),
             [
                 __('Please make sure Bold Checkout module output is enabled and Bold Checkout Integration is on.'),
             ]

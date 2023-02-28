@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
-    <consumer name="bold.checkout.sync.products" queue="bold.checkout.sync.products" connection="amqp"
-              handler="Bold\Platform\Model\Queue\Handler\Product::handle"/>
-    <consumer name="bold.checkout.sync.categories" queue="bold.checkout.sync.categories" connection="amqp"
-              handler="Bold\Platform\Model\Queue\Handler\Category::handle"/>
-    <consumer name="bold.checkout.sync.customers" queue="bold.checkout.sync.customers" connection="amqp"
-              handler="Bold\Platform\Model\Queue\Handler\Customer::handle"/>
+    <consumer name="bold.checkout.sync.products" queue="bold.checkout.sync.products" handler="Bold\Platform\Model\Queue\Handler\Product::handle"/>
+    <consumer name="bold.checkout.sync.categories" queue="bold.checkout.sync.categories" handler="Bold\Platform\Model\Queue\Handler\Category::handle"/>
+    <consumer name="bold.checkout.sync.customers" queue="bold.checkout.sync.customers" handler="Bold\Platform\Model\Queue\Handler\Customer::handle"/>
 </config>

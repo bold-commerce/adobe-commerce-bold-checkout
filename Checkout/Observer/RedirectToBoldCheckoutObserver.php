@@ -79,6 +79,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $quote = $this->session->getQuote();
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
         if (!$this->allowedForCart->isAllowed($quote)) {
             return;
         }
@@ -87,7 +88,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             $orderId = $checkoutData['data']['public_order_id'];
             $token = $checkoutData['data']['jwt_token'];
             $shipName = $checkoutData['data']['initial_data']['shop_name'];
-            $checkoutUrl = $this->config->getCheckoutUrl();
+            $checkoutUrl = $this->config->getCheckoutUrl($websiteId);
             $checkoutUrl .= '/bold_platform/' . $shipName . '/experience/resume?public_order_id='
                 . $orderId . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);

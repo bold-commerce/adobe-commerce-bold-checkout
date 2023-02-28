@@ -1,51 +1,69 @@
 <?php
+declare(strict_types=1);
 
 namespace Bold\Platform\Model\Queue\Handler;
 
-use \Bold\Platform\Model\Synchronizer;
+use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
-use Magento\Catalog\Model\Product as ProductModel;
+use Bold\Platform\Model\Queue\RequestInterface;
+use Bold\Platform\Model\Sync\GetProducts;
+use Exception;
 
 /**
  * Bold Products synchronization queue handler.
  */
 class Product
 {
+    private const METHOD = 'POST';
+    private const URL = '/';
+    private const CHUNK_SIZE = 500;
+
     /**
-     * @var \Bold\Checkout\Model\ConfigInterface
+     * @var ConfigInterface
      */
     private $config;
 
     /**
-     * @var Synchronizer
+     * @var GetProducts
      */
-    private $synchronizer;
+    private $getProducts;
 
     /**
-     * @param \Bold\Checkout\Model\ConfigInterface $config
-     * @param \Bold\Platform\Model\Synchronizer $synchronizer
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
+     * @param ConfigInterface $config
+     * @param GetProducts $getProducts
+     * @param ClientInterface $client
      */
     public function __construct(
         ConfigInterface $config,
-        Synchronizer    $synchronizer
+        GetProducts $getProducts,
+        ClientInterface $client
     ) {
         $this->config = $config;
-        $this->synchronizer = $synchronizer;
+        $this->getProducts = $getProducts;
+        $this->client = $client;
     }
 
     /**
      * Handle Bold Products synchronization queue message.
      *
-     * @param int[] $productIds
+     * @param RequestInterface $request
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws Exception
      */
-    public function handle(array $productIds): void
+    public function handle(RequestInterface $request): void
     {
-        if (!$this->config->isCheckoutEnabled()) {
+        if (!$this->config->isCheckoutEnabled($request->getWebsiteId())) {
             return;
         }
-
-        $this->synchronizer->synchronize(ProductModel::ENTITY, $productIds);
+        $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
+        foreach ($idsChunks as $entityIds) {
+            $items = $this->getProducts->getItems($request->getWebsiteId(), $entityIds);
+            $this->client->call($request->getWebsiteId(), self::METHOD, self::URL, $items);
+        }
     }
 }

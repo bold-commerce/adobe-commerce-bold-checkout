@@ -72,7 +72,8 @@ class InitOrderFromQuote
             'cart_items' => $this->getCartLineItems->getItems($quote),
             'actions' => $this->quoteAction->getActionsData($quote),
         ];
-        $orderData = $this->client->call('POST', self::INIT_URL, $body)->getBody();
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
+        $orderData = $this->client->call($websiteId, 'POST', self::INIT_URL, $body)->getBody();
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
             throw new LocalizedException(__('Cannot initialize order for quote with id = "%s"', $quote->getId()));
@@ -94,7 +95,7 @@ class InitOrderFromQuote
             'accepts_marketing' => false,
             'saved_addresses' => $customerAddresses,
         ];
-        $authenticateResponse = $this->client->call('POST', $authenticateUrl, $authenticateBody)->getBody();
+        $authenticateResponse = $this->client->call($websiteId, 'POST', $authenticateUrl, $authenticateBody)->getBody();
         if (!isset($authenticateResponse['data']['application_state']['customer']['public_id'])) {
             throw new LocalizedException(__('Cannot authenticate customer with id="%s"', $quote->getCustomerId()));
         }

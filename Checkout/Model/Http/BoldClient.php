@@ -56,17 +56,17 @@ class BoldClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function call(string $method, string $url, array $data = null): ResponseInterface
+    public function call(int $websiteId, string $method, string $url, array $data = null): ResponseInterface
     {
-        $apiToken = $this->config->getApiToken();;
-        $shopId = $this->boldShopIdentifier->getShopIdentifier();
+        $apiToken = $this->config->getApiToken($websiteId);
+        $shopId = $this->boldShopIdentifier->getShopIdentifier($websiteId);
         $headers = [
             'Authorization' => 'Bearer ' . $apiToken,
             'Content-Type' => 'application/json',
             'User-Agent' => $this->userAgent->getUserAgent(),
             'Bold-API-Version-Date' => self::BOLD_API_VERSION_DATE,
         ];
-        $url = $this->config->getApiUrl() . '/' . ltrim(str_replace('{{shopId}}', $shopId, $url), '/');
+        $url = $this->config->getApiUrl($websiteId) . '/' . ltrim(str_replace('{{shopId}}', $shopId, $url), '/');
 
         return $this->client->sendRequest($method, $url, $headers, $data);
     }
