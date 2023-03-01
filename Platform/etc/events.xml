@@ -13,4 +13,7 @@
     <event name="customer_address_save_after">
         <observer name="bold_platform_customer_address_save" instance="Bold\Platform\Observer\CustomerAddressSave" />
     </event>
+    <event name="admin_system_config_changed_section_checkout">
+        <observer name="bold_platform_create_integration" instance="Bold\Platform\Observer\CheckoutSectionSave"/>
+    </event>
 </config>
