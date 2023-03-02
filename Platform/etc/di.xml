@@ -2,6 +2,10 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Bold\Platform\Model\Queue\RequestInterface" type="Bold\Platform\Model\Queue\Request"/>
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="bold_checkout_product_save_update_attributes"
+                type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>
+    </type>
     <type name="Bold\Platform\Model\Sync\GetProducts">
         <arguments>
             <argument name="skipProductTypes" xsi:type="array">

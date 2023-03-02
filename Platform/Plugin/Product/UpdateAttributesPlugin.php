@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Plugin\Product;
 
-use Bold\Checkout\Model\ConfigInterface;
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product\Action;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -17,11 +16,6 @@ use Psr\Log\LoggerInterface;
 class UpdateAttributesPlugin
 {
     public const TOPIC_NAME = 'bold.checkout.sync.products';
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
 
     /**
      * @var EntitySyncPublisher
@@ -39,18 +33,15 @@ class UpdateAttributesPlugin
     private $logger;
 
     /**
-     * @param ConfigInterface $config
      * @param EntitySyncPublisher $publisher
      * @param StoreManagerInterface $storeManager
      * @param LoggerInterface $logger
      */
     public function __construct(
-        ConfigInterface $config,
-        EntitySyncPublisher $publisher,
+        EntitySyncPublisher   $publisher,
         StoreManagerInterface $storeManager,
-        LoggerInterface $logger
+        LoggerInterface       $logger
     ) {
-        $this->config = $config;
         $this->publisher = $publisher;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
@@ -70,20 +61,28 @@ class UpdateAttributesPlugin
     public function afterUpdateAttributes(
         Action $subject,
         Action $result,
-        array $productIds,
-        array $attrData,
-        $storeId
+        array  $productIds,
+        array  $attrData,
+               $storeId
     ): Action {
-        $websiteId = (int)$this->storeManager->getStore($storeId)->getWebsiteId();
-        if ($this->config->isCheckoutEnabled($websiteId)) {
-            return $result;
-        }
+        $websiteIds = $storeId
+            ? [(int)$this->storeManager->getStore($storeId)->getWebsiteId()]
+            : array_map(
+                function (WebsiteInterface $website) {
+                    return (int)$website->getId();
+                },
+                $this->storeManager->getWebsites()
+            );
+
         $intIds = array_map('intval', $productIds);
-        try {
-            $this->publisher->publish(self::TOPIC_NAME, $websiteId, ProductInterface::class, $intIds);
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
+        foreach ($websiteIds as $websiteId) {
+            try {
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, $intIds);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+            }
         }
+
         return $result;
     }
 }

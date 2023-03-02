@@ -5,8 +5,8 @@ namespace Bold\Platform\Observer;
 
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -30,31 +30,31 @@ class CustomerAddressSave implements ObserverInterface
     private $storeManager;
 
     /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepository;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    /**
      * @param StoreManagerInterface $storeManager
      * @param EntitySyncPublisher $publisher
-     * @param CustomerRepositoryInterface $customerRepository
      * @param LoggerInterface $logger
+     * @param MetadataPool $metadataPool
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         EntitySyncPublisher $publisher,
-        CustomerRepositoryInterface $customerRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        MetadataPool $metadataPool
     ) {
         $this->publisher = $publisher;
         $this->storeManager = $storeManager;
-        $this->customerRepository = $customerRepository;
         $this->logger = $logger;
+        $this->metadataPool = $metadataPool;
     }
 
     /**
@@ -66,9 +66,10 @@ class CustomerAddressSave implements ObserverInterface
     public function execute(Observer $observer)
     {
         $websiteIds = [];
-        $address = $observer->getEvent()->getAddress();
+        /** @var \Magento\Customer\Model\Address $address */
+        $address = $observer->getEvent()->getCustomerAddress();
+        $customer = $address->getCustomer();
         try {
-            $customer = $this->customerRepository->getById($address->getCustomerId());
             if (!(int)$customer->getWebsiteId()) {
                 $websites = $this->storeManager->getWebsites();
                 foreach ($websites as $website) {
@@ -76,8 +77,10 @@ class CustomerAddressSave implements ObserverInterface
                 }
             }
             $websiteIds = $websiteIds ?: [(int)$customer->getWebsiteId()];
+            $linkField = $this->metadataPool->getMetadata(CustomerInterface::class)->getLinkField();
+            $entityId = (int)$customer->getData($linkField);
             foreach ($websiteIds as $websiteId) {
-                $this->publisher->publish(self::TOPIC_NAME, $websiteId, CustomerInterface::class, [$address]);
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [$entityId]);
             }
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());

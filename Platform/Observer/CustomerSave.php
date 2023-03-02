@@ -6,6 +6,7 @@ namespace Bold\Platform\Observer;
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -34,18 +35,26 @@ class CustomerSave implements ObserverInterface
     private $logger;
 
     /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    /**
      * @param StoreManagerInterface $storeManager
      * @param EntitySyncPublisher $publisher
      * @param LoggerInterface $logger
+     * @param MetadataPool $metadataPool
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         EntitySyncPublisher $publisher,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        MetadataPool $metadataPool
     ) {
         $this->publisher = $publisher;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
+        $this->metadataPool = $metadataPool;
     }
 
     /**
@@ -65,9 +74,11 @@ class CustomerSave implements ObserverInterface
             }
         }
         $websiteIds = $websiteIds ?: [(int)$customer->getWebsiteId()];
+        $linkField = $this->metadataPool->getMetadata(CustomerInterface::class)->getLinkField();
+        $entityId = (int)$customer->getData($linkField);
         foreach ($websiteIds as $websiteId) {
             try {
-                $this->publisher->publish(self::TOPIC_NAME, $websiteId, CustomerInterface::class, [$customer]);
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [$entityId]);
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }
