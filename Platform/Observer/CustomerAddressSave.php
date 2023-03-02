@@ -6,7 +6,6 @@ namespace Bold\Platform\Observer;
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -66,7 +65,7 @@ class CustomerAddressSave implements ObserverInterface
     public function execute(Observer $observer)
     {
         $websiteIds = [];
-        $address = $observer->getEvent()->getAddress();
+        $address = $observer->getEvent()->getCustomerAddress();
         try {
             $customer = $this->customerRepository->getById($address->getCustomerId());
             if (!(int)$customer->getWebsiteId()) {
@@ -77,7 +76,7 @@ class CustomerAddressSave implements ObserverInterface
             }
             $websiteIds = $websiteIds ?: [(int)$customer->getWebsiteId()];
             foreach ($websiteIds as $websiteId) {
-                $this->publisher->publish(self::TOPIC_NAME, $websiteId, CustomerInterface::class, [$address]);
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [(int)$address->getCustomerId()]);
             }
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());

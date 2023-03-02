@@ -5,7 +5,6 @@ namespace Bold\Platform\Observer;
 
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -67,7 +66,7 @@ class ProductSave implements ObserverInterface
         $websiteIds = $websiteIds ?: [(int)$product->getStore()->getWebsiteId()];
         foreach ($websiteIds as $websiteId) {
             try {
-                $this->publisher->publish(self::TOPIC_NAME, $websiteId, ProductInterface::class, [$product]);
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [(int)$product->getId()]);
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }

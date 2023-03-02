@@ -67,7 +67,7 @@ class CustomerSave implements ObserverInterface
         $websiteIds = $websiteIds ?: [(int)$customer->getWebsiteId()];
         foreach ($websiteIds as $websiteId) {
             try {
-                $this->publisher->publish(self::TOPIC_NAME, $websiteId, CustomerInterface::class, [$customer]);
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [(int)$customer->getId()]);
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }
