@@ -65,14 +65,12 @@ class UpdateAttributesPlugin
         array  $attrData,
                $storeId
     ): Action {
-        $websiteIds = $storeId
-            ? [(int)$this->storeManager->getStore($storeId)->getWebsiteId()]
-            : array_map(
-                function (WebsiteInterface $website) {
-                    return (int)$website->getId();
-                },
-                $this->storeManager->getWebsites()
-            );
+        $websiteIds = array_map(
+            function (WebsiteInterface $website) {
+                return (int)$website->getId();
+            },
+            $this->storeManager->getWebsites()
+        );
 
         $intIds = array_map('intval', $productIds);
         foreach ($websiteIds as $websiteId) {

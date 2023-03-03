@@ -15,17 +15,17 @@
             </argument>
         </arguments>
     </type>
-    <type name="Bold\Platform\Model\Queue\Handler\Category">
+    <type name="Bold\Platform\Model\Queue\Handler\Category\Synchronize">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
-    <type name="Bold\Platform\Model\Queue\Handler\Product">
+    <type name="Bold\Platform\Model\Queue\Handler\Product\Synchronize">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
-    <type name="Bold\Platform\Model\Queue\Handler\Customer">
+    <type name="Bold\Platform\Model\Queue\Handler\Customer\Synchronize">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>
@@ -55,4 +55,10 @@
             <argument name="oauthHelper" xsi:type="object">Bold\Platform\Helper\Oauth</argument>
         </arguments>
     </virtualType>
+    <type name="Magento\Catalog\Model\Product\Website">
+        <plugin name="bold_checkout_product_add_website"
+                type="Bold\Platform\Plugin\Product\AddWebsitePlugin"/>
+        <plugin name="bold_checkout_product_remove_website"
+                type="Bold\Platform\Plugin\Product\RemoveWebsitePlugin"/>
+    </type>
 </config>

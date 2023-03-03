@@ -1,22 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Model\Queue\Handler;
+namespace Bold\Platform\Model\Queue\Handler\Product;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Platform\Model\Queue\RequestInterface;
-use Bold\Platform\Model\Sync\GetCategories;
+use Bold\Platform\Model\Sync\GetProducts;
 use Exception;
 
 /**
  * Bold Products synchronization queue handler.
  */
-class Category
+class Synchronize
 {
-    private const CHUNK_SIZE = 500;
     private const METHOD = 'POST';
     private const URL = '/';
+    private const CHUNK_SIZE = 500;
 
     /**
      * @var ConfigInterface
@@ -24,9 +24,9 @@ class Category
     private $config;
 
     /**
-     * @var GetCategories
+     * @var GetProducts
      */
-    private $getCategories;
+    private $getProducts;
 
     /**
      * @var ClientInterface
@@ -35,21 +35,21 @@ class Category
 
     /**
      * @param ConfigInterface $config
-     * @param GetCategories $getCategories
+     * @param GetProducts $getProducts
      * @param ClientInterface $client
      */
     public function __construct(
         ConfigInterface $config,
-        GetCategories $getCategories,
+        GetProducts $getProducts,
         ClientInterface $client
     ) {
         $this->config = $config;
-        $this->getCategories = $getCategories;
+        $this->getProducts = $getProducts;
         $this->client = $client;
     }
 
     /**
-     * Handle Bold Category synchronization queue message.
+     * Handle Bold Products synchronization queue message.
      *
      * @param RequestInterface $request
      * @return void
@@ -62,7 +62,7 @@ class Category
         }
         $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
         foreach ($idsChunks as $entityIds) {
-            $items = $this->getCategories->getItems($request->getWebsiteId(), $entityIds);
+            $items = $this->getProducts->getItems($request->getWebsiteId(), $entityIds);
             $this->client->call($request->getWebsiteId(), self::METHOD, self::URL, $items);
         }
     }

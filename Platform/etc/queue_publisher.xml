@@ -4,4 +4,7 @@
     <publisher topic="bold.checkout.sync.products"/>
     <publisher topic="bold.checkout.sync.categories"/>
     <publisher topic="bold.checkout.sync.customers"/>
+    <publisher topic="bold.checkout.delete.products"/>
+    <publisher topic="bold.checkout.delete.categories"/>
+    <publisher topic="bold.checkout.delete.customers"/>
 </config>

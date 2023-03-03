@@ -16,4 +16,16 @@
     <event name="admin_system_config_changed_section_checkout">
         <observer name="bold_platform_create_integration" instance="Bold\Platform\Observer\CheckoutSectionSave"/>
     </event>
+    <event name="catalog_category_delete_after">
+        <observer name="bold_platform_category_delete" instance="Bold\Platform\Observer\CategoryDelete" />
+    </event>
+    <event name="catalog_product_delete_after">
+        <observer name="bold_platform_product_delete" instance="Bold\Platform\Observer\ProductDelete" />
+    </event>
+    <event name="customer_delete_after">
+        <observer name="bold_platform_customer_delete" instance="Bold\Platform\Observer\CustomerDelete" />
+    </event>
+    <event name="customer_address_delete_after">
+        <observer name="bold_platform_customer_address_delete" instance="Bold\Platform\Observer\CustomerAddressDelete" />
+    </event>
 </config>

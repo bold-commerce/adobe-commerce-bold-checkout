@@ -1,22 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Model\Queue\Handler;
+namespace Bold\Platform\Model\Queue\Handler\Product;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Platform\Model\Queue\RequestInterface;
-use Bold\Platform\Model\Sync\GetCustomers;
+use Bold\Platform\Model\Sync\GetProducts;
 use Exception;
 
 /**
- * Bold Customer synchronization queue handler.
+ * Bold Products deletion queue handler.
  */
-class Customer
+class Delete
 {
-    private const CHUNK_SIZE = 500;
     private const METHOD = 'POST';
     private const URL = '/';
+    private const CHUNK_SIZE = 500;
 
     /**
      * @var ConfigInterface
@@ -24,9 +24,9 @@ class Customer
     private $config;
 
     /**
-     * @var GetCustomers
+     * @var GetProducts
      */
-    private $getCustomers;
+    private $getProducts;
 
     /**
      * @var ClientInterface
@@ -35,21 +35,21 @@ class Customer
 
     /**
      * @param ConfigInterface $config
-     * @param GetCustomers $getCustomers
+     * @param GetProducts $getProducts
      * @param ClientInterface $client
      */
     public function __construct(
         ConfigInterface $config,
-        GetCustomers $getCustomers,
+        GetProducts     $getProducts,
         ClientInterface $client
     ) {
         $this->config = $config;
-        $this->getCustomers = $getCustomers;
+        $this->getProducts = $getProducts;
         $this->client = $client;
     }
 
     /**
-     * Handle Bold Customer synchronization queue message.
+     * Handle Bold Products synchronization queue message.
      *
      * @param RequestInterface $request
      * @return void
@@ -62,7 +62,7 @@ class Customer
         }
         $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
         foreach ($idsChunks as $entityIds) {
-            $items = $this->getCustomers->getItems($request->getWebsiteId(), $entityIds);
+            $items = $this->getProducts->getItems($request->getWebsiteId(), $entityIds);
             $this->client->call($request->getWebsiteId(), self::METHOD, self::URL, $items);
         }
     }
