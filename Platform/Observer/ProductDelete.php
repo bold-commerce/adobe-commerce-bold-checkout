@@ -13,12 +13,11 @@ use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Publish product ids for sync observer.
+ * Publish product ids for delete observer.
  */
-class ProductSave implements ObserverInterface
+class ProductDelete implements ObserverInterface
 {
-    private const SYNC_TOPIC_NAME = 'bold.checkout.sync.products';
-    private const DELETE_TOPIC_NAME = 'bold.checkout.delete.products';
+    private const TOPIC_NAME = 'bold.checkout.delete.products';
 
     /**
      * @var EntitySyncPublisher
@@ -48,9 +47,9 @@ class ProductSave implements ObserverInterface
      */
     public function __construct(
         StoreManagerInterface $storeManager,
-        EntitySyncPublisher   $publisher,
-        LoggerInterface       $logger,
-        MetadataPool          $metadataPool
+        EntitySyncPublisher $publisher,
+        LoggerInterface $logger,
+        MetadataPool $metadataPool
     ) {
         $this->publisher = $publisher;
         $this->storeManager = $storeManager;
@@ -59,33 +58,30 @@ class ProductSave implements ObserverInterface
     }
 
     /**
-     * Publish product sync message.
+     * Publish product delete message.
      *
      * @param Observer $observer
      * @return void
      */
     public function execute(Observer $observer)
     {
+        $websiteIds = [];
         $product = $observer->getEvent()->getProduct();
-        $syncWebsiteIds = array_map('intval', $product->getData('website_ids'));
-        $previousWebsiteIds = array_map('intval', $product->getOrigData('website_ids'));
-        $deleteWebsiteIds = array_diff($previousWebsiteIds, $syncWebsiteIds);
-        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
-        $entityId = (int)$product->getData($linkField);
-        foreach ($syncWebsiteIds as $syncWebsiteId) {
-            try {
-                $this->publisher->publish(self::SYNC_TOPIC_NAME, $syncWebsiteId, [$entityId]);
-            } catch (Exception $e) {
-                $this->logger->error($e->getMessage());
+        if (!(int)$product->getStore()->getWebsiteId()) {
+            $websites = $this->storeManager->getWebsites();
+            foreach ($websites as $website) {
+                $websiteIds[] = (int)$website->getId();
             }
         }
-        foreach ($deleteWebsiteIds as $deleteWebsiteId) {
+        $websiteIds = $websiteIds ?: [(int)$product->getStore()->getWebsiteId()];
+        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
+        $entityId = (int)$product->getData($linkField);
+        foreach ($websiteIds as $websiteId) {
             try {
-                $this->publisher->publish(self::DELETE_TOPIC_NAME, $deleteWebsiteId, [$entityId]);
+                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [$entityId]);
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }
         }
     }
 }
-

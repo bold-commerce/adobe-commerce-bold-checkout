@@ -9,7 +9,6 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -17,17 +16,13 @@ use Psr\Log\LoggerInterface;
  */
 class CustomerSave implements ObserverInterface
 {
-    private const TOPIC_NAME = 'bold.checkout.sync.customers';
+    private const SYNC_TOPIC_NAME = 'bold.checkout.sync.customers';
+    private const DELETE_TOPIC_NAME = 'bold.checkout.delete.customers';
 
     /**
      * @var EntitySyncPublisher
      */
     private $publisher;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
 
     /**
      * @var LoggerInterface
@@ -40,19 +35,16 @@ class CustomerSave implements ObserverInterface
     private $metadataPool;
 
     /**
-     * @param StoreManagerInterface $storeManager
      * @param EntitySyncPublisher $publisher
      * @param LoggerInterface $logger
      * @param MetadataPool $metadataPool
      */
     public function __construct(
-        StoreManagerInterface $storeManager,
         EntitySyncPublisher $publisher,
-        LoggerInterface $logger,
-        MetadataPool $metadataPool
+        LoggerInterface     $logger,
+        MetadataPool        $metadataPool
     ) {
         $this->publisher = $publisher;
-        $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->metadataPool = $metadataPool;
     }
@@ -65,20 +57,19 @@ class CustomerSave implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $websiteIds = [];
         $customer = $observer->getEvent()->getCustomer();
-        if (!(int)$customer->getWebsiteId()) {
-            $websites = $this->storeManager->getWebsites();
-            foreach ($websites as $website) {
-                $websiteIds[] = (int)$website->getId();
-            }
-        }
-        $websiteIds = $websiteIds ?: [(int)$customer->getWebsiteId()];
+        $syncWebsiteId = (int)$customer->getData('website_id');
+        $previousWebsiteId = (int)$customer->getOrigData('website_id');
         $linkField = $this->metadataPool->getMetadata(CustomerInterface::class)->getLinkField();
         $entityId = (int)$customer->getData($linkField);
-        foreach ($websiteIds as $websiteId) {
+        try {
+            $this->publisher->publish(self::SYNC_TOPIC_NAME, $syncWebsiteId, [$entityId]);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
+        }
+        if ($syncWebsiteId !== $previousWebsiteId) {
             try {
-                $this->publisher->publish(self::TOPIC_NAME, $websiteId, [$entityId]);
+                $this->publisher->publish(self::DELETE_TOPIC_NAME, $previousWebsiteId, [$entityId]);
             } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }

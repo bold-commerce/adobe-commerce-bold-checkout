@@ -2,8 +2,17 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/topology.xsd">
     <exchange name="magento">
-        <binding id="BoldCheckoutProducts" topic="bold.checkout.sync.products" destination="bold.checkout.sync.products"/>
-        <binding id="BoldCheckoutCategories" topic="bold.checkout.sync.categories" destination="bold.checkout.sync.categories"/>
-        <binding id="BoldCheckoutCustomers" topic="bold.checkout.sync.customers" destination="bold.checkout.sync.customers"/>
+        <binding id="BoldCheckoutSyncProducts" topic="bold.checkout.sync.products"
+                 destination="bold.checkout.sync.products"/>
+        <binding id="BoldCheckoutSyncCategories" topic="bold.checkout.sync.categories"
+                 destination="bold.checkout.sync.categories"/>
+        <binding id="BoldCheckoutSyncCustomers" topic="bold.checkout.sync.customers"
+                 destination="bold.checkout.sync.customers"/>
+        <binding id="BoldCheckoutDeleteProducts" topic="bold.checkout.delete.products"
+                 destination="bold.checkout.delete.products"/>
+        <binding id="BoldCheckoutDeleteCategories" topic="bold.checkout.delete.categories"
+                 destination="bold.checkout.delete.categories"/>
+        <binding id="BoldCheckoutDeleteCustomers" topic="bold.checkout.delete.customers"
+                 destination="bold.checkout.delete.customers"/>
     </exchange>
 </config>

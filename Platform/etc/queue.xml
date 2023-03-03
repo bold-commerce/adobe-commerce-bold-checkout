@@ -1,12 +1,21 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
     <broker topic="bold.checkout.sync.products" exchange="magento">
-        <queue name="bold.checkout.sync.products" consumer="bold.checkout.sync.products" handler="Bold\Platform\Model\Queue\Handler\Product::handle"/>
+        <queue name="bold.checkout.sync.products" consumer="bold.checkout.sync.products" handler="Bold\Platform\Model\Queue\Handler\Product\Synchronize::handle"/>
     </broker>
     <broker topic="bold.checkout.sync.categories" exchange="magento">
-        <queue name="bold.checkout.sync.categories" consumer="bold.checkout.sync.categories" handler="Bold\Platform\Model\Queue\Handler\Category::handle"/>
+        <queue name="bold.checkout.sync.categories" consumer="bold.checkout.sync.categories" handler="Bold\Platform\Model\Queue\Handler\Category\Synchronize::handle"/>
     </broker>
     <broker topic="bold.checkout.sync.customers" exchange="magento">
-        <queue name="bold.checkout.sync.customers" consumer="bold.checkout.sync.customers" handler="Bold\Platform\Model\Queue\Handler\Customer::handle"/>
+        <queue name="bold.checkout.sync.customers" consumer="bold.checkout.sync.customers" handler="Bold\Platform\Model\Queue\Handler\Customer\Synchronize::handle"/>
+    </broker>
+    <broker topic="bold.checkout.delete.products" exchange="magento">
+        <queue name="bold.checkout.delete.products" consumer="bold.checkout.delete.products" handler="Bold\Platform\Model\Queue\Handler\Product\Delete::handle"/>
+    </broker>
+    <broker topic="bold.checkout.delete.categories" exchange="magento">
+        <queue name="bold.checkout.delete.categories" consumer="bold.checkout.delete.categories" handler="Bold\Platform\Model\Queue\Handler\Category\Delete::handle"/>
+    </broker>
+    <broker topic="bold.checkout.delete.customers" exchange="magento">
+        <queue name="bold.checkout.delete.customers" consumer="bold.checkout.delete.customers" handler="Bold\Platform\Model\Queue\Handler\Customer\Delete::handle"/>
     </broker>
 </config>
