@@ -66,10 +66,10 @@ class OrderExtensionData extends AbstractModel
     /**
      * Set order financial status.
      *
-     * @param string $financialStatus
+     * @param string|null $financialStatus
      * @return void
      */
-    public function setFinancialStatus(string $financialStatus): void
+    public function setFinancialStatus(?string $financialStatus): void
     {
         $this->setData(OrderExtensionDataResource::FINANCIAL_STATUS, $financialStatus);
     }
@@ -87,10 +87,10 @@ class OrderExtensionData extends AbstractModel
     /**
      * Set order fulfillment status.
      *
-     * @param string $fulfillmentStatus
+     * @param string|null $fulfillmentStatus
      * @return void
      */
-    public function setFulfillmentStatus(string $fulfillmentStatus): void
+    public function setFulfillmentStatus(?string $fulfillmentStatus): void
     {
         $this->setData(OrderExtensionDataResource::FULFILLMENT_STATUS, $fulfillmentStatus);
     }

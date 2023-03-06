@@ -4,4 +4,7 @@
     <event name="sales_order_load_after">
         <observer name="add_bold_data_to_order" instance="Bold\Checkout\Observer\AddBoldDataToOrderObserver"/>
     </event>
+    <event name="sales_order_save_after">
+        <observer name="save_bold_data" instance="Bold\Checkout\Observer\SaveOrderBoldDataObserver"/>
+    </event>
 </config>
