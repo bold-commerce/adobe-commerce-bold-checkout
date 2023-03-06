@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Order\PlaceOrder;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterface;
+use Bold\Checkout\Api\Data\PlaceOrder\ResponseExtensionInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
@@ -23,13 +24,23 @@ class Response implements ResponseInterface
     private $errors;
 
     /**
+     * @var ResponseExtensionInterface|null
+     */
+    private $extensionAttributes;
+
+    /**
      * @param OrderInterface|null $order
      * @param ErrorInterface[] $errors
+     * @param ResponseExtensionInterface|null $extensionAttributes
      */
-    public function __construct(OrderInterface $order = null, array $errors = [])
-    {
+    public function __construct(
+        OrderInterface $order = null,
+        array $errors = [],
+        ResponseExtensionInterface $extensionAttributes = null
+    ) {
         $this->order = $order;
         $this->errors = $errors;
+        $this->extensionAttributes = $extensionAttributes;
     }
 
     /**
@@ -46,5 +57,13 @@ class Response implements ResponseInterface
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes(): ResponseExtensionInterface
+    {
+        return $this->extensionAttributes;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Order\PlaceOrder;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
+use Bold\Checkout\Api\Data\PlaceOrder\RequestExtensionInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\RequestInterface;
 
 /**
@@ -17,11 +18,18 @@ class Request implements RequestInterface
     private $order;
 
     /**
-     * @param OrderDataInterface $order
+     * @var RequestExtensionInterface|null
      */
-    public function __construct(OrderDataInterface $order)
+    private $extensionAttributes;
+
+    /**
+     * @param OrderDataInterface $order
+     * @param RequestExtensionInterface|null $extensionAttributes
+     */
+    public function __construct(OrderDataInterface $order, RequestExtensionInterface $extensionAttributes = null)
     {
         $this->order = $order;
+        $this->extensionAttributes = $extensionAttributes;
     }
 
     /**
@@ -30,5 +38,13 @@ class Request implements RequestInterface
     public function getOrder(): OrderDataInterface
     {
         return $this->order;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes(): ?RequestExtensionInterface
+    {
+        return $this->extensionAttributes;
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Data\PlaceOrder;
 
+use Bold\Checkout\Api\Data\PlaceOrder\ResponseExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
@@ -24,4 +25,11 @@ interface ResponseInterface extends ExtensibleDataInterface
      * @return \Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterface[]
      */
     public function getErrors(): array;
+
+    /**
+     * Retrieve response extension attributes.
+     *
+     * @return \Bold\Checkout\Api\Data\PlaceOrder\ResponseExtensionInterface|null
+     */
+    public function getExtensionAttributes(): ResponseExtensionInterface;
 }

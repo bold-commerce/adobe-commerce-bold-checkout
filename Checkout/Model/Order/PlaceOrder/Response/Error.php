@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order\PlaceOrder\Response;
 
+use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorExtensionInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterface;
 
 /**
@@ -26,15 +27,26 @@ class Error implements ErrorInterface
     private $message;
 
     /**
+     * @var ErrorExtensionInterface|null
+     */
+    private $extensionAttributes;
+
+    /**
      * @param int $code
      * @param string $type
      * @param string $message
+     * @param ErrorExtensionInterface|null $extensionAttributes
      */
-    public function __construct(int $code, string $type, string $message)
-    {
+    public function __construct(
+        int $code,
+        string $type,
+        string $message,
+        ErrorExtensionInterface $extensionAttributes = null
+    ) {
         $this->code = $code;
         $this->type = $type;
         $this->message = $message;
+        $this->extensionAttributes = $extensionAttributes;
     }
 
     /**
@@ -59,5 +71,13 @@ class Error implements ErrorInterface
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes(): ?ErrorExtensionInterface
+    {
+        return $this->extensionAttributes;
     }
 }

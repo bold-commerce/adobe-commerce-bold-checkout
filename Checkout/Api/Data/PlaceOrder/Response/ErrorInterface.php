@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Data\PlaceOrder\Response;
 
+use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorExtensionInterface;
+use Magento\Framework\Api\ExtensibleDataInterface;
+
 /**
  * Place order response error data interface.
  */
-interface ErrorInterface
+interface ErrorInterface extends ExtensibleDataInterface
 {
     /**
      * Retrieve error code.
@@ -28,4 +31,11 @@ interface ErrorInterface
      * @return string
      */
     public function getMessage(): string;
+
+    /**
+     * Retrieve error extension attributes.
+     *
+     * @return \Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorExtensionInterface|null
+     */
+    public function getExtensionAttributes(): ?ErrorExtensionInterface;
 }
