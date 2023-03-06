@@ -6,6 +6,7 @@ namespace Bold\Platform\Observer;
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Model\Config\Share;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -25,11 +26,6 @@ class CustomerDelete implements ObserverInterface
     private $publisher;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -40,21 +36,26 @@ class CustomerDelete implements ObserverInterface
     private $metadataPool;
 
     /**
-     * @param StoreManagerInterface $storeManager
+     * @var Share
+     */
+    private $share;
+
+    /**
      * @param EntitySyncPublisher $publisher
      * @param LoggerInterface $logger
      * @param MetadataPool $metadataPool
+     * @param Share $share
      */
     public function __construct(
-        StoreManagerInterface $storeManager,
-        EntitySyncPublisher $publisher,
-        LoggerInterface $logger,
-        MetadataPool $metadataPool
+        EntitySyncPublisher   $publisher,
+        LoggerInterface       $logger,
+        MetadataPool          $metadataPool,
+        Share                 $share
     ) {
         $this->publisher = $publisher;
-        $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->metadataPool = $metadataPool;
+        $this->share = $share;
     }
 
     /**
@@ -62,18 +63,14 @@ class CustomerDelete implements ObserverInterface
      *
      * @param Observer $observer
      * @return void
+     * @throws \Exception
      */
     public function execute(Observer $observer)
     {
-        $websiteIds = [];
         $customer = $observer->getEvent()->getCustomer();
-        if (!(int)$customer->getWebsiteId()) {
-            $websites = $this->storeManager->getWebsites();
-            foreach ($websites as $website) {
-                $websiteIds[] = (int)$website->getId();
-            }
-        }
-        $websiteIds = $websiteIds ?: [(int)$customer->getWebsiteId()];
+        $websiteIds = $this->share->isWebsiteScope()
+            ? [(int)$customer->getWebsiteId()]
+            : array_map('intval', $customer->getSharedWebsiteIds());
         $linkField = $this->metadataPool->getMetadata(CustomerInterface::class)->getLinkField();
         $entityId = (int)$customer->getData($linkField);
         foreach ($websiteIds as $websiteId) {
