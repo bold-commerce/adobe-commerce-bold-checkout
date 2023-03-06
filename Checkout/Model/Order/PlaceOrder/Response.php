@@ -62,7 +62,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getExtensionAttributes(): ResponseExtensionInterface
+    public function getExtensionAttributes(): ?ResponseExtensionInterface
     {
         return $this->extensionAttributes;
     }

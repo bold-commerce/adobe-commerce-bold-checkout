@@ -31,5 +31,5 @@ interface ResponseInterface extends ExtensibleDataInterface
      *
      * @return \Bold\Checkout\Api\Data\PlaceOrder\ResponseExtensionInterface|null
      */
-    public function getExtensionAttributes(): ResponseExtensionInterface;
+    public function getExtensionAttributes(): ?ResponseExtensionInterface;
 }
