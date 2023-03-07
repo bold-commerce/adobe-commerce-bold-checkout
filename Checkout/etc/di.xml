@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Bold\Checkout\Model\ConfigInterface" type="Bold\Checkout\Model\Config"/>
     <preference for="Bold\Checkout\Api\Http\ClientInterface" type="Bold\Checkout\Model\Http\BoldClient"/>
-    <preference for="Bold\Checkout\Api\Data\Http\Client\ResponseInterface" type="Bold\Checkout\Model\Http\Response"/>
+    <preference for="Bold\Checkout\Api\Data\Http\Client\ResponseInterface" type="Bold\Checkout\Model\Http\Client\Response"/>
 
     <type name="Bold\Checkout\Model\Quote\QuoteAction">
         <arguments>

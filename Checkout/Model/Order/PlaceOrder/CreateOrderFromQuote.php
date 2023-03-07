@@ -21,6 +21,12 @@ use Psr\Log\LoggerInterface;
  */
 class CreateOrderFromQuote
 {
+    private const BROWSER_IP = 'remote_ip';
+    private const ORDER_NUMBER = 'ext_order_id';
+    private const PUBLIC_ID = 'extension_attribute_public_id_public_id';
+    private const FINANCIAL_STATUS = 'extension_attribute_financial_status_financial_status';
+    private const FULFILLMENT_STATUS = 'extension_attribute_fulfillment_status_fulfillment_status';
+
     /**
      * @var CartManagementInterface
      */
@@ -87,11 +93,11 @@ class CreateOrderFromQuote
         $cart->getBillingAddress()->setShouldIgnoreValidation(true);
         $this->prepareCartForCustomer($cart);
         $orderData = [
-            'ext_order_id' => $orderPayload->getOrderNumber(),
-            'remote_ip' => $orderPayload->getBrowserIp(),
-            'extension_attribute_public_id_public_id' => $orderPayload->getPublicId(),
-            'extension_attribute_financial_status_financial_status' => $orderPayload->getFinancialStatus(),
-            'extension_attribute_fulfillment_status_fulfillment_status' => $orderPayload->getFulfillmentStatus(),
+            self::ORDER_NUMBER => $orderPayload->getOrderNumber(),
+            self::BROWSER_IP => $orderPayload->getBrowserIp(),
+            self::PUBLIC_ID => $orderPayload->getPublicId(),
+            self::FINANCIAL_STATUS => $orderPayload->getFinancialStatus(),
+            self::FULFILLMENT_STATUS => $orderPayload->getFulfillmentStatus(),
         ];
         $order = $this->cartManagement->submit($cart, $orderData);
         $this->eventManager->dispatch(

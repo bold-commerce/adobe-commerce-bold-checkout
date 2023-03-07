@@ -8,7 +8,6 @@ use Bold\Checkout\Model\Order\InitOrderFromQuote;
 use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
 use Exception;
 use Magento\Checkout\Model\Session;
-use Magento\Framework\App\ActionInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Http;
+namespace Bold\Checkout\Model\Http\Client;
 
 use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 
