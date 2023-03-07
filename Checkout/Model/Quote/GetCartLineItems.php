@@ -114,7 +114,7 @@ class GetCartLineItems
      * @param CartItemInterface $item
      * @return float
      */
-    private static function getPriceAdjustment(CartItemInterface $item)
+    private function getPriceAdjustment(CartItemInterface $item)
     {
         $parentItem = $item->getParentItem();
         $childProduct = $item->getProduct();
@@ -134,7 +134,7 @@ class GetCartLineItems
      * @param array $lineItem
      * @return array
      */
-    public function addConfigurableOptions(CartItemInterface $item, array $lineItem): array
+    private function addConfigurableOptions(CartItemInterface $item, array $lineItem): array
     {
         foreach ($this->configurableType->getOrderOptions($item->getProduct())['attributes_info'] as $option) {
             $label = $this->escaper->escapeHtml($option['label']);
@@ -151,7 +151,7 @@ class GetCartLineItems
      * @param array $lineItem
      * @return array
      */
-    public function addCustomOptions(array $customOption, array $lineItem): array
+    private function addCustomOptions(array $customOption, array $lineItem): array
     {
         $label = $this->escaper->escapeHtml($customOption['label']);
         $value = $this->configuration->getFormattedOptionValue(
