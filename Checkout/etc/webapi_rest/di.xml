@@ -2,7 +2,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Bold\Checkout\Api\PlaceOrderInterface" type="Bold\Checkout\Model\Order\PlaceOrder"/>
-    <preference for="Bold\Checkout\Api\Data\PlaceOrder\RequestInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Request"/>
     <preference for="Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Request\OrderData"/>
     <preference for="Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Response"/>
     <preference for="Bold\Checkout\Api\Data\Response\ErrorInterface" type="Bold\Checkout\Model\Response\Error"/>
