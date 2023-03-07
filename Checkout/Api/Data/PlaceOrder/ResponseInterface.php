@@ -22,7 +22,7 @@ interface ResponseInterface extends ExtensibleDataInterface
     /**
      * Retrieve errors from response.
      *
-     * @return \Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterface[]
+     * @return \Bold\Checkout\Api\Data\Response\ErrorInterface[]
      */
     public function getErrors(): array;
 

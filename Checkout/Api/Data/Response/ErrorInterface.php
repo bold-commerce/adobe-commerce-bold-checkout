@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Api\Data\PlaceOrder\Response;
+namespace Bold\Checkout\Api\Data\Response;
 
-use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorExtensionInterface;
+use Bold\Checkout\Api\Data\Response\ErrorExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
@@ -35,7 +35,7 @@ interface ErrorInterface extends ExtensibleDataInterface
     /**
      * Retrieve error extension attributes.
      *
-     * @return \Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorExtensionInterface|null
+     * @return \Bold\Checkout\Api\Data\Response\ErrorExtensionInterface|null
      */
     public function getExtensionAttributes(): ?ErrorExtensionInterface;
 }

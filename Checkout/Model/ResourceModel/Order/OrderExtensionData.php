@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\ResourceModel;
+namespace Bold\Checkout\Model\ResourceModel\Order;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 

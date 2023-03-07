@@ -32,7 +32,8 @@ class VoidPayment implements CommandInterface
      */
     public function execute(array $commandSubject): void
     {
-        $payment = $commandSubject['payment'];
+        $paymentDataObject = $commandSubject['payment'];
+        $payment = $paymentDataObject->getPayment();
         $this->gatewayService->cancel($payment->getOrder(), Service::VOID);
     }
 }

@@ -2,6 +2,21 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
+        <payment>
+            <bold>
+                <active>1</active>
+                <model>Bold\Checkout\Model\Method\Adapter</model>
+                <order_status>pending</order_status>
+                <title>Bold Payments</title>
+                <allowspecific>0</allowspecific>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_refund>1</can_refund>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <group>bold_payments</group>
+            </bold>
+        </payment>
         <checkout>
             <bold_checkout_base>
                 <enabled>0</enabled>

@@ -4,32 +4,26 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Order;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterfaceFactory;
+use Bold\Checkout\Api\Data\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterfaceFactory;
 use Bold\Checkout\Api\PlaceOrderInterface;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateInvoice;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromQuote;
 use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrderPayment;
-use Bold\Checkout\Model\Order\PlaceOrder\SaveCustomerAddress;
+use Bold\Checkout\Model\Request\Validator\ShopIdValidator;
 use Exception;
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
 use Magento\Sales\Model\ResourceModel\Order;
-use Magento\Store\Model\App\Emulation;
 
 /**
  * Place magento order with bold payment service.
  */
 class PlaceOrder implements PlaceOrderInterface
 {
-    /**
-     * @var Emulation
-     */
-    private $emulation;
-
     /**
      * @var Order
      */
@@ -71,7 +65,12 @@ class PlaceOrder implements PlaceOrderInterface
     private $createInvoice;
 
     /**
-     * @param Emulation $emulation
+     * @var ShopIdValidator
+     */
+    private $shopIdValidator;
+
+    /**
+     * @param ShopIdValidator $shopIdValidator
      * @param Order $orderResource
      * @param CartRepositoryInterface $cartRepository
      * @param CreateOrderFromQuote $createOrderFromQuote
@@ -82,7 +81,7 @@ class PlaceOrder implements PlaceOrderInterface
      * @param ErrorInterfaceFactory $errorFactory
      */
     public function __construct(
-        Emulation $emulation,
+        ShopIdValidator $shopIdValidator,
         Order $orderResource,
         CartRepositoryInterface $cartRepository,
         CreateOrderFromQuote $createOrderFromQuote,
@@ -92,7 +91,6 @@ class PlaceOrder implements PlaceOrderInterface
         ResponseInterfaceFactory $responseFactory,
         ErrorInterfaceFactory $errorFactory
     ) {
-        $this->emulation = $emulation;
         $this->orderResource = $orderResource;
         $this->orderFactory = $orderFactory;
         $this->responseFactory = $responseFactory;
@@ -101,6 +99,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->createOrderFromQuote = $createOrderFromQuote;
         $this->processOrderPayment = $processOrderPayment;
         $this->createInvoice = $createInvoice;
+        $this->shopIdValidator = $shopIdValidator;
     }
 
     /**
@@ -108,17 +107,17 @@ class PlaceOrder implements PlaceOrderInterface
      */
     public function place(string $shopId, OrderDataInterface $order): ResponseInterface
     {
+        try {
+            $quote = $this->cartRepository->get($order->getQuoteId());
+            $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+        } catch (LocalizedException $e) {
+            return $this->getErrorResponse($e->getMessage());
+        }
         $magentoOrder = $this->orderFactory->create();
         $this->orderResource->load($magentoOrder, $order->getOrderNumber(), 'ext_order_id');
         if ($magentoOrder->getId()) {
             return $this->getSuccessResponse($magentoOrder);
         }
-        try {
-            $quote = $this->cartRepository->getActive($order->getQuoteId());
-        } catch (NoSuchEntityException $e) {
-            return $this->getErrorResponse(500, 'server.internal_error', $e->getMessage());
-        }
-        $this->emulation->startEnvironmentEmulation($quote->getStoreId());
         try {
             $magentoOrder = $this->createOrderFromQuote->create($quote, $order);
             $this->processOrderPayment->process($magentoOrder, $order);
@@ -127,7 +126,7 @@ class PlaceOrder implements PlaceOrderInterface
                 $this->addCommentToOrder($magentoOrder, $order);
             }
         } catch (Exception $e) {
-            return $this->getErrorResponse(500, 'server.internal_error', $e->getMessage());
+            return $this->getErrorResponse($e->getMessage());
         }
         return $this->getSuccessResponse($magentoOrder);
     }
@@ -161,20 +160,16 @@ class PlaceOrder implements PlaceOrderInterface
     /**
      * Build error response.
      *
-     * @param int $code
-     * @param string $type
      * @param string $message
      * @return ResponseInterface
      */
-    private function getErrorResponse(int $code, string $type, string $message): ResponseInterface
+    private function getErrorResponse(string $message): ResponseInterface
     {
         return $this->responseFactory->create(
             [
                 'errors' => [
                     $this->errorFactory->create(
                         [
-                            'code' => $code,
-                            'type' => $type,
                             'message' => $message,
                         ]
                     ),

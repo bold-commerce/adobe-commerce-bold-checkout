@@ -32,7 +32,8 @@ class CapturePayment implements CommandInterface
      */
     public function execute(array $commandSubject): void
     {
-        $payment = $commandSubject['payment'];
+        $paymentDataObject = $commandSubject['payment'];
+        $payment = $paymentDataObject->getPayment();
         $order = $payment->getOrder();
         $amount = (float)$commandSubject['amount'];
         if ((float)$order->getGrandTotal() === $amount) {
