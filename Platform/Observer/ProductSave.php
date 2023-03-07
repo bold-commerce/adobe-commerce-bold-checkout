@@ -26,11 +26,6 @@ class ProductSave implements ObserverInterface
     private $publisher;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -41,19 +36,16 @@ class ProductSave implements ObserverInterface
     private $metadataPool;
 
     /**
-     * @param StoreManagerInterface $storeManager
      * @param EntitySyncPublisher $publisher
      * @param LoggerInterface $logger
      * @param MetadataPool $metadataPool
      */
     public function __construct(
-        StoreManagerInterface $storeManager,
         EntitySyncPublisher   $publisher,
         LoggerInterface       $logger,
         MetadataPool          $metadataPool
     ) {
         $this->publisher = $publisher;
-        $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->metadataPool = $metadataPool;
     }
