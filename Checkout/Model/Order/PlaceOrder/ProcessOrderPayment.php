@@ -67,6 +67,9 @@ class ProcessOrderPayment
         );
         $orderPayment->setTransactionId($orderData->getTransaction()->getTxnId());
         $transaction = $orderPayment->addTransaction($orderData->getTransaction()->getTxnType());
+        if (!$orderPayment->getIsTransactionClosed()) {
+            $transaction->setIsClosed(0);
+        }
         $this->transactionRepository->save($transaction);
         $this->orderPaymentRepository->save($orderPayment);
     }

@@ -32,20 +32,20 @@ class RefundPayment implements CommandInterface
      */
     public function execute(array $commandSubject): void
     {
-        $payment = $commandSubject['payment'];
+        $paymentDataObject = $commandSubject['payment'];
         $amount = (float)$commandSubject['amount'];
-        $order = $payment->getOrder();
+        $order = $paymentDataObject->getPayment()->getOrder();
         if ((float)$order->getGrandTotal() <= $amount) {
             $transactionId = $this->gatewayService->refundFull($order);
-            $payment->setTransactionId($transactionId)
+            $paymentDataObject->setTransactionId($transactionId)
                 ->setIsTransactionClosed(1)
                 ->setShouldCloseParentTransaction(true);
             return;
         }
         $transactionId = $this->gatewayService->refundPartial($order, $amount);
-        $payment->setTransactionId($transactionId)->setIsTransactionClosed(1);
-        if ((float)$payment->getBaseAmountPaid() === $payment->getBaseAmountRefunded() + $amount) {
-            $payment->setShouldCloseParentTransaction(true);
+        $paymentDataObject->setTransactionId($transactionId)->setIsTransactionClosed(1);
+        if ((float)$paymentDataObject->getBaseAmountPaid() === $paymentDataObject->getBaseAmountRefunded() + $amount) {
+            $paymentDataObject->setShouldCloseParentTransaction(true);
         }
     }
 }

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order\PlaceOrder;
 
-use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResponseExtensionInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface;
+use Bold\Checkout\Api\Data\Response\ErrorInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 /**

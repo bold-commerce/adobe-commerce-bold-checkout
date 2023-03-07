@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Order\PlaceOrder\Response;
+namespace Bold\Checkout\Model\Response;
 
-use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorExtensionInterface;
-use Bold\Checkout\Api\Data\PlaceOrder\Response\ErrorInterface;
+use Bold\Checkout\Api\Data\Response\ErrorExtensionInterface;
+use Bold\Checkout\Api\Data\Response\ErrorInterface;
 
 /**
  * Place order endpoint error data model.
@@ -32,20 +32,20 @@ class Error implements ErrorInterface
     private $extensionAttributes;
 
     /**
-     * @param int $code
-     * @param string $type
      * @param string $message
+     * @param string $type
+     * @param int $code
      * @param ErrorExtensionInterface|null $extensionAttributes
      */
     public function __construct(
-        int $code,
-        string $type,
         string $message,
+        string $type = 'server.internal_error',
+        int $code = 500,
         ErrorExtensionInterface $extensionAttributes = null
     ) {
-        $this->code = $code;
-        $this->type = $type;
         $this->message = $message;
+        $this->type = $type;
+        $this->code = $code;
         $this->extensionAttributes = $extensionAttributes;
     }
 

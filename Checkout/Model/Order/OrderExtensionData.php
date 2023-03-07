@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model;
+namespace Bold\Checkout\Model\Order;
 
-use Bold\Checkout\Model\ResourceModel\OrderExtensionData as OrderExtensionDataResource;
+use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Magento\Framework\Model\AbstractModel;
 
 /**

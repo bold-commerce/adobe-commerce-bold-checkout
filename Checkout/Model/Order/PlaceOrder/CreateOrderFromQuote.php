@@ -77,6 +77,9 @@ class CreateOrderFromQuote
      */
     public function create(CartInterface $cart, OrderDataInterface $orderPayload): OrderInterface
     {
+        if (!$cart->getIsActive()) {
+            throw new LocalizedException(__('Cannot create order from inactive cart.'));
+        }
         $cart->getPayment()->setMethod(Service::CODE);
         $cart->getPayment()->setStoreId($cart->getStoreId());
         $cart->getPayment()->setCustomerPaymentId($cart->getCustomerId());

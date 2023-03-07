@@ -6,8 +6,5 @@
         <resources>
             <resource ref="Magento_Sales::create"/>
         </resources>
-        <data>
-            <parameter name="shopId" force="true">%shopId%</parameter>
-        </data>
     </route>
 </routes>

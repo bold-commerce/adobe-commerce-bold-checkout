@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer;
 
-use Bold\Checkout\Model\OrderExtensionDataFactory;
-use Bold\Checkout\Model\ResourceModel\OrderExtensionData;
+use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
+use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -52,7 +52,7 @@ class AddBoldDataToOrderObserver implements ObserverInterface
         $orderExtensionData = $this->orderExtensionData[$order->getId()] ?? null;
         if (!$orderExtensionData) {
             $orderExtensionData = $this->orderExtensionDataFactory->create();
-            $this->orderExtensionDataResource->load($orderExtensionData, $order->getId());
+            $this->orderExtensionDataResource->load($orderExtensionData, $order->getId(), OrderExtensionData::ORDER_ID);
             $this->orderExtensionData[$order->getId()] = $orderExtensionData;
         }
         $order->getExtensionAttributes()->setPublicId($orderExtensionData->getPublicId());
