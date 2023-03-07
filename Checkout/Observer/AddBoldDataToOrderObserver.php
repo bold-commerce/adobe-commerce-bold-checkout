@@ -56,7 +56,7 @@ class AddBoldDataToOrderObserver implements ObserverInterface
             $this->orderExtensionData[$order->getId()] = $orderExtensionData;
         }
         $order->getExtensionAttributes()->setPublicId($orderExtensionData->getPublicId());
-        $order->getExtensionAttributes()->setFulfilmentStatus($orderExtensionData->getFulfillmentStatus());
+        $order->getExtensionAttributes()->setFulfillmentStatus($orderExtensionData->getFulfillmentStatus());
         $order->getExtensionAttributes()->setFinancialStatus($orderExtensionData->getFinancialStatus());
     }
 }
