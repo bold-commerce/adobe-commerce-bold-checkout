@@ -55,7 +55,7 @@ class Curl extends FrameworkCurl
         $this->logger->debug('Outgoing Call Data: ' . json_encode($data));
         $this->setHeaders($headers);
         $url = $this->prepareRequest($method, $url, $data);
-        $this->makeRequest($method, $url, $data);
+        $this->makeRequest($method, $url, json_encode($data));
         $this->logger->debug('Outgoing call code: ' . $this->_responseStatus);
         $this->logger->debug('Outgoing call result: ' . $this->_responseBody);
         try {
