@@ -1,20 +1,22 @@
 {
-  "name": "bold/module-platform",
-  "version": "0.0.1",
-  "description": "N/A",
-  "type": "magento2-module",
-  "require": {
-    "magento/framework": "*"
-  },
-  "license": [
-    "Proprietary"
-  ],
-  "autoload": {
-    "files": [
-      "registration.php"
+    "name": "bold/module-platform",
+    "version": "0.0.1",
+    "description": "N/A",
+    "type": "magento2-module",
+    "require": {
+        "magento/framework": "*",
+        "magento/module-integration": "*",
+        "bold/module-checkout": "*"
+    },
+    "license": [
+        "Proprietary"
     ],
-    "psr-4": {
-      "Bold\\Platform\\": ""
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Bold\\Platform\\": ""
+        }
     }
-  }
 }

@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Bold_Platform"/>
+    <module name="Bold_Platform">
+        <sequence>
+            <module name="Magento_Integration"/>
+            <module name="Bold_Checkout"/>
+        </sequence>
+    </module>
 </config>

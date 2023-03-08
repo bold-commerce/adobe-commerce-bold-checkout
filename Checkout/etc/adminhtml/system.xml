@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="checkout">
-            <group id="bold_checkout_base" translate="label" sortOrder="100" showInDefault="0" showInWebsite="1">
+            <group id="bold_checkout_base" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Integration</label>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
                     <label>Enable Bold Checkout</label>
