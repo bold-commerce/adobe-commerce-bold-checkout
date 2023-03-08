@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
-    <consumer name="bold.checkout.sync.products" queue="bold.checkout.sync.products"
+    <consumer name="bold.checkout.sync.products" connection="db" queue="bold.checkout.sync.products"
               handler="Bold\Platform\Model\Queue\Handler\Product\Synchronize::handle"/>
-    <consumer name="bold.checkout.sync.categories" queue="bold.checkout.sync.categories"
+    <consumer name="bold.checkout.sync.categories" connection="db" queue="bold.checkout.sync.categories"
               handler="Bold\Platform\Model\Queue\Handler\Category\Synchronize::handle"/>
-    <consumer name="bold.checkout.sync.customers" queue="bold.checkout.sync.customers"
+    <consumer name="bold.checkout.sync.customers" connection="db" queue="bold.checkout.sync.customers"
               handler="Bold\Platform\Model\Queue\Handler\Customer\Synchronize::handle"/>
-    <consumer name="bold.checkout.delete.products" queue="bold.checkout.delete.products"
+    <consumer name="bold.checkout.delete.products" connection="db" queue="bold.checkout.delete.products"
               handler="Bold\Platform\Model\Queue\Handler\Product\Delete::handle"/>
-    <consumer name="bold.checkout.delete.categories" queue="bold.checkout.delete.categories"
+    <consumer name="bold.checkout.delete.categories" connection="db" queue="bold.checkout.delete.categories"
               handler="Bold\Platform\Model\Queue\Handler\Category\Delete::handle"/>
-    <consumer name="bold.checkout.delete.customers" queue="bold.checkout.delete.customers"
+    <consumer name="bold.checkout.delete.customers" connection="db" queue="bold.checkout.delete.customers"
               handler="Bold\Platform\Model\Queue\Handler\Customer\Delete::handle"/>
 </config>
