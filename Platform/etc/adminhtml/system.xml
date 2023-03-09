@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="checkout">
+            <group id="bold_checkout_base">
+                <field id="authorize" translate="label" type="button" sortOrder="10" showInDefault="1">
+                    <label>Bold Integration</label>
+                    <frontend_model>Bold\Platform\Block\System\Config\Form\Field\Activate</frontend_model>
+                    <comment><![CDATA[All other Bold Checkout configuration options are available on the Website level.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
