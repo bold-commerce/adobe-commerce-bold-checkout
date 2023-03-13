@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Platform\Block\System\Config\Form\Field;
@@ -10,7 +9,6 @@ use Magento\Backend\Model\UrlInterface;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Phrase;
-use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use Magento\Integration\Model\Integration;
 
@@ -22,32 +20,33 @@ class Activate extends Field
     private const INTEGRATION_NAME = 'BoldPlatformIntegration';
 
     /**
-     * @var \Magento\Integration\Api\IntegrationServiceInterface
+     * @var IntegrationServiceInterface
      */
     private $integrationService;
 
     /**
-     * @var \Magento\Backend\Model\UrlInterface
+     * @var UrlInterface
      */
     private $url;
 
+    /**
+     * @var Integration|null
+     */
     private $integration = null;
 
     /**
-     * @param \Magento\Integration\Api\IntegrationServiceInterface $integrationService
-     * @param \Magento\Backend\Model\UrlInterface $url
-     * @param \Magento\Backend\Block\Template\Context $context
+     * @param IntegrationServiceInterface $integrationService
+     * @param UrlInterface $url
+     * @param Context $context
      * @param array $data
-     * @param \Magento\Framework\View\Helper\SecureHtmlRenderer|null $secureRenderer
      */
     public function __construct(
         IntegrationServiceInterface $integrationService,
-        UrlInterface                $url,
-        Context                     $context,
-        array                       $data = [],
-        ?SecureHtmlRenderer         $secureRenderer = null)
-    {
-        parent::__construct($context, $data, $secureRenderer);
+        UrlInterface $url,
+        Context $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
         $this->integrationService = $integrationService;
         $this->url = $url;
     }
@@ -57,7 +56,6 @@ class Activate extends Field
      */
     protected function _getElementHtml(AbstractElement $element)
     {
-        /** @var \Magento\Backend\Block\Widget\Button $buttonBlock */
         $buttonBlock = $this->getForm()->getLayout()->createBlock(Button::class);
         $data = [
             'id' => 'bold_integration_activate',
@@ -71,13 +69,11 @@ class Activate extends Field
     /**
      * Get button label.
      *
-     * @return \Magento\Framework\Phrase
+     * @return Phrase
      */
     private function getLabel(): Phrase
     {
-        return !$this->isActivated()
-            ? __('Activate')
-            : __('Reauthorize');
+        return !$this->isActivated() ? __('Activate') : __('Reauthorize');
     }
 
     /**
@@ -93,14 +89,13 @@ class Activate extends Field
     /**
      * Get Bold Integration.
      *
-     * @return \Magento\Integration\Model\Integration
+     * @return Integration
      */
     private function getIntegration(): Integration
     {
         if (!$this->integration) {
             $this->integration = $this->integrationService->findByName(self::INTEGRATION_NAME);
         }
-
         return $this->integration;
     }
 
@@ -112,14 +107,13 @@ class Activate extends Field
     private function getActivationUrl(): string
     {
         $secret = $this->url->getSecretKey('adminhtml', 'integration', 'tokensExchange');
-
         return $this->getUrl(
             '*/integration/tokensExchange',
             [
                 'id' => $this->getIntegration()->getId(),
                 'reauthorize' => !$this->isActivated(),
                 '_escape_params' => false,
-                UrlInterface::SECRET_KEY_PARAM_NAME => $secret
+                UrlInterface::SECRET_KEY_PARAM_NAME => $secret,
             ]
         );
     }
