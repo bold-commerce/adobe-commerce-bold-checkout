@@ -12,6 +12,7 @@ interface ConfigInterface
     public const VALUE_ENABLED_FOR_IP = 1;
     public const VALUE_ENABLED_FOR_CUSTOMER = 2;
     public const VALUE_ENABLED_FOR_PERCENTAGE = 3;
+    public const PATH_SHOP_IDENTIFIER = 'checkout/bold_checkout_base/shop_identifier';
 
     /**
      * Check if bold functionality enabled.
@@ -24,6 +25,7 @@ interface ConfigInterface
     /**
      * Show if Bold functionality is enabled for specific customers.
      *
+     * @param int $websiteId
      * @return int
      */
     public function getEnabledFor(int $websiteId): int;
@@ -59,28 +61,21 @@ interface ConfigInterface
     public function getSharedSecret(int $websiteId): ?string;
 
     /**
+     * Set shared secret for outgoing calls to bold m2 integration.
+     *
+     * @param int $websiteId
+     * @param string $sharedSecret
+     * @return void
+     */
+    public function setSharedSecret(int $websiteId, string $sharedSecret): void;
+
+    /**
      * Get api token (decrypted).
      *
      * @param int $websiteId
      * @return string|null
      */
     public function getApiToken(int $websiteId): ?string;
-
-    /**
-     * Get configured weight unit to grams conversion rate.
-     *
-     * @param int $websiteId
-     * @return float
-     */
-    public function getWeightConversionRate(int $websiteId): float;
-
-    /**
-     * Get configured weight unit.
-     *
-     * @param int $websiteId
-     * @return string
-     */
-    public function getWeightUnit(int $websiteId): string;
 
     /**
      * Get Bold API url.

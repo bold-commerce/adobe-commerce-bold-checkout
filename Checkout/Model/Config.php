@@ -24,9 +24,6 @@ class Config implements ConfigInterface
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
     private const PATH_API_URL = 'checkout/bold_checkout_advanced/api_url';
     private const PATH_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
-    private const PATH_WEIGHT_CONVERSION_RATE = 'checkout/bold_checkout_advanced/weight_conversion_rate';
-    private const PATH_WEIGHT_UNIT = 'checkout/bold_checkout_advanced/weight_unit';
-    private const PATH_SHOP_IDENTIFIER = 'checkout/bold_checkout_base/shop_identifier';
 
     /**
      * @var ScopeConfigInterface
@@ -141,26 +138,6 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getWeightConversionRate(int $websiteId): float
-    {
-        return (float)$this->scopeConfig->getValue(
-            self::PATH_WEIGHT_CONVERSION_RATE,
-            ScopeInterface::SCOPE_WEBSITES,
-            $websiteId
-        ) ?: 1000;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWeightUnit(int $websiteId): string
-    {
-        return $this->scopeConfig->getValue(self::PATH_WEIGHT_UNIT, ScopeInterface::SCOPE_WEBSITES, $websiteId) ?: 'kg';
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getApiUrl(int $websiteId): string
     {
         return rtrim($this->scopeConfig->getValue(self::PATH_API_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId), '/');
@@ -196,6 +173,21 @@ class Config implements ConfigInterface
         $this->configWriter->save(
             self::PATH_SHOP_IDENTIFIER,
             $shopIdentifier,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+        $this->cacheTypeList->cleanType('config');
+        $this->scopeConfig->clean();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSharedSecret(int $websiteId, string $sharedSecret): void
+    {
+        $this->configWriter->save(
+            self::PATH_SECRET,
+            $this->encryptor->encrypt($sharedSecret),
             ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );

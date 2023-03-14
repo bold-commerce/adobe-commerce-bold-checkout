@@ -15,22 +15,8 @@
                     <label>API Token</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <validate>required-entry</validate>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
                     <comment>API token used to communicate with the Bold Checkout APIs. Obtain in the Bold Account
                         Center.
-                    </comment>
-                </field>
-                <field id="shared_secret" translate="label" type="obscure" sortOrder="30" showInDefault="0" showInWebsite="1">
-                    <label>Secret Key</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                    <validate>required-entry</validate>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                    <comment>Secret key used to validate incoming API calls from Bold Checkout. Obtain in the Bold
-                        Account Center.
                     </comment>
                 </field>
             </group>
@@ -39,9 +25,6 @@
                 <field id="enabled_for" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
                     <label>Enabled For</label>
                     <source_model>\Bold\Checkout\Model\Config\Source\EnabledForSource</source_model>
-                    <depends>
-                        <field id="*/bold_checkout_base/enabled">1</field>
-                    </depends>
                     <comment>Configure Bold Checkout access limitations. Select 'All' to remove all limitations.
                     </comment>
                 </field>
@@ -79,17 +62,6 @@
                     <label>Checkout Url</label>
                     <validate>required-url</validate>
                     <comment>The URL of your checkout. Do not change.</comment>
-                </field>
-                <field id="weight_unit" translate="label" type="text" sortOrder="80" showInDefault="0" showInWebsite="1">
-                    <label>Weight Unit</label>
-                    <comment>Weight unit. Used to properly synchronize products with Bold Checkout.</comment>
-                </field>
-                <field id="weight_conversion_rate" translate="label" type="text" sortOrder="90" showInDefault="0" showInWebsite="1">
-                    <label>Weight Unit Conversion Rate To Grams</label>
-                    <comment>Conversion rate to get product weight in grams. Change accordingly with the "Weight Unit"
-                        configuration.
-                        Used to properly synchronize products with Bold Checkout.
-                    </comment>
                 </field>
             </group>
         </section>
