@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route method="POST" url="V1/shops/:shopId/shared_secret">
+        <service class="Bold\Platform\Api\AddSharedSecretInterface" method="addSecret"/>
+        <resources>
+            <resource ref="Bold_Checkout::shared_secret"/>
+        </resources>
+    </route>
+</routes>

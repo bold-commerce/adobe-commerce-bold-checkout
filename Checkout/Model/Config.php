@@ -26,7 +26,6 @@ class Config implements ConfigInterface
     private const PATH_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
     private const PATH_WEIGHT_CONVERSION_RATE = 'checkout/bold_checkout_advanced/weight_conversion_rate';
     private const PATH_WEIGHT_UNIT = 'checkout/bold_checkout_advanced/weight_unit';
-    private const PATH_SHOP_IDENTIFIER = 'checkout/bold_checkout_base/shop_identifier';
 
     /**
      * @var ScopeConfigInterface
@@ -196,6 +195,21 @@ class Config implements ConfigInterface
         $this->configWriter->save(
             self::PATH_SHOP_IDENTIFIER,
             $shopIdentifier,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+        $this->cacheTypeList->cleanType('config');
+        $this->scopeConfig->clean();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSharedSecret(int $websiteId, string $sharedSecret): void
+    {
+        $this->configWriter->save(
+            self::PATH_SECRET,
+            $this->encryptor->encrypt($sharedSecret),
             ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );

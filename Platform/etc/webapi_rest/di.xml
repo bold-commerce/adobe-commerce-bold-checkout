@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Bold\Platform\Api\AddSharedSecretInterface" type="Bold\Platform\Model\AddSharedSecret"/>
+    <preference for="Bold\Platform\Api\Data\AddSharedSecret\ResultInterface" type="Bold\Platform\Model\AddSharedSecret\Result"/>
+</config>
