@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Api;
 
-use Bold\Platform\Api\Data\AddSharedSecret\ResultInterface;
+use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
 
 /**
  * Add shared secret service interface.
  */
-interface AddSharedSecretInterface
+interface RegisterSharedSecretInterface
 {
     /**
      * Add shared secret to authorize outgoing requests to bold m2 integration.
      *
      * @param string $shopId
      * @param string $sharedSecret
-     * @return \Bold\Platform\Api\Data\AddSharedSecret\ResultInterface
+     * @return \Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface
      */
-    public function addSecret(string $shopId, string $sharedSecret): ResultInterface;
+    public function register(string $shopId, string $sharedSecret): ResultInterface;
 }

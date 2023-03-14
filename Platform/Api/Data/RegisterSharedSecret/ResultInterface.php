@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Api\Data\AddSharedSecret;
+namespace Bold\Platform\Api\Data\RegisterSharedSecret;
 
-use Bold\Platform\Api\Data\AddSharedSecret\ResultExtensionInterface;
+use Bold\Platform\Api\Data\RegisterSharedSecret\ResultExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
@@ -35,7 +35,7 @@ interface ResultInterface extends ExtensibleDataInterface
     /**
      * Retreive result extension attributes.
      *
-     * @return \Bold\Platform\Api\Data\AddSharedSecret\ResultExtensionInterface|null
+     * @return \Bold\Platform\Api\Data\RegisterSharedSecret\ResultExtensionInterface|null
      */
     public function getExtensionAttributes(): ?ResultExtensionInterface;
 }

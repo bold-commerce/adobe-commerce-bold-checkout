@@ -3,8 +3,12 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
     <acl>
         <resources>
-            <resource id="Bold_Checkout::integration" title="Bold Checkout M2 Platform Integration" translate="title" sortOrder="100">
-                <resource id="Bold_Checkout::shared_secret" title="Bold Checkout Shared Secret Management" translate="title" sortOrder="1"/>
+            <resource id="Magento_Backend::admin">
+                <resource id="Bold_Checkout::integration" title="Bold Checkout M2 Platform Integration" translate="title" sortOrder="100">
+                    <resource id="Bold_Checkout::secret" title="Shared Secret Management" translate="title" sortOrder="1">
+                        <resource id="Bold_Checkout::create" title="Create Secret Key" translate="title" sortOrder="1"/>
+                    </resource>
+                </resource>
             </resource>
         </resources>
     </acl>

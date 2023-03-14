@@ -5,9 +5,9 @@ namespace Bold\Platform\Model;
 
 use Bold\Checkout\Api\Data\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Model\ConfigInterface;
-use Bold\Platform\Api\AddSharedSecretInterface;
-use Bold\Platform\Api\Data\AddSharedSecret\ResultInterface;
-use Bold\Platform\Api\Data\AddSharedSecret\ResultInterfaceFactory;
+use Bold\Platform\Api\RegisterSharedSecretInterface;
+use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
+use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterfaceFactory;
 use Bold\Platform\Model\Resource\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
@@ -15,7 +15,7 @@ use Magento\Store\Model\StoreManagerInterface;
 /**
  * Register shared secret for outgoing calls to bold m2 integration service.
  */
-class AddSharedSecret implements AddSharedSecretInterface
+class RegisterSharedSecret implements RegisterSharedSecretInterface
 {
     /**
      * @var StoreManagerInterface
@@ -66,7 +66,7 @@ class AddSharedSecret implements AddSharedSecretInterface
     /**
      * @inheritDoc
      */
-    public function addSecret(string $shopId, string $sharedSecret): ResultInterface
+    public function register(string $shopId, string $sharedSecret): ResultInterface
     {
         try {
             $websiteId = $this->getWebsiteIdByShopId->getWebsiteId($shopId);

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Model\AddSharedSecret;
+namespace Bold\Platform\Model\RegisterSharedSecret;
 
 use Bold\Checkout\Api\Data\Response\ErrorInterface;
-use Bold\Platform\Api\Data\AddSharedSecret\ResultExtensionInterface;
-use Bold\Platform\Api\Data\AddSharedSecret\ResultInterface;
+use Bold\Platform\Api\Data\RegisterSharedSecret\ResultExtensionInterface;
+use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
 
 /**
  * Add shared secret result data model.
