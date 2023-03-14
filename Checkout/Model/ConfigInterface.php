@@ -78,22 +78,6 @@ interface ConfigInterface
     public function getApiToken(int $websiteId): ?string;
 
     /**
-     * Get configured weight unit to grams conversion rate.
-     *
-     * @param int $websiteId
-     * @return float
-     */
-    public function getWeightConversionRate(int $websiteId): float;
-
-    /**
-     * Get configured weight unit.
-     *
-     * @param int $websiteId
-     * @return string
-     */
-    public function getWeightUnit(int $websiteId): string;
-
-    /**
      * Get Bold API url.
      *
      * @param int $websiteId

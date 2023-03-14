@@ -24,8 +24,6 @@ class Config implements ConfigInterface
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
     private const PATH_API_URL = 'checkout/bold_checkout_advanced/api_url';
     private const PATH_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
-    private const PATH_WEIGHT_CONVERSION_RATE = 'checkout/bold_checkout_advanced/weight_conversion_rate';
-    private const PATH_WEIGHT_UNIT = 'checkout/bold_checkout_advanced/weight_unit';
 
     /**
      * @var ScopeConfigInterface
@@ -135,26 +133,6 @@ class Config implements ConfigInterface
         $encryptedToken = $this->scopeConfig->getValue(self::PATH_TOKEN, ScopeInterface::SCOPE_WEBSITES, $websiteId);
 
         return $this->encryptor->decrypt($encryptedToken);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWeightConversionRate(int $websiteId): float
-    {
-        return (float)$this->scopeConfig->getValue(
-            self::PATH_WEIGHT_CONVERSION_RATE,
-            ScopeInterface::SCOPE_WEBSITES,
-            $websiteId
-        ) ?: 1000;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWeightUnit(int $websiteId): string
-    {
-        return $this->scopeConfig->getValue(self::PATH_WEIGHT_UNIT, ScopeInterface::SCOPE_WEBSITES, $websiteId) ?: 'kg';
     }
 
     /**
