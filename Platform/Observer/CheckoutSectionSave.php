@@ -70,6 +70,8 @@ class CheckoutSectionSave implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        //todo: revisit.
+        return;
         $event = $observer->getEvent();
         $changedPaths = (array)$event->getChangedPaths();
         if (!array_intersect(self::OBSERVED_PATHS, $changedPaths)) {
