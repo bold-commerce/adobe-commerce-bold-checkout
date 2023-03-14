@@ -11,7 +11,6 @@ use Bold\Platform\Api\Data\AddSharedSecret\ResultInterfaceFactory;
 use Bold\Platform\Model\Resource\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Register shared secret for outgoing calls to bold m2 integration service.
@@ -22,11 +21,6 @@ class AddSharedSecret implements AddSharedSecretInterface
      * @var StoreManagerInterface
      */
     private $storeManager;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @var ConfigInterface
@@ -50,7 +44,6 @@ class AddSharedSecret implements AddSharedSecretInterface
 
     /**
      * @param StoreManagerInterface $storeManager
-     * @param LoggerInterface $logger
      * @param GetWebsiteIdByShopId $getWebsiteIdByShopId
      * @param ConfigInterface $config
      * @param ResultInterfaceFactory $resultFactory
@@ -58,14 +51,12 @@ class AddSharedSecret implements AddSharedSecretInterface
      */
     public function __construct(
         StoreManagerInterface $storeManager,
-        LoggerInterface $logger,
         GetWebsiteIdByShopId $getWebsiteIdByShopId,
         ConfigInterface $config,
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory
     ) {
         $this->storeManager = $storeManager;
-        $this->logger = $logger;
         $this->config = $config;
         $this->getWebsiteIdByShopId = $getWebsiteIdByShopId;
         $this->resultFactory = $resultFactory;
