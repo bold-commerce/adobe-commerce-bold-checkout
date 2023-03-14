@@ -33,14 +33,21 @@ class Result implements ResultInterface
     private $errors;
 
     /**
+     * @var int|null
+     */
+    private $websiteId;
+
+    /**
      * @param string|null $shopId
      * @param string|null $websiteCode
+     * @param int|null $websiteId
      * @param ErrorInterface[] $errors
      * @param ResultExtensionInterface|null $extensionAttributes
      */
     public function __construct(
         string $shopId = null,
         string $websiteCode = null,
+        int $websiteId = null,
         array $errors = [],
         ResultExtensionInterface $extensionAttributes = null
     ) {
@@ -48,6 +55,7 @@ class Result implements ResultInterface
         $this->websiteCode = $websiteCode;
         $this->extensionAttributes = $extensionAttributes;
         $this->errors = $errors;
+        $this->websiteId = $websiteId;
     }
 
     /**
@@ -64,6 +72,14 @@ class Result implements ResultInterface
     public function getWebsiteCode(): ?string
     {
         return $this->websiteCode;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWebsiteId(): ?int
+    {
+        return $this->websiteId;
     }
 
     /**

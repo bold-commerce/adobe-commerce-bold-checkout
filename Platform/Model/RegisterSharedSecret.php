@@ -89,6 +89,7 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
             [
                 'shopId' => $shopId,
                 'websiteCode' => $website->getCode(),
+                'websiteId' => $website->getId(),
             ]
         );
     }

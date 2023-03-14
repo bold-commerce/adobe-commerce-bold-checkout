@@ -26,6 +26,13 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getWebsiteCode(): ?string;
 
     /**
+     * Retrieve website id shared secret belongs to.
+     *
+     * @return int|null
+     */
+    public function getWebsiteId(): ?int;
+
+    /**
      * Retrieve errors.
      *
      * @return \Bold\Checkout\Api\Data\Response\ErrorInterface[]
