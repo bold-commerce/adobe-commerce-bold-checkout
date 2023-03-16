@@ -12,6 +12,7 @@ use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 
 /**
  * Init order data from quote on Bold side.
@@ -42,21 +43,29 @@ class InitOrderFromQuote
     private $quoteAction;
 
     /**
-     * @param ClientInterface $client
-     * @param CollectionFactory $countryCollectionFactory
-     * @param GetCartLineItems $getCartLineItems
-     * @param QuoteAction $quoteAction
+     * @var QuoteIdToMaskedQuoteIdInterface
      */
+    private $quoteIdToMaskedQuoteId;
+
+     /**
+      * @param ClientInterface $client
+      * @param CollectionFactory $countryCollectionFactory
+      * @param GetCartLineItems $getCartLineItems
+      * @param QuoteAction $quoteAction
+      * @param QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId
+      */
     public function __construct(
         ClientInterface $client,
         CollectionFactory $countryCollectionFactory,
         GetCartLineItems $getCartLineItems,
-        QuoteAction $quoteAction
+        QuoteAction $quoteAction,
+        QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId
     ) {
         $this->client = $client;
         $this->countryCollectionFactory = $countryCollectionFactory;
         $this->getCartLineItems = $getCartLineItems;
         $this->quoteAction = $quoteAction;
+        $this->quoteIdToMaskedQuoteId = $quoteIdToMaskedQuoteId;
     }
 
     /**
@@ -68,11 +77,21 @@ class InitOrderFromQuote
      */
     public function init(CartInterface $quote): array
     {
+        $maskedQuoteId = $quote->getCustomerIsGuest() ? $this->quoteIdToMaskedQuoteId->execute((int) $quote->getId()) : null;
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
         $body = [
             'cart_items' => $this->getCartLineItems->getItems($quote),
             'actions' => $this->quoteAction->getActionsData($quote),
+            'order_meta_data' => [
+                'cart_parameters' => [
+                    'quote_id' => $quote->getId(),
+                    'masked_quote_id' => $maskedQuoteId,
+                    'store_id' => $quote->getStoreId(),
+                    'website_id' => $websiteId,
+                ]
+            ],
         ];
-        $websiteId = (int)$quote->getStore()->getWebsiteId();
+
         $orderData = $this->client->call($websiteId, 'POST', self::INIT_URL, $body)->getBody();
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
