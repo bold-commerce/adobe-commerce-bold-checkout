@@ -42,6 +42,11 @@ class CheckoutSectionSave implements ObserverInterface
     private $messageManager;
 
     /**
+     * @var \Bold\Checkout\Model\BoldShopIdentifier
+     */
+    private $boldShopIdentifier;
+
+    /**
      * @param \Bold\Checkout\Model\ConfigInterface $config
      * @param \Bold\Platform\Model\CreateIntegration $createIntegration
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
@@ -51,12 +56,14 @@ class CheckoutSectionSave implements ObserverInterface
         ConfigInterface       $config,
         CreateIntegration     $createIntegration,
         StoreManagerInterface $storeManager,
-        ManagerInterface      $messageManager
+        ManagerInterface      $messageManager,
+        BoldShopIdentifier    $boldShopIdentifier,
     ) {
         $this->config = $config;
         $this->createIntegration = $createIntegration;
         $this->storeManager = $storeManager;
         $this->messageManager = $messageManager;
+        $this->boldShopIdentifier = $boldShopIdentifier;
     }
 
     /**
@@ -70,16 +77,18 @@ class CheckoutSectionSave implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        //todo: revisit.
-        return;
         $event = $observer->getEvent();
         $changedPaths = (array)$event->getChangedPaths();
         if (!array_intersect(self::OBSERVED_PATHS, $changedPaths)) {
             return;
         }
-
+        
         $websiteId = (int)$event->getWebsite();
         $website = $this->storeManager->getWebsite($websiteId);
+        $this->boldShopIdentifier->getShopIdentifier($websiteId);
+
+        //todo: revisit.
+        return;
         $name = sprintf(self::INTEGRATION_NAME_TEMPLATE, $website->getCode());
         $token = $this->config->getApiToken($websiteId);
         $secret = $this->config->getSharedSecret($websiteId);
