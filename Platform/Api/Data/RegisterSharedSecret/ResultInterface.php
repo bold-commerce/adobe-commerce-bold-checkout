@@ -35,7 +35,7 @@ interface ResultInterface extends ExtensibleDataInterface
     /**
      * Retrieve errors.
      *
-     * @return \Bold\Checkout\Api\Data\Response\ErrorInterface[]
+     * @return \Bold\Platform\Api\Data\Response\ErrorInterface[]
      */
     public function getErrors(): array;
 

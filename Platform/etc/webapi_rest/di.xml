@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Bold\Platform\Api\PlaceOrderInterface" type="Bold\Platform\Model\Order\PlaceOrder"/>
+    <preference for="Bold\Platform\Api\Data\PlaceOrder\Request\OrderDataInterface" type="Bold\Platform\Model\Order\PlaceOrder\Request\OrderData"/>
+    <preference for="Bold\Platform\Api\Data\PlaceOrder\ResponseInterface" type="Bold\Platform\Model\Order\PlaceOrder\Response"/>
+    <preference for="Bold\Platform\Api\Data\Response\ErrorInterface" type="Bold\Platform\Model\Response\Error"/>
     <preference for="Bold\Platform\Api\RegisterSharedSecretInterface" type="Bold\Platform\Model\RegisterSharedSecret"/>
     <preference for="Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface" type="Bold\Platform\Model\RegisterSharedSecret\Result"/>
+    <preference for="Bold\Platform\Api\CustomerEmailValidatorInterface" type="Bold\Platform\Model\Customer\EmailValidator"/>
+    <preference for="Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterface" type="Bold\Platform\Model\Customer\EmailValidator\Result"/>
 </config>
