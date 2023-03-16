@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_load_after">
+        <observer name="add_bold_data_to_order" instance="Bold\Platform\Observer\AddBoldDataToOrderObserver"/>
+    </event>
+    <event name="sales_order_save_after">
+        <observer name="save_bold_data" instance="Bold\Platform\Observer\SaveOrderBoldDataObserver"/>
+    </event>
     <event name="catalog_category_save_after">
         <observer name="bold_platform_category_save" instance="Bold\Platform\Observer\CategorySave" />
     </event>

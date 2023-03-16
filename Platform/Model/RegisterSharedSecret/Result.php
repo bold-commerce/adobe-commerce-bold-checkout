@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Model\RegisterSharedSecret;
 
-use Bold\Checkout\Api\Data\Response\ErrorInterface;
 use Bold\Platform\Api\Data\RegisterSharedSecret\ResultExtensionInterface;
 use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
+use Bold\Platform\Api\Data\Response\ErrorInterface;
 
 /**
  * Add shared secret result data model.

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Model;
 
-use Bold\Checkout\Api\Data\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Model\ConfigInterface;
-use Bold\Platform\Api\RegisterSharedSecretInterface;
 use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
 use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterfaceFactory;
+use Bold\Platform\Api\Data\Response\ErrorInterfaceFactory;
+use Bold\Platform\Api\RegisterSharedSecretInterface;
 use Bold\Platform\Model\Resource\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
@@ -71,6 +71,21 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
         try {
             $websiteId = $this->getWebsiteIdByShopId->getWebsiteId($shopId);
             $website = $this->storeManager->getWebsite($websiteId);
+            if (!$website->getId()) {
+                return $this->resultFactory->create(
+                    [
+                        'errors' => [
+                            $this->errorFactory->create(
+                                [
+                                    'message' => __('Incorrect "%1" Shop Id is provided.'),
+                                    'code' => 422,
+                                    'type' => 'server.validation_error'
+                                ]
+                            ),
+                        ],
+                    ]
+                );
+            }
         } catch (LocalizedException $e) {
             return $this->resultFactory->create(
                 [
