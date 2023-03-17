@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Platform\Model\Queue\Handler\Customer;
@@ -17,7 +16,7 @@ class Delete
 {
     private const CHUNK_SIZE = 500;
     private const METHOD = 'POST';
-    private const URL = '/';
+    private const URL = '/{{shopId}}/webhooks/customer/deleted';
 
     /**
      * @var ConfigInterface

@@ -43,7 +43,7 @@ class ShopIdValidator
     public function validate(string $shopId, int $storeId): void
     {
         $websiteId = (int)$this->storeManager->getStore($storeId)->getWebsiteId();
-        $shopIdentifier = $this->checkoutConfig->getShopIdentifier($websiteId);
+        $shopIdentifier = $this->checkoutConfig->getShopId($websiteId);
         if ($shopIdentifier !== $shopId) {
             throw new LocalizedException(__('Shop Id "%1" is incorrect.', $shopId));
         }

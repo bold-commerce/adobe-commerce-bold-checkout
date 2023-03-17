@@ -5,7 +5,6 @@ namespace Bold\Checkout\Model\Http;
 
 use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
-use Bold\Checkout\Model\BoldShopIdentifier;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Curl;
 use Bold\Checkout\Model\Http\Client\UserAgent;
@@ -15,6 +14,8 @@ use Bold\Checkout\Model\Http\Client\UserAgent;
  */
 class BoldClient implements ClientInterface
 {
+    public const URL = 'https://api.boldcommerce.com/';
+
     /**
      * @var ConfigInterface
      */
@@ -31,26 +32,18 @@ class BoldClient implements ClientInterface
     private $userAgent;
 
     /**
-     * @var BoldShopIdentifier
-     */
-    private $boldShopIdentifier;
-
-    /**
      * @param ConfigInterface $config
      * @param Curl $curl
      * @param UserAgent $userAgent
-     * @param BoldShopIdentifier $boldShopIdentifier
      */
     public function __construct(
         ConfigInterface $config,
         Curl $curl,
-        UserAgent $userAgent,
-        BoldShopIdentifier $boldShopIdentifier
+        UserAgent $userAgent
     ) {
         $this->config = $config;
         $this->client = $curl;
         $this->userAgent = $userAgent;
-        $this->boldShopIdentifier = $boldShopIdentifier;
     }
 
     /**
@@ -59,14 +52,14 @@ class BoldClient implements ClientInterface
     public function call(int $websiteId, string $method, string $url, array $data = null): ResponseInterface
     {
         $apiToken = $this->config->getApiToken($websiteId);
-        $shopId = $this->boldShopIdentifier->getShopIdentifier($websiteId);
+        $shopId = $this->config->getShopId($websiteId);
         $headers = [
             'Authorization' => 'Bearer ' . $apiToken,
             'Content-Type' => 'application/json',
             'User-Agent' => $this->userAgent->getUserAgent(),
             'Bold-API-Version-Date' => self::BOLD_API_VERSION_DATE,
         ];
-        $url = $this->config->getApiUrl($websiteId) . '/' . ltrim(str_replace('{{shopId}}', $shopId, $url), '/');
+        $url = self::URL . str_replace('{{shopId}}', $shopId, $url);
 
         return $this->client->sendRequest($method, $url, $headers, $data);
     }

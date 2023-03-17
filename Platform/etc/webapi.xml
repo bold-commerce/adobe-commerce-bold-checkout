@@ -10,7 +10,7 @@
     <route method="POST" url="V1/shops/:shopId/secret/register">
         <service class="Bold\Platform\Api\RegisterSharedSecretInterface" method="register"/>
         <resources>
-            <resource ref="Bold_Checkout::create"/>
+            <resource ref="Bold_Checkout::secret_create"/>
         </resources>
     </route>
     <route method="POST" url="V1/shops/:shopId/customer/email/validate">

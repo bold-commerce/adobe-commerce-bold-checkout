@@ -15,7 +15,7 @@ use Exception;
 class Delete
 {
     private const METHOD = 'POST';
-    private const URL = '/';
+    private const URL = '/{{shopId}}/webhooks/products/deleted';
     private const CHUNK_SIZE = 500;
 
     /**

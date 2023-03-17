@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model;
@@ -22,8 +21,7 @@ class Config implements ConfigInterface
     private const PATH_IP_WHITELIST = 'checkout/bold_checkout_advanced/ip_whitelist';
     private const PATH_CUSTOMER_WHITELIST = 'checkout/bold_checkout_advanced/customer_whitelist';
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
-    private const PATH_API_URL = 'checkout/bold_checkout_advanced/api_url';
-    private const PATH_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
+    private const PATH_PLATFORM_CONNECTOR_URL = 'checkout/bold_checkout_advanced/platform_connector_url';
 
     /**
      * @var ScopeConfigInterface
@@ -138,41 +136,33 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function getApiUrl(int $websiteId): string
-    {
-        return rtrim($this->scopeConfig->getValue(self::PATH_API_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId), '/');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCheckoutUrl(int $websiteId): string
+    public function getPlatformConnectorUrl(int $websiteId): string
     {
         return rtrim(
             $this->scopeConfig->getValue(
-                self::PATH_CHECKOUT_URL,
+                self::PATH_PLATFORM_CONNECTOR_URL,
                 ScopeInterface::SCOPE_WEBSITES,
-                $websiteId
-            ),
-            '/');
+                $websiteId),
+            '/'
+        );
     }
 
     /**
      * @inheritDoc
      */
-    public function getShopIdentifier(int $websiteId): ?string
+    public function getShopId(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_SHOP_IDENTIFIER, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->getValue(self::PATH_SHOP_ID, ScopeInterface::SCOPE_WEBSITES, $websiteId);
     }
 
     /**
      * @inheritDoc
      */
-    public function setShopIdentifier(int $websiteId, string $shopIdentifier): void
+    public function setShopId(int $websiteId, string $shopId): void
     {
         $this->configWriter->save(
-            self::PATH_SHOP_IDENTIFIER,
-            $shopIdentifier,
+            self::PATH_SHOP_ID,
+            $shopId,
             ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );

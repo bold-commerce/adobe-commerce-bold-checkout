@@ -77,10 +77,6 @@ class GetCartLineItems
             'quantity' => $this->extractLineItemQuantity($item),
             'line_item_key' => (string)$item->getId(),
             'price_adjustment' => $this->getPriceAdjustment($item),
-            'line_item_properties' => [
-                '_quote_id' => (string)$item->getQuoteId(),
-                '_store_id' => (string)$item->getQuote()->getStoreId(),
-            ],
         ];
         $item = $item->getParentItem() ?: $item;
         if ($item->getProductType() === Configurable::TYPE_CODE) {
