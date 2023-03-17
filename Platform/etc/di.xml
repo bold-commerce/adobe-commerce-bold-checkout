@@ -45,31 +45,6 @@
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
-    <type name="Bold\Platform\Model\CreateIntegration">
-        <arguments>
-            <argument name="oauthService" xsi:type="object">Bold\Platform\Model\OauthService</argument>
-        </arguments>
-    </type>
-    <virtualType name="Bold\Platform\Model\OauthService" type="Magento\Integration\Model\OauthService">
-        <arguments>
-            <argument name="tokenProvider" xsi:type="object">Bold\Platform\Model\Oauth\Token\Provider</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Bold\Platform\Model\Oauth\Token\Provider" type="Magento\Integration\Model\Oauth\Token\Provider">
-        <arguments>
-            <argument name="tokenFactory" xsi:type="object">Bold\Platform\Model\Oauth\TokenFactory</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Bold\Platform\Model\Oauth\TokenFactory" type="Magento\Integration\Model\Oauth\TokenFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="string">Bold\Platform\Model\Oauth\Token</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Bold\Platform\Model\Oauth\Token" type="Magento\Integration\Model\Oauth\Token">
-        <arguments>
-            <argument name="oauthHelper" xsi:type="object">Bold\Platform\Helper\Oauth</argument>
-        </arguments>
-    </virtualType>
     <type name="Magento\Catalog\Model\Product\Website">
         <plugin name="bold_checkout_product_add_website"
                 type="Bold\Platform\Plugin\Product\AddWebsitePlugin"/>

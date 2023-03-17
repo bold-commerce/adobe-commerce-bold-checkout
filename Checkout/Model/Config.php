@@ -14,8 +14,8 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Config implements ConfigInterface
 {
-    public const PATH_TOKEN = 'checkout/bold_checkout_base/api_token';
-    public const PATH_SECRET = 'checkout/bold_checkout_base/shared_secret';
+    private const PATH_TOKEN = 'checkout/bold_checkout_base/api_token';
+    private const PATH_SECRET = 'checkout/bold_checkout_base/shared_secret';
     private const PATH_ENABLED = 'checkout/bold_checkout_base/enabled';
     private const PATH_ENABLED_FOR = 'checkout/bold_checkout_advanced/enabled_for';
     private const PATH_IP_WHITELIST = 'checkout/bold_checkout_advanced/ip_whitelist';
