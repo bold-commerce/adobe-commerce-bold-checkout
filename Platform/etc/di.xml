@@ -20,12 +20,27 @@
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
+    <type name="Bold\Platform\Model\Queue\Handler\Category\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Platform\Model\Queue\Handler\Product\Synchronize">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
+    <type name="Bold\Platform\Model\Queue\Handler\Product\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Platform\Model\Queue\Handler\Customer\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Platform\Model\Queue\Handler\Customer\Delete">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Platform\Model\Http\PlatformClient</argument>
         </arguments>

@@ -53,15 +53,10 @@
                     <comment>Percentage of carts will be redirected to Bold Checkout.
                         Please select the percentage of Orders to be placed using Bold Checkout.</comment>
                 </field>
-                <field id="api_url" translate="label" type="text" sortOrder="60" showInDefault="0" showInWebsite="1">
-                    <label>API Url</label>
+                <field id="platform_connector_url" translate="label" type="text" sortOrder="60" showInDefault="0" showInWebsite="1">
+                    <label>M2 Platform Connector API Url</label>
                     <validate>required-url</validate>
-                    <comment>Bold Checkout API URL. Do not change.</comment>
-                </field>
-                <field id="checkout_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
-                    <label>Checkout Url</label>
-                    <validate>required-url</validate>
-                    <comment>The URL of your checkout. Do not change.</comment>
+                    <comment>M2 Platform Connector API URL.</comment>
                 </field>
             </group>
         </section>

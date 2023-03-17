@@ -15,7 +15,7 @@ use Exception;
 class Synchronize
 {
     private const METHOD = 'POST';
-    private const URL = '/';
+    private const URL = '/{{shopId}}/webhooks/products/saved';
     private const CHUNK_SIZE = 500;
 
     /**

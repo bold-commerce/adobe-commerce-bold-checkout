@@ -23,11 +23,7 @@
             </bold_checkout_base>
             <bold_checkout_advanced>
                 <enabled_for>0</enabled_for>
-                <realtime_enabled>1</realtime_enabled>
-                <api_url>https://api.boldcommerce.com/</api_url>
-                <checkout_url>https://checkout.boldcommerce.com/</checkout_url>
-                <weight_unit>kg</weight_unit>
-                <weight_conversion_rate>1000</weight_conversion_rate>
+                <platform_connector_url>https://m2-platform-connector.staging.boldapps.net/magento/shops/</platform_connector_url>
             </bold_checkout_advanced>
         </checkout>
     </default>

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer;
 
-use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
 use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
 use Exception;
@@ -18,6 +17,8 @@ use Psr\Log\LoggerInterface;
  */
 class RedirectToBoldCheckoutObserver implements ObserverInterface
 {
+    private const CHECKOUT_URL = 'https://checkout.boldcommerce.com/bold_platform/';
+
     /**
      * @var IsBoldCheckoutAllowedForCart
      */
@@ -44,13 +45,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $initOrderFromQuote;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
      * @param IsBoldCheckoutAllowedForCart $allowedForCart
-     * @param ConfigInterface $config
      * @param Session $session
      * @param ManagerInterface $messageManager
      * @param LoggerInterface $logger
@@ -58,7 +53,6 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
      */
     public function __construct(
         IsBoldCheckoutAllowedForCart $allowedForCart,
-        ConfigInterface $config,
         Session $session,
         ManagerInterface $messageManager,
         LoggerInterface $logger,
@@ -69,7 +63,6 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         $this->messageManager = $messageManager;
         $this->logger = $logger;
         $this->initOrderFromQuote = $initOrderFromQuote;
-        $this->config = $config;
     }
 
     /**
@@ -78,7 +71,6 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $quote = $this->session->getQuote();
-        $websiteId = (int)$quote->getStore()->getWebsiteId();
         if (!$this->allowedForCart->isAllowed($quote)) {
             return;
         }
@@ -86,10 +78,9 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             $checkoutData = $this->initOrderFromQuote->init($quote);
             $orderId = $checkoutData['data']['public_order_id'];
             $token = $checkoutData['data']['jwt_token'];
-            $shipName = $checkoutData['data']['initial_data']['shop_name'];
-            $checkoutUrl = $this->config->getCheckoutUrl($websiteId);
-            $checkoutUrl .= '/bold_platform/' . $shipName . '/experience/resume?public_order_id='
-                . $orderId . '&token=' . $token;
+            $shopName = $checkoutData['data']['initial_data']['shop_name'];
+            $checkoutUrl = self::CHECKOUT_URL . $shopName . '/experience/resume?public_order_id=' . $orderId
+                . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);
         } catch (Exception $exception) {
             $this->messageManager->addErrorMessage(

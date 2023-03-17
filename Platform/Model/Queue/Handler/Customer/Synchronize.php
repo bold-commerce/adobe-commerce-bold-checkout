@@ -17,7 +17,7 @@ class Synchronize
 {
     private const CHUNK_SIZE = 500;
     private const METHOD = 'POST';
-    private const URL = '/';
+    private const URL = '/{{shopId}}/webhooks/customer/saved';
 
     /**
      * @var ConfigInterface

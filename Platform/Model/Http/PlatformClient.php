@@ -1,20 +1,15 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Platform\Model\Http;
 
 use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
-use Bold\Checkout\Model\BoldShopIdentifier;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Curl;
-use Bold\Checkout\Model\Http\Client\UserAgent;
-
-// TODO: update class after API is revealed.
 
 /**
- * @inheritDoc
+ * M2 Platform Connector Http Client.
  */
 class PlatformClient implements ClientInterface
 {
@@ -29,31 +24,15 @@ class PlatformClient implements ClientInterface
     private $client;
 
     /**
-     * @var UserAgent
-     */
-    private $userAgent;
-
-    /**
-     * @var BoldShopIdentifier
-     */
-    private $boldShopIdentifier;
-
-    /**
      * @param ConfigInterface $config
      * @param Curl $curl
-     * @param UserAgent $userAgent
-     * @param BoldShopIdentifier $boldShopIdentifier
      */
     public function __construct(
         ConfigInterface $config,
-        Curl $curl,
-        UserAgent $userAgent,
-        BoldShopIdentifier $boldShopIdentifier
+        Curl $curl
     ) {
         $this->config = $config;
         $this->client = $curl;
-        $this->userAgent = $userAgent;
-        $this->boldShopIdentifier = $boldShopIdentifier;
     }
 
     /**
@@ -61,15 +40,13 @@ class PlatformClient implements ClientInterface
      */
     public function call(int $websiteId, string $method, string $url, array $data = null): ResponseInterface
     {
-        $apiToken = $this->config->getApiToken($websiteId);
-        $shopId = $this->boldShopIdentifier->getShopIdentifier($websiteId);
+        $secret = $this->config->getSharedSecret($websiteId);
+        $shopId = $this->config->getShopId($websiteId);
         $headers = [
-            'Authorization' => 'Bearer ' . $apiToken,
+            'Authorization' => 'Bearer ' . $secret,
             'Content-Type' => 'application/json',
-            'User-Agent' => $this->userAgent->getUserAgent(),
-            'Bold-API-Version-Date' => self::BOLD_API_VERSION_DATE,
         ];
-        $url = $this->config->getApiUrl($websiteId) . '/' . ltrim(str_replace('{{shopId}}', $shopId, $url), '/');
+        $url = $this->config->getPlatformConnectorUrl($websiteId) . str_replace('{{shopId}}', $shopId, $url);
 
         return $this->client->sendRequest($method, $url, $headers, $data);
     }

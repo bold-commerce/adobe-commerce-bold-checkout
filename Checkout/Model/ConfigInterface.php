@@ -12,7 +12,7 @@ interface ConfigInterface
     public const VALUE_ENABLED_FOR_IP = 1;
     public const VALUE_ENABLED_FOR_CUSTOMER = 2;
     public const VALUE_ENABLED_FOR_PERCENTAGE = 3;
-    public const PATH_SHOP_IDENTIFIER = 'checkout/bold_checkout_base/shop_identifier';
+    public const PATH_SHOP_ID = 'checkout/bold_checkout_base/shop_id';
 
     /**
      * Check if bold functionality enabled.
@@ -53,7 +53,7 @@ interface ConfigInterface
     public function getOrdersPercentage(int $websiteId): int;
 
     /**
-     * Get shared secret key (decrypted).
+     * Get shared secret key for M2 Platform Integration.
      *
      * @param int $websiteId
      * @return string|null
@@ -70,7 +70,7 @@ interface ConfigInterface
     public function setSharedSecret(int $websiteId, string $sharedSecret): void;
 
     /**
-     * Get api token (decrypted).
+     * Get Bold Checkout Api Token.
      *
      * @param int $websiteId
      * @return string|null
@@ -78,20 +78,12 @@ interface ConfigInterface
     public function getApiToken(int $websiteId): ?string;
 
     /**
-     * Get Bold API url.
+     * Get M2 Platform connector API url.
      *
      * @param int $websiteId
      * @return string
      */
-    public function getApiUrl(int $websiteId): string;
-
-    /**
-     * Get Bold Checkout url.
-     *
-     * @param int $websiteId
-     * @return string
-     */
-    public function getCheckoutUrl(int $websiteId): string;
+    public function getPlatformConnectorUrl(int $websiteId): string;
 
     /**
      * Retrieve Bold shop identifier.
@@ -99,14 +91,14 @@ interface ConfigInterface
      * @param int $websiteId
      * @return string|null
      */
-    public function getShopIdentifier(int $websiteId): ?string;
+    public function getShopId(int $websiteId): ?string;
 
     /**
      * Set shop identifier.
      *
      * @param int $websiteId
-     * @param string $shopIdentifier
+     * @param string $shopId
      * @return void
      */
-    public function setShopIdentifier(int $websiteId, string $shopIdentifier): void;
+    public function setShopId(int $websiteId, string $shopId): void;
 }

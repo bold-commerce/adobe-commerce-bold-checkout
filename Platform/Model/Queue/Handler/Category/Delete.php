@@ -16,7 +16,7 @@ class Delete
 {
     private const CHUNK_SIZE = 500;
     private const METHOD = 'POST';
-    private const URL = '/';
+    private const URL = '/{{shopId}}/webhooks/categories/deleted';
 
     /**
      * @var ConfigInterface
