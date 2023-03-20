@@ -3,6 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Bold\Platform\Model\Queue\RequestInterface" type="Bold\Platform\Model\Queue\Request"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Platform\Model\Import\Customer"/>
+    <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Platform\Model\Import\Address"/>
     <type name="Magento\Catalog\Model\Product\Action">
         <plugin name="bold_checkout_product_save_update_attributes"
                 type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>

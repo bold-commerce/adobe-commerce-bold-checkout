@@ -140,6 +140,9 @@ class Customer extends \Magento\CustomerImportExport\Model\Import\Customer
      */
     private function addToQueue(string $topicName, int $websiteId, array $entityIds): void
     {
+        if (!$websiteId || empty($entityIds)) {
+            return;
+        }
         try {
             $this->publisher->publish($topicName, $websiteId, $entityIds);
         } catch (Exception $e) {
