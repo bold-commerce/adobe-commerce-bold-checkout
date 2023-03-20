@@ -7,7 +7,6 @@ namespace Bold\Platform\Model\Import;
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
 use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Model\Indexer\Processor;
 use Magento\Customer\Model\ResourceModel\Attribute\CollectionFactory;
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\StorageFactory;
 use Magento\Eav\Model\Config;
@@ -55,8 +54,6 @@ class Customer extends \Magento\CustomerImportExport\Model\Import\Customer
      * @param \Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\StorageFactory $storageFactory
      * @param \Magento\Customer\Model\ResourceModel\Attribute\CollectionFactory $attrCollectionFactory
      * @param \Magento\Customer\Model\CustomerFactory $customerFactory
-     * @param array $data
-     * @param \Magento\Customer\Model\Indexer\Processor|null $indexerProcessor
      */
     public function __construct(
         EntitySyncPublisher                $publisher,
@@ -72,10 +69,8 @@ class Customer extends \Magento\CustomerImportExport\Model\Import\Customer
         Config                             $eavConfig,
         StorageFactory                     $storageFactory,
         CollectionFactory                  $attrCollectionFactory,
-        CustomerFactory                    $customerFactory,
-        array                              $data = [],
-        ?Processor                         $indexerProcessor = null)
-    {
+        CustomerFactory                    $customerFactory
+    ) {
         parent::__construct(
             $string,
             $scopeConfig,

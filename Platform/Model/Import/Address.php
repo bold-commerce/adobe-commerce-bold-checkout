@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Bold\Platform\Model\Import;
 
 use Bold\Platform\Model\Queue\Publisher\EntitySyncPublisher;
+use Exception;
 use Magento\Customer\Model\Address\Validator\Postcode;
 use Magento\Customer\Model\AddressFactory;
 use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Model\Indexer\Processor;
 use Magento\Customer\Model\ResourceModel\Address\Attribute\CollectionFactory;
-use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites as CountryWithWebsitesSource;
-use Magento\CustomerImportExport\Model\ResourceModel\Import\Address\Storage as AddressStorage;
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\StorageFactory;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -62,10 +60,6 @@ class Address extends \Magento\CustomerImportExport\Model\Import\Address
      * @param \Magento\Customer\Model\ResourceModel\Address\Attribute\CollectionFactory $attributesFactory
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param \Magento\Customer\Model\Address\Validator\Postcode $postcodeValidator
-     * @param array $data
-     * @param \Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites|null $countryWithWebsites
-     * @param \Magento\CustomerImportExport\Model\ResourceModel\Import\Address\Storage|null $addressStorage
-     * @param \Magento\Customer\Model\Indexer\Processor|null $indexerProcessor
      */
     public function __construct(
         EntitySyncPublisher                                             $publisher,
@@ -78,16 +72,14 @@ class Address extends \Magento\CustomerImportExport\Model\Import\Address
         ProcessingErrorAggregatorInterface                              $errorAggregator,
         StoreManagerInterface                                           $storeManager,
         Factory                                                         $collectionFactory,
-        Config                                                          $eavConfig, StorageFactory $storageFactory,
+        Config                                                          $eavConfig,
+        StorageFactory                                                  $storageFactory,
         AddressFactory                                                  $addressFactory,
         \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionColFactory,
         CustomerFactory                                                 $customerFactory,
-        CollectionFactory                                               $attributesFactory, DateTime $dateTime,
-        Postcode                                                        $postcodeValidator,
-        array                                                           $data = [],
-        ?CountryWithWebsitesSource                                      $countryWithWebsites = null,
-        ?AddressStorage                                                 $addressStorage = null,
-        ?Processor                                                      $indexerProcessor = null
+        CollectionFactory                                               $attributesFactory,
+        DateTime                                                        $dateTime,
+        Postcode                                                        $postcodeValidator
     ) {
         parent::__construct(
             $string,
@@ -105,11 +97,7 @@ class Address extends \Magento\CustomerImportExport\Model\Import\Address
             $customerFactory,
             $attributesFactory,
             $dateTime,
-            $postcodeValidator,
-            $data,
-            $countryWithWebsites,
-            $addressStorage,
-            $indexerProcessor
+            $postcodeValidator
         );
         $this->publisher = $publisher;
         $this->logger = $logger;
@@ -127,31 +115,6 @@ class Address extends \Magento\CustomerImportExport\Model\Import\Address
             },
             array_merge($addRows, $updateRows)
         );
-        foreach ($this->getWebsiteIds() as $websiteId) {
-            $this->addToQueue(self::SYNC_TOPIC_NAME, $websiteId, $customerIds);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function _saveCustomerDefaults(array $defaults)
-    {
-        $result = parent::_saveCustomerDefaults($defaults);
-        $customerIds =
-            array_map('intval',
-                array_unique(
-                    array_reduce(
-                        $defaults,
-                        function ($carry, $data) {
-                            return array_merge($carry, array_keys($data));
-                        },
-                        []
-                    )
-                )
-            );
         foreach ($this->getWebsiteIds() as $websiteId) {
             $this->addToQueue(self::SYNC_TOPIC_NAME, $websiteId, $customerIds);
         }
@@ -189,8 +152,33 @@ class Address extends \Magento\CustomerImportExport\Model\Import\Address
         }
         try {
             $this->publisher->publish($topicName, $websiteId, $entityIds);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error($e->getMessage());
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _saveCustomerDefaults(array $defaults)
+    {
+        $result = parent::_saveCustomerDefaults($defaults);
+        $customerIds =
+            array_map('intval',
+                array_unique(
+                    array_reduce(
+                        $defaults,
+                        function ($carry, $data) {
+                            return array_merge($carry, array_keys($data));
+                        },
+                        []
+                    )
+                )
+            );
+        foreach ($this->getWebsiteIds() as $websiteId) {
+            $this->addToQueue(self::SYNC_TOPIC_NAME, $websiteId, $customerIds);
+        }
+
+        return $result;
     }
 }
