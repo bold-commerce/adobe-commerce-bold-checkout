@@ -83,9 +83,7 @@ class Customer extends \Magento\CustomerImportExport\Model\Import\Customer
             $eavConfig,
             $storageFactory,
             $attrCollectionFactory,
-            $customerFactory,
-            $data,
-            $indexerProcessor
+            $customerFactory
         );
         $this->publisher = $publisher;
         $this->logger = $logger;
