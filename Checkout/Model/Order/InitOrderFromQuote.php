@@ -20,7 +20,6 @@ use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 class InitOrderFromQuote
 {
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
-    private const AUTHENTICATION_URL = '/checkout/orders/{{shopId}}/%s/customer/authenticated';
 
     /**
      * @var ClientInterface
@@ -92,30 +91,29 @@ class InitOrderFromQuote
             ],
         ];
 
+        if ($quote->getCustomer()->getId()) {
+            $countries = $this->getCustomerCountries($quote);
+            $customerAddresses = [];
+            foreach ($quote->getCustomer()->getAddresses() as $address) {
+                $customerAddresses[] = $this->getAddress($address, $countries);
+            }
+            $body['customer'] = [
+                'first_name' => (string)$quote->getCustomerFirstname(),
+                'last_name' => (string)$quote->getCustomerLastname(),
+                'email_address' => (string)$quote->getCustomerEmail(),
+                'platform_id' => (string)$quote->getCustomerId(),
+                'accepts_marketing' => false,
+                'saved_addresses' => $customerAddresses,
+            ];
+        }
+
         $orderData = $this->client->call($websiteId, 'POST', self::INIT_URL, $body)->getBody();
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
             throw new LocalizedException(__('Cannot initialize order for quote with id = "%s"', $quote->getId()));
         }
-        if (!$quote->getCustomer()->getId()) {
-            return $orderData;
-        }
-        $authenticateUrl = sprintf(self::AUTHENTICATION_URL, $publicOrderId);
-        $countries = $this->getCustomerCountries($quote);
-        $customerAddresses = [];
-        foreach ($quote->getCustomer()->getAddresses() as $address) {
-            $customerAddresses[] = $this->getAddress($address, $countries);
-        }
-        $authenticateBody = [
-            'first_name' => (string)$quote->getCustomerFirstname(),
-            'last_name' => (string)$quote->getCustomerLastname(),
-            'email_address' => (string)$quote->getCustomerEmail(),
-            'platform_id' => (string)$quote->getCustomerId(),
-            'accepts_marketing' => false,
-            'saved_addresses' => $customerAddresses,
-        ];
-        $authenticateResponse = $this->client->call($websiteId, 'POST', $authenticateUrl, $authenticateBody)->getBody();
-        if (!isset($authenticateResponse['data']['application_state']['customer']['public_id'])) {
+
+        if ($quote->getCustomer()->getId() && !isset($orderData['data']['application_state']['customer']['public_id'])) {
             throw new LocalizedException(__('Cannot authenticate customer with id="%s"', $quote->getCustomerId()));
         }
 
@@ -177,8 +175,8 @@ class InitOrderFromQuote
         return [
             'first_name' => (string)$address->getFirstname(),
             'last_name' => (string)$address->getLastname(),
-            'address_line_1' => (string)$address->getStreet()[0] ?? '',
-            'address_line_2' => (string)$address->getStreet()[1] ?? '',
+            'address_line_1' => (string)($address->getStreet()[0] ?? ''),
+            'address_line_2' => (string)($address->getStreet()[1] ?? ''),
             'country' => $this->getCountryNameForAddress($countries, $address),
             'city' => (string)$address->getCity(),
             'province' => (string)$address->getRegion()->getRegion(),
