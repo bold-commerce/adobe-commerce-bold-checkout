@@ -78,9 +78,14 @@ class InitOrderFromQuote
     {
         $maskedQuoteId = $quote->getCustomerIsGuest() ? $this->quoteIdToMaskedQuoteId->execute((int) $quote->getId()) : null;
         $websiteId = (int)$quote->getStore()->getWebsiteId();
+        $actions = $this->quoteAction->getActionsData($quote);
+        $mergedActions = array_reduce($actions, function($carry, $item) {
+            return array_merge($carry, $item);
+        }, []);
+
         $body = [
             'cart_items' => $this->getCartLineItems->getItems($quote),
-            'actions' => $this->quoteAction->getActionsData($quote),
+            'actions' => $mergedActions,
             'order_meta_data' => [
                 'cart_parameters' => [
                     'quote_id' => $quote->getId(),
