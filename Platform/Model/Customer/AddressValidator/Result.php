@@ -1,15 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Model\Customer\EmailValidator;
+namespace Bold\Platform\Model\Customer\AddressValidator;
 
-use Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterface;
-use Bold\Platform\Api\Data\CustomerEmailValidator\ResultExtensionInterface;
+use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface;
+use Bold\Platform\Api\Data\CustomerAddressValidator\ResultExtensionInterface;
 use Bold\Platform\Api\Data\Response\ErrorInterface;
 
-/**
- * Customer email validation result.
- */
 class Result implements ResultInterface
 {
     /**

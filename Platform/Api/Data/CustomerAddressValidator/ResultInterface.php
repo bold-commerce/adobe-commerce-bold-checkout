@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Api\Data\CustomerEmailValidator;
+namespace Bold\Platform\Api\Data\CustomerAddressValidator;
 
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
- * Customer email validation result interface.
+ * Customer address validation result data model interface.
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
     /**
-     * Get is email valid.
+     * Get is address valid.
      *
      * @return bool
      */
@@ -25,7 +25,7 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getErrors(): array;
 
     /**
-     * @return \Bold\Platform\Api\Data\CustomerEmailValidator\ResultExtensionInterface|null
+     * @return \Bold\Platform\Api\Data\CustomerAddressValidator\ResultExtensionInterface|null
      */
     public function getExtensionAttributes(): ?ResultExtensionInterface;
 }
