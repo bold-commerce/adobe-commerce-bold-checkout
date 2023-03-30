@@ -16,7 +16,13 @@
     <route method="POST" url="V1/shops/:shopId/customer/email/validate">
         <service class="Bold\Platform\Api\CustomerEmailValidatorInterface" method="validate"/>
         <resources>
-            <resource ref="anonymous"/>
+            <resource ref="Bold_Checkout::customer"/>
+        </resources>
+    </route>
+    <route method="POST" url="V1/shops/:shopId/customer/address/validate">
+        <service class="Bold\Platform\Api\CustomerAddressValidatorInterface" method="validate"/>
+        <resources>
+            <resource ref="Bold_Checkout::customer"/>
         </resources>
     </route>
 </routes>

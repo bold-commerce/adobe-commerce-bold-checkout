@@ -9,4 +9,6 @@
     <preference for="Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface" type="Bold\Platform\Model\RegisterSharedSecret\Result"/>
     <preference for="Bold\Platform\Api\CustomerEmailValidatorInterface" type="Bold\Platform\Model\Customer\EmailValidator"/>
     <preference for="Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterface" type="Bold\Platform\Model\Customer\EmailValidator\Result"/>
+    <preference for="Bold\Platform\Api\CustomerAddressValidatorInterface" type="Bold\Platform\Model\Customer\AddressValidator"/>
+    <preference for="Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface" type="Bold\Platform\Model\Customer\AddressValidator\Result"/>
 </config>

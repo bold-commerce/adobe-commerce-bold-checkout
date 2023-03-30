@@ -8,6 +8,7 @@
                     <resource id="Bold_Checkout::secret" title="Shared Secret Management" translate="title" sortOrder="1">
                         <resource id="Bold_Checkout::secret_create" title="Create Secret Key" translate="title" sortOrder="1"/>
                     </resource>
+                    <resource id="Bold_Checkout::customer" title="Customer Management" translate="title" sortOrder="2"/>
                 </resource>
             </resource>
         </resources>
