@@ -54,7 +54,6 @@ class Curl extends FrameworkCurl
         $this->logger->debug('Outgoing Call Headers: ' . json_encode($headers));
         $this->logger->debug('Outgoing Call Data: ' . json_encode($data));
         $this->setHeaders($headers);
-        $url = $this->prepareRequest($method, $url, $data);
         $this->makeRequest($method, $url, json_encode($data));
         $this->logger->debug('Outgoing call code: ' . $this->_responseStatus);
         $this->logger->debug('Outgoing call result: ' . $this->_responseBody);
@@ -71,44 +70,6 @@ class Curl extends FrameworkCurl
                 'errors' => $errors,
             ]
         );
-    }
-
-    /**
-     * Build request for given data and type.
-     *
-     * @param string $method
-     * @param string $url
-     * @param array|null $data
-     * @return string
-     */
-    private function prepareRequest(string $method, string $url, array $data = null): string
-    {
-        switch ($method) {
-            case "PUT":
-                $this->curlOption(CURLOPT_PUT, 1);
-                if ($data) {
-                    $this->curlOption(CURLOPT_POSTFIELDS, http_build_query($data));
-                }
-                break;
-            case 'PATCH':
-                $this->curlOption(CURLOPT_CUSTOMREQUEST, 'PATCH');
-                if ($data) {
-                    $this->curlOption(CURLOPT_POSTFIELDS, http_build_query($data));
-                }
-                break;
-            case 'DELETE' :
-                if ($data) {
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-                }
-                $this->curlOption(CURLOPT_CUSTOMREQUEST, 'DELETE');
-                break;
-            default:
-                if ($data) {
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-                }
-        }
-
-        return $url;
     }
 
     /**
