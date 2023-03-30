@@ -25,6 +25,8 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getErrors(): array;
 
     /**
+     * Retrieve result extension attributes.
+     *
      * @return \Bold\Platform\Api\Data\CustomerAddressValidator\ResultExtensionInterface|null
      */
     public function getExtensionAttributes(): ?ResultExtensionInterface;

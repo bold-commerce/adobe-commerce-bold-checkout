@@ -12,6 +12,9 @@ use Magento\Customer\Api\Data\AddressInterface;
 interface CustomerAddressValidatorInterface
 {
     /**
+     * Validate given custom address.
+     *
+     * @param string $shopId
      * @param AddressInterface $address
      * @return ResultInterface
      */

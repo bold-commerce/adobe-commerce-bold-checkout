@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Model\Customer\AddressValidator;
 
-use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface;
 use Bold\Platform\Api\Data\CustomerAddressValidator\ResultExtensionInterface;
+use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface;
 use Bold\Platform\Api\Data\Response\ErrorInterface;
 
+/**
+ * Customer address validation result data model.
+ */
 class Result implements ResultInterface
 {
     /**
