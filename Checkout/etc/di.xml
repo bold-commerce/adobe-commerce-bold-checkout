@@ -14,6 +14,7 @@
             <argument name="quoteActions" xsi:type="array">
                 <item name="quote_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountCart</item>
                 <item name="quote_items_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem</item>
+                <item name="quote_currency" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\Currency</item>
             </argument>
         </arguments>
     </type>
