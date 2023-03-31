@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Curl;
+use DateTime;
 
 /**
  * M2 Platform Connector Http Client.
@@ -42,8 +43,12 @@ class PlatformClient implements ClientInterface
     {
         $secret = $this->config->getSharedSecret($websiteId);
         $shopId = $this->config->getShopId($websiteId);
+        $timestamp = date(DateTime::RFC3339);
+        $hmac = base64_encode(hash_hmac('sha256', $timestamp, $secret, true));
+
         $headers = [
-            'Authorization' => 'Bearer ' . $secret,
+            'X-HMAC-Timestamp' => $timestamp,
+            'X-HMAC' => $hmac,
             'Content-Type' => 'application/json',
         ];
         $url = $this->config->getPlatformConnectorUrl($websiteId) . str_replace('{{shopId}}', $shopId, $url);
