@@ -7,7 +7,7 @@ use Bold\Platform\Api\CustomerAddressValidatorInterface;
 use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface;
 use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterfaceFactory;
 use Bold\Platform\Api\Data\Response\ErrorInterfaceFactory;
-use Bold\Platform\Model\Resource\GetWebsiteIdByShopId;
+use Bold\Platform\Model\ResourceModel\GetWebsiteIdByShopId;
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Customer\Model\Address\CompositeValidator;
 use Magento\Customer\Model\AddressFactory;

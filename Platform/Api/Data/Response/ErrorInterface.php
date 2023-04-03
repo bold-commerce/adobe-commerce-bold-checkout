@@ -7,7 +7,7 @@ use Bold\Platform\Api\Data\Response\ErrorExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
- * Place order response error data interface.
+ * Response error data interface.
  */
 interface ErrorInterface extends ExtensibleDataInterface
 {

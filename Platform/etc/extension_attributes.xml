@@ -18,4 +18,13 @@
             </join>
         </attribute>
     </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\CartItemInterface">
+        <attribute code="tax_details" type="Magento\Tax\Api\Data\AppliedTaxInterface[]"/>
+    </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
+        <attribute code="shipping_tax_amount" type="float"/>
+    </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
+        <attribute code="base_shipping_tax_amount" type="float"/>
+    </extension_attributes>
 </config>
