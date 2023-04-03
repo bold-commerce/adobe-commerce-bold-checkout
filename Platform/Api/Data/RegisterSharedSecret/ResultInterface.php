@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Api\Data\RegisterSharedSecret;
 
-use Bold\Platform\Api\Data\RegisterSharedSecret\ResultExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**

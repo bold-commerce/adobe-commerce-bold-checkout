@@ -16,7 +16,7 @@ interface CustomerAddressValidatorInterface
      *
      * @param string $shopId
      * @param AddressInterface $address
-     * @return ResultInterface
+     * @return \Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface
      */
     public function validate(string $shopId, AddressInterface $address): ResultInterface;
 }
