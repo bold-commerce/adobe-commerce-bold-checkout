@@ -8,6 +8,8 @@ use Bold\Platform\Api\Data\PlaceOrder\ResponseInterface;
 
 /**
  * Place order service.
+ *
+ * @api
  */
 interface PlaceOrderInterface
 {
