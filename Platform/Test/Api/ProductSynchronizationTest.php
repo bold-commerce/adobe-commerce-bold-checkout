@@ -27,7 +27,7 @@ class ProductSynchronizationTest extends WebapiAbstract
     private const SERVICE_VERSION = 'V1';
     private const RESOURCE_PATH = '/V1/products';
     private const BOLD_RESOURCE_PATH = 'products/v2/shops/{{shopId}}/products/pid/%d';
-    private const BOLD_PRODUCT_UPDATE_DELAY = 1;
+    private const BOLD_PRODUCT_UPDATE_DELAY = 15;
 
     /**
      * @var ProductRepositoryInterface
