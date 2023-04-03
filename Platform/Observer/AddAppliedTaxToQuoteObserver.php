@@ -1,23 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Plugin\Quote\Item\Collection;
+namespace Bold\Platform\Observer;
 
-use Exception;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SimpleDataObjectConverter;
-use Magento\Framework\DataObject;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Model\ResourceModel\Quote\Item\Collection;
 use Magento\Tax\Api\Data\AppliedTaxInterface;
 use Magento\Tax\Api\Data\AppliedTaxInterfaceFactory;
-use Psr\Log\LoggerInterface;
 
 /**
- * Populate quote item extension attributes with applied tax details data plugin.
+ * Add applied taxes to cart items and quote.
  */
-class ProcessTaxDetailsDataPlugin
+class AddAppliedTaxToQuoteObserver implements ObserverInterface
 {
     /**
      * @var AppliedTaxInterfaceFactory
@@ -35,59 +33,51 @@ class ProcessTaxDetailsDataPlugin
     private $json;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param AppliedTaxInterfaceFactory $appliedTaxFactory
      * @param DataObjectHelper $objectHelper
      * @param Json $json
-     * @param LoggerInterface $logger
      */
     public function __construct(
         AppliedTaxInterfaceFactory $appliedTaxFactory,
         DataObjectHelper $objectHelper,
-        Json $json,
-        LoggerInterface $logger
+        Json $json
     ) {
         $this->objectHelper = $objectHelper;
         $this->appliedTaxFactory = $appliedTaxFactory;
         $this->json = $json;
-        $this->logger = $logger;
     }
 
     /**
-     * Un-serialize applied tax details and add to extension attributes.
+     * Add applied taxes to quote items and quote.
      *
-     * @param Collection $subject
-     * @param DataObject $item
+     * @param Observer $observer
      * @return void
      */
-    public function beforeAddItem(Collection $subject, DataObject $item): void
+    public function execute(Observer $observer)
     {
-        $taxDetails = $item->getTaxDetails();
-        if (!$taxDetails) {
-            return;
+        $quote = $observer->getEvent()->getQuote();
+        $shippingAddress = $quote->getShippingAddress();
+        foreach ($quote->getAllItems() as $item) {
+            $this->addAppliedTaxesToItem($shippingAddress->getAppliedTaxes(), $item);
         }
-        try {
-            $this->processTaxDetailsData($this->json->unserialize($taxDetails), $item);
-        } catch (Exception $e) {
-            $this->logger->error($e->getMessage());
-        }
+        $quote->getExtensionAttributes()->setShippingTaxAmount($shippingAddress->getShippingTaxAmount());
+        $quote->getExtensionAttributes()->setBaseShippingTaxAmount($shippingAddress->getBaseShippingTaxAmount());
     }
 
     /**
-     * Convert applied taxes data into extension attributes.
+     * Populate cart item with applied taxes.
      *
-     * @param array $taxDetailsData
+     * @param array $appliedTaxes
      * @param CartItemInterface $item
      * @return void
      */
-    private function processTaxDetailsData(array $taxDetailsData, CartItemInterface $item): void
+    public function addAppliedTaxesToItem(array $appliedTaxes, CartItemInterface $item): void
     {
         $taxDetails = [];
-        foreach ($taxDetailsData as $appliedTaxData) {
+        foreach ($appliedTaxes as $appliedTaxData) {
+            if ((int)$item->getItemId() !== (int)$appliedTaxData['item_id']) {
+                continue;
+            }
             $appliedTax = $this->appliedTaxFactory->create();
             $this->objectHelper->populateWithArray(
                 $appliedTax,

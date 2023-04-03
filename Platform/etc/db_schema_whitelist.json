@@ -13,14 +13,5 @@
     "constraint": {
       "PRIMARY": true
     }
-  },
-  "bold_checkout_quote_item_tax": {
-    "column": {
-      "item_id": true,
-      "tax_details": true
-    },
-    "constraint": {
-      "PRIMARY": true
-    }
   }
 }
