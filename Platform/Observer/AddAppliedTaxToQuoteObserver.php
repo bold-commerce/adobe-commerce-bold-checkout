@@ -7,7 +7,6 @@ use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SimpleDataObjectConverter;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Tax\Api\Data\AppliedTaxInterface;
 use Magento\Tax\Api\Data\AppliedTaxInterfaceFactory;
@@ -28,23 +27,15 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
     private $objectHelper;
 
     /**
-     * @var Json
-     */
-    private $json;
-
-    /**
      * @param AppliedTaxInterfaceFactory $appliedTaxFactory
      * @param DataObjectHelper $objectHelper
-     * @param Json $json
      */
     public function __construct(
         AppliedTaxInterfaceFactory $appliedTaxFactory,
-        DataObjectHelper $objectHelper,
-        Json $json
+        DataObjectHelper $objectHelper
     ) {
         $this->objectHelper = $objectHelper;
         $this->appliedTaxFactory = $appliedTaxFactory;
-        $this->json = $json;
     }
 
     /**
@@ -71,7 +62,7 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
      * @param CartItemInterface $item
      * @return void
      */
-    public function addAppliedTaxesToItem(array $appliedTaxes, CartItemInterface $item): void
+    private function addAppliedTaxesToItem(array $appliedTaxes, CartItemInterface $item): void
     {
         $taxDetails = [];
         foreach ($appliedTaxes as $appliedTaxData) {
