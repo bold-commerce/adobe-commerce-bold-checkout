@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Platform\Model\Resource;
+namespace Bold\Platform\Model\ResourceModel;
 
 use Bold\Checkout\Model\ConfigInterface;
 use Magento\Framework\App\ResourceConnection;

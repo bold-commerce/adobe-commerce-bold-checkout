@@ -8,6 +8,13 @@
         <plugin name="bold_checkout_product_save_update_attributes"
                 type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>
     </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Item\Collection">
+        <plugin name="load_applied_tax_details_data" type="Bold\Platform\Plugin\Quote\Item\Collection\LoadTaxDetailsPlugin"/>
+        <plugin name="process_applied_tax_details_data" type="Bold\Platform\Plugin\Quote\Item\Collection\ProcessTaxDetailsDataPlugin"/>
+    </type>
+    <type name="Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector">
+        <plugin name="add_applied_tax_details_to_quote_item" type="Bold\Platform\Plugin\Tax\Model\Sales\Total\Quote\CommonTaxCollector\AddAppliedTaxDetailsToCartItemPlugin"/>
+    </type>
     <type name="Bold\Platform\Model\Sync\GetProducts">
         <arguments>
             <argument name="skipProductTypes" xsi:type="array">

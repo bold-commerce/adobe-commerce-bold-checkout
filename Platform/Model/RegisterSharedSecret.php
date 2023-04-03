@@ -8,7 +8,7 @@ use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
 use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterfaceFactory;
 use Bold\Platform\Api\Data\Response\ErrorInterfaceFactory;
 use Bold\Platform\Api\RegisterSharedSecretInterface;
-use Bold\Platform\Model\Resource\GetWebsiteIdByShopId;
+use Bold\Platform\Model\ResourceModel\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
 

@@ -20,4 +20,12 @@
             <column name="order_id"/>
         </index>
     </table>
+
+    <table name="bold_checkout_quote_item_tax" resource="default" engine="innodb" comment="Bold Checkout Cat Item Tax Details">
+        <column xsi:type="int" name="item_id" unsigned="true" nullable="false" identity="true" comment="Magento Quote Item ID"/>
+        <column xsi:type="varchar" name="tax_details" nullable="true" comment="Quote Item Encoded Applied Tax Details"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="item_id"/>
+        </constraint>
+    </table>
 </schema>

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Model\Customer;
 
-use Bold\Platform\Api\Data\Response\ErrorInterfaceFactory;
 use Bold\Platform\Api\CustomerEmailValidatorInterface;
 use Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterface;
 use Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterfaceFactory;
-use Bold\Platform\Model\Resource\GetWebsiteIdByShopId;
+use Bold\Platform\Api\Data\Response\ErrorInterfaceFactory;
+use Bold\Platform\Model\ResourceModel\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
 use Magento\Store\Model\StoreManagerInterface;

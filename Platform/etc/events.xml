@@ -40,4 +40,10 @@
     <event name="catalog_product_import_bunch_delete_after">
         <observer name="bold_platform_product_import_delete" instance="Bold\Platform\Observer\ProductImportDelete"/>
     </event>
+    <event name="sales_quote_item_save_after">
+        <observer name="save_quote_item_tax_details" instance="Bold\Platform\Observer\SaveQuoteItemTaxDetails"/>
+    </event>
+    <event name="sales_quote_item_delete_after">
+        <observer name="save_quote_item_tax_details" instance="Bold\Platform\Observer\DeleteQuoteItemTaxDetails"/>
+    </event>
 </config>
