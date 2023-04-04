@@ -7,7 +7,7 @@ use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface;
 use Magento\Customer\Api\Data\AddressInterface;
 
 /**
- * Validate customer address interface.
+ * Validate customer address.
  */
 interface CustomerAddressValidatorInterface
 {

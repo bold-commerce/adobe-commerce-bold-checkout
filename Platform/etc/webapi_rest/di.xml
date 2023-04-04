@@ -11,4 +11,8 @@
     <preference for="Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterface" type="Bold\Platform\Model\Customer\EmailValidator\Result"/>
     <preference for="Bold\Platform\Api\CustomerAddressValidatorInterface" type="Bold\Platform\Model\Customer\AddressValidator"/>
     <preference for="Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterface" type="Bold\Platform\Model\Customer\AddressValidator\Result"/>
+
+    <type name="Magento\Quote\Model\ResourceModel\Quote">
+        <plugin name="persist_quote_currency" type="Bold\Platform\Plugin\Sales\Model\ResourceModel\Quote\PersistQuoteCurrencyPlugin"/>
+    </type>
 </config>
