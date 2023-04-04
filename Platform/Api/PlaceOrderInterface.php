@@ -7,7 +7,7 @@ use Bold\Platform\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Platform\Api\Data\PlaceOrder\ResponseInterface;
 
 /**
- * Place order service.
+ * Push bold order to m2 platform.
  *
  * @api
  */

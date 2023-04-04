@@ -6,7 +6,7 @@ namespace Bold\Platform\Api;
 use Bold\Platform\Api\Data\CustomerEmailValidator\ResultInterface;
 
 /**
- * Customer email validation service interface.
+ * Validate customer email.
  */
 interface CustomerEmailValidatorInterface
 {

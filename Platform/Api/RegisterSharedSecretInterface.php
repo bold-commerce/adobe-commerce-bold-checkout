@@ -6,7 +6,7 @@ namespace Bold\Platform\Api;
 use Bold\Platform\Api\Data\RegisterSharedSecret\ResultInterface;
 
 /**
- * Add shared secret service interface.
+ * Add shared secret for m2 bold integration auth.
  */
 interface RegisterSharedSecretInterface
 {
