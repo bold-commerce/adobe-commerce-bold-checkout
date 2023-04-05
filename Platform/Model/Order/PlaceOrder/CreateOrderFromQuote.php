@@ -170,7 +170,7 @@ class CreateOrderFromQuote
      * @param OrderInterface $order
      * @return void
      */
-    private function setOrderTaxDetails(OrderInterface $order)
+    private function setOrderTaxDetails(OrderInterface $order): void
     {
         $extensionAttributes = $order->getExtensionAttributes();
         $orderTaxDetails = $this->orderTaxManagement->getOrderTaxDetails($order->getEntityId());
@@ -190,7 +190,7 @@ class CreateOrderFromQuote
      * @param OrderInterface $order
      * @return void
      */
-    private function setShippingAssignments(OrderInterface $order)
+    private function setShippingAssignments(OrderInterface $order): void
     {
         if ($order->getExtensionAttributes()->getShippingAssignments()) {
             return;
