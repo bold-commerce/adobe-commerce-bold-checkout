@@ -9,9 +9,9 @@ use Bold\Platform\Api\Data\CustomerAddressValidator\ResultInterfaceFactory;
 use Bold\Platform\Api\Data\Response\ErrorInterfaceFactory;
 use Bold\Platform\Model\ResourceModel\GetWebsiteIdByShopId;
 use Magento\Customer\Api\Data\AddressInterface;
-use Magento\CustomerGraphQl\Model\Customer\Address\ValidateAddress;
+use Magento\Customer\Model\Address\CompositeValidator;
+use Magento\Customer\Model\AddressFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -20,9 +20,9 @@ use Magento\Store\Model\StoreManagerInterface;
 class AddressValidator implements CustomerAddressValidatorInterface
 {
     /**
-     * @var ValidateAddress
+     * @var CompositeValidator
      */
-    private $validateAddress;
+    private $compositeValidator;
 
     /**
      * @var ResultInterfaceFactory
@@ -33,6 +33,11 @@ class AddressValidator implements CustomerAddressValidatorInterface
      * @var ErrorInterfaceFactory
      */
     private $errorFactory;
+
+    /**
+     * @var AddressFactory
+     */
+    private $customerAddressFactory;
 
     /**
      * @var GetWebsiteIdByShopId
@@ -47,20 +52,23 @@ class AddressValidator implements CustomerAddressValidatorInterface
     /**
      * @param GetWebsiteIdByShopId $getWebsiteIdByShopId
      * @param StoreManagerInterface $storeManager
-     * @param ValidateAddress $validateAddress
+     * @param CompositeValidator $compositeValidator
+     * @param AddressFactory $customerAddressFactory
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      */
     public function __construct(
         GetWebsiteIdByShopId $getWebsiteIdByShopId,
         StoreManagerInterface $storeManager,
-        ValidateAddress $validateAddress,
+        CompositeValidator $compositeValidator,
+        AddressFactory $customerAddressFactory,
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory
     ) {
-        $this->validateAddress = $validateAddress;
+        $this->compositeValidator = $compositeValidator;
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
+        $this->customerAddressFactory = $customerAddressFactory;
         $this->getWebsiteIdByShopId = $getWebsiteIdByShopId;
         $this->storeManager = $storeManager;
     }
@@ -99,13 +107,14 @@ class AddressValidator implements CustomerAddressValidatorInterface
                 ]
             );
         }
-        try {
-            $responseErrors = [];
-            $this->validateAddress->execute($address);
-        } catch (GraphQlInputException $e) {
+        $customerAddress = $this->customerAddressFactory->create();
+        $customerAddress->updateData($address);
+        $errors = $this->compositeValidator->validate($customerAddress);
+        $responseErrors = [];
+        foreach ($errors as $error) {
             $responseErrors[] = $this->errorFactory->create(
                 [
-                    'message' => $e->getMessage(),
+                    'message' => $error,
                     'code' => 422,
                     'type' => 'server.validation_error',
                 ]
@@ -113,7 +122,7 @@ class AddressValidator implements CustomerAddressValidatorInterface
         }
         return $this->resultFactory->create(
             [
-                'errors' => $responseErrors,
+                'errors' => $responseErrors
             ]
         );
     }
