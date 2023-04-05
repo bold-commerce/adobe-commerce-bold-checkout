@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Platform\Model\Order\PlaceOrder;
 
-use Bold\Platform\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Payment\Gateway\Service;
-use Exception;
+use Bold\Platform\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Framework\Event\ManagerInterface;
@@ -13,8 +12,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Order\ShippingAssignmentBuilder;
+use Magento\Tax\Api\OrderTaxManagementInterface;
 
 /**
  * Place order for given cart.
@@ -38,39 +37,39 @@ class CreateOrderFromQuote
     private $eventManager;
 
     /**
-     * @var OrderSender
-     */
-    private $orderSender;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var CustomerRepositoryInterface
      */
     private $customerRepository;
 
     /**
+     * @var OrderTaxManagementInterface
+     */
+    private $orderTaxManagement;
+
+    /**
+     * @var ShippingAssignmentBuilder
+     */
+    private $shippingAssignmentBuilder;
+
+    /**
      * @param CartManagementInterface $cartManagement
      * @param CustomerRepositoryInterface $customerRepository
+     * @param OrderTaxManagementInterface $orderTaxManagement
+     * @param ShippingAssignmentBuilder $shippingAssignmentBuilder
      * @param ManagerInterface $eventManager
-     * @param OrderSender $orderSender
-     * @param LoggerInterface $logger
      */
     public function __construct(
         CartManagementInterface $cartManagement,
         CustomerRepositoryInterface $customerRepository,
-        ManagerInterface $eventManager,
-        OrderSender $orderSender,
-        LoggerInterface $logger
+        OrderTaxManagementInterface $orderTaxManagement,
+        ShippingAssignmentBuilder $shippingAssignmentBuilder,
+        ManagerInterface $eventManager
     ) {
         $this->cartManagement = $cartManagement;
         $this->eventManager = $eventManager;
-        $this->orderSender = $orderSender;
-        $this->logger = $logger;
         $this->customerRepository = $customerRepository;
+        $this->orderTaxManagement = $orderTaxManagement;
+        $this->shippingAssignmentBuilder = $shippingAssignmentBuilder;
     }
 
     /**
@@ -100,17 +99,12 @@ class CreateOrderFromQuote
             self::FULFILLMENT_STATUS => $orderPayload->getFulfillmentStatus(),
         ];
         $order = $this->cartManagement->submit($cart, $orderData);
+        $this->setOrderTaxDetails($order);
+        $this->setShippingAssignments($order);
         $this->eventManager->dispatch(
             'checkout_type_onepage_save_order_after',
             ['order' => $order, 'quote' => $cart]
         );
-        if ($order->getCanSendNewEmailFlag()) {
-            try {
-                $this->orderSender->send($order);
-            } catch (Exception $e) {
-                $this->logger->critical($e);
-            }
-        }
         $this->eventManager->dispatch(
             'checkout_submit_all_after',
             [
@@ -168,5 +162,40 @@ class CreateOrderFromQuote
             $cart->addCustomerAddress($billingAddress);
             $billing->setCustomerAddressData($billingAddress);
         }
+    }
+
+    /**
+     * Set order tax details to extension attributes.
+     *
+     * @param OrderInterface $order
+     * @return void
+     */
+    private function setOrderTaxDetails(OrderInterface $order)
+    {
+        $extensionAttributes = $order->getExtensionAttributes();
+        $orderTaxDetails = $this->orderTaxManagement->getOrderTaxDetails($order->getEntityId());
+        $appliedTaxes = $orderTaxDetails->getAppliedTaxes();
+        $extensionAttributes->setAppliedTaxes($appliedTaxes);
+        if (!empty($appliedTaxes)) {
+            $extensionAttributes->setConvertingFromQuote(true);
+        }
+        $items = $orderTaxDetails->getItems();
+        $extensionAttributes->setItemAppliedTaxes($items);
+        $order->setExtensionAttributes($extensionAttributes);
+    }
+
+    /**
+     * Set shipping assignments to extension attributes.
+     *
+     * @param OrderInterface $order
+     * @return void
+     */
+    private function setShippingAssignments(OrderInterface $order)
+    {
+        if ($order->getExtensionAttributes()->getShippingAssignments()) {
+            return;
+        }
+        $this->shippingAssignmentBuilder->setOrderId($order->getEntityId());
+        $order->getExtensionAttributes()->setShippingAssignments($this->shippingAssignmentBuilder->create());
     }
 }
