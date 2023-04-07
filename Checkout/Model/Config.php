@@ -22,6 +22,7 @@ class Config implements ConfigInterface
     private const PATH_CUSTOMER_WHITELIST = 'checkout/bold_checkout_advanced/customer_whitelist';
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
     private const PATH_PLATFORM_CONNECTOR_URL = 'checkout/bold_checkout_advanced/platform_connector_url';
+    private const PATH_LOG_ENABLED = 'checkout/bold_checkout_advanced/log_enabled';
 
     /**
      * @var ScopeConfigInterface
@@ -153,6 +154,14 @@ class Config implements ConfigInterface
     public function getShopId(int $websiteId): ?string
     {
         return $this->scopeConfig->getValue(self::PATH_SHOP_ID, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLogIsEnabled(int $websiteId): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::PATH_LOG_ENABLED, ScopeInterface::SCOPE_WEBSITES, $websiteId);
     }
 
     /**

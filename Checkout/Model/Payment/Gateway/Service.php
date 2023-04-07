@@ -7,7 +7,6 @@ use Bold\Checkout\Api\Http\ClientInterface;
 use Exception;
 use Magento\Framework\Math\Random;
 use Magento\Sales\Api\Data\OrderInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Bold gateway service.
@@ -34,20 +33,13 @@ class Service
     private $random;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param ClientInterface $httpClient
      * @param Random $random
-     * @param LoggerInterface $logger
      */
-    public function __construct(ClientInterface $httpClient, Random $random, LoggerInterface $logger)
+    public function __construct(ClientInterface $httpClient, Random $random)
     {
         $this->httpClient = $httpClient;
         $this->random = $random;
-        $this->logger = $logger;
     }
 
     /**
@@ -66,7 +58,7 @@ class Service
             'idempotent_key' => $this->random->getRandomString(10),
         ];
         $url = sprintf(self::CAPTURE_FULL_URL, $order->getExtensionAttributes()->getPublicId());
-        return $this->sendCaptureRequest($websiteId, $url, $order->getIncrementId(), $body);
+        return $this->sendCaptureRequest($websiteId, $url, $body);
     }
 
     /**
@@ -89,7 +81,7 @@ class Service
         ];
         $url = sprintf(self::CAPTURE_PARTIALLY_URL, $orderPublicId);
 
-        return $this->sendCaptureRequest($websiteId, $url, $order->getIncrementId(), $body);
+        return $this->sendCaptureRequest($websiteId, $url, $body);
     }
 
     /**
@@ -111,16 +103,13 @@ class Service
                 ? __('Order has been canceled.')
                 : __('Order payment has been voided.'),
         ];
-        $result = $this->httpClient->call($websiteId, 'POST', $url, $body);
+        $result = $this->httpClient->post($websiteId, $url, $body);
         $errors = $result->getErrors();
-        $logMessage = sprintf('Order id: %s. Errors: ' . PHP_EOL, $order->getIncrementId());
         $errorMessage = $operation === self::CANCEL ? __('Cannot cancel the order') : __('Cannot void order payment.');
         foreach ($errors as $error) {
-            $logMessage .= sprintf('Type: %s. Message: %s' . PHP_EOL, $error['type'], $error['message']);
             $errorMessage = $error['message'];
         }
         if ($errors) {
-            $this->logger->debug($logMessage);
             throw new Exception($errorMessage);
         }
         $body = $result->getBody();
@@ -149,7 +138,7 @@ class Service
             'reason' => 'Magento credit memo created.',
         ];
         $url = sprintf(self::REFUND_FULL_URL, $orderPublicId);
-        return $this->sendRefundRequest($websiteId, $url, $order->getIncrementId(), $body);
+        return $this->sendRefundRequest($websiteId, $url, $body);
     }
 
     /**
@@ -171,34 +160,27 @@ class Service
             'amount' => $amount * 100,
         ];
         $url = sprintf(self::REFUND_PARTIALLY_URL, $orderPublicId);
-        return $this->sendRefundRequest($websiteId, $url, $order->getIncrementId(), $body);
+        return $this->sendRefundRequest($websiteId, $url, $body);
     }
 
     /**
      * Perform capture api call.
      *
+     * @param int $websiteId
      * @param string $url
-     * @param string $orderId
      * @param array $body
      * @return string
      * @throws Exception
      */
-    private function sendCaptureRequest(int $websiteId, string $url, string $orderId, array $body): string
+    private function sendCaptureRequest(int $websiteId, string $url, array $body): string
     {
-        $result = $this->httpClient->call($websiteId, 'POST', $url, $body);
+        $result = $this->httpClient->post($websiteId, $url, $body);
         $errors = $result->getErrors();
-        $logMessage = sprintf('Order id: %s. Errors: ' . PHP_EOL, $orderId);
         $errorMessage = __('Cannot capture the order.');
         foreach ($errors as $error) {
             $errorMessage .= ' ' . $error['message'];
-            $logMessage .= sprintf(
-                'Type: %s. Message: %s' . PHP_EOL,
-                $error['type'],
-                $error['message']
-            );
         }
         if ($errors) {
-            $this->logger->debug($logMessage);
             throw new Exception($errorMessage);
         }
         $body = $result->getBody();
@@ -212,29 +194,21 @@ class Service
     /**
      * Perform refund api call.
      *
+     * @param int $websiteId
      * @param string $url
-     * @param string $orderId
      * @param array $body
      * @return string
      * @throws Exception
      */
-    private function sendRefundRequest(int $websiteId, string $url, string $orderId, array $body): string
+    private function sendRefundRequest(int $websiteId, string $url, array $body): string
     {
-        $result = $this->httpClient->call($websiteId, 'POST', $url, $body);
+        $result = $this->httpClient->post($websiteId, $url, $body);
         $errors = $result->getErrors();
-        $logMessage = sprintf('Order id: %s. Errors: ' . PHP_EOL, $orderId);
         $errorMessage = __('Cannot refund order.');
         foreach ($errors as $error) {
             $errorMessage .= ' ' . $error['message'];
-            $logMessage .= sprintf(
-                'Code: %s. Type: %s. Message: %s' . PHP_EOL,
-                $error['code'],
-                $error['type'],
-                $error['message']
-            );
         }
         if ($errors) {
-            $this->logger->debug($logMessage);
             throw new Exception($errorMessage);
         }
         $body = $result->getBody();

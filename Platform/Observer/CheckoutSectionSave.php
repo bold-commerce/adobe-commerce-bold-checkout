@@ -5,8 +5,6 @@ namespace Bold\Platform\Observer;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
-use Bold\Checkout\Model\Http\Client\Curl;
-use Bold\Checkout\Model\Http\Client\UserAgent;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -16,7 +14,12 @@ use Magento\Framework\Event\ObserverInterface;
  */
 class CheckoutSectionSave implements ObserverInterface
 {
-    private const SHOP_INFO_URL = 'https://api.boldcommerce.com/shops/v1/info';
+    private const SHOP_INFO_URL = 'shops/v1/info';
+
+    /**
+     * @var ClientInterface
+     */
+    private $client;
 
     /**
      * @var ConfigInterface
@@ -24,28 +27,15 @@ class CheckoutSectionSave implements ObserverInterface
     private $config;
 
     /**
-     * @var UserAgent
-     */
-    private $userAgent;
-
-    /**
-     * @var Curl
-     */
-    private $curl;
-
-    /**
      * @param ConfigInterface $config
-     * @param UserAgent $userAgent
-     * @param Curl $curl
+     * @param ClientInterface $client
      */
     public function __construct(
         ConfigInterface $config,
-        UserAgent $userAgent,
-        Curl $curl
+        ClientInterface $client
     ) {
+        $this->client = $client;
         $this->config = $config;
-        $this->userAgent = $userAgent;
-        $this->curl = $curl;
     }
 
     /**
@@ -59,14 +49,7 @@ class CheckoutSectionSave implements ObserverInterface
     {
         $event = $observer->getEvent();
         $websiteId = (int)$event->getWebsite();
-        $apiToken = $this->config->getApiToken($websiteId);
-        $headers = [
-            'Authorization' => 'Bearer ' . $apiToken,
-            'Content-Type' => 'application/json',
-            'User-Agent' => $this->userAgent->getUserAgent(),
-            'Bold-API-Version-Date' => ClientInterface::BOLD_API_VERSION_DATE,
-        ];
-        $shopInfo = $this->curl->sendRequest('GET', self::SHOP_INFO_URL, $headers);
+        $shopInfo = $this->client->get($websiteId, self::SHOP_INFO_URL);
         if ($shopInfo->getErrors()) {
             $error = current($shopInfo->getErrors());
             throw new Exception($error);

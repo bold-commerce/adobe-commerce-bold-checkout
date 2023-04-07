@@ -7,19 +7,23 @@ use Magento\Framework\Locale\CurrencyInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
 /**
- * Gets currency for the active cart
+ * Gets currency for the active cart.
  */
 class Currency implements QuoteActionInterface
 {
     private const SET_CURRENCY = 'set_currency';
     private const SET_GATEWAY_CURRENCY = 'set_gateway_currency';
 
-    /** @var CurrencyInterface */
-    protected $currency;
+    /**
+     * @var CurrencyInterface
+     */
+    private $currency;
 
-    public function __construct(
-        CurrencyInterface $currency,
-    ) {
+    /**
+     * @param CurrencyInterface $currency
+     */
+    public function __construct(CurrencyInterface $currency)
+    {
         $this->currency = $currency;
     }
 
@@ -47,7 +51,7 @@ class Currency implements QuoteActionInterface
                 'data' => [
                     'currency' => $cartCurrency->getQuoteCurrencyCode(),
                 ],
-            ]
+            ],
         ];
     }
 }

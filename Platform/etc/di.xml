@@ -5,8 +5,12 @@
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Platform\Model\Import\Customer"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Platform\Model\Import\Address"/>
     <type name="Magento\Catalog\Model\Product\Action">
-        <plugin name="bold_checkout_product_save_update_attributes"
-                type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>
+        <plugin name="bold_checkout_product_save_update_attributes" type="Bold\Platform\Plugin\Product\UpdateAttributesPlugin"/>
+    </type>
+    <type name="Bold\Platform\Observer\CheckoutSectionSave">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
     </type>
     <type name="Bold\Platform\Model\Sync\GetProducts">
         <arguments>
@@ -48,9 +52,7 @@
         </arguments>
     </type>
     <type name="Magento\Catalog\Model\Product\Website">
-        <plugin name="bold_checkout_product_add_website"
-                type="Bold\Platform\Plugin\Product\AddWebsitePlugin"/>
-        <plugin name="bold_checkout_product_remove_website"
-                type="Bold\Platform\Plugin\Product\RemoveWebsitePlugin"/>
+        <plugin name="bold_checkout_product_add_website" type="Bold\Platform\Plugin\Product\AddWebsitePlugin"/>
+        <plugin name="bold_checkout_product_remove_website" type="Bold\Platform\Plugin\Product\RemoveWebsitePlugin"/>
     </type>
 </config>

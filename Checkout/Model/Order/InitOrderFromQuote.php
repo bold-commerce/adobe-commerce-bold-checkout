@@ -46,13 +46,13 @@ class InitOrderFromQuote
      */
     private $quoteIdToMaskedQuoteId;
 
-     /**
-      * @param ClientInterface $client
-      * @param CollectionFactory $countryCollectionFactory
-      * @param GetCartLineItems $getCartLineItems
-      * @param QuoteAction $quoteAction
-      * @param QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId
-      */
+    /**
+     * @param ClientInterface $client
+     * @param CollectionFactory $countryCollectionFactory
+     * @param GetCartLineItems $getCartLineItems
+     * @param QuoteAction $quoteAction
+     * @param QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId
+     */
     public function __construct(
         ClientInterface $client,
         CollectionFactory $countryCollectionFactory,
@@ -76,10 +76,10 @@ class InitOrderFromQuote
      */
     public function init(CartInterface $quote): array
     {
-        $maskedQuoteId = $quote->getCustomerIsGuest() ? $this->quoteIdToMaskedQuoteId->execute((int) $quote->getId()) : null;
+        $maskedQuoteId = $quote->getCustomerIsGuest() ? $this->quoteIdToMaskedQuoteId->execute((int)$quote->getId()) : null;
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         $actions = $this->quoteAction->getActionsData($quote);
-        $mergedActions = array_reduce($actions, function($carry, $item) {
+        $mergedActions = array_reduce($actions, function ($carry, $item) {
             return array_merge($carry, $item);
         }, []);
 
@@ -92,7 +92,7 @@ class InitOrderFromQuote
                     'masked_quote_id' => $maskedQuoteId,
                     'store_id' => $quote->getStoreId(),
                     'website_id' => $websiteId,
-                ]
+                ],
             ],
         ];
 
@@ -112,7 +112,7 @@ class InitOrderFromQuote
             ];
         }
 
-        $orderData = $this->client->call($websiteId, 'POST', self::INIT_URL, $body)->getBody();
+        $orderData = $this->client->post($websiteId, self::INIT_URL, $body)->getBody();
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
             throw new LocalizedException(__('Cannot initialize order for quote with id = "%s"', $quote->getId()));
