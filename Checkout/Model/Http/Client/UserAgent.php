@@ -30,7 +30,7 @@ class UserAgent
      *
      * @return string
      */
-    public function getUserAgent(): string
+    public function getUserAgentData(): string
     {
         $moduleConfig = $this->moduleList->getOne('Bold_Checkout');
         return isset($moduleConfig['setup_version'])

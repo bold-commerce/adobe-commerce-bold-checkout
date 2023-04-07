@@ -14,7 +14,6 @@ use Exception;
  */
 class Delete
 {
-    private const METHOD = 'POST';
     private const URL = '/{{shopId}}/webhooks/products/deleted';
     private const CHUNK_SIZE = 500;
 
@@ -63,7 +62,7 @@ class Delete
         $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
         foreach ($idsChunks as $entityIds) {
             $items = $this->getProducts->getItems($request->getWebsiteId(), $entityIds);
-            $this->client->call($request->getWebsiteId(), self::METHOD, self::URL, $items);
+            $this->client->post($request->getWebsiteId(),  self::URL, $items);
         }
     }
 }

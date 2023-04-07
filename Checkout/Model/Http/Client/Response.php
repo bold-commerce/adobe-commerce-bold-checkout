@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http\Client;
 
+use Bold\Checkout\Api\Data\Http\Client\ResponseExtensionInterface;
 use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
+use Exception;
+use Magento\Framework\HTTP\ClientInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * Http client response data model.
@@ -11,30 +15,33 @@ use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
 class Response implements ResponseInterface
 {
     /**
-     * @var int
+     * @var ClientInterface
      */
-    private $status;
+    private $client;
 
     /**
-     * @var array
+     * @var Json
      */
-    private $body;
+    private $json;
 
     /**
-     * @var array
+     * @var ResponseExtensionInterface|null
      */
-    private $errors;
+    private $extensionAttributes;
 
     /**
-     * @param int $status
-     * @param array $body
-     * @param array $errors
+     * @param Json $json
+     * @param ClientInterface $client
+     * @param ResponseExtensionInterface|null $extensionAttributes
      */
-    public function __construct(int $status, array $body = [], array $errors = [])
-    {
-        $this->status = $status;
-        $this->body = $body;
-        $this->errors = $errors;
+    public function __construct(
+        Json $json,
+        ClientInterface $client,
+        ResponseExtensionInterface $extensionAttributes = null
+    ) {
+        $this->client = $client;
+        $this->json = $json;
+        $this->extensionAttributes = $extensionAttributes;
     }
 
     /**
@@ -42,7 +49,7 @@ class Response implements ResponseInterface
      */
     public function getStatus(): int
     {
-        return $this->status;
+        return $this->client->getStatus();
     }
 
     /**
@@ -50,7 +57,12 @@ class Response implements ResponseInterface
      */
     public function getErrors(): array
     {
-        return $this->errors;
+        try {
+            $body = $this->json->unserialize($this->client->getBody());
+        } catch (Exception $e) {
+            $body = [];
+        }
+        return $this->getErrorsFromBody($body);
     }
 
     /**
@@ -58,6 +70,36 @@ class Response implements ResponseInterface
      */
     public function getBody(): array
     {
-        return $this->body;
+        try {
+            $body = $this->json->unserialize($this->client->getBody());
+        } catch (Exception $e) {
+            $body = [];
+        }
+        return $this->getErrorsFromBody($body) ? [] : $body;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes(): ?ResponseExtensionInterface
+    {
+        return $this->extensionAttributes;
+    }
+
+    /**
+     * Retrieve errors from response body.
+     *
+     * @param array $body
+     * @return array
+     */
+    private function getErrorsFromBody(array $body): array
+    {
+        $errors = $body['errors'] ?? [];
+        if (isset($body['error'])) {
+            $errors = [
+                $body['error_description'] ?? $body['error'],
+            ];
+        }
+        return $errors;
     }
 }

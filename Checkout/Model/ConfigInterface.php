@@ -94,6 +94,14 @@ interface ConfigInterface
     public function getShopId(int $websiteId): ?string;
 
     /**
+     * Get is bold checkout log is enabled.
+     *
+     * @param int $websiteId
+     * @return bool
+     */
+    public function getLogIsEnabled(int $websiteId): bool;
+
+    /**
      * Set shop identifier.
      *
      * @param int $websiteId

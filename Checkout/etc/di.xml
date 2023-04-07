@@ -4,6 +4,23 @@
     <preference for="Bold\Checkout\Model\ConfigInterface" type="Bold\Checkout\Model\Config"/>
     <preference for="Bold\Checkout\Api\Data\Http\Client\ResponseInterface" type="Bold\Checkout\Model\Http\Client\Response"/>
 
+    <type name="Bold\Checkout\Model\Http\Client\RequestsLogger">
+        <arguments>
+            <argument name="logger" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger</argument>
+        </arguments>
+    </type>
+    <virtualType name="Bold\Checkout\Model\Http\Client\RequestsLogger\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Checkout\Model\Http\Client\RequestsLogger\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/bold_checkout.log</argument>
+        </arguments>
+    </virtualType>
     <type name="Bold\Checkout\Model\Order\InitOrderFromQuote">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
@@ -22,21 +39,8 @@
     <type name="Bold\Checkout\Model\Payment\Gateway\Service">
         <arguments>
             <argument name="httpClient" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-            <argument name="logger" xsi:type="object">Bold\Checkout\Payment\Gateway\Service\Logger</argument>
         </arguments>
     </type>
-    <virtualType name="Bold\Checkout\Payment\Gateway\Service\Logger" type="Magento\Framework\Logger\Monolog">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="debug" xsi:type="object">Bold\Checkout\Payment\Gateway\Service\Logger\Handler</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Bold\Checkout\Payment\Gateway\Service\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
-        <arguments>
-            <argument name="fileName" xsi:type="string">bold_payment.log</argument>
-        </arguments>
-    </virtualType>
 
     <!-- Bold Payment Method Configuration. -->
     <virtualType name="Bold\Checkout\Model\Method\Adapter" type="Magento\Payment\Model\Method\Adapter">

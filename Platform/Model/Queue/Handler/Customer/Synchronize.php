@@ -16,7 +16,6 @@ use Exception;
 class Synchronize
 {
     private const CHUNK_SIZE = 500;
-    private const METHOD = 'POST';
     private const URL = '/{{shopId}}/webhooks/customer/saved';
 
     /**
@@ -41,7 +40,7 @@ class Synchronize
      */
     public function __construct(
         ConfigInterface $config,
-        GetCustomers    $getCustomers,
+        GetCustomers $getCustomers,
         ClientInterface $client
     ) {
         $this->config = $config;
@@ -64,7 +63,7 @@ class Synchronize
         $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
         foreach ($idsChunks as $entityIds) {
             $items = $this->getCustomers->getItems($request->getWebsiteId(), $entityIds);
-            $this->client->call($request->getWebsiteId(), self::METHOD, self::URL, $items);
+            $this->client->post($request->getWebsiteId(), self::URL, $items);
         }
     }
 }

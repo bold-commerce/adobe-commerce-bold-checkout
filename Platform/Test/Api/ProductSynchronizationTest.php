@@ -79,7 +79,7 @@ class ProductSynchronizationTest extends WebapiAbstract
         $website = $this->storeManager->getWebsite('base');
         $product = $this->productRepository->get('sample_simple_product');
         $url = sprintf(self::BOLD_RESOURCE_PATH, $product->getId());
-        $response = $this->boldClient->call((int)$website->getId(), 'GET', $url, []);
+        $response = $this->boldClient->get((int)$website->getId(), $url);
         $this->assertEquals(200, $response->getStatus(), 'Product record on Bold not found');
         $boldAttributeValue = $response->getBody()['data'][$updatedAttributeName] ?? null;
         $this->assertNotNull(
@@ -176,7 +176,7 @@ class ProductSynchronizationTest extends WebapiAbstract
         $product = $this->productRepository->get('sample_simple_product');
         $this->deleteProduct(['sku' => 'sample_simple_product']);
         $url = sprintf(self::BOLD_RESOURCE_PATH, $product->getId());
-        $response = $this->boldClient->call((int)$website->getId(), 'GET', $url, []);
+        $response = $this->boldClient->get((int)$website->getId(), $url);
         $this->assertEquals(404, $response->getStatus(), 'Product record on Bold not removed');
     }
 
