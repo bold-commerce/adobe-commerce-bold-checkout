@@ -39,7 +39,6 @@ class GetCategories
         StoreManagerInterface $storeManager,
         DataObjectProcessor $dataObjectProcessor
     ) {
-        $this->metadataPool = $metadataPool;
         $this->storeManager = $storeManager;
         $this->collectionFactory = $collectionFactory;
         $this->dataObjectProcessor = $dataObjectProcessor;
