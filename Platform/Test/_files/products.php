@@ -31,4 +31,3 @@ $product->setTypeId(Type::TYPE_SIMPLE)
     )
     ->setStatus(Status::STATUS_ENABLED);
 $productRepository->save($product);
-
