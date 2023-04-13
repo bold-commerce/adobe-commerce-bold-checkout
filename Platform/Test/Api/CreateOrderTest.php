@@ -20,8 +20,6 @@ use Magento\TestFramework\TestCase\WebapiAbstract;
  */
 class CreateOrderTest extends WebapiAbstract
 {
-    private const SERVICE_NAME = 'boldPlatformPlaceOrderV1';
-    private const SERVICE_VERSION = 'V1';
     private const RESOURCE_PATH = '/V1/shops/{{shopId}}/orders';
     private const QUOTE_RESERVED_ORDER_ID = 'bold_test_reserved_order_id';
 
@@ -47,6 +45,28 @@ class CreateOrderTest extends WebapiAbstract
         $this->quote->setIsActive(0);
         $cartRepository = Bootstrap::getObjectManager()->get(CartRepositoryInterface::class);
         $cartRepository->save($this->quote);
+    }
+
+    /**
+     * Test place order endpoint is hit with wrong shop id.
+     *
+     * @magentoApiDataFixture Bold_Platform::Test/_files/guest_quote.php
+     * @return void
+     */
+    public function testInvalidShopId(): void
+    {
+        self::_markTestAsRestOnly();
+        $orderNumber = Bootstrap::getObjectManager()->get(Random::class)->getRandomString(10);
+        $orderRequestBody = $this->getPlaceOrderPayload($orderNumber);
+        $serviceInfo = [
+            'rest' => [
+                'resourcePath' => str_replace('{{shopId}}', 'invalid_shop_id', self::RESOURCE_PATH),
+                'httpMethod' => Request::HTTP_METHOD_POST,
+            ],
+        ];
+        $result = $this->_webApiCall($serviceInfo, $orderRequestBody);
+        self::assertEquals('Shop Id "invalid_shop_id" is incorrect.', $result['errors'][0]['message']);
+        self::assertEquals(422, $result['errors'][0]['code']);
     }
 
     /**
