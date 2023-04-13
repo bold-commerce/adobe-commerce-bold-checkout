@@ -6,7 +6,6 @@ namespace Bold\Platform\Test\Api;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\BoldClient;
-use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\MessageQueue\ConsumerFactory;
