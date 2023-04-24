@@ -93,6 +93,9 @@ class InitOrderFromQuote
                     'store_id' => $quote->getStoreId(),
                     'website_id' => $websiteId,
                 ],
+                'note_attributes' => [
+                    'quote_id' => $quote->getId(),
+                ]
             ],
         ];
 
