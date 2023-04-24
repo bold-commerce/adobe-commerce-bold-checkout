@@ -35,11 +35,6 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $messageManager;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var InitOrderFromQuote
      */
     private $initOrderFromQuote;
@@ -48,20 +43,17 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
      * @param IsBoldCheckoutAllowedForCart $allowedForCart
      * @param Session $session
      * @param ManagerInterface $messageManager
-     * @param LoggerInterface $logger
      * @param InitOrderFromQuote $initOrderFromQuote
      */
     public function __construct(
         IsBoldCheckoutAllowedForCart $allowedForCart,
         Session $session,
         ManagerInterface $messageManager,
-        LoggerInterface $logger,
         InitOrderFromQuote $initOrderFromQuote
     ) {
         $this->allowedForCart = $allowedForCart;
         $this->session = $session;
         $this->messageManager = $messageManager;
-        $this->logger = $logger;
         $this->initOrderFromQuote = $initOrderFromQuote;
     }
 
@@ -86,7 +78,6 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             $this->messageManager->addErrorMessage(
                 __('There was an error during checkout. Please contact us or try again later.')
             );
-            $this->logger->error('Bold Checkout error: ' . $exception->getMessage());
             $observer->getControllerAction()->getResponse()->setRedirect('/');
         }
     }
