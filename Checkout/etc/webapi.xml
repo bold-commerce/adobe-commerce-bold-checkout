@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route method="POST" url="/V1/shops/:shopId/orders">
+        <service class="Bold\Checkout\Api\PlaceOrderInterface" method="place"/>
+        <resources>
+            <resource ref="Magento_Sales::create"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/shops/:shopId/secret/register">
+        <service class="Bold\Checkout\Api\RegisterSharedSecretInterface" method="register"/>
+        <resources>
+            <resource ref="Bold_Checkout::secret_create"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/shops/:shopId/customer/email/validate">
+        <service class="Bold\Checkout\Api\CustomerEmailValidatorInterface" method="validate"/>
+        <resources>
+            <resource ref="Bold_Checkout::customer"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/shops/:shopId/customer/address/validate">
+        <service class="Bold\Checkout\Api\CustomerAddressValidatorInterface" method="validate"/>
+        <resources>
+            <resource ref="Bold_Checkout::customer"/>
+        </resources>
+    </route>
+</routes>

@@ -10,7 +10,6 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Redirect to bold checkout if allowed.

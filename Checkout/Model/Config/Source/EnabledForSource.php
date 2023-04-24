@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Config\Source;
@@ -7,6 +6,9 @@ namespace Bold\Checkout\Model\Config\Source;
 use Bold\Checkout\Model\ConfigInterface;
 use Magento\Framework\Data\OptionSourceInterface;
 
+/**
+ * "Enabled For" system configuration source class.
+ */
 class EnabledForSource implements OptionSourceInterface
 {
     /**
