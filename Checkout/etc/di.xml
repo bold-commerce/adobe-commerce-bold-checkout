@@ -6,6 +6,76 @@
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Checkout\Model\Import\Address"/>
 
+    <type name="Bold\Checkout\Observer\CheckoutSectionSave">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Sync\GetProducts">
+        <arguments>
+            <argument name="skipProductTypes" xsi:type="array">
+                <item name="configurable" xsi:type="const">Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE</item>
+                <item name="grouped" xsi:type="const">Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE</item>
+                <item name="bundle" xsi:type="const">Magento\Bundle\Model\Product\Type::TYPE_CODE</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Category\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Category\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Product\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Product\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Order\InitOrderFromQuote">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Payment\Gateway\Service">
+        <arguments>
+            <argument name="httpClient" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Quote\QuoteAction">
+        <arguments>
+            <argument name="quoteActions" xsi:type="array">
+                <item name="quote_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountCart</item>
+                <item name="quote_items_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem</item>
+                <item name="quote_currency" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\Currency</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="bold_checkout_product_save_update_attributes" type="Bold\Checkout\Plugin\Product\UpdateAttributesPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Website">
+        <plugin name="bold_checkout_product_add_website" type="Bold\Checkout\Plugin\Product\AddWebsitePlugin"/>
+        <plugin name="bold_checkout_product_remove_website" type="Bold\Checkout\Plugin\Product\RemoveWebsitePlugin"/>
+    </type>
     <type name="Bold\Checkout\Model\Http\Client\RequestsLogger">
         <arguments>
             <argument name="logger" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger</argument>
@@ -23,26 +93,6 @@
             <argument name="fileName" xsi:type="string">/var/log/bold_checkout.log</argument>
         </arguments>
     </virtualType>
-    <type name="Bold\Checkout\Model\Order\InitOrderFromQuote">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Quote\QuoteAction">
-        <arguments>
-            <argument name="quoteActions" xsi:type="array">
-                <item name="quote_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountCart</item>
-                <item name="quote_items_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem</item>
-                <item name="quote_currency" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\Currency</item>
-            </argument>
-        </arguments>
-    </type>
-    <!-- Gateway Service Logger Configuration.   -->
-    <type name="Bold\Checkout\Model\Payment\Gateway\Service">
-        <arguments>
-            <argument name="httpClient" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-        </arguments>
-    </type>
 
     <!-- Bold Payment Method Configuration. -->
     <virtualType name="Bold\Checkout\Model\Method\Adapter" type="Magento\Payment\Model\Method\Adapter">
@@ -93,55 +143,4 @@
             </argument>
         </arguments>
     </virtualType>
-    <type name="Magento\Catalog\Model\Product\Action">
-        <plugin name="bold_checkout_product_save_update_attributes" type="Bold\Checkout\Plugin\Product\UpdateAttributesPlugin"/>
-    </type>
-    <type name="Bold\Checkout\Observer\CheckoutSectionSave">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Sync\GetProducts">
-        <arguments>
-            <argument name="skipProductTypes" xsi:type="array">
-                <item name="configurable" xsi:type="const">Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE</item>
-                <item name="grouped" xsi:type="const">Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE</item>
-                <item name="bundle" xsi:type="const">Magento\Bundle\Model\Product\Type::TYPE_CODE</item>
-            </argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Category\Synchronize">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Category\Delete">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Product\Synchronize">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Product\Delete">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Delete">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Magento\Catalog\Model\Product\Website">
-        <plugin name="bold_checkout_product_add_website" type="Bold\Checkout\Plugin\Product\AddWebsitePlugin"/>
-        <plugin name="bold_checkout_product_remove_website" type="Bold\Checkout\Plugin\Product\RemoveWebsitePlugin"/>
-    </type>
 </config>
