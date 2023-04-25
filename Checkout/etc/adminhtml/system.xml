@@ -5,6 +5,9 @@
         <section id="checkout">
             <group id="bold_checkout_base" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Integration</label>
+                <field id="comment" translate="label" type="note" sortOrder="1" showInDefault="1">
+                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Note</frontend_model>
+                </field>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
                     <label>Enable Bold Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
