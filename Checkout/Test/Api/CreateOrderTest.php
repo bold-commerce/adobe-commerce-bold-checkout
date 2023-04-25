@@ -50,7 +50,7 @@ class CreateOrderTest extends WebapiAbstract
     /**
      * Test place order endpoint is hit with wrong shop id.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/guest_quote.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/guest_quote.php
      * @return void
      */
     public function testInvalidShopId(): void
@@ -72,7 +72,7 @@ class CreateOrderTest extends WebapiAbstract
     /**
      * Test place order for guest customer with delayed capture.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/guest_quote.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/guest_quote.php
      * @return void
      */
     public function testGuestCustomerPlaceOrderDelayedCapture(): void
@@ -98,7 +98,7 @@ class CreateOrderTest extends WebapiAbstract
     /**
      * Test place order for guest customer with delayed capture.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/customer_quote.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/customer_quote.php
      * @return void
      */
     public function testCustomerPlaceOrderDelayedCapture(): void
@@ -125,7 +125,7 @@ class CreateOrderTest extends WebapiAbstract
     /**
      * Test place order for guest customer with immediate capture.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/guest_quote.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/guest_quote.php
      * @return void
      */
     public function testGuestCustomerPlaceOrderImmediateCapture(): void
@@ -151,7 +151,7 @@ class CreateOrderTest extends WebapiAbstract
     /**
      * Test place order for guest customer with immediate capture.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/customer_quote.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/customer_quote.php
      * @return void
      */
     public function testCustomerPlaceOrderImmediateCapture(): void

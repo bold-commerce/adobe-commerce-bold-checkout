@@ -67,7 +67,7 @@ class CustomerSynchronizationTest extends WebapiAbstract
     /**
      * Check if Customer is correctly synchronized after update.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/customer.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/customer.php
      * @magentoConfigFixture base_website checkout/bold_checkout_base/enabled 1
      */
     public function testUpdateCustomer(): void
@@ -166,7 +166,7 @@ class CustomerSynchronizationTest extends WebapiAbstract
     /**
      * Check if Customer is correctly removed after deletion.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/customer.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/customer.php
      * @magentoConfigFixture base_website checkout/bold_checkout_base/enabled 1
      */
     public function testDeleteCustomer(): void

@@ -16,7 +16,7 @@ use Magento\Framework\Message\ManagerInterface;
  */
 class RedirectToBoldCheckoutObserver implements ObserverInterface
 {
-    private const CHECKOUT_URL = 'https://checkout.boldcommerce.com/bold_platform/';
+    private const CHECKOUT_URL = 'https://checkout.boldcommerce.com/bold_checkout/';
 
     /**
      * @var IsBoldCheckoutAllowedForCart

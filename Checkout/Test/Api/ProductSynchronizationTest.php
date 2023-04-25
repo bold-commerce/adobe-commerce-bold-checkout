@@ -67,7 +67,7 @@ class ProductSynchronizationTest extends WebapiAbstract
     /**
      * Check if Product is correctly synchronized after update.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/products.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/products.php
      * @magentoConfigFixture base_website checkout/bold_checkout_base/enabled 1
      */
     public function testUpdateProduct(): void
@@ -166,7 +166,7 @@ class ProductSynchronizationTest extends WebapiAbstract
     /**
      * Check if Product is correctly removed after deletion.
      *
-     * @magentoApiDataFixture Bold_Platform::Test/_files/products.php
+     * @magentoApiDataFixture Bold_Checkout::Test/_files/products.php
      * @magentoConfigFixture base_website checkout/bold_checkout_base/enabled 1
      */
     public function testDeleteProduct(): void
