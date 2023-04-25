@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Bold\Checkout\Api\PlaceOrderInterface" type="Bold\Checkout\Model\Order\PlaceOrder"/>
+    <preference for="Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Request\OrderData"/>
+    <preference for="Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Response"/>
+    <preference for="Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface" type="Bold\Checkout\Model\Http\Client\Response\Error"/>
+    <preference for="Bold\Checkout\Api\RegisterSharedSecretInterface" type="Bold\Checkout\Model\RegisterSharedSecret"/>
+    <preference for="Bold\Checkout\Api\Data\RegisterSharedSecret\ResultInterface" type="Bold\Checkout\Model\RegisterSharedSecret\Result"/>
+    <preference for="Bold\Checkout\Api\CustomerEmailValidatorInterface" type="Bold\Checkout\Model\Customer\EmailValidator"/>
+    <preference for="Bold\Checkout\Api\Data\CustomerEmailValidator\ResultInterface" type="Bold\Checkout\Model\Customer\EmailValidator\Result"/>
+    <preference for="Bold\Checkout\Api\CustomerAddressValidatorInterface" type="Bold\Checkout\Model\Customer\AddressValidator"/>
+    <preference for="Bold\Checkout\Api\Data\CustomerAddressValidator\ResultInterface" type="Bold\Checkout\Model\Customer\AddressValidator\Result"/>
+
+    <type name="Magento\Quote\Model\ResourceModel\Quote">
+        <plugin name="persist_quote_currency" type="Bold\Checkout\Plugin\Sales\Model\ResourceModel\Quote\PersistQuoteCurrencyPlugin"/>
+    </type>
+</config>

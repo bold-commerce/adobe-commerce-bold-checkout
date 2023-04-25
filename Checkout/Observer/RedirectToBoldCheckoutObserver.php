@@ -10,14 +10,13 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Redirect to bold checkout if allowed.
  */
 class RedirectToBoldCheckoutObserver implements ObserverInterface
 {
-    private const CHECKOUT_URL = 'https://checkout.boldcommerce.com/bold_platform/';
+    private const CHECKOUT_URL = 'https://checkout.boldcommerce.com/bold_checkout/';
 
     /**
      * @var IsBoldCheckoutAllowedForCart

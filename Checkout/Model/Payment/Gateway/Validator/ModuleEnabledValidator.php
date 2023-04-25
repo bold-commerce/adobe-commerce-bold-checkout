@@ -7,7 +7,6 @@ use Bold\Checkout\Model\ConfigInterface;
 use Magento\Payment\Gateway\Validator\AbstractValidator;
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
-use Magento\Sales\Api\Data\OrderInterface;
 
 /**
  * Verify is bold checkout module is enabled.
