@@ -23,6 +23,15 @@ class Config implements ConfigInterface
     private const PATH_ORDERS_PERCENTAGE = 'checkout/bold_checkout_advanced/orders_percentage';
     private const PATH_PLATFORM_CONNECTOR_URL = 'checkout/bold_checkout_advanced/platform_connector_url';
     private const PATH_LOG_ENABLED = 'checkout/bold_checkout_advanced/log_enabled';
+    private const PATH_INTEGRATION_EMAIL = 'checkout/bold_checkout_base/integration_email';
+    private const PATH_INTEGRATION_CALLBACK_URL = 'checkout/bold_checkout_base/integration_callback_url';
+    private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
+
+    public const INTEGRATION_PATHS = [
+        self::PATH_INTEGRATION_EMAIL,
+        self::PATH_INTEGRATION_CALLBACK_URL,
+        self::PATH_INTEGRATION_IDENTITY_URL,
+    ];
 
     /**
      * @var ScopeConfigInterface
@@ -192,5 +201,29 @@ class Config implements ConfigInterface
         );
         $this->cacheTypeList->cleanType('config');
         $this->scopeConfig->clean();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIntegrationEmail(int $websiteId): ?string
+    {
+        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_EMAIL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIntegrationCallbackUrl(int $websiteId): ?string
+    {
+        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_CALLBACK_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIntegrationIdentityLinkUrl(int $websiteId): ?string
+    {
+        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_IDENTITY_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
     }
 }

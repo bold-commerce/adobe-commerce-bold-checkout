@@ -19,6 +19,26 @@
                         Center.
                     </comment>
                 </field>
+                <field id="integration_email" translate="select" type="select" sortOrder="30" showInDefault="0" showInWebsite="1">
+                    <label>Bold Integration Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="integration_callback_url" translate="label" type="text" sortOrder="40" showInDefault="0" showInWebsite="1">
+                    <label>Bold Integration Callback URL</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Please do not change.]]></comment>
+                </field>
+                <field id="integration_identity_url" translate="label" type="text" sortOrder="50" showInDefault="0" showInWebsite="1">
+                    <label>Bold Integration Identity Link URL</label>
+                    <validate>required-entry</validate>
+                    <comment><![CDATA[Please do not change.]]></comment>
+                </field>
+                <field id="integration_status" translate="label" type="note" sortOrder="60" showInDefault="0" showInWebsite="1">
+                    <label>Bold Integration Status</label>
+                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Status</frontend_model>
+                    <comment><![CDATA[In case the status is 'Not Found', please re-save configuration.
+                     Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named '{{integrationName}}' and Activate or Reauthorize it.]]></comment>
+                </field>
             </group>
             <group id="bold_checkout_advanced" translate="label" sortOrder="110" showInDefault="0" showInWebsite="1">
                 <label>Bold Checkout Integration Advanced Setting</label>
