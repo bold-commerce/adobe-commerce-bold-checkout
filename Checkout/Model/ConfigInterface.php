@@ -109,4 +109,28 @@ interface ConfigInterface
      * @return void
      */
     public function setShopId(int $websiteId, string $shopId): void;
+
+    /**
+     * Get integration Email.
+     *
+     * @param int $websiteId
+     * @return string|null
+     */
+    public function getIntegrationEmail(int $websiteId): ?string;
+
+    /**
+     * Get integration Callback URL.
+     *
+     * @param int $websiteId
+     * @return string|null
+     */
+    public function getIntegrationCallbackUrl(int $websiteId): ?string;
+
+    /**
+     * Get integration Identity link URL.
+     *
+     * @param int $websiteId
+     * @return string|null
+     */
+    public function getIntegrationIdentityLinkUrl(int $websiteId): ?string;
 }
