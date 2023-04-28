@@ -6,7 +6,6 @@ namespace Bold\Checkout\Model;
 
 use Magento\Framework\Mail\Template\SenderResolverInterface;
 use Magento\Integration\Api\IntegrationServiceInterface;
-use Magento\Integration\Model\Config\Consolidated\Converter;
 use Magento\Integration\Model\Integration;
 use Magento\Store\Api\StoreWebsiteRelationInterface;
 
@@ -16,16 +15,6 @@ use Magento\Store\Api\StoreWebsiteRelationInterface;
 class BoldIntegration
 {
     private const INTEGRATION_NAME_TEMPLATE = 'BoldPlatformIntegration{{websiteId}}';
-
-    private const API_RESOURCES = [
-        'Magento_Backend::admin',
-        'Bold_Checkout::integration',
-        'Magento_Customer::customer',
-        'Magento_Catalog::catalog',
-        'Magento_Catalog::catalog_inventory',
-        'Magento_Catalog::products',
-        'Magento_Catalog::categories',
-    ];
 
     /**
      * @var ConfigInterface
@@ -97,19 +86,33 @@ class BoldIntegration
             Integration::ENDPOINT => $endpointUrl,
             Integration::IDENTITY_LINK_URL => $identityUrl,
             Integration::SETUP_TYPE => Integration::TYPE_MANUAL,
-            Integration::STATUS => Integration::STATUS_RECREATED,
-            Converter::API_RESOURCES => self::API_RESOURCES
+            Integration::STATUS => Integration::STATUS_INACTIVE,
+            'all_resources' => '1',
         ];
         $integration->getId()
             ? $this->integrationService->update($integrationData)
             : $this->integrationService->create($integrationData);
     }
 
-    public function getName(int $websiteId) {
+    /**
+     * Get integration name.
+     *
+     * @param int $websiteId
+     * @return string
+     */
+    public function getName(int $websiteId)
+    {
         return str_replace('{{websiteId}}', (string)$websiteId, self::INTEGRATION_NAME_TEMPLATE);
     }
 
-    public function getStatus(int $websiteId) {
+    /**
+     * Get integration status.
+     *
+     * @param int $websiteId
+     * @return int|null
+     */
+    public function getStatus(int $websiteId)
+    {
         $integration = $this->integrationService->findByName($this->getName($websiteId));
 
         return $integration->getId() ? $integration->getStatus() : null;
