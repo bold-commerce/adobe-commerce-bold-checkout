@@ -9,7 +9,6 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Config\Model\Config;
 use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Integration\Model\Integration\Source\Status as SourceStatus;
 
 /**
@@ -38,17 +37,15 @@ class Status extends Field
      * @param Config $config
      * @param SourceStatus $statusData
      * @param array $data
-     * @param SecureHtmlRenderer|null $secureRenderer
      */
     public function __construct(
         Context $context,
         BoldIntegration $boldIntegration,
         Config $config,
         SourceStatus $statusData,
-        array $data = [],
-        ?SecureHtmlRenderer $secureRenderer = null)
-    {
-        parent::__construct($context, $data, $secureRenderer);
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
         $this->boldIntegration = $boldIntegration;
         $this->config = $config;
         $this->statusData = $statusData;
@@ -65,11 +62,11 @@ class Status extends Field
         $statusText = __('Not Found');
         foreach ($this->statusData->toOptionArray() as $statusDatum) {
             if ($statusDatum['value'] === $integrationStatus) {
-                $statusText =  $statusDatum['label'];
+                $statusText = $statusDatum['label'];
                 break;
             }
         }
-        $element->setText('<strong>' . $statusText. '</strong>');
+        $element->setText('<strong>' . $statusText . '</strong>');
         $commentTemplate = $element->getComment();
         $comment = str_replace('{{integrationName}}', $integrationName, (string)$commentTemplate);
         $element->setComment($comment);
