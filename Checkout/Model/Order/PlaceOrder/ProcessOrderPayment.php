@@ -70,6 +70,12 @@ class ProcessOrderPayment
         if (!$orderPayment->getIsTransactionClosed()) {
             $transaction->setIsClosed(0);
         }
+        $orderPayment->setAdditionalInformation(
+            array_merge(
+                $orderPayment->getAdditionalInformation() ?: [],
+                $orderData->getPayment()->getExtensionAttributes()->getAdditionalInformation() ?: []
+            )
+        );
         $this->transactionRepository->save($transaction);
         $this->orderPaymentRepository->save($orderPayment);
     }
