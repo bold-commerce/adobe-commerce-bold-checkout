@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Api\Data\Quote\SetQuoteAddresses;
+namespace Bold\Checkout\Api\Data\Quote;
 
+use Bold\Checkout\Api\Data\Quote\ResultExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\TotalsInterface;
@@ -43,7 +44,7 @@ interface ResultInterface extends ExtensibleDataInterface
     /**
      * Get response extension attributes.
      *
-     * @return \Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultExtensionInterface|null
+     * @return \Bold\Checkout\Api\Data\Quote\ResultExtensionInterface|null
      */
     public function getExtensionAttributes(): ?ResultExtensionInterface;
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Quote\SetQuoteAddresses;
+namespace Bold\Checkout\Model\Quote\Result\Builder;
 
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\ShippingMethodInterface;

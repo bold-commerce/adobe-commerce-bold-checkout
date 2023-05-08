@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Quote\SetQuoteAddresses;
+namespace Bold\Checkout\Model\Quote\Result\Builder;
 
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CouponManagementInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\TotalsInterface;
@@ -23,11 +22,6 @@ class ExtractCartTotals
      * @var TotalsInterfaceFactory
      */
     private $totalsFactory;
-
-    /**
-     * @var CartRepositoryInterface
-     */
-    private $quoteRepository;
 
     /**
      * @var DataObjectHelper
@@ -51,7 +45,6 @@ class ExtractCartTotals
 
     /**
      * @param TotalsInterfaceFactory $totalsFactory
-     * @param CartRepositoryInterface $quoteRepository
      * @param DataObjectHelper $dataObjectHelper
      * @param ItemConverter $itemConverter
      * @param CouponManagementInterface $couponService
@@ -59,14 +52,12 @@ class ExtractCartTotals
      */
     public function __construct(
         TotalsInterfaceFactory $totalsFactory,
-        CartRepositoryInterface $quoteRepository,
         DataObjectHelper $dataObjectHelper,
         ItemConverter $itemConverter,
         CouponManagementInterface $couponService,
         TotalsConverter $totalsConverter
     ) {
         $this->totalsFactory = $totalsFactory;
-        $this->quoteRepository = $quoteRepository;
         $this->dataObjectHelper = $dataObjectHelper;
         $this->itemConverter = $itemConverter;
         $this->couponService = $couponService;

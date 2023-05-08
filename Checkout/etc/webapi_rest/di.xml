@@ -11,7 +11,8 @@
     <preference for="Bold\Checkout\Api\CustomerAddressValidatorInterface" type="Bold\Checkout\Model\Customer\AddressValidator"/>
     <preference for="Bold\Checkout\Api\Data\CustomerAddressValidator\ResultInterface" type="Bold\Checkout\Model\Customer\AddressValidator\Result"/>
     <preference for="Bold\Checkout\Api\Quote\SetQuoteAddressesInterface" type="Bold\Checkout\Model\Quote\SetQuoteAddresses"/>
-    <preference for="Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultInterface" type="Bold\Checkout\Model\Quote\SetQuoteAddresses\Result"/>
+    <preference for="Bold\Checkout\Api\Quote\SetQuoteShippingMethodInterface" type="Bold\Checkout\Model\Quote\SetQuoteShippingMethod"/>
+    <preference for="Bold\Checkout\Api\Data\Quote\ResultInterface" type="Bold\Checkout\Model\Quote\Result"/>
 
     <type name="Magento\Quote\Model\ResourceModel\Quote">
         <plugin name="persist_quote_currency" type="Bold\Checkout\Plugin\Sales\Model\ResourceModel\Quote\PersistQuoteCurrencyPlugin"/>

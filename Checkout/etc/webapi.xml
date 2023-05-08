@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
-    <route method="POST" url="/V1/shops/:shopId/cart/addresses/:cartId">
+    <route method="POST" url="/V1/shops/:shopId/cart/:cartId/addresses">
         <service class="Bold\Checkout\Api\Quote\SetQuoteAddressesInterface" method="setAddresses"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/shops/:shopId/cart/:cartId/shippingMethod">
+        <service class="Bold\Checkout\Api\Quote\SetQuoteShippingMethodInterface" method="setShippingMethod"/>
         <resources>
             <resource ref="Magento_Cart::manage"/>
         </resources>

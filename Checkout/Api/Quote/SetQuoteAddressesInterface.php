@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Quote;
 
-use Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultInterface;
+use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 
 /**
@@ -18,7 +18,7 @@ interface SetQuoteAddressesInterface
      * @param int $cartId
      * @param \Magento\Quote\Api\Data\AddressInterface $billingAddress
      * @param \Magento\Quote\Api\Data\AddressInterface|null $shippingAddress
-     * @return \Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultInterface
+     * @return \Bold\Checkout\Api\Data\Quote\ResultInterface
      */
     public function setAddresses(
         string $shopId,

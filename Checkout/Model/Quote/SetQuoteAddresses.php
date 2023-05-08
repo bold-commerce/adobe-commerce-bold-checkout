@@ -3,13 +3,10 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote;
 
-use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
-use Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultInterface;
-use Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultInterfaceFactory;
+use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteAddressesInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
-use Bold\Checkout\Model\Quote\SetQuoteAddresses\ExtractCartTotals;
-use Bold\Checkout\Model\Quote\SetQuoteAddresses\ExtractShippingMethods;
+use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -22,16 +19,6 @@ use Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor;
 class SetQuoteAddresses implements SetQuoteAddressesInterface
 {
     /**
-     * @var ResultInterfaceFactory
-     */
-    private $resultFactory;
-
-    /**
-     * @var ErrorInterfaceFactory
-     */
-    private $errorFactory;
-
-    /**
      * @var CartRepositoryInterface
      */
     private $cartRepository;
@@ -42,45 +29,31 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $shopIdValidator;
 
     /**
-     * @var ExtractShippingMethods
-     */
-    private $extractShippingMethods;
-
-    /**
-     * @var ExtractCartTotals
-     */
-    private $extractCartTotals;
-
-    /**
      * @var ShippingAssignmentProcessor
      */
     private $shippingAssignmentProcessor;
 
     /**
-     * @param ResultInterfaceFactory $resultFactory
-     * @param ErrorInterfaceFactory $errorFactory
+     * @var Builder
+     */
+    private $quoteResultBuilder;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
-     * @param ExtractShippingMethods $extractShippingMethods
-     * @param ExtractCartTotals $extractCartTotals
+     * @param Builder $quoteResultBuilder
      */
     public function __construct(
-        ResultInterfaceFactory $resultFactory,
-        ErrorInterfaceFactory $errorFactory,
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
-        ExtractShippingMethods $extractShippingMethods,
-        ExtractCartTotals $extractCartTotals
+        Builder $quoteResultBuilder
     ) {
-        $this->resultFactory = $resultFactory;
-        $this->errorFactory = $errorFactory;
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
-        $this->extractShippingMethods = $extractShippingMethods;
-        $this->extractCartTotals = $extractCartTotals;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
+        $this->quoteResultBuilder = $quoteResultBuilder;
     }
 
     /**
@@ -96,19 +69,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
         } catch (LocalizedException $e) {
-            return $this->resultFactory->create(
-                [
-                    'errors' => [
-                        $this->errorFactory->create(
-                            [
-                                'message' => $e->getMessage(),
-                                'code' => 422,
-                                'type' => 'server.validation_error',
-                            ]
-                        ),
-                    ],
-                ]
-            );
+            return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }
         $shippingAddress = $shippingAddress === null || $shippingAddress->getSameAsBilling()
             ? $billingAddress
@@ -117,14 +78,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $this->setShippingAddress($quote, $shippingAddress);
         $quote->collectTotals();
         $this->cartRepository->save($quote);
-        $this->processQuoteItems($quote);
-        return $this->resultFactory->create(
-            [
-                'quote' => $quote,
-                'totals' => $this->extractCartTotals->extract($quote),
-                'shippingMethods' => $this->extractShippingMethods->extract($quote),
-            ]
-        );
+        return $this->quoteResultBuilder->createSuccessResult($quote);
     }
 
     /**
@@ -163,21 +117,5 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $quote->setExtensionAttributes($cartExtension);
         $quote->getShippingAddress()->setCollectShippingRates(true);
         $quote->setDataChanges(true);
-    }
-
-    /**
-     * Add product to quote items extension attributes.
-     *
-     * This is needed for Bold Checkout to be able to display product information in the cart.
-     *
-     * @param CartInterface $quote
-     * @return void
-     */
-    private function processQuoteItems(CartInterface $quote): void
-    {
-        $quoteItems = $quote->getAllVisibleItems();
-        foreach ($quoteItems as $quoteItem) {
-            $quoteItem->getExtensionAttributes()->setProduct($quoteItem->getProduct());
-        }
     }
 }
