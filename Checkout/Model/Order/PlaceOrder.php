@@ -5,7 +5,7 @@ namespace Bold\Checkout\Model\Order;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResultInterface;
-use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterfaceFactory;
+use Bold\Checkout\Api\Data\PlaceOrder\ResultInterfaceFactory;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\PlaceOrderInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
@@ -35,7 +35,7 @@ class PlaceOrder implements PlaceOrderInterface
     private $orderFactory;
 
     /**
-     * @var ResponseInterfaceFactory
+     * @var ResultInterfaceFactory
      */
     private $responseFactory;
 
@@ -77,7 +77,7 @@ class PlaceOrder implements PlaceOrderInterface
      * @param ProcessOrderPayment $processOrderPayment
      * @param CreateInvoice $createInvoice
      * @param OrderInterfaceFactory $orderFactory
-     * @param ResponseInterfaceFactory $responseFactory
+     * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
      */
     public function __construct(
@@ -88,7 +88,7 @@ class PlaceOrder implements PlaceOrderInterface
         ProcessOrderPayment $processOrderPayment,
         CreateInvoice $createInvoice,
         OrderInterfaceFactory $orderFactory,
-        ResponseInterfaceFactory $responseFactory,
+        ResultInterfaceFactory $responseFactory,
         ErrorInterfaceFactory $errorFactory
     ) {
         $this->orderResource = $orderResource;

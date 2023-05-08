@@ -7,7 +7,7 @@ use Bold\Checkout\Api\Data\Quote\SetQuoteAddresses\ResultInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 
 /**
- * Set quote addresses service interface.
+ * Set quote addresses.
  */
 interface SetQuoteAddressesInterface
 {

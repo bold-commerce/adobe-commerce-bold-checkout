@@ -15,7 +15,6 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor;
-use Magento\Quote\Model\ShippingAddressAssignment;
 
 /**
  * Set quote addresses service.
@@ -43,11 +42,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $shopIdValidator;
 
     /**
-     * @var ShippingAddressAssignment
-     */
-    private $shippingAddressAssignment;
-
-    /**
      * @var ExtractShippingMethods
      */
     private $extractShippingMethods;
@@ -67,7 +61,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
      * @param ErrorInterfaceFactory $errorFactory
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
-     * @param ShippingAddressAssignment $shippingAddressAssignment
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
      * @param ExtractShippingMethods $extractShippingMethods
      * @param ExtractCartTotals $extractCartTotals
@@ -77,7 +70,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         ErrorInterfaceFactory $errorFactory,
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
-        ShippingAddressAssignment $shippingAddressAssignment,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
         ExtractShippingMethods $extractShippingMethods,
         ExtractCartTotals $extractCartTotals
@@ -86,7 +78,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $this->errorFactory = $errorFactory;
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
-        $this->shippingAddressAssignment = $shippingAddressAssignment;
         $this->extractShippingMethods = $extractShippingMethods;
         $this->extractCartTotals = $extractCartTotals;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
@@ -119,13 +110,11 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
                 ]
             );
         }
+        $shippingAddress = $shippingAddress === null || $shippingAddress->getSameAsBilling()
+            ? $billingAddress
+            : $shippingAddress;
         $this->setBillingAddress($quote, $billingAddress);
-        if (!$shippingAddress || $shippingAddress->getSameAsBilling()) {
-            $this->shippingAddressAssignment->setAddress($quote, $billingAddress, true);
-        }
-        if ($shippingAddress && !$shippingAddress->getSameAsBilling()) {
-            $this->setShippingAddress($quote, $shippingAddress);
-        }
+        $this->setShippingAddress($quote, $shippingAddress);
         $quote->collectTotals();
         $this->cartRepository->save($quote);
         $this->processQuoteItems($quote);
@@ -152,7 +141,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $billingAddress->setCustomerId($quote->getCustomerId());
         $quote->removeAddress($quote->getBillingAddress()->getId());
         $quote->setBillingAddress($billingAddress);
-        $quote->setDataChanges(true);
     }
 
     /**
@@ -173,8 +161,8 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $shippingAssignment = $this->shippingAssignmentProcessor->create($quote);
         $cartExtension->setShippingAssignments([$shippingAssignment]);
         $quote->setExtensionAttributes($cartExtension);
-        $quote->setDataChanges(true);
         $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->setDataChanges(true);
     }
 
     /**

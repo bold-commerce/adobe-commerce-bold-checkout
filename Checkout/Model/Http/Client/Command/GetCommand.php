@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Http\Client\Command;
 
 use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
-use Bold\Checkout\Api\Data\Http\Client\ResponseInterfaceFactory;
+use Bold\Checkout\Api\Data\Http\Client\ResultInterfaceFactory;
 use Bold\Checkout\Model\Http\Client\RequestsLogger;
 use Magento\Framework\HTTP\ClientInterface;
 
@@ -24,17 +24,17 @@ class GetCommand
     private $logger;
 
     /**
-     * @var ResponseInterfaceFactory
+     * @var ResultInterfaceFactory
      */
     private $responseFactory;
 
     /**
-     * @param ResponseInterfaceFactory $responseFactory
+     * @param ResultInterfaceFactory $responseFactory
      * @param ClientInterface $client
      * @param RequestsLogger $logger
      */
     public function __construct(
-        ResponseInterfaceFactory $responseFactory,
+        ResultInterfaceFactory $responseFactory,
         ClientInterface $client,
         RequestsLogger $logger
     ) {
