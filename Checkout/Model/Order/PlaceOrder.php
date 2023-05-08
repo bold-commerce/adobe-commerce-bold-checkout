@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Order;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface;
+use Bold\Checkout\Api\Data\PlaceOrder\ResultInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterfaceFactory;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\PlaceOrderInterface;
@@ -105,7 +105,7 @@ class PlaceOrder implements PlaceOrderInterface
     /**
      * @inheritDoc
      */
-    public function place(string $shopId, OrderDataInterface $order): ResponseInterface
+    public function place(string $shopId, OrderDataInterface $order): ResultInterface
     {
         try {
             $quote = $this->cartRepository->get($order->getQuoteId());
@@ -173,9 +173,9 @@ class PlaceOrder implements PlaceOrderInterface
      * Build error response.
      *
      * @param string $message
-     * @return ResponseInterface
+     * @return ResultInterface
      */
-    private function getErrorResponse(string $message): ResponseInterface
+    private function getErrorResponse(string $message): ResultInterface
     {
         return $this->responseFactory->create(
             [
@@ -194,9 +194,9 @@ class PlaceOrder implements PlaceOrderInterface
      * Build order response
      *
      * @param OrderInterface $order
-     * @return ResponseInterface
+     * @return ResultInterface
      */
-    private function getSuccessResponse(OrderInterface $order): ResponseInterface
+    private function getSuccessResponse(OrderInterface $order): ResultInterface
     {
         return $this->responseFactory->create(
             [

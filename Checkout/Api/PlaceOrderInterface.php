@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Api;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface;
+use Bold\Checkout\Api\Data\PlaceOrder\ResultInterface;
 
 /**
  * Push bold order to m2 platform.
@@ -18,7 +18,7 @@ interface PlaceOrderInterface
      *
      * @param string $shopId
      * @param \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface $order
-     * @return \Bold\Checkout\Api\Data\PlaceOrder\ResponseInterface
+     * @return \Bold\Checkout\Api\Data\PlaceOrder\ResultInterface
      */
-    public function place(string $shopId, OrderDataInterface $order): ResponseInterface;
+    public function place(string $shopId, OrderDataInterface $order): ResultInterface;
 }

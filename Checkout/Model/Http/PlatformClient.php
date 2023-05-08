@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http;
 
-use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
@@ -49,7 +49,7 @@ class PlatformClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function get(int $websiteId, string $url): ResponseInterface
+    public function get(int $websiteId, string $url): ResultInterface
     {
         $url = $this->getUrl($websiteId, $url);
         $headers = $this->getHeaders($websiteId);
@@ -59,7 +59,7 @@ class PlatformClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function post(int $websiteId, string $url, array $data): ResponseInterface
+    public function post(int $websiteId, string $url, array $data): ResultInterface
     {
         $url = $this->getUrl($websiteId, $url);
         $headers = $this->getHeaders($websiteId);
@@ -69,7 +69,7 @@ class PlatformClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function put(int $websiteId, string $url, array $data): ResponseInterface
+    public function put(int $websiteId, string $url, array $data): ResultInterface
     {
         throw new LocalizedException(__('Put method is not implemented.'));
     }
@@ -77,7 +77,7 @@ class PlatformClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function patch(int $websiteId, string $url, array $data): ResponseInterface
+    public function patch(int $websiteId, string $url, array $data): ResultInterface
     {
         throw new LocalizedException(__('Patch method is not implemented.'));
     }
@@ -85,7 +85,7 @@ class PlatformClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function delete(int $websiteId, string $url): ResponseInterface
+    public function delete(int $websiteId, string $url): ResultInterface
     {
         throw new LocalizedException(__('Delete method is not implemented.'));
     }

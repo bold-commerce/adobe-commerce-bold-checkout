@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http\Client;
 
-use Bold\Checkout\Api\Data\Http\Client\ResponseExtensionInterface;
-use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResultExtensionInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Exception;
 use Magento\Framework\HTTP\ClientInterface;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -12,7 +12,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 /**
  * Http client response data model.
  */
-class Response implements ResponseInterface
+class Result implements ResultInterface
 {
     /**
      * @var ClientInterface
@@ -25,19 +25,19 @@ class Response implements ResponseInterface
     private $json;
 
     /**
-     * @var ResponseExtensionInterface|null
+     * @var ResultExtensionInterface|null
      */
     private $extensionAttributes;
 
     /**
      * @param Json $json
      * @param ClientInterface $client
-     * @param ResponseExtensionInterface|null $extensionAttributes
+     * @param ResultExtensionInterface|null $extensionAttributes
      */
     public function __construct(
         Json $json,
         ClientInterface $client,
-        ResponseExtensionInterface $extensionAttributes = null
+        ResultExtensionInterface $extensionAttributes = null
     ) {
         $this->client = $client;
         $this->json = $json;
@@ -81,7 +81,7 @@ class Response implements ResponseInterface
     /**
      * @inheritDoc
      */
-    public function getExtensionAttributes(): ?ResponseExtensionInterface
+    public function getExtensionAttributes(): ?ResultExtensionInterface
     {
         return $this->extensionAttributes;
     }

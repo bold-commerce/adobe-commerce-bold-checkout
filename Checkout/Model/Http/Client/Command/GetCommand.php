@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Http\Client\Command;
 
-use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Api\Data\Http\Client\ResponseInterfaceFactory;
 use Bold\Checkout\Model\Http\Client\RequestsLogger;
 use Magento\Framework\HTTP\ClientInterface;
@@ -49,9 +49,9 @@ class GetCommand
      * @param int $websiteId
      * @param string $url
      * @param array $headers
-     * @return ResponseInterface
+     * @return ResultInterface
      */
-    public function execute(int $websiteId, string $url, array $headers): ResponseInterface
+    public function execute(int $websiteId, string $url, array $headers): ResultInterface
     {
         $this->logger->logRequest($websiteId, $url, 'GET');
         $this->client->setHeaders($headers);

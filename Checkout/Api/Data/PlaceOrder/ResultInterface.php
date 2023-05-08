@@ -9,7 +9,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 /**
  * Place order response interface.
  */
-interface ResponseInterface extends ExtensibleDataInterface
+interface ResultInterface extends ExtensibleDataInterface
 {
     /**
      * Retrieve order from response.
@@ -28,7 +28,7 @@ interface ResponseInterface extends ExtensibleDataInterface
     /**
      * Retrieve response extension attributes.
      *
-     * @return \Bold\Checkout\Api\Data\PlaceOrder\ResponseExtensionInterface|null
+     * @return \Bold\Checkout\Api\Data\PlaceOrder\ResultExtensionInterface|null
      */
-    public function getExtensionAttributes(): ?ResponseExtensionInterface;
+    public function getExtensionAttributes(): ?ResultExtensionInterface;
 }
