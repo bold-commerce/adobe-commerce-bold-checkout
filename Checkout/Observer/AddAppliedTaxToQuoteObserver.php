@@ -49,7 +49,9 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
         $quote = $observer->getEvent()->getQuote();
         $shippingAddress = $quote->getShippingAddress();
         foreach ($quote->getAllItems() as $item) {
-            $this->addAppliedTaxesToItem($shippingAddress->getAppliedTaxes(), $item);
+            if ($shippingAddress->getAppliedTaxes()) {
+                $this->addAppliedTaxesToItem($shippingAddress->getAppliedTaxes(), $item);
+            }
         }
         $quote->getExtensionAttributes()->setShippingTaxAmount($shippingAddress->getShippingTaxAmount());
         $quote->getExtensionAttributes()->setBaseShippingTaxAmount($shippingAddress->getBaseShippingTaxAmount());
