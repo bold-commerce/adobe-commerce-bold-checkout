@@ -16,7 +16,7 @@ use Exception;
 class Synchronize
 {
     private const CHUNK_SIZE = 500;
-    private const URL = '/{{shopId}}/webhooks/customer/saved';
+    private const URL = '/{{shopId}}/webhooks/customers/saved';
 
     /**
      * @var ConfigInterface
