@@ -13,6 +13,7 @@
     <preference for="Bold\Checkout\Api\Quote\SetQuoteAddressesInterface" type="Bold\Checkout\Model\Quote\SetQuoteAddresses"/>
     <preference for="Bold\Checkout\Api\Quote\SetQuoteShippingMethodInterface" type="Bold\Checkout\Model\Quote\SetQuoteShippingMethod"/>
     <preference for="Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface" type="Bold\Checkout\Model\Quote\SetQuoteCouponCode"/>
+    <preference for="Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface" type="Bold\Checkout\Model\Quote\RemoveQuoteCouponCode"/>
     <preference for="Bold\Checkout\Api\Data\Quote\ResultInterface" type="Bold\Checkout\Model\Quote\Result"/>
 
     <type name="Magento\Quote\Model\ResourceModel\Quote">
