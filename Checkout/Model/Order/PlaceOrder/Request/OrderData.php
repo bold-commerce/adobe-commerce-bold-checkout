@@ -56,6 +56,11 @@ class OrderData implements OrderDataInterface
     private $total;
 
     /**
+     * @var AddressInterface
+     */
+    private $billingAddress;
+
+    /**
      * @var PaymentInterface
      */
     private $payment;
@@ -70,44 +75,6 @@ class OrderData implements OrderDataInterface
      */
     private $extensionAttributes;
 
-    /**
-     * @param int $quoteId
-     * @param string $browserIp
-     * @param string $publicId
-     * @param string $financialStatus
-     * @param string $fulfillmentStatus
-     * @param string $orderStatus
-     * @param string $orderNumber
-     * @param float $total
-     * @param OrderPaymentInterface $payment
-     * @param TransactionInterface $transaction
-     * @param OrderDataExtensionInterface|null $extensionAttributes
-     */
-    public function __construct(
-        int $quoteId,
-        string $browserIp,
-        string $publicId,
-        string $financialStatus,
-        string $fulfillmentStatus,
-        string $orderStatus,
-        string $orderNumber,
-        float $total,
-        OrderPaymentInterface $payment,
-        TransactionInterface $transaction,
-        OrderDataExtensionInterface $extensionAttributes = null
-    ) {
-        $this->quoteId = $quoteId;
-        $this->browserIp = $browserIp;
-        $this->publicId = $publicId;
-        $this->financialStatus = $financialStatus;
-        $this->fulfillmentStatus = $fulfillmentStatus;
-        $this->orderStatus = $orderStatus;
-        $this->orderNumber = $orderNumber;
-        $this->total = $total;
-        $this->payment = $payment;
-        $this->extensionAttributes = $extensionAttributes;
-        $this->transaction = $transaction;
-    }
 
     /**
      * @inheritDoc
@@ -115,6 +82,14 @@ class OrderData implements OrderDataInterface
     public function getQuoteId(): int
     {
         return $this->quoteId;
+    }
+
+    /**
+     * @param int $quoteId
+     */
+    public function setQuoteId(int $quoteId): void
+    {
+        $this->quoteId = $quoteId;
     }
 
     /**
@@ -126,11 +101,27 @@ class OrderData implements OrderDataInterface
     }
 
     /**
+     * @param string $browserIp
+     */
+    public function setBrowserIp(string $browserIp): void
+    {
+        $this->browserIp = $browserIp;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getPublicId(): string
     {
         return $this->publicId;
+    }
+
+    /**
+     * @param string $publicId
+     */
+    public function setPublicId(string $publicId): void
+    {
+        $this->publicId = $publicId;
     }
 
     /**
@@ -142,6 +133,14 @@ class OrderData implements OrderDataInterface
     }
 
     /**
+     * @param string $financialStatus
+     */
+    public function setFinancialStatus(string $financialStatus): void
+    {
+        $this->financialStatus = $financialStatus;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getFulfillmentStatus(): string
@@ -150,11 +149,27 @@ class OrderData implements OrderDataInterface
     }
 
     /**
+     * @param string $fulfillmentStatus
+     */
+    public function setFulfillmentStatus(string $fulfillmentStatus): void
+    {
+        $this->fulfillmentStatus = $fulfillmentStatus;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getOrderStatus(): string
     {
         return $this->orderStatus;
+    }
+
+    /**
+     * @param string $orderStatus
+     */
+    public function setOrderStatus(string $orderStatus): void
+    {
+        $this->orderStatus = $orderStatus;
     }
 
     /**
@@ -168,9 +183,38 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
+    public function setOrderNumber(string $orderNumber): void
+    {
+        $this->orderNumber = $orderNumber;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTotal(): float
     {
         return $this->total;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTotal(float $total): void
+    {
+        $this->total = $total;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBillingAddress(): AddressInterface
+    {
+        return $this->billingAddress;
+    }
+
+    public function setBillingAddress(AddressInterface $address): void
+    {
+        $this->billingAddress = $address;
     }
 
     /**
@@ -184,9 +228,25 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
+    public function setPayment(\Magento\Sales\Api\Data\OrderPaymentInterface $payment): void
+    {
+        $this->payment = $payment;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTransaction(): TransactionInterface
     {
         return $this->transaction;
+    }
+
+    /**
+     * @param TransactionInterface $transaction
+     */
+    public function setTransaction(TransactionInterface $transaction): void
+    {
+        $this->transaction = $transaction;
     }
 
     /**
@@ -195,5 +255,13 @@ class OrderData implements OrderDataInterface
     public function getExtensionAttributes(): ?OrderDataExtensionInterface
     {
         return $this->extensionAttributes;
+    }
+
+    /**
+     * @param OrderDataExtensionInterface|null $extensionAttributes
+     */
+    public function setExtensionAttributes(?OrderDataExtensionInterface $extensionAttributes): void
+    {
+        $this->extensionAttributes = $extensionAttributes;
     }
 }
