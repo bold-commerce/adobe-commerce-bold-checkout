@@ -88,8 +88,6 @@ class CreateOrderFromQuote
         $cart->getPayment()->setMethod(Service::CODE);
         $cart->getPayment()->setStoreId($cart->getStoreId());
         $cart->getPayment()->setCustomerPaymentId($cart->getCustomerId());
-        $cart->setBillingAddress($orderPayload->getBillingAddress());
-        $cart->getBillingAddress()->setShouldIgnoreValidation(true);
         $this->prepareCartForCustomer($cart);
         $orderData = [
             self::ORDER_NUMBER => $orderPayload->getOrderNumber(),

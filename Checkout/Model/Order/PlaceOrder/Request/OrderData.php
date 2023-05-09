@@ -56,11 +56,6 @@ class OrderData implements OrderDataInterface
     private $total;
 
     /**
-     * @var AddressInterface
-     */
-    private $billingAddress;
-
-    /**
      * @var PaymentInterface
      */
     private $payment;
@@ -84,7 +79,6 @@ class OrderData implements OrderDataInterface
      * @param string $orderStatus
      * @param string $orderNumber
      * @param float $total
-     * @param AddressInterface $billingAddress
      * @param OrderPaymentInterface $payment
      * @param TransactionInterface $transaction
      * @param OrderDataExtensionInterface|null $extensionAttributes
@@ -98,7 +92,6 @@ class OrderData implements OrderDataInterface
         string $orderStatus,
         string $orderNumber,
         float $total,
-        AddressInterface $billingAddress,
         OrderPaymentInterface $payment,
         TransactionInterface $transaction,
         OrderDataExtensionInterface $extensionAttributes = null
@@ -112,7 +105,6 @@ class OrderData implements OrderDataInterface
         $this->orderNumber = $orderNumber;
         $this->total = $total;
         $this->payment = $payment;
-        $this->billingAddress = $billingAddress;
         $this->extensionAttributes = $extensionAttributes;
         $this->transaction = $transaction;
     }
@@ -179,14 +171,6 @@ class OrderData implements OrderDataInterface
     public function getTotal(): float
     {
         return $this->total;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getBillingAddress(): AddressInterface
-    {
-        return $this->billingAddress;
     }
 
     /**

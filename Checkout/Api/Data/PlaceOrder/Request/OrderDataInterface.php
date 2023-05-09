@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Data\PlaceOrder\Request;
 
-use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 
@@ -67,13 +66,6 @@ interface OrderDataInterface
      * @return float
      */
     public function getTotal(): float;
-
-    /**
-     * Retrieve request billing address.
-     *
-     * @return \Magento\Quote\Api\Data\AddressInterface
-     */
-    public function getBillingAddress(): AddressInterface;
 
     /**
      * Retrieve order payment request data.

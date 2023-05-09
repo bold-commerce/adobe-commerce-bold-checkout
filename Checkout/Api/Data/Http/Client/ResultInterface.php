@@ -8,7 +8,7 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 /**
  * Https client response data model interface.
  */
-interface ResponseInterface extends ExtensibleDataInterface
+interface ResultInterface extends ExtensibleDataInterface
 {
     /**
      * Retrieve response status.
@@ -34,7 +34,7 @@ interface ResponseInterface extends ExtensibleDataInterface
     /**
      * Retrieve response extension attributes.
      *
-     * @return \Bold\Checkout\Api\Data\Http\Client\ResponseExtensionInterface|null
+     * @return \Bold\Checkout\Api\Data\Http\Client\ResultExtensionInterface|null
      */
-    public function getExtensionAttributes(): ?ResponseExtensionInterface;
+    public function getExtensionAttributes(): ?ResultExtensionInterface;
 }

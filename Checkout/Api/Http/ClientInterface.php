@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Http;
 
-use Bold\Checkout\Api\Data\Http\Client\ResponseInterface;
+use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 
 /**
  * Http client interface to make requests to Bold side|Platform.
@@ -15,10 +15,10 @@ interface ClientInterface
      *
      * @param int $websiteId
      * @param string $url
-     * @return ResponseInterface
+     * @return ResultInterface
      * @throws \Exception
      */
-    public function get(int $websiteId, string $url): ResponseInterface;
+    public function get(int $websiteId, string $url): ResultInterface;
 
     /**
      * Perform post http request to bold|platform.
@@ -26,10 +26,10 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array|null $data
-     * @return ResponseInterface
+     * @return ResultInterface
      * @throws \Exception
      */
-    public function post(int $websiteId, string $url, array $data): ResponseInterface;
+    public function post(int $websiteId, string $url, array $data): ResultInterface;
 
     /**
      * Perform put http request to bold|platform.
@@ -37,10 +37,10 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array|null $data
-     * @return ResponseInterface
+     * @return ResultInterface
      * @throws \Exception
      */
-    public function put(int $websiteId, string $url, array $data): ResponseInterface;
+    public function put(int $websiteId, string $url, array $data): ResultInterface;
 
     /**
      * Perform patch http request to bold|platform.
@@ -48,18 +48,18 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array|null $data
-     * @return ResponseInterface
+     * @return ResultInterface
      * @throws \Exception
      */
-    public function patch(int $websiteId, string $url, array $data): ResponseInterface;
+    public function patch(int $websiteId, string $url, array $data): ResultInterface;
 
     /**
      * Perform delet http request to bold|platform.
      *
      * @param int $websiteId
      * @param string $url
-     * @return ResponseInterface
+     * @return ResultInterface
      * @throws \Exception
      */
-    public function delete(int $websiteId, string $url): ResponseInterface;
+    public function delete(int $websiteId, string $url): ResultInterface;
 }
