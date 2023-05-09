@@ -9,7 +9,7 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\TotalsInterface;
 
 /**
- * Add addresses to quote response interface.
+ * Quote response interface.
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
@@ -35,7 +35,7 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getShippingMethods(): array;
 
     /**
-     * Get set quote addresses errors.
+     * Get quote errors.
      *
      * @return \Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface[]
      */

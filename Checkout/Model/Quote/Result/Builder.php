@@ -72,6 +72,34 @@ class Builder
     }
 
     /**
+     * Create quote error result.
+     *
+     * @param string $error
+     * @param int $code
+     * @param string $type
+     * @return ResultInterface
+     */
+    public function createErrorResult(
+        string $error,
+        int $code = 422,
+        string $type = 'server.validation_error'
+    ): ResultInterface {
+        return $this->resultFactory->create(
+            [
+                'errors' => [
+                    $this->errorFactory->create(
+                        [
+                            'message' => $error,
+                            'code' => $code,
+                            'type' => $type,
+                        ]
+                    ),
+                ],
+            ]
+        );
+    }
+
+    /**
      * Add product to quote items extension attributes.
      *
      * This is needed for Bold Checkout to be able to display product information in the cart.
@@ -85,28 +113,5 @@ class Builder
         foreach ($quoteItems as $quoteItem) {
             $quoteItem->getExtensionAttributes()->setProduct($quoteItem->getProduct());
         }
-    }
-
-    /**
-     * Create quote error result.
-     *
-     * @param string $error
-     * @return ResultInterface
-     */
-    public function createErrorResult(string $error): ResultInterface
-    {
-        return $this->resultFactory->create(
-            [
-                'errors' => [
-                    $this->errorFactory->create(
-                        [
-                            'message' => $error,
-                            'code' => 422,
-                            'type' => 'server.validation_error',
-                        ]
-                    ),
-                ],
-            ]
-        );
     }
 }
