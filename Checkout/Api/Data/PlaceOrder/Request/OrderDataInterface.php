@@ -117,22 +117,6 @@ interface OrderDataInterface
     public function setTotal(float $total): void;
 
     /**
-     * Retrieve request billing address.
-     *
-     * @return \Magento\Quote\Api\Data\AddressInterface
-     */
-    public function getBillingAddress(): AddressInterface;
-
-
-    /**
-     * Retrieve request billing address.
-     *
-     * @param AddressInterface $address
-     * @return void
-     */
-    public function setBillingAddress(AddressInterface $address): void;
-
-    /**
      * Retrieve order payment request data.
      *
      * @return \Magento\Sales\Api\Data\OrderPaymentInterface

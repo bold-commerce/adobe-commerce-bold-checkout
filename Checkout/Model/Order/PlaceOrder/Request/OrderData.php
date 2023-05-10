@@ -56,11 +56,6 @@ class OrderData implements OrderDataInterface
     private $total;
 
     /**
-     * @var AddressInterface
-     */
-    private $billingAddress;
-
-    /**
      * @var PaymentInterface
      */
     private $payment;
@@ -202,19 +197,6 @@ class OrderData implements OrderDataInterface
     public function setTotal(float $total): void
     {
         $this->total = $total;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getBillingAddress(): AddressInterface
-    {
-        return $this->billingAddress;
-    }
-
-    public function setBillingAddress(AddressInterface $address): void
-    {
-        $this->billingAddress = $address;
     }
 
     /**
