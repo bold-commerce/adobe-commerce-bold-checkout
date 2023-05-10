@@ -19,12 +19,12 @@
         <checkout>
             <bold_checkout_base>
                 <enabled>0</enabled>
-                <integration_callback_url>https://m2-platform-connector.staging.boldapps.net/magento/oauth/callback/{{shopId}}</integration_callback_url>
-                <integration_identity_url>https://m2-platform-connector.staging.boldapps.net/magento/oauth/identify</integration_identity_url>
+                <integration_callback_url>https://adobe-commerce-connector.boldapps.net/platform/oauth/callback/{{shopId}}</integration_callback_url>
+                <integration_identity_url>https://adobe-commerce-connector.boldapps.net/platform/oauth/identify</integration_identity_url>
             </bold_checkout_base>
             <bold_checkout_advanced>
                 <enabled_for>0</enabled_for>
-                <platform_connector_url>https://m2-platform-connector.staging.boldapps.net/magento/shops/</platform_connector_url>
+                <platform_connector_url>https://adobe-commerce-connector.boldapps.net/platform/shops/</platform_connector_url>
             </bold_checkout_advanced>
         </checkout>
     </default>
