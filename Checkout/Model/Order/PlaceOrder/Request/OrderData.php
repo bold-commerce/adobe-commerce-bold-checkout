@@ -5,7 +5,6 @@ namespace Bold\Checkout\Model\Order\PlaceOrder\Request;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataExtensionInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
@@ -70,49 +69,11 @@ class OrderData implements OrderDataInterface
      */
     private $extensionAttributes;
 
-    /**
-     * @param int $quoteId
-     * @param string $browserIp
-     * @param string $publicId
-     * @param string $financialStatus
-     * @param string $fulfillmentStatus
-     * @param string $orderStatus
-     * @param string $orderNumber
-     * @param float $total
-     * @param OrderPaymentInterface $payment
-     * @param TransactionInterface $transaction
-     * @param OrderDataExtensionInterface|null $extensionAttributes
-     */
-    public function __construct(
-        int $quoteId,
-        string $browserIp,
-        string $publicId,
-        string $financialStatus,
-        string $fulfillmentStatus,
-        string $orderStatus,
-        string $orderNumber,
-        float $total,
-        OrderPaymentInterface $payment,
-        TransactionInterface $transaction,
-        OrderDataExtensionInterface $extensionAttributes = null
-    ) {
-        $this->quoteId = $quoteId;
-        $this->browserIp = $browserIp;
-        $this->publicId = $publicId;
-        $this->financialStatus = $financialStatus;
-        $this->fulfillmentStatus = $fulfillmentStatus;
-        $this->orderStatus = $orderStatus;
-        $this->orderNumber = $orderNumber;
-        $this->total = $total;
-        $this->payment = $payment;
-        $this->extensionAttributes = $extensionAttributes;
-        $this->transaction = $transaction;
-    }
 
     /**
      * @inheritDoc
      */
-    public function getQuoteId(): int
+    public function getQuoteId(): ?int
     {
         return $this->quoteId;
     }
@@ -120,7 +81,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getBrowserIp(): string
+    public function setQuoteId(int $quoteId): void
+    {
+        $this->quoteId = $quoteId;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBrowserIp(): ?string
     {
         return $this->browserIp;
     }
@@ -128,7 +97,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getPublicId(): string
+    public function setBrowserIp(string $browserIp): void
+    {
+        $this->browserIp = $browserIp;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPublicId(): ?string
     {
         return $this->publicId;
     }
@@ -136,7 +113,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getFinancialStatus(): string
+    public function setPublicId(string $publicId): void
+    {
+        $this->publicId = $publicId;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFinancialStatus(): ?string
     {
         return $this->financialStatus;
     }
@@ -144,7 +129,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getFulfillmentStatus(): string
+    public function setFinancialStatus(string $financialStatus): void
+    {
+        $this->financialStatus = $financialStatus;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFulfillmentStatus(): ?string
     {
         return $this->fulfillmentStatus;
     }
@@ -152,7 +145,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getOrderStatus(): string
+    public function setFulfillmentStatus(string $fulfillmentStatus): void
+    {
+        $this->fulfillmentStatus = $fulfillmentStatus;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOrderStatus(): ?string
     {
         return $this->orderStatus;
     }
@@ -160,7 +161,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getOrderNumber(): string
+    public function setOrderStatus(string $orderStatus): void
+    {
+        $this->orderStatus = $orderStatus;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOrderNumber(): ?string
     {
         return $this->orderNumber;
     }
@@ -168,7 +177,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getTotal(): float
+    public function setOrderNumber(string $orderNumber): void
+    {
+        $this->orderNumber = $orderNumber;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotal(): ?float
     {
         return $this->total;
     }
@@ -176,7 +193,15 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getPayment(): OrderPaymentInterface
+    public function setTotal(float $total): void
+    {
+        $this->total = $total;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPayment(): ?OrderPaymentInterface
     {
         return $this->payment;
     }
@@ -184,9 +209,25 @@ class OrderData implements OrderDataInterface
     /**
      * @inheritDoc
      */
-    public function getTransaction(): TransactionInterface
+    public function setPayment(\Magento\Sales\Api\Data\OrderPaymentInterface $payment): void
+    {
+        $this->payment = $payment;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTransaction(): ?TransactionInterface
     {
         return $this->transaction;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTransaction(TransactionInterface $transaction): void
+    {
+        $this->transaction = $transaction;
     }
 
     /**
@@ -195,5 +236,13 @@ class OrderData implements OrderDataInterface
     public function getExtensionAttributes(): ?OrderDataExtensionInterface
     {
         return $this->extensionAttributes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setExtensionAttributes(?OrderDataExtensionInterface $extensionAttributes): void
+    {
+        $this->extensionAttributes = $extensionAttributes;
     }
 }
