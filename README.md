@@ -6,10 +6,12 @@ This module replaces native Adobe Commerce checkout with the Bold Checkout.
 ## Installation Git
 1. Clone the repository to `app/code/Bold/`.
 2. Run `bin/magento setup:upgrade`.
+3. Run `bin/magento setup:di:compile`.
 
 ## Installation Composer
 1. Run `composer require bold-commerce/module-checkout`.
 2. Run `bin/magento setup:upgrade`.
+3. Run `bin/magento setup:di:compile`.
 
 ## Enable Bold Checkout
 1. Go to `Stores > Configuration > Sales > Checkout`.
