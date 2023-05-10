@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Data\PlaceOrder\ResultInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResultInterfaceFactory;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\PlaceOrderInterface;
+use Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateInvoice;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromQuote;
@@ -70,7 +71,13 @@ class PlaceOrder implements PlaceOrderInterface
     private $shopIdValidator;
 
     /**
+     * @var OrderPayloadValidator
+     */
+    private $orderPayloadValidator;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
+     * @param OrderPayloadValidator $orderPayloadValidator
      * @param Order $orderResource
      * @param CartRepositoryInterface $cartRepository
      * @param CreateOrderFromQuote $createOrderFromQuote
@@ -82,6 +89,7 @@ class PlaceOrder implements PlaceOrderInterface
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
+        OrderPayloadValidator $orderPayloadValidator,
         Order $orderResource,
         CartRepositoryInterface $cartRepository,
         CreateOrderFromQuote $createOrderFromQuote,
@@ -100,6 +108,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->processOrderPayment = $processOrderPayment;
         $this->createInvoice = $createInvoice;
         $this->shopIdValidator = $shopIdValidator;
+        $this->orderPayloadValidator = $orderPayloadValidator;
     }
 
     /**
@@ -108,6 +117,7 @@ class PlaceOrder implements PlaceOrderInterface
     public function place(string $shopId, OrderDataInterface $order): ResultInterface
     {
         try {
+            $this->orderPayloadValidator->validate($order);
             $quote = $this->cartRepository->get($order->getQuoteId());
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
         } catch (LocalizedException $e) {

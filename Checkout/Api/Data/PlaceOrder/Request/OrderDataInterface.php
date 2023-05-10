@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Data\PlaceOrder\Request;
 
-use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 
@@ -12,12 +11,36 @@ use Magento\Sales\Api\Data\TransactionInterface;
  */
 interface OrderDataInterface
 {
+    public const PROPERTY_QUOTE_ID = 'quoteId';
+    public const PROPERTY_BROWSER_IP = 'browserIp';
+    public const PROPERTY_PUBLIC_ID = 'publicId';
+    public const PROPERTY_FINANCIAL_STATUS = 'financialStatus';
+    public const PROPERTY_FULFILLMENT_STATUS = 'fulfillmentStatus';
+    public const PROPERTY_ORDER_STATUS = 'orderStatus';
+    public const PROPERTY_ORDER_NUMBER = 'orderNumber';
+    public const PROPERTY_TOTAL = 'total';
+    public const PROPERTY_PAYMENT = 'payment';
+    public const PROPERTY_TRANSACTION = 'transaction';
+    public const PROPERTY_EXTENSION_ATTRIBUTES = 'extension_attributes';
+    public const PROPERTIES_REQUIRED = [
+        self::PROPERTY_QUOTE_ID,
+        self::PROPERTY_BROWSER_IP,
+        self::PROPERTY_PUBLIC_ID,
+        self::PROPERTY_FINANCIAL_STATUS,
+        self::PROPERTY_FULFILLMENT_STATUS,
+        self::PROPERTY_ORDER_STATUS,
+        self::PROPERTY_ORDER_NUMBER,
+        self::PROPERTY_TOTAL,
+        self::PROPERTY_PAYMENT,
+        self::PROPERTY_TRANSACTION,
+    ];
+
     /**
      * Retrieve cart id.
      *
      * @return int
      */
-    public function getQuoteId(): int;
+    public function getQuoteId(): ?int;
 
     /**
      * @param int $quoteId
@@ -30,7 +53,7 @@ interface OrderDataInterface
      *
      * @return string
      */
-    public function getBrowserIp(): string;
+    public function getBrowserIp(): ?string;
 
     /**
      * @param string $browserIp
@@ -43,7 +66,7 @@ interface OrderDataInterface
      *
      * @return string
      */
-    public function getPublicId(): string;
+    public function getPublicId(): ?string;
 
     /**
      * @param string $publicId
@@ -56,7 +79,7 @@ interface OrderDataInterface
      *
      * @return string
      */
-    public function getFinancialStatus(): string;
+    public function getFinancialStatus(): ?string;
 
     /**
      * @param string $financialStatus
@@ -69,7 +92,7 @@ interface OrderDataInterface
      *
      * @return string
      */
-    public function getFulfillmentStatus(): string;
+    public function getFulfillmentStatus(): ?string;
 
     /**
      * @param string $fulfillmentStatus
@@ -82,7 +105,7 @@ interface OrderDataInterface
      *
      * @return string
      */
-    public function getOrderStatus(): string;
+    public function getOrderStatus(): ?string;
 
     /**
      * @param string $orderStatus
@@ -95,7 +118,7 @@ interface OrderDataInterface
      *
      * @return string
      */
-    public function getOrderNumber(): string;
+    public function getOrderNumber(): ?string;
 
     /**
      * Set order number.
@@ -110,7 +133,7 @@ interface OrderDataInterface
      *
      * @return float
      */
-    public function getTotal(): float;
+    public function getTotal(): ?float;
 
     /**
      * Set bold order total.
@@ -125,7 +148,7 @@ interface OrderDataInterface
      *
      * @return \Magento\Sales\Api\Data\OrderPaymentInterface
      */
-    public function getPayment(): OrderPaymentInterface;
+    public function getPayment(): ?OrderPaymentInterface;
 
     /**
      * Set order payment request data.
@@ -140,7 +163,7 @@ interface OrderDataInterface
      *
      * @return \Magento\Sales\Api\Data\TransactionInterface
      */
-    public function getTransaction(): TransactionInterface;
+    public function getTransaction(): ?TransactionInterface;
 
     /**
      * Set payment transaction request data.
