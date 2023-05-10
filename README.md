@@ -1,7 +1,7 @@
-# Magento 2 Bold Checkout Integration.
+# Adobe Commerce Bold Checkout Integration.
 
 ## Overview
-This module replaces native Magento 2 checkout the Bold Checkout.
+This module replaces native Adobe Commerce checkout with the Bold Checkout.
 
 ## Installation Git
 1. Clone the repository to `app/code/Bold/`.
