@@ -98,6 +98,8 @@ interface OrderDataInterface
     public function getOrderNumber(): string;
 
     /**
+     * Set order number.
+     *
      * @param string $orderNumber
      * @return void
      */
@@ -111,6 +113,8 @@ interface OrderDataInterface
     public function getTotal(): float;
 
     /**
+     * Set bold order total.
+     *
      * @param float $total
      * @return void
      */
@@ -121,15 +125,15 @@ interface OrderDataInterface
      *
      * @return \Magento\Sales\Api\Data\OrderPaymentInterface
      */
-    public function getPayment(): \Magento\Sales\Api\Data\OrderPaymentInterface ;
+    public function getPayment(): OrderPaymentInterface;
 
     /**
-     * Retrieve order payment request data.
+     * Set order payment request data.
      *
      * @param \Magento\Sales\Api\Data\OrderPaymentInterface $payment
      * @return void
      */
-    public function setPayment(\Magento\Sales\Api\Data\OrderPaymentInterface $payment): void;
+    public function setPayment(OrderPaymentInterface $payment): void;
 
     /**
      * Retrieve payment transaction request data.
@@ -139,11 +143,12 @@ interface OrderDataInterface
     public function getTransaction(): TransactionInterface;
 
     /**
+     * Set payment transaction request data.
+     *
      * @param TransactionInterface $transaction
      * @return void
      */
     public function setTransaction(TransactionInterface $transaction): void;
-
 
     /**
      * Retrieve order request extension attributes.
@@ -153,6 +158,8 @@ interface OrderDataInterface
     public function getExtensionAttributes(): ?OrderDataExtensionInterface;
 
     /**
+     * Set order request extension attributes.
+     *
      * @param OrderDataExtensionInterface $orderDataExtension
      * @return void
      */
