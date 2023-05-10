@@ -36,12 +36,11 @@ class OrderPayloadValidator
     {
         foreach ($this->requiredProperties as $property) {
             $methodName = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
-            if (method_exists($orderData, $methodName)) {
-                if ($orderData->$methodName() === null) {
-                    throw new LocalizedException(__('Order creation service requires "%1" to be set in payload.', $property));
-                }
+            if (method_exists($orderData, $methodName) && ($orderData->$methodName() === null)) {
+                throw new LocalizedException(
+                    __('Order creation service requires "%1" to be set in payload.', $property)
+                );
             }
-
         }
     }
 }
