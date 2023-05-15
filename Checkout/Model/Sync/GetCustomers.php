@@ -77,19 +77,15 @@ class GetCustomers
         $this->searchCriteriaBuilder->addFilter($linkField, $entityIds, 'in');
         $this->searchCriteriaBuilder->addFilter('store_id', $storeId);
         $customerList = $this->customerRepository->getList($this->searchCriteriaBuilder->create())->getItems();
-        $customers = [];
-        foreach ($customerList as $customer) {
-            $customers[$customer->getId()] = $customer;
-        }
-
         return [
             'items' =>
                 array_map(
                     function (CustomerInterface $customer) {
                         return $this->dataObjectProcessor->buildOutputDataArray($customer, CustomerInterface::class);
                     },
-                    $customers
-                )
+                    $customerList
+                ),
+            'total_count' => count($customerList)
         ];
     }
 }
