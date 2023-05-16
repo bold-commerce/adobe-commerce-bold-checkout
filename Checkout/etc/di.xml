@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Bold\Checkout\Model\ConfigInterface" type="Bold\Checkout\Model\Config"/>
+    <preference for="Bold\Checkout\Api\Data\Http\Client\ResultInterface" type="Bold\Checkout\Model\Http\Client\Result"/>
+    <preference for="Bold\Checkout\Model\Queue\RequestInterface" type="Bold\Checkout\Model\Queue\Request"/>
+    <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>
+    <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Checkout\Model\Import\Address"/>
+
+    <type name="Bold\Checkout\Observer\CheckoutSectionSave">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Sync\GetProducts">
+        <arguments>
+            <argument name="skipProductTypes" xsi:type="array">
+                <item name="configurable" xsi:type="const">Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE</item>
+                <item name="grouped" xsi:type="const">Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE</item>
+                <item name="bundle" xsi:type="const">Magento\Bundle\Model\Product\Type::TYPE_CODE</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Category\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Category\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Product\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Product\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Delete">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Order\InitOrderFromQuote">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Payment\Gateway\Service">
+        <arguments>
+            <argument name="httpClient" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Quote\QuoteAction">
+        <arguments>
+            <argument name="quoteActions" xsi:type="array">
+                <item name="quote_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountCart</item>
+                <item name="quote_items_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem</item>
+                <item name="quote_currency" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\Currency</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="bold_checkout_product_save_update_attributes" type="Bold\Checkout\Plugin\Product\UpdateAttributesPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Website">
+        <plugin name="bold_checkout_product_add_website" type="Bold\Checkout\Plugin\Product\AddWebsitePlugin"/>
+        <plugin name="bold_checkout_product_remove_website" type="Bold\Checkout\Plugin\Product\RemoveWebsitePlugin"/>
+    </type>
+    <type name="Bold\Checkout\Model\Http\Client\RequestsLogger">
+        <arguments>
+            <argument name="logger" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger</argument>
+        </arguments>
+    </type>
+    <virtualType name="Bold\Checkout\Model\Http\Client\RequestsLogger\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Checkout\Model\Http\Client\RequestsLogger\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/bold_checkout.log</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Bold Payment Method Configuration. -->
+    <virtualType name="Bold\Checkout\Model\Method\Adapter" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Bold\Checkout\Model\Payment\Gateway\Service::CODE</argument>
+            <argument name="valueHandlerPool" xsi:type="object">Bold\Checkout\Gateway\Config\ValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">Bold\Checkout\Gateway\Validator\ValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">Bold\Checkout\Gateway\Command\CommandPool</argument>
+            <argument name="formBlockType" xsi:type="object">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Bold\Checkout\Block\Info</argument>
+        </arguments>
+    </virtualType>
+    <!--Value Handler Pool-->
+    <virtualType name="Bold\Checkout\Gateway\Config\ValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">Bold\Checkout\Gateway\Config\ConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Checkout\Gateway\Config\ConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">Bold\Checkout\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Checkout\Gateway\Config\Config" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Bold\Checkout\Model\Payment\Gateway\Service::CODE</argument>
+        </arguments>
+    </virtualType>
+    <!-- Validator Pool-->
+    <virtualType name="Bold\Checkout\Gateway\Validator\ValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="public_order_id" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Validator\PublicOrderIdValidator</item>
+                <item name="module_enabled" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Validator\ModuleEnabledValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Command Pool -->
+    <virtualType name="Bold\Checkout\Gateway\Command\CommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="capture" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Command\CapturePayment</item>
+                <item name="refund" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Command\RefundPayment</item>
+                <item name="void" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Command\VoidPayment</item>
+                <item name="cancel" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Command\CancelOrder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

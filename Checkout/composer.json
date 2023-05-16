@@ -1,0 +1,34 @@
+{
+  "name": "bold-commerce/module-checkout",
+  "version": "1.0.0",
+  "description": "Bold Checkout integration module",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "102.0.0 - 103.0.5-p1",
+    "magento/module-catalog": "103.0.0 - 104.0.5-p1",
+    "magento/module-catalog-import-export": "101.0.0 - 101.1.5",
+    "magento/module-configurable-product": "100.3.0 - 100.4.5-p1",
+    "magento/module-customer": "102.0.0 - 103.0.5-p1",
+    "magento/module-directory": "100.3.0 - 100.4.5",
+    "magento/module-eav": "102.0.0 - 102.1.5",
+    "magento/module-import-export": "100.3.0 - 101.0.5",
+    "magento/module-integration": "100.3.0 - 100.4.5",
+    "magento/module-payment": "100.3.0 - 100.4.5",
+    "magento/module-quote": "101.1.0 - 101.2.5",
+    "magento/module-sales": "102.0.0 - 103.0.5-p1",
+    "magento/module-store": "101.0.0 - 101.1.5",
+    "magento/module-tax": "100.3.0 - 100.4.5",
+    "psr/log": "*"
+  },
+  "license": [
+    "Proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Bold\\Checkout\\": ""
+    }
+  }
+}
