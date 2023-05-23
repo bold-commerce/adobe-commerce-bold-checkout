@@ -26,6 +26,7 @@ class Config implements ConfigInterface
     private const PATH_INTEGRATION_EMAIL = 'checkout/bold_checkout_base/integration_email';
     private const PATH_INTEGRATION_CALLBACK_URL = 'checkout/bold_checkout_base/integration_callback_url';
     private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
+    private const PATH_SELF_HOSTED_CHECKOUT_ENABLED = 'checkout/bold_checkout_advanced/self_hosted_enabled';
 
     public const INTEGRATION_PATHS = [
         self::PATH_INTEGRATION_EMAIL,
@@ -174,6 +175,19 @@ class Config implements ConfigInterface
     }
 
     /**
+     * @param int $websiteId
+     * @return bool
+     */
+    public function isSelfHostedCheckoutEnabled(int $websiteId): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::PATH_SELF_HOSTED_CHECKOUT_ENABLED,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+    }
+
+    /**
      * @inheritDoc
      */
     public function setShopId(int $websiteId, string $shopId): void
@@ -216,7 +230,8 @@ class Config implements ConfigInterface
      */
     public function getIntegrationCallbackUrl(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_CALLBACK_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_CALLBACK_URL, ScopeInterface::SCOPE_WEBSITES,
+            $websiteId);
     }
 
     /**
@@ -224,6 +239,7 @@ class Config implements ConfigInterface
      */
     public function getIntegrationIdentityLinkUrl(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_IDENTITY_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_IDENTITY_URL, ScopeInterface::SCOPE_WEBSITES,
+            $websiteId);
     }
 }
