@@ -6,6 +6,7 @@ namespace Bold\Checkout\Model;
 
 use Magento\Framework\Mail\Template\SenderResolverInterface;
 use Magento\Integration\Api\IntegrationServiceInterface;
+use Magento\Integration\Model\Config\Consolidated\Converter;
 use Magento\Integration\Model\Integration;
 use Magento\Store\Api\StoreWebsiteRelationInterface;
 
@@ -14,6 +15,24 @@ use Magento\Store\Api\StoreWebsiteRelationInterface;
  */
 class BoldIntegration
 {
+    private const API_RESOURCES = [
+        'Bold_Checkout::secret_create',
+        'Magento_Backend::store',
+        'Magento_Catalog::products',
+        'Magento_Catalog::sets',
+        'Magento_InventoryApi::stock',
+        'Magento_Catalog::categories',
+        'Magento_Customer::customer',
+        'Magento_Customer::manage',
+        'Magento_Customer::delete',
+        'Magento_Sales::create',
+        'Magento_Catalog::catalog_inventory',
+        'Magento_InventorySalesApi::stock',
+        'Magento_Sales::actions_view',
+        'Magento_Tax::manage_tax',
+        'Magento_Cart::manage',
+    ];
+
     private const INTEGRATION_NAME_TEMPLATE = 'BoldPlatformIntegration{{websiteId}}';
 
     /**
@@ -87,7 +106,7 @@ class BoldIntegration
             Integration::IDENTITY_LINK_URL => $identityUrl,
             Integration::SETUP_TYPE => Integration::TYPE_MANUAL,
             Integration::STATUS => Integration::STATUS_INACTIVE,
-            'all_resources' => '1',
+            Converter::API_RESOURCES => self::API_RESOURCES,
         ];
         $integration->getId()
             ? $this->integrationService->update($integrationData)
