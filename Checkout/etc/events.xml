@@ -39,4 +39,7 @@
     <event name="catalog_product_import_bunch_delete_after">
         <observer name="bold_checkout_product_import_delete" instance="Bold\Checkout\Observer\ProductImportDelete"/>
     </event>
+    <event name="shortcut_buttons_container">
+        <observer name="bold_checkout_parallel_checkout_button" instance="Bold\Checkout\Observer\AddParallelCheckoutButton"/>
+    </event>
 </config>

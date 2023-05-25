@@ -17,6 +17,7 @@ class Config implements ConfigInterface
     private const PATH_TOKEN = 'checkout/bold_checkout_base/api_token';
     private const PATH_SECRET = 'checkout/bold_checkout_base/shared_secret';
     private const PATH_ENABLED = 'checkout/bold_checkout_base/enabled';
+    private const PATH_TYPE = 'checkout/bold_checkout_base/type';
     private const PATH_ENABLED_FOR = 'checkout/bold_checkout_advanced/enabled_for';
     private const PATH_IP_WHITELIST = 'checkout/bold_checkout_advanced/ip_whitelist';
     private const PATH_CUSTOMER_WHITELIST = 'checkout/bold_checkout_advanced/customer_whitelist';
@@ -225,5 +226,32 @@ class Config implements ConfigInterface
     public function getIntegrationIdentityLinkUrl(int $websiteId): ?string
     {
         return $this->scopeConfig->getValue(self::PATH_INTEGRATION_IDENTITY_URL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isCheckoutTypeStandard(int $websiteId): bool
+    {
+        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
+            === ConfigInterface::VALUE_TYPE_STANDARD;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isCheckoutTypeParallel(int $websiteId): bool
+    {
+        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
+            === ConfigInterface::VALUE_TYPE_PARALLEL;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isCheckoutTypeSelfHosted(int $websiteId): bool
+    {
+        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
+            === ConfigInterface::VALUE_TYPE_SELF;
     }
 }

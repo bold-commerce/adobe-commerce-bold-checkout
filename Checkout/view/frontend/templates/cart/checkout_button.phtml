@@ -1,0 +1,17 @@
+<?php
+/** @var \Bold\Checkout\Block\Onepage\Button $block */
+?>
+<?php if ($block->isParallelCheckoutEnabled()): ?>
+    <br>
+    <div>
+        <button type="button"
+                data-role="proceed-to-checkout"
+                title="<?= /* @escapeNotVerified */ __('Proceed to Bold Checkout') ?>"
+            data-mage-init='{"Magento_Checkout/js/proceed-to-checkout":{"checkoutUrl":"<?= /* @escapeNotVerified */ $block->getCheckoutUrl() ?>"}}'
+            class="action primary checkout<?= ($block->isDisabledByQuote()) ? ' disabled' : '' ?>"
+            <?php if ($block->isDisabledByQuote()):?>disabled="disabled"<?php endif; ?>>
+        <span><?= /* @escapeNotVerified */ __('Proceed to Bold Checkout') ?></span>
+        </button>
+    </div>
+    <br>
+<?php endif?>
