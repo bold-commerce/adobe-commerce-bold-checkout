@@ -4,4 +4,7 @@
     <event name="controller_action_predispatch_checkout_index_index">
         <observer name="redirect_to_bold_checkout" instance="Bold\Checkout\Observer\RedirectToBoldCheckoutObserver"/>
     </event>
+    <event name="controller_action_predispatch_onestepcheckout_index_index">
+        <observer name="redirect_to_bold_checkout" instance="Bold\Checkout\Observer\RedirectToBoldCheckoutObserver"/>
+    </event>
 </config>

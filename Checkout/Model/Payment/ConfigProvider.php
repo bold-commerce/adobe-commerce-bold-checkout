@@ -61,6 +61,10 @@ class ConfigProvider implements ConfigProviderInterface
         if (!$boldCheckoutData) {
             return [];
         }
+        $websiteId = (int)$this->storeManager->getWebsite()->getId();
+        $shopId = $this->config->getShopId($websiteId);
+        $orderId = $boldCheckoutData['data']['public_order_id'];
+        $jwtToken = $boldCheckoutData['data']['jwt_token'];
         return [
             'bold' => [
                 'payment' => [
@@ -68,6 +72,10 @@ class ConfigProvider implements ConfigProviderInterface
                     'title' => __('Bold Payments'),
                     'method' => Service::CODE,
                 ],
+                'shopId' => $shopId,
+                'publicOrderId' => $orderId,
+                'jwtToken' => $jwtToken,
+                'billingAddressUrl' => self::URL . $shopId . '/' . $orderId . '/addresses/billing',
             ],
         ];
     }
