@@ -113,10 +113,10 @@ interface ConfigInterface
      * Set shop identifier.
      *
      * @param int $websiteId
-     * @param string $shopId
+     * @param string|null $shopId
      * @return void
      */
-    public function setShopId(int $websiteId, string $shopId): void;
+    public function setShopId(int $websiteId, ?string $shopId): void;
 
     /**
      * Get integration Email.
@@ -133,6 +133,14 @@ interface ConfigInterface
      * @return string|null
      */
     public function getIntegrationCallbackUrl(int $websiteId): ?string;
+
+    /**
+     * Get integration API URL.
+     *
+     * @param int $websiteId
+     * @return string|null
+     */
+    public function getApiUrl(int $websiteId): ?string;
 
     /**
      * Get integration Identity link URL.

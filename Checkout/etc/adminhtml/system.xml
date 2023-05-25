@@ -81,12 +81,17 @@
                     <validate>required-url</validate>
                     <comment>M2 Platform Connector API URL.</comment>
                 </field>
-                <field id="log_enabled" translate="label" type="select" sortOrder="70" showInDefault="0" showInWebsite="1">
+                <field id="api_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
+                    <label>Api URL</label>
+                    <validate>required-url</validate>
+                    <comment><![CDATA[Bold Checkout API URL. Do not change..]]></comment>
+                </field>
+                <field id="log_enabled" translate="label" type="select" sortOrder="80" showInDefault="0" showInWebsite="1">
                     <label>Enable Bold Checkout Requests Log</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Log Bold Checkout requests for debugging purpose.]]></comment>
                 </field>
-                <field id="self_hosted_enabled" translate="label" type="select" sortOrder="80" showInDefault="0" showInWebsite="1">
+                <field id="self_hosted_enabled" translate="label" type="select" sortOrder="90" showInDefault="0" showInWebsite="1">
                     <label>Enable Self-Hosted Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>

@@ -1,0 +1,22 @@
+{
+  "name": "bold-commerce/module-mageplaza-osc",
+  "version": "1.0.0",
+  "description": "Mageplaza OSC adaptation for Bold Checkout integration module",
+  "type": "magento2-module",
+  "require": {
+    "bold-commerce/module-checkout": "*",
+    "magento/framework": "102.0.0 - 103.0.5-p1",
+    "mageplaza/magento-2-one-step-checkout-extension": "4.0.11"
+  },
+  "license": [
+    "Proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Bold\\MageplazaOsc\\": ""
+    }
+  }
+}

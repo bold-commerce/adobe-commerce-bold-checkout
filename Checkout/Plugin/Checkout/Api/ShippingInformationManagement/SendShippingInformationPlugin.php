@@ -36,11 +36,11 @@ class SendShippingInformationPlugin
         ShippingInformationManagementInterface $subject,
         PaymentDetailsInterface $result
     ) {
-        $quote = $this->session->getQuote();
         if (!$this->session->getBoldCheckoutData()) {
             return $result;
         }
         try {
+            $quote = $this->session->getQuote();
             //todo: replace address::getShippingDescription with address::getShippingMethod after
             // https://trello.com/c/TRcLOQQg/56-waiting-on-bold-shipping-lines-have-no-codes will be fixed.
             $this->sendShippingMethodIndex($quote->getShippingAddress()->getShippingDescription());

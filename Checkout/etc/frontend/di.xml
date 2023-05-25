@@ -13,21 +13,4 @@
             </argument>
         </arguments>
     </type>
-
-    <type name="Magento\Quote\Api\Data\CartInterface">
-        <plugin name="send_billing_address" type="Bold\Checkout\Plugin\Quote\Api\Data\SendBillingAddressPlugin"/>
-    </type>
-    <type name="Magento\Quote\Model\Quote">
-        <plugin name="send_shipping_address" type="Bold\Checkout\Plugin\Quote\Model\Quote\SendShippingAddressPlugin"/>
-    </type>
-    <type name="Bold\Checkout\Plugin\Quote\Api\Data\SendBillingAddressPlugin">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Plugin\Quote\Model\Quote\SendShippingAddressPlugin">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
 </config>

@@ -127,9 +127,10 @@ class BoldClient implements ClientInterface
      */
     private function getUrl(int $websiteId, string $url): string
     {
+        $apiUrl = $this->config->getApiUrl($websiteId);
         if (!$this->config->getShopId($websiteId)) {
-            return self::URL . $url;
+            return $apiUrl . $url;
         }
-        return self::URL . str_replace('{{shopId}}', $this->config->getShopId($websiteId), $url);
+        return $apiUrl . str_replace('{{shopId}}', $this->config->getShopId($websiteId), $url);
     }
 }

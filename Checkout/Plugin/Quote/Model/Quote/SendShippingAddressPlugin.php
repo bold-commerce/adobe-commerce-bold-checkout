@@ -57,7 +57,7 @@ class SendShippingAddressPlugin
         Quote $result,
         AddressInterface $address = null
     ): Quote {
-        if (!$address || !$this->session->getBoldCheckoutData()) {
+        if (!$this->canSendAddress($address)) {
             return $result;
         }
         $addressData = $this->addressConverter->convert($address);
@@ -75,5 +75,25 @@ class SendShippingAddressPlugin
             return $result;
         }
         return $result;
+    }
+
+    /**
+     * Verify if address can be sent to Bold.
+     *
+     * @param AddressInterface|null $address
+     * @return bool
+     */
+    public function canSendAddress(?AddressInterface $address): bool
+    {
+        if (!$address) {
+            return false;
+        }
+        if (!$this->session->getBoldCheckoutData()) {
+            return false;
+        }
+        if (!$address->getCountryId() || !$address->getFirstname() || !$address->getLastname()) {
+            return false;
+        }
+        return true;
     }
 }

@@ -25,6 +25,7 @@ class Config implements ConfigInterface
     private const PATH_LOG_ENABLED = 'checkout/bold_checkout_advanced/log_enabled';
     private const PATH_INTEGRATION_EMAIL = 'checkout/bold_checkout_base/integration_email';
     private const PATH_INTEGRATION_CALLBACK_URL = 'checkout/bold_checkout_base/integration_callback_url';
+    private const PATH_INTEGRATION_API_URL = 'checkout/bold_checkout_advanced/api_url';
     private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
     private const PATH_SELF_HOSTED_CHECKOUT_ENABLED = 'checkout/bold_checkout_advanced/self_hosted_enabled';
 
@@ -190,7 +191,7 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function setShopId(int $websiteId, string $shopId): void
+    public function setShopId(int $websiteId, ?string $shopId): void
     {
         $this->configWriter->save(
             self::PATH_SHOP_ID,
@@ -231,6 +232,15 @@ class Config implements ConfigInterface
     public function getIntegrationCallbackUrl(int $websiteId): ?string
     {
         return $this->scopeConfig->getValue(self::PATH_INTEGRATION_CALLBACK_URL, ScopeInterface::SCOPE_WEBSITES,
+            $websiteId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getApiUrl(int $websiteId): ?string
+    {
+        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_API_URL, ScopeInterface::SCOPE_WEBSITES,
             $websiteId);
     }
 
