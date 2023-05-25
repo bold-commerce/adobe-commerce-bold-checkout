@@ -73,9 +73,11 @@ class ConfigProvider implements ConfigProviderInterface
                     'method' => Service::CODE,
                 ],
                 'shopId' => $shopId,
+                'customerIsGuest' => $this->checkoutSession->getQuote()->getCustomerIsGuest(),
                 'publicOrderId' => $orderId,
                 'jwtToken' => $jwtToken,
                 'billingAddressUrl' => self::URL . $shopId . '/' . $orderId . '/addresses/billing',
+                'guestUrl' => self::URL . $shopId . '/' . $orderId . '/customer/guest',
             ],
         ];
     }

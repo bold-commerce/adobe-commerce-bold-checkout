@@ -94,7 +94,7 @@
         </arguments>
     </virtualType>
 
-    <type name="Magento\Quote\Api\Data\CartInterface">
+    <!--<type name="Magento\Quote\Api\Data\CartInterface">
         <plugin name="send_billing_address" type="Bold\Checkout\Plugin\Quote\Api\Data\SendBillingAddressPlugin"/>
     </type>
     <type name="Magento\Quote\Model\Quote">
@@ -109,7 +109,7 @@
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
         </arguments>
-    </type>
+    </type>-->
 
     <!-- Bold Payment Method Configuration. -->
     <virtualType name="Bold\Checkout\Model\Method\Adapter" type="Magento\Payment\Model\Method\Adapter">
