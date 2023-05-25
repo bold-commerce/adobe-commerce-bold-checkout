@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Block\Onepage;
 
 use Bold\Checkout\Model\ConfigInterface;
+use Magento\Catalog\Block\ShortcutInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
@@ -12,9 +13,11 @@ use Magento\Framework\View\Element\Template\Context;
 /**
  * Block for parallel checkout handling.
  */
-class Button extends Template
+class Button extends Template implements ShortcutInterface
 {
     public const KEY_PARALLEL = 'parallel';
+
+    public const ELEMENT_ALIAS = 'bold.checkout.parallel.button';
 
     /**
      * @var Session
@@ -42,6 +45,16 @@ class Button extends Template
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
         $this->config = $config;
+    }
+
+    /**
+     * Get shortcut alias
+     *
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->getData(self::ELEMENT_ALIAS);
     }
 
     /**
@@ -74,6 +87,12 @@ class Button extends Template
      */
     public function getCheckoutUrl(): string
     {
-        return $this->getUrl('checkout', [self::KEY_PARALLEL => true]);
+        return $this->getUrl(
+            'checkout',
+            [
+                '_secure' => $this->getRequest()->isSecure(),
+                self::KEY_PARALLEL => true,
+            ]
+        );
     }
 }
