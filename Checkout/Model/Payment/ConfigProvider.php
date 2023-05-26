@@ -77,7 +77,7 @@ class ConfigProvider implements ConfigProviderInterface
                 'publicOrderId' => $orderId,
                 'jwtToken' => $jwtToken,
                 'billingAddressUrl' => self::URL . $shopId . '/' . $orderId . '/addresses/billing',
-                'guestUrl' => self::URL . $shopId . '/' . $orderId . '/customer/guest',
+                'url' => self::URL . $shopId . '/' . $orderId . '/',
             ],
         ];
     }
