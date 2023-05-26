@@ -12,6 +12,9 @@ interface ConfigInterface
     public const VALUE_ENABLED_FOR_IP = 1;
     public const VALUE_ENABLED_FOR_CUSTOMER = 2;
     public const VALUE_ENABLED_FOR_PERCENTAGE = 3;
+    public const VALUE_TYPE_STANDARD = 0;
+    public const VALUE_TYPE_PARALLEL = 1;
+    public const VALUE_TYPE_SELF = 2;
     public const PATH_SHOP_ID = 'checkout/bold_checkout_base/shop_id';
 
     /**
@@ -133,4 +136,28 @@ interface ConfigInterface
      * @return string|null
      */
     public function getIntegrationIdentityLinkUrl(int $websiteId): ?string;
+
+    /**
+     * Check if Bold Checkout type is standard.
+     *
+     * @param int $websiteId
+     * @return bool
+     */
+    public function isCheckoutTypeStandard(int $websiteId): bool;
+
+    /**
+     * Check if Bold Checkout type is parallel.
+     *
+     * @param int $websiteId
+     * @return bool
+     */
+    public function isCheckoutTypeParallel(int $websiteId): bool;
+
+    /**
+     * Check if Bold Checkout type is self-hosted.
+     *
+     * @param int $websiteId
+     * @return bool
+     */
+    public function isCheckoutTypeSelfHosted(int $websiteId): bool;
 }
