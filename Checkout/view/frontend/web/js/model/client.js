@@ -3,11 +3,19 @@ define([
 ], function ($) {
     'use strict';
 
+    /**
+     * Bold storefront client.
+     *
+     * @type object
+     */
     const client = {
         /**
          * Initialize client.
          */
         initialize: function () {
+            if (window.checkoutConfig.bold === undefined) {
+                return;
+            }
             this.jwtToken = window.checkoutConfig.bold.jwtToken;
             this.url = window.checkoutConfig.bold.url;
         },
@@ -25,7 +33,7 @@ define([
                 type: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + this.jwtToken,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 data: JSON.stringify(data)
             });

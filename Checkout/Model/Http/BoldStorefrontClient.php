@@ -75,7 +75,12 @@ class BoldStorefrontClient implements ClientInterface
     {
         $url = $this->getUrl($websiteId, $url);
         $headers = $this->getHeaders();
-        return $this->postCommand->execute($websiteId, $url, $headers, $data);
+        $result = $this->postCommand->execute($websiteId, $url, $headers, $data);
+        if (!$result->getErrors() && isset($result->getBody()['data']['jwt_token'])) {
+            $this->checkoutSession->setBoldCheckoutData($result->getBody());
+        }
+
+        return $result;
     }
 
     /**

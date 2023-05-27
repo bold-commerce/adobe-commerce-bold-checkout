@@ -8,6 +8,17 @@ use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Payment\Gateway\Service;
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Checkout\Model\Session;
+use Magento\Directory\Model\AllowedCountries;
+use Magento\Directory\Model\Country;
+use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
+use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Component\ComponentRegistrar;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\ReadFactory;
+use Magento\Framework\Module\Dir;
+use Magento\Framework\Module\Dir\Reader;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\View\Element\Template\File\Resolver;
 use Magento\Store\Model\StoreManagerInterface;
 
 class ConfigProvider implements ConfigProviderInterface
@@ -35,27 +46,73 @@ class ConfigProvider implements ConfigProviderInterface
     private $config;
 
     /**
+     * @var Json
+     */
+    private $json;
+
+    /**
+     * @var Reader
+     */
+    private $moduleReader;
+
+    /**
+     * @var ReadFactory
+     */
+    private $readFactory;
+
+    /**
+     * @var AllowedCountries
+     */
+    private $allowedCountries;
+
+    /**
+     * @var CollectionFactory
+     */
+    private $collectionFactory;
+
+    /**
+     * @var array
+     */
+    private $countries;
+
+    /**
      * @param Session $checkoutSession
      * @param ConfigInterface $config
      * @param ClientInterface $client
      * @param StoreManagerInterface $storeManager
+     * @param Filesystem $filesystem
+     * @param DirectoryList $directoryList
+     * @param ComponentRegistrar $componentRegistrar
+     * @param Resolver $fileResolver
+     * @param \Magento\Framework\View\FileSystem $viewFileSystem
+     * @param Json $json
      */
     public function __construct(
         Session $checkoutSession,
         ConfigInterface $config,
         ClientInterface $client,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        AllowedCountries $allowedCountries,
+        CollectionFactory $collectionFactory,
+        Json $json,
+        Reader $moduleReader,
+        ReadFactory $readFactory
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->client = $client;
         $this->storeManager = $storeManager;
         $this->config = $config;
+        $this->json = $json;
+        $this->moduleReader = $moduleReader;
+        $this->readFactory = $readFactory;
+        $this->allowedCountries = $allowedCountries;
+        $this->collectionFactory = $collectionFactory;
     }
 
     /**
      * @inheritdoc
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
         if (!$boldCheckoutData) {
@@ -63,20 +120,20 @@ class ConfigProvider implements ConfigProviderInterface
         }
         $websiteId = (int)$this->storeManager->getWebsite()->getId();
         $shopId = $this->config->getShopId($websiteId);
-        $orderId = $boldCheckoutData['data']['public_order_id'];
-        $jwtToken = $boldCheckoutData['data']['jwt_token'];
+        $orderId = $boldCheckoutData['data']['public_order_id'] ?? null;
+        $jwtToken = $boldCheckoutData['data']['jwt_token'] ?? null;
         return [
             'bold' => [
                 'payment' => [
                     'iframeSrc' => $this->getIframeSrc(),
-                    'title' => __('Bold Payments'),
+                    'title' => __('Pay Pal'),
                     'method' => Service::CODE,
                 ],
                 'shopId' => $shopId,
                 'customerIsGuest' => $this->checkoutSession->getQuote()->getCustomerIsGuest(),
                 'publicOrderId' => $orderId,
                 'jwtToken' => $jwtToken,
-                'billingAddressUrl' => self::URL . $shopId . '/' . $orderId . '/addresses/billing',
+                'countries' => $this->getAllowedCountries(),
                 'url' => self::URL . $shopId . '/' . $orderId . '/',
             ],
         ];
@@ -99,8 +156,33 @@ class ConfigProvider implements ConfigProviderInterface
         return self::URL . $shopId . '/' . $orderId . '/payments/iframe?token=' . $jwtToken;
     }
 
-    private function getStyles()
+    /**
+     * Get iframe styles.
+     *
+     * @return array
+     */
+    private function getStyles(): array
     {
-        return null;
+        $dir = $this->moduleReader->getModuleDir(Dir::MODULE_VIEW_DIR, 'Bold_Checkout');
+        $read = $this->readFactory->create($dir . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'web');
+        if (!$read->isFile('iframe-styles.json')) {
+            return [];
+        }
+        return $this->json->unserialize($read->readFile('iframe-styles.json'));
+    }
+
+    /**
+     * @return Country[]
+     */
+    public function getAllowedCountries(): array
+    {
+        if ($this->countries) {
+            return $this->countries;
+        }
+        $allowedCountries = $this->allowedCountries->getAllowedCountries();
+        $countriesCollection = $this->collectionFactory->create()->addFieldToFilter('country_id',
+            ['in' => $allowedCountries]);
+        $this->countries = $countriesCollection->toOptionArray(false);
+        return $this->countries;
     }
 }

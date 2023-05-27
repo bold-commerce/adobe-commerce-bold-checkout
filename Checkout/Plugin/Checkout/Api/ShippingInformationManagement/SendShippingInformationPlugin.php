@@ -44,13 +44,7 @@ class SendShippingInformationPlugin
             //todo: replace address::getShippingDescription with address::getShippingMethod after
             // https://trello.com/c/TRcLOQQg/56-waiting-on-bold-shipping-lines-have-no-codes will be fixed.
             $this->sendShippingMethodIndex($quote->getShippingAddress()->getShippingDescription());
-            $taxes = $this->client->post((int)$quote->getStore()->getWebsiteId(), 'taxes', []);
-            if ($taxes->getErrors()) {
-                $this->session->setBoldCheckoutData(null);
-                return $result;
-            }
         } catch (\Exception $e) {
-            $this->session->setBoldCheckoutData(null);
             return $result;
         }
         return $result;
@@ -66,11 +60,12 @@ class SendShippingInformationPlugin
      */
     private function sendShippingMethodIndex(string $shippingMethod): void
     {
+        $websiteId = (int)$this->session->getQuote()->getStore()->getWebsiteId();
         $shippingLines = $this->getShippingLines();
         foreach ($shippingLines as $shippingLine) {
             if ($shippingLine['code'] === $shippingMethod) {
                 $shippingLine = $this->client->post(
-                    (int)$this->session->getQuote()->getStore()->getWebsiteId(),
+                    $websiteId,
                     'shipping_lines',
                     ['index' => $shippingLine['id']]
                 );
@@ -90,16 +85,15 @@ class SendShippingInformationPlugin
     private function getShippingLines(): array
     {
         try {
+            $websiteId = (int)$this->session->getQuote()->getStore()->getWebsiteId();
             $lines = $this->client->get(
-                (int)$this->session->getQuote()->getStore()->getWebsiteId(),
+                $websiteId,
                 'shipping_lines'
             );
             if ($lines->getErrors()) {
-                $this->session->setBoldCheckoutData(null);
                 return [];
             }
         } catch (\Exception $e) {
-            $this->session->setBoldCheckoutData(null);
             return [];
         }
         return $lines->getBody()['data']['shipping_lines'];
