@@ -17,10 +17,9 @@ define([
          * Convert address to Bold API format.
          *
          * @param address object
-         * @param type string
          * @return object
          */
-        convertAddress: function (address, type) {
+        convertAddress: function (address) {
             const countryId = address.countryId;
             const country = this.countries.find(country => country.value === countryId);
             const countryName = country ? country.label : null;
@@ -39,7 +38,11 @@ define([
                 'address_line_1': address.street !== undefined && address.street[0] ? address.street[0] : '',
                 'address_line_2': address.street !== undefined && address.street[1] ? address.street[1] : '',
             }
-            this.validatePayload(payload, type);
+            try {
+                this.validatePayload(payload);
+            } catch (e) {
+                return null;
+            }
             return payload;
         },
 
@@ -47,29 +50,28 @@ define([
          * Validate address payload.
          *
          * @param payload object
-         * @param type string
          * @return void
          * @throws Error
          * @private
          */
-        validatePayload(payload, type) {
-            let requiredFields = {
-                'first_name': 'Please provide your ' + type +' address first name.',
-                'last_name': 'Please provide your ' + type +' address last name.',
-                'postal_code': 'Please provide your ' + type +' address postal code.',
-                'phone_number': 'Please provide your ' + type +' address phone number.',
-                'country': 'Please select your ' + type +' address country.',
-                'city': 'Please provide your ' + type +' address city.',
-                'address_line_1': 'Please provide your ' + type +' address address.',
-            }
+        validatePayload(payload) {
+            let requiredFields = [
+                'first_name',
+                'last_name',
+                'postal_code',
+                'phone_number',
+                'country',
+                'city',
+                'address_line_1',
+            ];
             const country = this.countries.find(country => country.value === payload.country_code);
             if (country && country.is_region_visible) {
-                requiredFields.province = 'Please select your ' + type +' address province.';
-                requiredFields.province_code = 'Please select your ' + type +' address province.';
+                requiredFields.push('province');
+                requiredFields.push('province_code');
             }
-            _.each(requiredFields, function (message, field) {
+            _.each(requiredFields, function (field) {
                 if (!payload[field]) {
-                    throw new Error(message);
+                    throw new Error('Missing required field: ' + field);
                 }
             })
         },

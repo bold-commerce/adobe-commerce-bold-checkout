@@ -3,14 +3,48 @@ define([
 ], function ($) {
     'use strict';
 
+    let requestInProgress = false;
+    let requestQueue = [];
+
     /**
-     * Bold storefront client.
+     * Process next request in queue.
      *
-     * @type object
+     * @return void
+     * @private
+     */
+    function processNextRequest() {
+        if (!requestInProgress && requestQueue.length > 0) {
+            let nextRequest = requestQueue.shift();
+            requestInProgress = true;
+            $.ajax({
+                url: client.url + nextRequest.path,
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + client.jwtToken,
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify(nextRequest.data)
+            }).done(function (result) {
+                nextRequest.resolve(result);
+                requestInProgress = false;
+                processNextRequest();
+            }).fail(function (error) {
+                nextRequest.reject(error);
+                requestInProgress = false;
+                processNextRequest();
+            });
+        }
+    }
+
+    /**
+     * Bold http client.
+     * @type {object}
      */
     const client = {
         /**
          * Initialize client.
+         *
+         * @return void
          */
         initialize: function () {
             if (window.checkoutConfig.bold === undefined) {
@@ -25,25 +59,27 @@ define([
          *
          * @param path string
          * @param data object
-         * @return object
+         * @return {Promise}
          */
         post: function (path, data) {
-            return $.ajax({
-                url: this.url + path,
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + this.jwtToken,
-                    'Content-Type': 'application/json',
-                },
-                data: JSON.stringify(data)
+            return new Promise((resolve, reject) => {
+                requestQueue.push({
+                    path: path,
+                    data: data,
+                    resolve: resolve,
+                    reject: reject,
+                    errorLog: path + ' Error'
+                });
+
+                processNextRequest();
             });
         },
 
         /**
          * Get data from Bold API.
          *
-         * @param path string
-         * @return object
+         * @param path
+         * @return {*}
          */
         get: function (path) {
             return $.ajax({
