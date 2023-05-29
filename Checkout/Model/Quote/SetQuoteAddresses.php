@@ -76,7 +76,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
-            if ($this->config->isSelfHostedCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
+            if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
                 return $this->quoteResultBuilder->createSuccessResult($quote);
             }
         } catch (LocalizedException $e) {

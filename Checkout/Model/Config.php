@@ -28,7 +28,6 @@ class Config implements ConfigInterface
     private const PATH_INTEGRATION_CALLBACK_URL = 'checkout/bold_checkout_base/integration_callback_url';
     private const PATH_INTEGRATION_API_URL = 'checkout/bold_checkout_advanced/api_url';
     private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
-    private const PATH_SELF_HOSTED_CHECKOUT_ENABLED = 'checkout/bold_checkout_advanced/self_hosted_enabled';
 
     public const INTEGRATION_PATHS = [
         self::PATH_INTEGRATION_EMAIL,
@@ -174,19 +173,6 @@ class Config implements ConfigInterface
     public function getLogIsEnabled(int $websiteId): bool
     {
         return $this->scopeConfig->isSetFlag(self::PATH_LOG_ENABLED, ScopeInterface::SCOPE_WEBSITES, $websiteId);
-    }
-
-    /**
-     * @param int $websiteId
-     * @return bool
-     */
-    public function isSelfHostedCheckoutEnabled(int $websiteId): bool
-    {
-        return $this->scopeConfig->isSetFlag(
-            self::PATH_SELF_HOSTED_CHECKOUT_ENABLED,
-            ScopeInterface::SCOPE_WEBSITES,
-            $websiteId
-        );
     }
 
     /**

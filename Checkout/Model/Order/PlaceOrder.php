@@ -108,7 +108,7 @@ class PlaceOrder implements PlaceOrderInterface
         }
         try {
             $websiteId = $quote->getStore()->getWebsiteId();
-            $order = $this->config->isSelfHostedCheckoutEnabled($websiteId)
+            $order = $this->config->isCheckoutTypeSelfHosted($websiteId)
                 ? $this->processOrder->process($orderPayload)
                 : $this->createOrderFromPayload->createOrder($orderPayload, $quote);
         } catch (Exception $e) {

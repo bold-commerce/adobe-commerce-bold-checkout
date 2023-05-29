@@ -105,14 +105,6 @@ interface ConfigInterface
     public function getLogIsEnabled(int $websiteId): bool;
 
     /**
-     * Get is bold checkout log is enabled.
-     *
-     * @param int $websiteId
-     * @return bool
-     */
-    public function isSelfHostedCheckoutEnabled(int $websiteId): bool;
-
-    /**
      * Set shop identifier.
      *
      * @param int $websiteId
