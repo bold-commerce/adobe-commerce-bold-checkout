@@ -11,10 +11,20 @@
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
                     <label>Enable Bold Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[Replace native checkout with Bold Checkout’s three-page checkout.
-                             Refer to the <a target='_blank' href="https://developer.boldcommerce.com/default/guides/platform-integration/magento-1">documentation</a> for more details.]]></comment>
+                    <comment>
+                        <![CDATA[Refer to the <a target='_blank' href="https://developer.boldcommerce.com/default/guides/platform-integration/magento-1">documentation</a> for more details.]]></comment>
                 </field>
-                <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="0" showInWebsite="1">
+                <field id="type" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
+                    <label>Bold Checkout Type</label>
+                    <source_model>Bold\Checkout\Model\Config\Source\CheckoutTypeSource</source_model>
+                    <comment><![CDATA[
+                        Standard - replace the native checkout with Bold Checkout's three-page checkout.<br>
+                        Parallel - allow customers to choose between the native checkout or Bold Checkout.<br>
+                        Self-Hosted - use the native checkout with Bold Checkout's payment options.
+                    ]]></comment>
+                </field>
+                <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="0"
+                       showInWebsite="1">
                     <label>API Token</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <validate>required-entry</validate>
@@ -22,16 +32,19 @@
                         Center.
                     </comment>
                 </field>
-                <field id="integration_email" translate="select" type="select" sortOrder="30" showInDefault="0" showInWebsite="1">
+                <field id="integration_email" translate="select" type="select" sortOrder="30" showInDefault="0"
+                       showInWebsite="1">
                     <label>Bold Integration Email</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
                 </field>
-                <field id="integration_callback_url" translate="label" type="text" sortOrder="40" showInDefault="0" showInWebsite="1">
+                <field id="integration_callback_url" translate="label" type="text" sortOrder="40" showInDefault="0"
+                       showInWebsite="1">
                     <label>Bold Integration Callback URL</label>
                     <validate>required-entry</validate>
                     <comment><![CDATA[Please do not change.]]></comment>
                 </field>
-                <field id="integration_identity_url" translate="label" type="text" sortOrder="50" showInDefault="0" showInWebsite="1">
+                <field id="integration_identity_url" translate="label" type="text" sortOrder="50" showInDefault="0"
+                       showInWebsite="1">
                     <label>Bold Integration Identity Link URL</label>
                     <validate>required-entry</validate>
                     <comment><![CDATA[Please do not change.]]></comment>

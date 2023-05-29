@@ -25,6 +25,11 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $allowedForCart;
 
     /**
+     * @var IsBoldCheckoutAllowedForRequest
+     */
+    private $allowedForRequest;
+
+    /**
      * @var Session
      */
     private $session;
@@ -46,6 +51,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
 
     /**
      * @param IsBoldCheckoutAllowedForCart $allowedForCart
+     * @param IsBoldCheckoutAllowedForRequest $allowedForRequest
      * @param Session $session
      * @param ManagerInterface $messageManager
      * @param InitOrderFromQuote $initOrderFromQuote
@@ -54,12 +60,14 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
      */
     public function __construct(
         IsBoldCheckoutAllowedForCart $allowedForCart,
+        IsBoldCheckoutAllowedForRequest $allowedForRequest,
         Session $session,
         ManagerInterface $messageManager,
         InitOrderFromQuote $initOrderFromQuote,
         ConfigInterface $config
     ) {
         $this->allowedForCart = $allowedForCart;
+        $this->allowedForRequest = $allowedForRequest;
         $this->session = $session;
         $this->messageManager = $messageManager;
         $this->initOrderFromQuote = $initOrderFromQuote;
@@ -72,7 +80,11 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $quote = $this->session->getQuote();
+        $request = $observer->getRequest();
         if (!$this->allowedForCart->isAllowed($quote)) {
+            return;
+        }
+        if (!$this->allowedForRequest->isAllowed($quote, $request)) {
             return;
         }
         try {
