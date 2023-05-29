@@ -97,24 +97,24 @@ class PlaceOrder implements PlaceOrderInterface
     /**
      * @inheritDoc
      */
-    public function place(string $shopId, OrderDataInterface $orderPayload): ResultInterface
+    public function place(string $shopId, OrderDataInterface $order): ResultInterface
     {
         try {
-            $this->orderPayloadValidator->validate($orderPayload);
-            $quote = $this->cartRepository->get($orderPayload->getQuoteId());
+            $this->orderPayloadValidator->validate($order);
+            $quote = $this->cartRepository->get($order->getQuoteId());
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
         } catch (LocalizedException $e) {
             return $this->getValidationErrorResponse($e->getMessage());
         }
         try {
             $websiteId = $quote->getStore()->getWebsiteId();
-            $order = $this->config->isCheckoutTypeSelfHosted($websiteId)
-                ? $this->processOrder->process($orderPayload)
-                : $this->createOrderFromPayload->createOrder($orderPayload, $quote);
+            $magentoOrder = $this->config->isCheckoutTypeSelfHosted($websiteId)
+                ? $this->processOrder->process($order)
+                : $this->createOrderFromPayload->createOrder($order, $quote);
         } catch (Exception $e) {
             return $this->getErrorResponse($e->getMessage());
         }
-        return $this->getSuccessResponse($order);
+        return $this->getSuccessResponse($magentoOrder);
     }
 
     /**

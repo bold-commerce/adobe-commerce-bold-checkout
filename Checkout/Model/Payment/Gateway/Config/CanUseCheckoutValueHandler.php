@@ -6,6 +6,9 @@ namespace Bold\Checkout\Model\Payment\Gateway\Config;
 use Magento\Checkout\Model\Session;
 use Magento\Payment\Gateway\Config\ValueHandlerInterface;
 
+/**
+ * Is Bold Checkout payment is applicable for current quote.
+ */
 class CanUseCheckoutValueHandler implements ValueHandlerInterface
 {
     /**
