@@ -13,7 +13,6 @@ define(
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 customerIsGuest: !!Number(window.checkoutConfig.bold.customerIsGuest),
-                billingAddressComponent: registry.get('index = validator'),
                 iframeHeight: ko.observable('0px'),
                 isBillingAddressSynced: false,
                 isShippingAddressSynced: false,
@@ -29,13 +28,22 @@ define(
                     return;
                 }
                 this._super();
-                this.sendShippingAddress(quote.shippingAddress());
-                this.sendBillingAddress(quote.billingAddress());
                 this.iframeSrc = ko.observable(
                     this.isBillingAddressSynced && this.isShippingAddressSynced ?
                         window.checkoutConfig.bold.payment.iframeSrc
                         : null
                 );
+                this.iframeSrc.subscribe(function (iframeSrc) {
+                    if (iframeSrc === null) {
+                        return;
+                    }
+                    if (this.customerIsGuest) {
+                        this.sendGuestCustomerInfo();
+                    }
+                    this.subscribeToPIGI();
+                }.bind(this));
+                this.sendShippingAddress(quote.shippingAddress());
+                this.sendBillingAddress(quote.billingAddress());
                 quote.billingAddress.subscribe(function () {
                     const sendBillingAddress = _.debounce(
                         function (billingAddress) {
@@ -52,15 +60,6 @@ define(
                         1000);
                     sendShippingAddress(quote.shippingAddress());
                 }, this);
-                this.iframeSrc.subscribe(function (iframeSrc) {
-                    if (iframeSrc === null) {
-                        return;
-                    }
-                    if (this.customerIsGuest) {
-                        this.sendGuestCustomerInfo();
-                    }
-                    this.subscribeToPIGI();
-                }.bind(this));
             },
 
             /**

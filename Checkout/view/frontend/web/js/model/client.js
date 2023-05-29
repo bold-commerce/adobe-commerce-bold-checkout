@@ -13,27 +13,28 @@ define([
      * @private
      */
     function processNextRequest() {
-        if (!requestInProgress && requestQueue.length > 0) {
-            let nextRequest = requestQueue.shift();
-            requestInProgress = true;
-            $.ajax({
-                url: client.url + nextRequest.path,
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + client.jwtToken,
-                    'Content-Type': 'application/json',
-                },
-                data: JSON.stringify(nextRequest.data)
-            }).done(function (result) {
-                nextRequest.resolve(result);
-                requestInProgress = false;
-                processNextRequest();
-            }).fail(function (error) {
-                nextRequest.reject(error);
-                requestInProgress = false;
-                processNextRequest();
-            });
+        if (requestInProgress || requestQueue.length === 0) {
+            return;
         }
+        const nextRequest = requestQueue.shift();
+        requestInProgress = true;
+        $.ajax({
+            url: client.url + nextRequest.path,
+            type: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + client.jwtToken,
+                'Content-Type': 'application/json',
+            },
+            data: JSON.stringify(nextRequest.data)
+        }).done(function (result) {
+            nextRequest.resolve(result);
+            requestInProgress = false;
+            processNextRequest();
+        }).fail(function (error) {
+            nextRequest.reject(error);
+            requestInProgress = false;
+            processNextRequest();
+        });
     }
 
     /**

@@ -22,7 +22,7 @@ define([
         convertAddress: function (address) {
             const countryId = address.countryId;
             const country = this.countries.find(country => country.value === countryId);
-            const countryName = country ? country.label : null;
+            const countryName = country ? country.label : '';
             const payload = {
                 'id': address.customerAddressId ? Number(address.customerAddressId) : null,
                 'business_name': address.company ? address.company : '',
