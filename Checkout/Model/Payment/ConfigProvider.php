@@ -13,6 +13,8 @@ use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Component\ComponentRegistrar;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadFactory;
 use Magento\Framework\Module\Dir;
@@ -139,6 +141,11 @@ class ConfigProvider implements ConfigProviderInterface
         ];
     }
 
+    /**
+     * Get iframe src.
+     *
+     * @return string|null
+     */
     private function getIframeSrc(): ?string
     {
         $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
@@ -147,12 +154,19 @@ class ConfigProvider implements ConfigProviderInterface
         }
         $websiteId = (int)$this->storeManager->getWebsite()->getId();
         $shopId = $this->config->getShopId($websiteId);
-        $styles = $this->getStyles();
-        if ($styles) {
-            $this->client->post($websiteId, 'payments/styles', $styles);
+        try {
+            $styles = $this->getStyles();
+            if ($styles) {
+                $this->client->post($websiteId, 'payments/styles', $styles);
+            }
+        } catch (\Exception $e) {
+            return null;
         }
-        $orderId = $boldCheckoutData['data']['public_order_id'];
-        $jwtToken = $boldCheckoutData['data']['jwt_token'];
+        $orderId = $boldCheckoutData['data']['public_order_id'] ?? null;
+        $jwtToken = $boldCheckoutData['data']['jwt_token'] ?? null;
+        if (!$orderId || !$jwtToken) {
+            return null;
+        }
         return self::URL . $shopId . '/' . $orderId . '/payments/iframe?token=' . $jwtToken;
     }
 
@@ -160,6 +174,8 @@ class ConfigProvider implements ConfigProviderInterface
      * Get iframe styles.
      *
      * @return array
+     * @throws FileSystemException
+     * @throws ValidatorException
      */
     private function getStyles(): array
     {
@@ -172,6 +188,8 @@ class ConfigProvider implements ConfigProviderInterface
     }
 
     /**
+     * Get allowed countries.
+     *
      * @return Country[]
      */
     public function getAllowedCountries(): array

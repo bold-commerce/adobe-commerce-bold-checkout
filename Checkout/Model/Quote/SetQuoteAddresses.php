@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteAddressesInterface;
+use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Framework\Exception\LocalizedException;
@@ -39,6 +40,11 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $quoteResultBuilder;
 
     /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
@@ -48,12 +54,14 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
-        Builder $quoteResultBuilder
+        Builder $quoteResultBuilder,
+        ConfigInterface $config
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->quoteResultBuilder = $quoteResultBuilder;
+        $this->config = $config;
     }
 
     /**
@@ -68,6 +76,9 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            if ($this->config->isSelfHostedCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
+                return $this->quoteResultBuilder->createSuccessResult($quote);
+            }
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

@@ -15,9 +15,9 @@ define(
                 customerIsGuest: !!Number(window.checkoutConfig.bold.customerIsGuest),
                 iframeHeight: ko.observable('0px'),
                 isBillingAddressSynced: false,
-                isShippingAddressSynced: false,
+                guestCustomerSynced: true,
                 billingAddressPayload: {},
-                shippingAddressPayload: {},
+                guestCustomerPayload: {},
             },
 
             /**
@@ -29,36 +29,21 @@ define(
                 }
                 this._super();
                 this.iframeSrc = ko.observable(
-                    this.isBillingAddressSynced && this.isShippingAddressSynced ?
-                        window.checkoutConfig.bold.payment.iframeSrc
+                    this.isBillingAddressSynced && this.guestCustomerSynced
+                        ? window.checkoutConfig.bold.payment.iframeSrc
                         : null
                 );
                 this.iframeSrc.subscribe(function (iframeSrc) {
-                    if (iframeSrc === null) {
-                        return;
-                    }
-                    if (this.customerIsGuest) {
-                        this.sendGuestCustomerInfo();
-                    }
-                    this.subscribeToPIGI();
+                    this.subscribeToPIGI(iframeSrc);
                 }.bind(this));
-                this.sendShippingAddress(quote.shippingAddress());
-                this.sendBillingAddress(quote.billingAddress());
+                this.syncBillingData(quote.shippingAddress());
                 quote.billingAddress.subscribe(function () {
                     const sendBillingAddress = _.debounce(
                         function (billingAddress) {
-                            this.sendBillingAddress(billingAddress);
+                            this.syncBillingData(billingAddress);
                         }.bind(this),
                         1000);
                     sendBillingAddress(quote.billingAddress());
-                }, this);
-                quote.shippingAddress.subscribe(function () {
-                    const sendShippingAddress = _.debounce(
-                        function (shippingAddress) {
-                            this.sendShippingAddress(shippingAddress);
-                        }.bind(this),
-                        1000);
-                    sendShippingAddress(quote.shippingAddress());
                 }, this);
             },
 
@@ -77,18 +62,26 @@ define(
              */
             sendGuestCustomerInfo: function () {
                 const billingAddress = quote.billingAddress();
-                const shippingAddress = quote.shippingAddress();
-                const firstname = billingAddress.firstname ? billingAddress.firstname : shippingAddress.firstname;
-                const lastname = billingAddress.lastname ? billingAddress.lastname : shippingAddress.lastname;
-                boldClient.post(
-                    'customer/guest',
-                    {
-                        'email_address': quote.guestEmail,
-                        'first_name': firstname,
-                        'last_name': lastname,
-                    }
+                const firstname = billingAddress.firstname;
+                const lastname = billingAddress.lastname;
+                const payload = {
+                    'email_address': quote.guestEmail,
+                    'first_name': firstname,
+                    'last_name': lastname,
+                }
+                if (!payload.email_address || !payload.first_name || !payload.last_name) {
+                    this.guestCustomerSynced = false;
+                    return;
+                }
+                if (this.payloadCompare(payload, this.guestCustomerPayload)) {
+                    return;
+                }
+                boldClient.post('customer/guest', payload).then(
+                    function () {
+                        this.guestCustomerSynced = true;
+                    }.bind(this)
                 ).catch(function () {
-                    this.iframeSrc(null);
+                    this.guestCustomerSynced = false;
                 }.bind(this));
             },
 
@@ -96,9 +89,13 @@ define(
              * Subscribe to PIGI events.
              *
              * @private
+             * @param iframeSrc string
              * @returns {void}
              */
-            subscribeToPIGI() {
+            subscribeToPIGI(iframeSrc) {
+                if (iframeSrc === null) {
+                    return;
+                }
                 window.addEventListener('message', ({data}) => {
                     if (data.height) {
                         this.iframeHeight(data.height + 10 + 'px')
@@ -126,7 +123,7 @@ define(
              * @private
              * @returns {void}
              */
-            sendBillingAddress(address) {
+            syncBillingData(address) {
                 this.isBillingAddressSynced = false;
                 const billingAddress = registry.get('index = billingAddress');
                 if (billingAddress && !billingAddress.validate()) {
@@ -136,57 +133,32 @@ define(
                 if (!payload) {
                     return;
                 }
-                if (this.compareAddressesPayload(payload, this.billingAddressPayload)) {
+                if (this.payloadCompare(payload, this.billingAddressPayload)) {
                     return;
                 }
                 this.billingAddressPayload = payload;
                 boldClient.post('addresses/billing', payload).then(function () {
                     this.isBillingAddressSynced = true;
+                    if (this.customerIsGuest) {
+                        this.sendGuestCustomerInfo();
+                    }
                 }.bind(this)).catch(function () {
                     this.isBillingAddressSynced = false;
                 }.bind(this));
             },
 
             /**
-             * Send shipping address to Bold.
-             *
-             * @param address object
-             * @private
-             * @returns {void}
-             */
-            sendShippingAddress(address) {
-                this.isShippingAddressSynced = false;
-                const shippingAddress = registry.get('index = shippingAddress');
-                if (shippingAddress && !shippingAddress.validate()) {
-                    return;
-                }
-                const payload = boldAddress.convertAddress(address);
-                if (!payload) {
-                    return;
-                }
-                if (this.compareAddressesPayload(payload, this.shippingAddressPayload)) {
-                    return;
-                }
-                this.shippingAddressPayload = payload;
-                boldClient.post('addresses/shipping', payload).then(function () {
-                    this.isShippingAddressSynced = true;
-                }.bind).catch(function () {
-                    this.isShippingAddressSynced = false;
-                }.bind(this));
-            },
-
-            /**
              * Compare two addresses to reduce api calls.
              *
-             * @param address1 object
-             * @param address2 object
+             * @param newPayload object
+             * @param savedPayload object
              * @return {boolean}
              * @private
              */
-            compareAddressesPayload(address1, address2) {
+            payloadCompare(newPayload, savedPayload) {
                 let result = true;
-                _.each(address1, function (value, key) {
-                    if (address2[key] !== value) {
+                _.each(newPayload, function (value, key) {
+                    if (savedPayload[key] !== value) {
                         result = false;
                         return false;
                     }
