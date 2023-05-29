@@ -17,7 +17,7 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class BoldStorefrontClient implements ClientInterface
 {
-    private const URL = 'https://api.boldcommerce.com/checkout/storefront/';
+    public const URL = 'https://api.boldcommerce.com/checkout/storefront/';
 
     /**
      * @var ConfigInterface

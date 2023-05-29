@@ -36,7 +36,7 @@ define(
                 this.iframeSrc.subscribe(function (iframeSrc) {
                     this.subscribeToPIGI(iframeSrc);
                 }.bind(this));
-                this.syncBillingData(quote.shippingAddress());
+                this.syncBillingData(quote.billingAddress());
                 quote.billingAddress.subscribe(function () {
                     const sendBillingAddress = _.debounce(
                         function (billingAddress) {

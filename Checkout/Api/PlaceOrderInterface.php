@@ -17,8 +17,8 @@ interface PlaceOrderInterface
      * Place order from request.
      *
      * @param string $shopId
-     * @param \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface $orderPayload
+     * @param \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface $order
      * @return \Bold\Checkout\Api\Data\PlaceOrder\ResultInterface
      */
-    public function place(string $shopId, OrderDataInterface $orderPayload): ResultInterface;
+    public function place(string $shopId, OrderDataInterface $order): ResultInterface;
 }

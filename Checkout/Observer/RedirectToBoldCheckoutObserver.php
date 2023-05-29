@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer;
 
 use Bold\Checkout\Model\ConfigInterface;
+use Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
 use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
 use Exception;
@@ -87,9 +88,10 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         if (!$this->allowedForRequest->isAllowed($quote, $request)) {
             return;
         }
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
         try {
             $checkoutData = $this->initOrderFromQuote->init($quote);
-            if ($this->config->isSelfHostedCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
+            if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
                 $this->session->setBoldCheckoutData($checkoutData);
                 return;
             }
@@ -100,7 +102,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
                 . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);
         } catch (Exception $exception) {
-            if ($this->config->isSelfHostedCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
+            if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
                 return;
             }
             $this->messageManager->addErrorMessage(

@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Payment;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
+use Bold\Checkout\Model\Http\BoldStorefrontClient;
 use Bold\Checkout\Model\Payment\Gateway\Service;
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Checkout\Model\Session;
@@ -25,8 +26,6 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class ConfigProvider implements ConfigProviderInterface
 {
-    private const URL = 'https://api.boldcommerce.com/checkout/storefront/';
-
     /**
      * @var Session
      */
@@ -136,7 +135,7 @@ class ConfigProvider implements ConfigProviderInterface
                 'publicOrderId' => $orderId,
                 'jwtToken' => $jwtToken,
                 'countries' => $this->getAllowedCountries(),
-                'url' => self::URL . $shopId . '/' . $orderId . '/',
+                'url' => BoldStorefrontClient::URL . $shopId . '/' . $orderId . '/',
             ],
         ];
     }
@@ -167,7 +166,7 @@ class ConfigProvider implements ConfigProviderInterface
         if (!$orderId || !$jwtToken) {
             return null;
         }
-        return self::URL . $shopId . '/' . $orderId . '/payments/iframe?token=' . $jwtToken;
+        return BoldStorefrontClient::URL . $shopId . '/' . $orderId . '/payments/iframe?token=' . $jwtToken;
     }
 
     /**
