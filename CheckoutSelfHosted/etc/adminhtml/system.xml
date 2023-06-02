@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="checkout">
+            <group id="bold_checkout_base">
+                <field id="template_url" translate="label" type="text" sortOrder="16" showInDefault="0" showInWebsite="1">
+                    <label>Self Hosted Checkout Experience Templates App Url</label>
+                    <validate>required-url</validate>
+                    <depends>
+                        <field id="type">2</field>
+                    </depends>
+                </field>
+                <field id="template_type" translate="label" type="select" sortOrder="17" showInDefault="0" showInWebsite="1">
+                    <label>Self Hosted Checkout Template Type</label>
+                    <source_model>Bold\CheckoutSelfHosted\Model\Config\Source\TemplateSourceType</source_model>
+                    <depends>
+                        <field id="type">2</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

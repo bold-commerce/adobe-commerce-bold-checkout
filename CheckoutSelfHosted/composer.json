@@ -1,0 +1,21 @@
+{
+  "name": "bold/module-checkout-self-hosted",
+  "version": "1.0.0",
+  "description": "N/A",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*",
+    "bold-commerce/module-checkout": "1.0.*"
+  },
+  "license": [
+    "Academic Free License (AFL)"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Bold\\CheckoutSelfHosted\\": ""
+    }
+  }
+}
