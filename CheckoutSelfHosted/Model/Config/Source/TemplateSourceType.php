@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bold\CheckoutSelfHosted\Model\Config\Source;
 
-use Bold\Checkout\Model\ConfigInterface;
 use Magento\Framework\Data\OptionSourceInterface;
 
 /**
@@ -11,8 +10,8 @@ use Magento\Framework\Data\OptionSourceInterface;
  */
 class TemplateSourceType implements OptionSourceInterface
 {
-    public const VALUE_TYPE_ONE_PAGE= 'one_page';
-    public const VALUE_TYPE_THREE_PAGE= 'three_page';
+    public const VALUE_TYPE_ONE_PAGE = 'one_page';
+    public const VALUE_TYPE_THREE_PAGE = 'three_page';
 
     /**
      * @inheritDoc

@@ -5,6 +5,10 @@
   "type": "magento2-module",
   "require": {
     "magento/framework": "*",
+    "magento/module-checkout": "*",
+    "magento/module-csp": "*",
+    "magento/module-store": "*",
+    "magento/module-theme": "*",
     "bold-commerce/module-checkout": "1.0.*"
   },
   "license": [
