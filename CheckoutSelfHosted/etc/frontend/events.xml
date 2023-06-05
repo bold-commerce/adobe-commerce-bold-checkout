@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_checkout_index_index">
+        <observer name="redirect_to_bold_checkout" disabled="true"/>
+        <observer name="redirect_to_bold_checkout_self_hosted" instance="Bold\CheckoutSelfHosted\Observer\RedirectToBoldCheckoutObserver"/>
+    </event>
+</config>
