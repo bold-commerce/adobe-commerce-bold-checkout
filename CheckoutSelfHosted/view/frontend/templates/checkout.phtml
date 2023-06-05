@@ -2,7 +2,7 @@
 /**
  * Bold checkout self-hosted template.
  *
- * @var \Bold\CheckoutSelfHosted\Block\Checkout $this
+ * @var Bold\CheckoutSelfHosted\Block\Checkout $this
  */
 try {
     $orderData = $this->getOrderData();
@@ -12,9 +12,6 @@ try {
     return;
 }
 ?>
-<head>
-    <meta http-equiv='Content-Security-Policy' content="script-src 'self' <?php echo $this->getDomain() ?>; object-src 'self'">
-</head>
 <script>
     window.shopAlias = "<?php echo $this->getShopAlias() ?>";
     window.customDomain = "<?php echo $this->getCustomDomain() ?>";
@@ -30,7 +27,7 @@ try {
         data: <?php echo $orderData; ?>
     };
     window.publicOrderId = "<?php echo $orderId; ?>";
-    window.shopIdentifier = <?php echo '"' . $this->getShopIdentifier() . '"'; ?>;
+    window.shopIdentifier = "<?php echo $this->getShopIdentifier(); ?>";
     window.initializedOrder = <?php echo $orderData; ?>;
 </script>
 <div id='main'>

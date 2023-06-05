@@ -7,6 +7,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -85,6 +86,8 @@ class Checkout extends Template
     /**
      * Get order data.
      *
+     * @return string
+     * @throws ValidatorException
      */
     public function getOrderData(): string
     {
@@ -102,6 +105,8 @@ class Checkout extends Template
      * Get shop identifier.
      *
      * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function getShopIdentifier(): string
     {
@@ -124,7 +129,7 @@ class Checkout extends Template
      *
      * @return string
      */
-    public function getCustomDomain()
+    public function getCustomDomain(): string
     {
         return $this->checkoutSession->getBoldCheckoutData()['data']['initial_data']['shop_name'] ?? '';
     }
@@ -145,8 +150,10 @@ class Checkout extends Template
      * Get return url.
      *
      * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function getReturnUrl()
+    public function getReturnUrl(): string
     {
         return $this->checkoutSession->getQuote()->getStore()->getBaseUrl();
     }
@@ -155,18 +162,22 @@ class Checkout extends Template
      * Get login url.
      *
      * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function getLoginUrl()
+    public function getLoginUrl(): string
     {
         return $this->checkoutSession->getQuote()->getStore()->getUrl('customer/account/login');
     }
 
     /**
-     * Get react app url.
+     * Get react app template url.
      *
      * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function getTemplateUrl()
+    public function getTemplateUrl(): string
     {
         $websiteId = (int)$this->checkoutSession->getQuote()->getStore()->getWebsiteId();
         $reactAppUrl = $this->config->getValue(
@@ -187,32 +198,18 @@ class Checkout extends Template
      *
      * @return string
      */
-    public function getHeaderLogoUrl()
+    public function getHeaderLogoUrl(): string
     {
         return $this->logo->getLogoSrc();
     }
 
-    public function getPublicOrderId()
-    {
-        return $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? '';
-    }
-
     /**
-     * Get the domain for the CSP whitelist.
+     * Retrieve public order id from bold checkout data.
      *
      * @return string
      */
-    public function getDomain(): string
+    public function getPublicOrderId(): string
     {
-        try {
-            $websiteId = (int)$this->checkoutSession->getQuote()->getStore()->getWebsiteId();
-            return $this->config->getValue(
-                Checkout::APP_URL,
-                ScopeInterface::SCOPE_WEBSITES,
-                $websiteId
-            );
-        } catch (LocalizedException $e) {
-            return '';
-        }
+        return $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? '';
     }
 }
