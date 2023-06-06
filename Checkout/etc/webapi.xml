@@ -39,13 +39,13 @@
     <route method="POST" url="/V1/shops/:shopId/customer/email/validate">
         <service class="Bold\Checkout\Api\CustomerEmailValidatorInterface" method="validate"/>
         <resources>
-            <resource ref="Bold_Checkout::customer"/>
+            <resource ref="Magento_Customer::customer"/>
         </resources>
     </route>
     <route method="POST" url="/V1/shops/:shopId/customer/address/validate">
         <service class="Bold\Checkout\Api\CustomerAddressValidatorInterface" method="validate"/>
         <resources>
-            <resource ref="Bold_Checkout::customer"/>
+            <resource ref="Magento_Customer::customer"/>
         </resources>
     </route>
 </routes>
