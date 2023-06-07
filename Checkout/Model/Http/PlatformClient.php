@@ -85,7 +85,7 @@ class PlatformClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function delete(int $websiteId, string $url): ResultInterface
+    public function delete(int $websiteId, string $url, array $data): ResultInterface
     {
         throw new LocalizedException(__('Delete method is not implemented.'));
     }

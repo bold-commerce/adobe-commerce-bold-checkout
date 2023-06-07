@@ -54,12 +54,13 @@ interface ClientInterface
     public function patch(int $websiteId, string $url, array $data): ResultInterface;
 
     /**
-     * Perform delet http request to bold|platform.
+     * Perform delete http request to bold|platform.
      *
      * @param int $websiteId
      * @param string $url
+     * @param array $data
      * @return ResultInterface
      * @throws \Exception
      */
-    public function delete(int $websiteId, string $url): ResultInterface;
+    public function delete(int $websiteId, string $url, array $data): ResultInterface;
 }

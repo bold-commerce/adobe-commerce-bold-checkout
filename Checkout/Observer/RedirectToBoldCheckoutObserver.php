@@ -82,6 +82,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     {
         $quote = $this->session->getQuote();
         $request = $observer->getRequest();
+        $this->session->setBoldCheckoutData(null);
         if (!$this->allowedForCart->isAllowed($quote)) {
             return;
         }

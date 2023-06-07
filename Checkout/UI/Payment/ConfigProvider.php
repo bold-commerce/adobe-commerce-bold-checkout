@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Payment;
+namespace Bold\Checkout\UI\Payment;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
@@ -24,6 +24,9 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Element\Template\File\Resolver;
 use Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Config provider for Bold Checkout.
+ */
 class ConfigProvider implements ConfigProviderInterface
 {
     /**
@@ -197,8 +200,10 @@ class ConfigProvider implements ConfigProviderInterface
             return $this->countries;
         }
         $allowedCountries = $this->allowedCountries->getAllowedCountries();
-        $countriesCollection = $this->collectionFactory->create()->addFieldToFilter('country_id',
-            ['in' => $allowedCountries]);
+        $countriesCollection = $this->collectionFactory->create()->addFieldToFilter(
+            'country_id',
+            ['in' => $allowedCountries]
+        );
         $this->countries = $countriesCollection->toOptionArray(false);
         return $this->countries;
     }

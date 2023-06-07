@@ -6,8 +6,10 @@ namespace Bold\Checkout\Model\Http;
 use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
+use Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
+use Bold\Checkout\Model\Http\Client\Command\PutCommand;
 use Bold\Checkout\Model\Http\Client\UserAgent;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
@@ -40,22 +42,37 @@ class BoldStorefrontClient implements ClientInterface
     private $checkoutSession;
 
     /**
+     * @var DeleteCommand
+     */
+    private $deleteCommand;
+
+    /**
+     * @var PutCommand
+     */
+    private $putCommand;
+
+    /**
      * @param ConfigInterface $config
      * @param Session $checkoutSession
-     * @param UserAgent $userAgent
      * @param GetCommand $getCommand
      * @param PostCommand $postCommand
+     * @param DeleteCommand $deleteCommand
+     * @param PutCommand $putCommand
      */
     public function __construct(
         ConfigInterface $config,
         Session $checkoutSession,
         GetCommand $getCommand,
-        PostCommand $postCommand
+        PostCommand $postCommand,
+        DeleteCommand $deleteCommand,
+        PutCommand $putCommand
     ) {
         $this->config = $config;
         $this->getCommand = $getCommand;
         $this->postCommand = $postCommand;
         $this->checkoutSession = $checkoutSession;
+        $this->deleteCommand = $deleteCommand;
+        $this->putCommand = $putCommand;
     }
 
     /**
@@ -88,7 +105,14 @@ class BoldStorefrontClient implements ClientInterface
      */
     public function put(int $websiteId, string $url, array $data): ResultInterface
     {
-        throw new LocalizedException(__('Put method is not implemented.'));
+        $url = $this->getUrl($websiteId, $url);
+        $headers = $this->getHeaders();
+        $result = $this->putCommand->execute($websiteId, $url, $headers, $data);
+        if (!$result->getErrors() && isset($result->getBody()['data']['jwt_token'])) {
+            $this->checkoutSession->setBoldCheckoutData($result->getBody());
+        }
+
+        return $result;
     }
 
     /**
@@ -102,9 +126,16 @@ class BoldStorefrontClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function delete(int $websiteId, string $url): ResultInterface
+    public function delete(int $websiteId, string $url, array $data): ResultInterface
     {
-        throw new LocalizedException(__('Delete method is not implemented.'));
+        $url = $this->getUrl($websiteId, $url);
+        $headers = $this->getHeaders();
+        $result = $this->deleteCommand->execute($websiteId, $url, $headers, $data);
+        if (!$result->getErrors() && isset($result->getBody()['data']['jwt_token'])) {
+            $this->checkoutSession->setBoldCheckoutData($result->getBody());
+        }
+
+        return $result;
     }
 
     /**
