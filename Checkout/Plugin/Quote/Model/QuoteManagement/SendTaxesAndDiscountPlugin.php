@@ -58,7 +58,7 @@ class SendTaxesAndDiscountPlugin
             throw new LocalizedException(__('Unable to set taxes.'));
         }
         if ($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()) {
-            $discount = $this->client->post($websiteId, 'discounts', ['code' => 'TestCode']);
+            $discount = $this->client->post($websiteId, 'discounts', ['code' => 'Discount']);
             if ($discount->getErrors()) {
                 throw new LocalizedException(__('Unable to set discounts.'));
             }

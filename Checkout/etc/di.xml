@@ -6,6 +6,11 @@
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Checkout\Model\Import\Address"/>
 
+    <type name="Bold\Checkout\Observer\ProcessOrderObserver">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Observer\CheckoutSectionSave">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>

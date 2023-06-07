@@ -28,14 +28,8 @@
 
     <type name="\Magento\Quote\Model\QuoteManagement">
         <plugin name="send_taxes_and_discount_plugin" type="Bold\Checkout\Plugin\Quote\Model\QuoteManagement\SendTaxesAndDiscountPlugin"/>
-        <plugin name="process_order_on_bold_plugin" type="Bold\Checkout\Plugin\Quote\Model\QuoteManagement\ProcessOrderPlugin"/>
     </type>
     <type name="Bold\Checkout\Plugin\Quote\Model\QuoteManagement\SendTaxesAndDiscountPlugin">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Plugin\Quote\Model\QuoteManagement\ProcessOrderPlugin">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
         </arguments>

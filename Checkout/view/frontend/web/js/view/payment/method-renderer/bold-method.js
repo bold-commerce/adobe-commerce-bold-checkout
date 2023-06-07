@@ -141,6 +141,7 @@ define(
                                     this.paymentType = null;
                                     return;
                                 }
+                                loader.startLoader();
                                 this.paymentType = data.payload.paymentType;
                                 this.placeOrder();
                         }

@@ -57,7 +57,7 @@ class SaveOrderExtensionDataPlugin
             return (int)$orderId;
         }
         $orderExtensionData = $this->orderExtensionDataFactory->create();
-        $orderExtensionData->setOrderId($orderId);
+        $orderExtensionData->setOrderId((int)$orderId);
         $orderExtensionData->setPublicId($publicOrderId);
         $orderExtensionData->setFulfillmentStatus('pending');
         $orderExtensionData->setFinancialStatus('pending');

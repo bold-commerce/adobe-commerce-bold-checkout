@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_place_after">
+        <observer name="process_order_on_bold" instance="Bold\Checkout\Observer\ProcessOrderObserver"/>
+    </event>
     <event name="sales_order_load_after">
         <observer name="add_bold_data_to_order" instance="Bold\Checkout\Observer\AddBoldDataToOrderObserver"/>
     </event>
