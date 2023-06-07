@@ -14,7 +14,7 @@
                     <comment>
                         <![CDATA[Refer to the <a target='_blank' href="https://developer.boldcommerce.com/default/guides/platform-integration/magento-1">documentation</a> for more details.]]></comment>
                 </field>
-                <field id="type" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
+                <field id="type" translate="label" type="select" sortOrder="15" showInDefault="0" showInWebsite="1">
                     <label>Bold Checkout Type</label>
                     <source_model>Bold\Checkout\Model\Config\Source\CheckoutTypeSource</source_model>
                     <comment><![CDATA[
