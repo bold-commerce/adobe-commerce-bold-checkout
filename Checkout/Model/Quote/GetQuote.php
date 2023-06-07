@@ -50,7 +50,7 @@ class GetQuote implements GetQuoteInterface
      */
     public function getQuote(
         string $shopId,
-        int $cartId,
+        int $cartId
     ): ResultInterface {
         try {
             $quote = $this->cartRepository->getActive($cartId);
