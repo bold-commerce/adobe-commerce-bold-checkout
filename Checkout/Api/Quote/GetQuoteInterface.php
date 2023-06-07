@@ -19,6 +19,6 @@ interface GetQuoteInterface
      */
     public function getQuote(
         string $shopId,
-        int $cartId,
+        int $cartId
     ): ResultInterface;
 }
