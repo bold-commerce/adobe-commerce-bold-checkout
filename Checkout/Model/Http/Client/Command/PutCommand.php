@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Model\Http\Client\Command\DeleteCommand\Curl;
 use Bold\Checkout\Model\Http\Client\RequestsLogger;
 use Magento\Framework\Serialize\Serializer\Json;
+use Bold\Checkout\Api\Data\Http\Client\ResultInterfaceFactory;
 
 /**
  * Perform and log put request command.

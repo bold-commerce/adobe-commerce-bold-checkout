@@ -93,8 +93,11 @@ class BoldStorefrontClient implements ClientInterface
         $url = $this->getUrl($websiteId, $url);
         $headers = $this->getHeaders();
         $result = $this->postCommand->execute($websiteId, $url, $headers, $data);
-        if (!$result->getErrors() && isset($result->getBody()['data']['jwt_token'])) {
-            $this->checkoutSession->setBoldCheckoutData($result->getBody());
+        $applicationState = $result->getBody()['data']['application_state'] ?? null;
+        if (!$result->getErrors() && $applicationState) {
+            $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
+            $boldCheckoutData['data']['application_state'] = $applicationState;
+            $this->checkoutSession->setBoldCheckoutData($boldCheckoutData);
         }
 
         return $result;
@@ -108,8 +111,11 @@ class BoldStorefrontClient implements ClientInterface
         $url = $this->getUrl($websiteId, $url);
         $headers = $this->getHeaders();
         $result = $this->putCommand->execute($websiteId, $url, $headers, $data);
-        if (!$result->getErrors() && isset($result->getBody()['data']['jwt_token'])) {
-            $this->checkoutSession->setBoldCheckoutData($result->getBody());
+        $applicationState = $result->getBody()['data']['application_state'] ?? null;
+        if (!$result->getErrors() && $applicationState) {
+            $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
+            $boldCheckoutData['data']['application_state'] = $applicationState;
+            $this->checkoutSession->setBoldCheckoutData($boldCheckoutData);
         }
 
         return $result;
@@ -131,8 +137,11 @@ class BoldStorefrontClient implements ClientInterface
         $url = $this->getUrl($websiteId, $url);
         $headers = $this->getHeaders();
         $result = $this->deleteCommand->execute($websiteId, $url, $headers, $data);
-        if (!$result->getErrors() && isset($result->getBody()['data']['jwt_token'])) {
-            $this->checkoutSession->setBoldCheckoutData($result->getBody());
+        $applicationState = $result->getBody()['data']['application_state'] ?? null;
+        if (!$result->getErrors() && $applicationState) {
+            $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
+            $boldCheckoutData['data']['application_state'] = $applicationState;
+            $this->checkoutSession->setBoldCheckoutData($boldCheckoutData);
         }
 
         return $result;

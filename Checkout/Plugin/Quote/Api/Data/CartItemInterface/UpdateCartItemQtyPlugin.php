@@ -5,6 +5,7 @@ namespace Bold\Checkout\Plugin\Quote\Api\Data\CartItemInterface;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartItemInterface;
 
 /**
@@ -46,17 +47,41 @@ class UpdateCartItemQtyPlugin
             return $result;
         }
         try {
-            $this->client->put(
-                (int)$subject->getQuote()->getStore()->getWebsiteId(),
-                'items',
-                [
-                    'line_item_key' => (string)$subject->getItemId(),
-                    'quantity' => (int)$qty,
-                ]
-            );
+            $lineItemQty = $this->getLineItemQty($subject);
+            if ($lineItemQty !== (int)$qty) {
+                $this->client->put(
+                    (int)$subject->getQuote()->getStore()->getWebsiteId(),
+                    'items',
+                    [
+                        'platform_id' => (string)$subject->getProduct()->getId(),
+                        'line_item_key' => (string)$subject->getItemId(),
+                        'quantity' => (int)$qty,
+                    ]
+                );
+            }
         } catch (\Exception $e) {
             return $result;
         }
         return $result;
+    }
+
+    /**
+     * Get line item qty from Bold Checkout data.
+     *
+     * @param CartItemInterface $cartItem
+     * @return int
+     * @throws LocalizedException
+     */
+    private function getLineItemQty(CartItemInterface $cartItem): int
+    {
+        $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
+        $lineItems = $boldCheckoutData['data']['application_state']['line_items'] ?? [];
+        foreach ($lineItems as $lineItem) {
+            $lineItemKey = $lineItem['product_data']['line_item_key'] ?? null;
+            if ((string)$cartItem->getItemId() === $lineItemKey) {
+                return (int)$lineItem['product_data']['quantity'];
+            }
+        }
+        throw new LocalizedException(__('There is no line item with key: %1', $cartItem->getItemId()));
     }
 }

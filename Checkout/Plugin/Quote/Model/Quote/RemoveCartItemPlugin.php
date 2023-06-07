@@ -5,6 +5,8 @@ namespace Bold\Checkout\Plugin\Quote\Model\Quote;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote;
 
 /**
@@ -46,17 +48,39 @@ class RemoveCartItemPlugin
             return $result;
         }
         try {
+            $lineItem = $this->getLineItem((int)$itemId);
             $this->client->delete(
                 (int)$result->getStore()->getWebsiteId(),
                 'items',
                 [
+                    'platform_id' => $lineItem['product_data']['variant_id'],
                     'line_item_key' => (string)$itemId,
-                    'quantity' => 0,
+                    'quantity' => $lineItem['product_data']['quantity'],
                 ]
             );
         } catch (\Exception $e) {
             return $result;
         }
         return $result;
+    }
+
+    /**
+     * Get line item qty from Bold Checkout data.
+     *
+     * @param int $cartItemId
+     * @return array
+     * @throws LocalizedException
+     */
+    private function getLineItem(int $cartItemId): array
+    {
+        $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
+        $lineItems = $boldCheckoutData['data']['application_state']['line_items'] ?? [];
+        foreach ($lineItems as $lineItem) {
+            $lineItemKey = $lineItem['product_data']['line_item_key'] ?? null;
+            if ((string)$cartItemId === $lineItemKey) {
+                return $lineItem;
+            }
+        }
+        throw new LocalizedException(__('There is no line item with key: %1', $cartItemId));
     }
 }
