@@ -10,7 +10,6 @@ use Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
 use Bold\Checkout\Model\Http\Client\Command\PutCommand;
-use Bold\Checkout\Model\Http\Client\UserAgent;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 

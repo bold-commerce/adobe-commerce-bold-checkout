@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
+namespace Bold\Checkout\Model\Http\Client\Command\Client;
 
 use Magento\Framework\HTTP\Client\Curl as CurlCore;
 
