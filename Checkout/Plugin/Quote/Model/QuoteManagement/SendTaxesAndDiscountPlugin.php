@@ -6,7 +6,6 @@ namespace Bold\Checkout\Plugin\Quote\Model\QuoteManagement;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\QuoteManagement;
 
@@ -15,7 +14,6 @@ use Magento\Quote\Model\QuoteManagement;
  */
 class SendTaxesAndDiscountPlugin
 {
-
     /**
      * @var ClientInterface
      */
@@ -57,12 +55,12 @@ class SendTaxesAndDiscountPlugin
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         $taxes = $this->client->post($websiteId, 'taxes', []);
         if ($taxes->getErrors()) {
-            throw new LocalizedException(__('Unable to send taxes to Bold.'));
+            throw new LocalizedException(__('Unable to set taxes.'));
         }
         if ($quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount()) {
-            $discount = $this->client->post($websiteId, 'discounts', ['code' => 'Discount']);
+            $discount = $this->client->post($websiteId, 'discounts', ['code' => 'TestCode']);
             if ($discount->getErrors()) {
-                throw new LocalizedException(__('Unable to send discount to Bold.'));
+                throw new LocalizedException(__('Unable to set discounts.'));
             }
         }
     }

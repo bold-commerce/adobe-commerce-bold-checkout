@@ -4,18 +4,20 @@ define(
         'Bold_Checkout/js/model/client',
         'Bold_Checkout/js/model/address',
         'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/full-screen-loader',
+        'checkoutData',
         'uiRegistry',
         'underscore',
         'ko'
-    ], function (Component, boldClient, boldAddress, quote, registry, _, ko) {
+    ], function (Component, boldClient, boldAddress, quote, loader, checkoutData, registry, _, ko) {
         'use strict';
         return Component.extend({
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 customerIsGuest: !!Number(window.checkoutConfig.bold.customerIsGuest),
-                iframeHeight: ko.observable('0px'),
-                isBillingAddressSynced: false,
-                guestCustomerSynced: true,
+                iframeHeight: ko.observable('500px'),
+                isBillingDataSynced: ko.observable(false),
+                paymentType: null,
                 billingAddressPayload: {},
                 guestCustomerPayload: {},
             },
@@ -28,13 +30,12 @@ define(
                     return;
                 }
                 this._super();
-                this.iframeSrc = ko.observable(
-                    this.isBillingAddressSynced && this.guestCustomerSynced
-                        ? window.checkoutConfig.bold.payment.iframeSrc
-                        : null
-                );
-                this.iframeSrc.subscribe(function (iframeSrc) {
-                    this.subscribeToPIGI(iframeSrc);
+                if (checkoutData.getSelectedPaymentMethod() === 'bold') {
+                    checkoutData.setSelectedPaymentMethod(null);
+                    quote.paymentMethod(null);
+                }
+                this.iframeSrc = ko.computed(function () {
+                    return this.isBillingDataSynced() ? window.checkoutConfig.bold.payment.iframeSrc : null;
                 }.bind(this));
                 this.syncBillingData(quote.billingAddress());
                 quote.billingAddress.subscribe(function () {
@@ -50,7 +51,29 @@ define(
             /**
              * @inheritDoc
              */
+            selectPaymentMethod: function () {
+                this.subscribeToPIGI();
+                return this._super();
+            },
+
+            /**
+             * @inheritDoc
+             */
             placeOrder: function (data, event) {
+                if (!this.paymentType) {
+                    loader.startLoader();
+                    const iframeElement = document.getElementById('PIGI');
+                    if (!iframeElement) {
+                        return;
+                    }
+                    const iframeWindow = iframeElement.contentWindow;
+                    const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
+                    const action = {actionType: 'PIGI_ADD_PAYMENT'};
+                    iframeWindow.postMessage(clearAction, '*');
+                    iframeWindow.postMessage(action, '*');
+                    return;
+                }
+                this.paymentType = null;
                 this._super(data, event);
             },
 
@@ -70,7 +93,7 @@ define(
                     'last_name': lastname,
                 }
                 if (!payload.email_address || !payload.first_name || !payload.last_name) {
-                    this.guestCustomerSynced = false;
+                    this.isBillingDataSynced(false);
                     return;
                 }
                 if (this.payloadCompare(payload, this.guestCustomerPayload)) {
@@ -78,10 +101,10 @@ define(
                 }
                 boldClient.post('customer/guest', payload).then(
                     function () {
-                        this.guestCustomerSynced = true;
+                        this.isBillingDataSynced(true);
                     }.bind(this)
                 ).catch(function () {
-                    this.guestCustomerSynced = false;
+                    this.isBillingDataSynced(false);
                 }.bind(this));
             },
 
@@ -89,28 +112,37 @@ define(
              * Subscribe to PIGI events.
              *
              * @private
-             * @param iframeSrc string
              * @returns {void}
              */
-            subscribeToPIGI(iframeSrc) {
-                if (iframeSrc === null) {
+            subscribeToPIGI() {
+                const iframeElement = document.getElementById('PIGI');
+                if (!iframeElement) {
                     return;
                 }
+                const iframeWindow = iframeElement.contentWindow;
+                iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                 window.addEventListener('message', ({data}) => {
-                    if (data.height) {
-                        this.iframeHeight(data.height + 10 + 'px')
-                    }
                     console.log('data', data);
                     const responseType = data.responseType;
                     if (responseType) {
                         switch (responseType) {
+                            case 'PAYMENT_GATEWAY_FRAME_HEIGHT_UPDATED':
+                                if (data.height) {
+                                    this.iframeHeight(data.height + 'px')
+                                }
+                                break;
                             case 'PIGI_INITIALIZED':
-                                this.messageContainer.errorMessages([]);
                                 break;
                             case 'PIGI_REFRESH_ORDER':
                                 break;
                             case 'PIGI_ADD_PAYMENT':
-                                break;
+                                loader.stopLoader();
+                                if (!data.payload.success) {
+                                    this.paymentType = null;
+                                    return;
+                                }
+                                this.paymentType = data.payload.paymentType;
+                                this.placeOrder();
                         }
                     }
                 });
@@ -119,12 +151,14 @@ define(
             /**
              * Send billing address to Bold.
              *
-             * @param address object
+             * @param address object|null
              * @private
              * @returns {void}
              */
             syncBillingData(address) {
-                this.isBillingAddressSynced = false;
+                if (!address) {
+                    return;
+                }
                 const billingAddress = registry.get('index = billingAddress');
                 if (billingAddress && !billingAddress.validate()) {
                     return;
@@ -137,13 +171,14 @@ define(
                     return;
                 }
                 this.billingAddressPayload = payload;
+                this.isBillingDataSynced(false);
                 boldClient.post('addresses/billing', payload).then(function () {
-                    this.isBillingAddressSynced = true;
+                    this.isBillingDataSynced(true);
                     if (this.customerIsGuest) {
                         this.sendGuestCustomerInfo();
                     }
                 }.bind(this)).catch(function () {
-                    this.isBillingAddressSynced = false;
+                    this.isBillingDataSynced(false);
                 }.bind(this));
             },
 

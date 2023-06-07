@@ -12,6 +12,12 @@
             <resource ref="Magento_Cart::manage"/>
         </resources>
     </route>
+    <route method="GET" url="/V1/shops/:shopId/cart/:cartId">
+        <service class="Bold\Checkout\Api\Quote\GetQuoteInterface" method="getQuote"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
     <route method="POST" url="/V1/shops/:shopId/cart/:cartId/coupons">
         <service class="Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface" method="setCoupon"/>
         <resources>
