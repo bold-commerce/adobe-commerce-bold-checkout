@@ -66,9 +66,7 @@ class SendShippingInformationPlugin
             if ($shippingAddress !== $addressPayload) {
                 $this->client->post($websiteId, 'addresses/shipping', $addressPayload);
             }
-            //todo: replace address::getShippingDescription with address::getShippingMethod after
-            // https://trello.com/c/TRcLOQQg/56-waiting-on-bold-shipping-lines-have-no-codes will be fixed.
-            $this->sendShippingMethodIndex($quote->getShippingAddress()->getShippingDescription());
+            $this->sendShippingMethodIndex($quote->getShippingAddress()->getShippingMethod());
         } catch (\Exception $e) {
             return $result;
         }

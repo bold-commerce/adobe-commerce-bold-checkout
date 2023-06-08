@@ -1,6 +1,8 @@
 define([
     'underscore',
-], function (_) {
+    'Magento_Checkout/js/model/quote',
+    'uiRegistry',
+], function (_, quote, registry) {
     'use strict';
 
     /**
@@ -16,10 +18,17 @@ define([
         /**
          * Convert address to Bold API format.
          *
-         * @param address object
          * @return object
          */
-        convertAddress: function (address) {
+        getBillingAddress: function () {
+            const billingAddress = registry.get('index = billingAddress');
+            if (billingAddress && !billingAddress.validate()) {
+                return null;
+            }
+            const address = quote.billingAddress();
+            if (!address) {
+                return null;
+            }
             const countryId = address.countryId;
             const country = this.countries.find(country => country.value === countryId);
             const countryName = country ? country.label : '';
@@ -62,7 +71,6 @@ define([
                 'phone_number',
                 'country',
                 'city',
-                'address_line_1',
             ];
             const country = this.countries.find(country => country.value === payload.country_code);
             if (country && country.is_region_visible) {

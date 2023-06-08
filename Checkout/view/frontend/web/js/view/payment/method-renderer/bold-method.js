@@ -5,19 +5,27 @@ define(
         'Bold_Checkout/js/model/address',
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
-        'checkoutData',
         'uiRegistry',
+        'checkoutData',
         'underscore',
         'ko'
-    ], function (Component, boldClient, boldAddress, quote, loader, checkoutData, registry, _, ko) {
+    ], function (
+        Component,
+        boldClient,
+        boldAddress,
+        quote,
+        loader,
+        registry,
+        checkoutData,
+        _,
+        ko
+    ) {
         'use strict';
         return Component.extend({
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
-                customerIsGuest: !!Number(window.checkoutConfig.bold.customerIsGuest),
-                iframeHeight: ko.observable('500px'),
-                isBillingDataSynced: ko.observable(false),
                 paymentType: null,
+                iframeSrc: ko.observable(null),
                 billingAddressPayload: {},
                 guestCustomerPayload: {},
             },
@@ -30,47 +38,65 @@ define(
                     return;
                 }
                 this._super();
+                this.iframeSrc = ko.observable(window.checkoutConfig.bold.payment.iframeSrc);
+                this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
                 if (checkoutData.getSelectedPaymentMethod() === 'bold') {
                     checkoutData.setSelectedPaymentMethod(null);
                     quote.paymentMethod(null);
                 }
-                this.iframeSrc = ko.computed(function () {
-                    return this.isBillingDataSynced() ? window.checkoutConfig.bold.payment.iframeSrc : null;
-                }.bind(this));
-                this.syncBillingData(quote.billingAddress());
+                this.syncBillingData();
                 quote.billingAddress.subscribe(function () {
                     const sendBillingAddress = _.debounce(
-                        function (billingAddress) {
-                            this.syncBillingData(billingAddress);
+                        function () {
+                            this.syncBillingData();
                         }.bind(this),
-                        1000);
-                    sendBillingAddress(quote.billingAddress());
+                        1000
+                    );
+                    sendBillingAddress();
                 }, this);
+                const email = registry.get('index = customer-email');
+                if (email) {
+                    email.email.subscribe(function () {
+                        if (email.validateEmail()) {
+                            const sendGuestCustomerInfo = _.debounce(
+                                function () {
+                                    this.sendGuestCustomerInfo();
+                                }.bind(this),
+                                1000
+                            );
+                            sendGuestCustomerInfo();
+                        }
+                    }.bind(this));
+                }
+                this.subscribeToPIGI();
             },
 
             /**
              * @inheritDoc
              */
             selectPaymentMethod: function () {
-                this.subscribeToPIGI();
-                return this._super();
+                const iframeElement = document.getElementById('PIGI');
+                this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
+                this._super();
+                if (this.iframeWindow) {
+                    this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+                }
+                return true;
             },
 
             /**
              * @inheritDoc
              */
             placeOrder: function (data, event) {
+                if (!this.iframeWindow) {
+                    return;
+                }
                 if (!this.paymentType) {
                     loader.startLoader();
-                    const iframeElement = document.getElementById('PIGI');
-                    if (!iframeElement) {
-                        return;
-                    }
-                    const iframeWindow = iframeElement.contentWindow;
                     const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
-                    const action = {actionType: 'PIGI_ADD_PAYMENT'};
-                    iframeWindow.postMessage(clearAction, '*');
-                    iframeWindow.postMessage(action, '*');
+                    const addPaymentAction = {actionType: 'PIGI_ADD_PAYMENT'};
+                    this.iframeWindow.postMessage(clearAction, '*');
+                    this.iframeWindow.postMessage(addPaymentAction, '*');
                     return;
                 }
                 this.paymentType = null;
@@ -93,18 +119,19 @@ define(
                     'last_name': lastname,
                 }
                 if (!payload.email_address || !payload.first_name || !payload.last_name) {
-                    this.isBillingDataSynced(false);
                     return;
                 }
                 if (this.payloadCompare(payload, this.guestCustomerPayload)) {
                     return;
                 }
+                this.guestCustomerPayload = payload;
                 boldClient.post('customer/guest', payload).then(
                     function () {
-                        this.isBillingDataSynced(true);
-                    }.bind(this)
-                ).catch(function () {
-                    this.isBillingDataSynced(false);
+                        if (this.iframeWindow) {
+                            this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+                        }
+                    }.bind(this)).catch(function () {
+                    this.iframeSrc(null);
                 }.bind(this));
             },
 
@@ -115,35 +142,34 @@ define(
              * @returns {void}
              */
             subscribeToPIGI() {
-                const iframeElement = document.getElementById('PIGI');
-                if (!iframeElement) {
-                    return;
-                }
-                const iframeWindow = iframeElement.contentWindow;
-                iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                 window.addEventListener('message', ({data}) => {
-                    console.log('data', data);
                     const responseType = data.responseType;
                     if (responseType) {
                         switch (responseType) {
-                            case 'PAYMENT_GATEWAY_FRAME_HEIGHT_UPDATED':
-                                if (data.height) {
-                                    this.iframeHeight(data.height + 'px')
+                            case 'PIGI_UPDATE_HEIGHT':
+                                const iframeElement = document.querySelector('iframe#PIGI');
+                                if (iframeElement.style.height === Math.round(data.payload.height) + 'px') {
+                                    return;
                                 }
+                                iframeElement.style.height = Math.round(data.payload.height) + 'px';
                                 break;
                             case 'PIGI_INITIALIZED':
                                 break;
                             case 'PIGI_REFRESH_ORDER':
                                 break;
                             case 'PIGI_ADD_PAYMENT':
-                                loader.stopLoader();
                                 if (!data.payload.success) {
+                                    loader.stopLoader();
                                     this.paymentType = null;
                                     return;
                                 }
-                                loader.startLoader();
                                 this.paymentType = data.payload.paymentType;
-                                this.placeOrder();
+                                if (this.paymentType !== 'paypal') {
+                                    loader.startLoader();
+                                    this.placeOrder({}, null);
+                                    return;
+                                }
+                                this.messageContainer.successMessages(['Success']);
                         }
                     }
                 });
@@ -152,19 +178,14 @@ define(
             /**
              * Send billing address to Bold.
              *
-             * @param address object|null
              * @private
              * @returns {void}
              */
-            syncBillingData(address) {
-                if (!address) {
-                    return;
+            syncBillingData() {
+                if (this.customerIsGuest) {
+                    this.sendGuestCustomerInfo();
                 }
-                const billingAddress = registry.get('index = billingAddress');
-                if (billingAddress && !billingAddress.validate()) {
-                    return;
-                }
-                const payload = boldAddress.convertAddress(address);
+                const payload = boldAddress.getBillingAddress();
                 if (!payload) {
                     return;
                 }
@@ -172,14 +193,12 @@ define(
                     return;
                 }
                 this.billingAddressPayload = payload;
-                this.isBillingDataSynced(false);
                 boldClient.post('addresses/billing', payload).then(function () {
-                    this.isBillingDataSynced(true);
-                    if (this.customerIsGuest) {
-                        this.sendGuestCustomerInfo();
+                    if (this.iframeWindow) {
+                        this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
                 }.bind(this)).catch(function () {
-                    this.isBillingDataSynced(false);
+                    this.iframeSrc(null);
                 }.bind(this));
             },
 
