@@ -34,9 +34,11 @@ class QuoteAction
     {
         $result = [];
         foreach ($this->quoteActions as $quoteAction) {
-            $actionData = $quoteAction->getActionData($cart);
-            if ($actionData) {
-                $result[] = $actionData;
+            if ($quoteAction->isAllowed((int)$cart->getStore()->getWebsiteId())) {
+                $actionData = $quoteAction->getActionData($cart);
+                if ($actionData) {
+                    $result[] = $actionData;
+                }
             }
         }
 

@@ -32,9 +32,6 @@ class DiscountCart implements QuoteActionInterface
      */
     public function getActionData(CartInterface $cart): array
     {
-        if ($this->config->isCheckoutTypeSelfHosted((int)$cart->getStore()->getWebsiteId())) {
-            return [];
-        }
         $discountAmount = ($cart->getBaseSubtotal() - $cart->getBaseSubtotalWithDiscount());
         $couponDiscount = 0;
         $couponCode = $cart->getCouponCode();
@@ -71,5 +68,16 @@ class DiscountCart implements QuoteActionInterface
         $quote->setCouponCode($couponCode);
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllowed(int $websiteId): bool
+    {
+        if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
+            return false;
+        }
+        return true;
     }
 }

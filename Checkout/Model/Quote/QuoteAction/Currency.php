@@ -54,4 +54,12 @@ class Currency implements QuoteActionInterface
             ],
         ];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllowed(int $websiteId): bool
+    {
+        return true;
+    }
 }

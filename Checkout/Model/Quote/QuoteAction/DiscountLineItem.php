@@ -32,9 +32,6 @@ class DiscountLineItem implements QuoteActionInterface
      */
     public function getActionData(CartInterface $cart): array
     {
-        if ($this->config->isCheckoutTypeSelfHosted((int)$cart->getStore()->getWebsiteId())) {
-            return [];
-        }
         $couponCode = $cart->getCouponCode();
         if ($couponCode) {
             $cart->setCouponCode('');
@@ -69,5 +66,16 @@ class DiscountLineItem implements QuoteActionInterface
             $cart->collectTotals();
         }
         return $itemsData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isAllowed(int $websiteId): bool
+    {
+        if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
+            return false;
+        }
+        return true;
     }
 }
