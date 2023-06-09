@@ -111,7 +111,9 @@ class Builder
     {
         $quoteItems = $quote->getAllVisibleItems();
         foreach ($quoteItems as $quoteItem) {
-            $quoteItem->getExtensionAttributes()->setProduct($quoteItem->getProduct());
+            $children = $quoteItem->getChildren();
+            $product = $children ? reset($children)->getProduct() : $quoteItem->getProduct();
+            $quoteItem->getExtensionAttributes()->setProduct($product);
         }
     }
 }
