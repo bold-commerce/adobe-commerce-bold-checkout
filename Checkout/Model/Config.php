@@ -218,8 +218,11 @@ class Config implements ConfigInterface
      */
     public function getIntegrationCallbackUrl(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_CALLBACK_URL, ScopeInterface::SCOPE_WEBSITES,
-            $websiteId);
+        return $this->scopeConfig->getValue(
+            self::PATH_INTEGRATION_CALLBACK_URL,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
     }
 
     /**
@@ -236,8 +239,11 @@ class Config implements ConfigInterface
      */
     public function getIntegrationIdentityLinkUrl(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_IDENTITY_URL, ScopeInterface::SCOPE_WEBSITES,
-            $websiteId);
+        return $this->scopeConfig->getValue(
+            self::PATH_INTEGRATION_IDENTITY_URL,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
     }
 
     /**

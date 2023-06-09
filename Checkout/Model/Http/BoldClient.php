@@ -17,7 +17,6 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class BoldClient implements ClientInterface
 {
-    private const URL = 'https://api.boldcommerce.com/';
     private const BOLD_API_VERSION_DATE = '2022-10-14';
 
     /**

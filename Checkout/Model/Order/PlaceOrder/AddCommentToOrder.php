@@ -8,6 +8,9 @@ use Exception;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\ResourceModel\Order;
 
+/**
+ * Add comment to order in case it's quote total is different from bold order total.
+ */
 class AddCommentToOrder
 {
     /**
