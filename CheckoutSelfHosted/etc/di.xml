@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Bold\CheckoutSelfHosted\Observer\CreateCheckoutUrlRewritesObserver">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Quote\QuoteAction\DiscountCart">
+        <plugin name="bold_checkout_self_hosted_discount_cart" type="Bold\CheckoutSelfHosted\Plugin\Checkout\Model\Quote\QuoteAction\AllowDiscountCartPlugin"/>
+    </type>
+    <type name="Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem">
+        <plugin name="bold_checkout_self_hosted_discount_line_item" type="Bold\CheckoutSelfHosted\Plugin\Checkout\Model\Quote\QuoteAction\AllowDiscountLineItemPlugin"/>
+    </type>
+</config>

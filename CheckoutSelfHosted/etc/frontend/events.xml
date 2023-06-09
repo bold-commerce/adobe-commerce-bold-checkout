@@ -5,4 +5,8 @@
         <observer name="redirect_to_bold_checkout" disabled="true"/>
         <observer name="redirect_to_bold_checkout_self_hosted" instance="Bold\CheckoutSelfHosted\Observer\RedirectToBoldCheckoutObserver"/>
     </event>
+    <event name="controller_action_predispatch_onestepcheckout_index_index">
+        <observer name="redirect_to_bold_checkout" disabled="true"/>
+        <observer name="redirect_to_bold_checkout_self_hosted" instance="Bold\CheckoutSelfHosted\Observer\RedirectToBoldCheckoutObserver"/>
+    </event>
 </config>
