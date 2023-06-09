@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote\QuoteAction;
 
+use Bold\Checkout\Model\ConfigInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
 /**
@@ -14,10 +15,26 @@ class DiscountLineItem implements QuoteActionInterface
     private const DISCOUNT_TYPE_FIXED = 'fixed';
 
     /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
+     * @param ConfigInterface $config
+     */
+    public function __construct(ConfigInterface $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getActionData(CartInterface $cart): array
     {
+        if ($this->config->isCheckoutTypeSelfHosted((int)$cart->getStore()->getWebsiteId())) {
+            return [];
+        }
         $couponCode = $cart->getCouponCode();
         if ($couponCode) {
             $cart->setCouponCode('');

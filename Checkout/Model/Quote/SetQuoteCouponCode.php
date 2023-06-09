@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface;
+use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
@@ -37,21 +38,29 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     private $shopIdValidator;
 
     /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param CouponManagementInterface $couponService
      * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
+     * @param ConfigInterface $config
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
         CouponManagementInterface $couponService,
         CartRepositoryInterface $cartRepository,
-        Builder $quoteResultBuilder
+        Builder $quoteResultBuilder,
+        ConfigInterface $config
     ) {
         $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
+        $this->config = $config;
     }
 
     /**
@@ -61,6 +70,9 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     {
         try {
             $quote = $this->cartRepository->getActive($cartId);
+            if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsite())) {
+                return $this->quoteResultBuilder->createSuccessResult($quote);
+            }
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->couponService->set($cartId, $couponCode);
         } catch (Exception $e) {

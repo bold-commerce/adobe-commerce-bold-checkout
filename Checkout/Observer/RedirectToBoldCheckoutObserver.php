@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer;
 
+use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
 use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
@@ -45,24 +46,33 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $initOrderFromQuote;
 
     /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
      * @param IsBoldCheckoutAllowedForCart $allowedForCart
      * @param IsBoldCheckoutAllowedForRequest $allowedForRequest
      * @param Session $session
      * @param ManagerInterface $messageManager
      * @param InitOrderFromQuote $initOrderFromQuote
+     * @param ConfigInterface $config
+     * @param Session $session
      */
     public function __construct(
         IsBoldCheckoutAllowedForCart $allowedForCart,
         IsBoldCheckoutAllowedForRequest $allowedForRequest,
         Session $session,
         ManagerInterface $messageManager,
-        InitOrderFromQuote $initOrderFromQuote
+        InitOrderFromQuote $initOrderFromQuote,
+        ConfigInterface $config
     ) {
         $this->allowedForCart = $allowedForCart;
         $this->allowedForRequest = $allowedForRequest;
         $this->session = $session;
         $this->messageManager = $messageManager;
         $this->initOrderFromQuote = $initOrderFromQuote;
+        $this->config = $config;
     }
 
     /**
@@ -72,14 +82,20 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     {
         $quote = $this->session->getQuote();
         $request = $observer->getRequest();
+        $this->session->setBoldCheckoutData(null);
         if (!$this->allowedForCart->isAllowed($quote)) {
             return;
         }
         if (!$this->allowedForRequest->isAllowed($quote, $request)) {
             return;
         }
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
         try {
             $checkoutData = $this->initOrderFromQuote->init($quote);
+            if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
+                $this->session->setBoldCheckoutData($checkoutData);
+                return;
+            }
             $orderId = $checkoutData['data']['public_order_id'];
             $token = $checkoutData['data']['jwt_token'];
             $shopName = $checkoutData['data']['initial_data']['shop_name'];
@@ -87,6 +103,9 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
                 . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);
         } catch (Exception $exception) {
+            if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
+                return;
+            }
             $this->messageManager->addErrorMessage(
                 __('There was an error during checkout. Please contact us or try again later.')
             );

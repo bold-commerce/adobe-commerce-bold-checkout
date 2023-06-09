@@ -6,6 +6,11 @@
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Checkout\Model\Import\Address"/>
 
+    <type name="Bold\Checkout\Observer\ProcessOrderObserver">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Observer\CheckoutSectionSave">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
@@ -94,12 +99,30 @@
         </arguments>
     </virtualType>
 
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="bold_checkout_remove_item" type="Bold\Checkout\Plugin\Quote\Model\Quote\RemoveCartItemPlugin"/>
+    </type>
+    <type name="Bold\Checkout\Plugin\Quote\Model\Quote\RemoveCartItemPlugin">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Quote\Api\Data\CartItemInterface">
+        <plugin name="update_cart_item_qty_plugin" type="Bold\Checkout\Plugin\Quote\Api\Data\CartItemInterface\UpdateCartItemQtyPlugin"/>
+    </type>
+    <type name="Bold\Checkout\Plugin\Quote\Api\Data\CartItemInterface\UpdateCartItemQtyPlugin">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
+
     <!-- Bold Payment Method Configuration. -->
     <virtualType name="Bold\Checkout\Model\Method\Adapter" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
             <argument name="code" xsi:type="const">Bold\Checkout\Model\Payment\Gateway\Service::CODE</argument>
             <argument name="valueHandlerPool" xsi:type="object">Bold\Checkout\Gateway\Config\ValueHandlerPool</argument>
-            <argument name="validatorPool" xsi:type="object">Bold\Checkout\Gateway\Validator\ValidatorPool</argument>
+            <argument name="validatorPool" xsi:type="object">Bold\Checkout\Model\Payment\Gateway\Validator\ValidatorPool</argument>
             <argument name="commandPool" xsi:type="object">Bold\Checkout\Gateway\Command\CommandPool</argument>
             <argument name="formBlockType" xsi:type="object">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Bold\Checkout\Block\Info</argument>
@@ -109,22 +132,23 @@
     <virtualType name="Bold\Checkout\Gateway\Config\ValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">Bold\Checkout\Gateway\Config\ConfigValueHandler</item>
+                <item name="default" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\ConfigValueHandler</item>
+                <item name="can_use_checkout" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\CanUseCheckoutValueHandler</item>
             </argument>
         </arguments>
     </virtualType>
-    <virtualType name="Bold\Checkout\Gateway\Config\ConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+    <virtualType name="Bold\Checkout\Model\Payment\Gateway\Config\ConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
-            <argument name="configInterface" xsi:type="object">Bold\Checkout\Gateway\Config\Config</argument>
+            <argument name="configInterface" xsi:type="object">Bold\Checkout\Model\Payment\Gateway\Config\Config</argument>
         </arguments>
     </virtualType>
-    <virtualType name="Bold\Checkout\Gateway\Config\Config" type="Magento\Payment\Gateway\Config\Config">
+    <virtualType name="Bold\Checkout\Model\Payment\Gateway\Config\Config" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">Bold\Checkout\Model\Payment\Gateway\Service::CODE</argument>
         </arguments>
     </virtualType>
     <!-- Validator Pool-->
-    <virtualType name="Bold\Checkout\Gateway\Validator\ValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+    <virtualType name="Bold\Checkout\Model\Payment\Gateway\Validator\ValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
         <arguments>
             <argument name="validators" xsi:type="array">
                 <item name="public_order_id" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Validator\PublicOrderIdValidator</item>

@@ -17,7 +17,6 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class BoldClient implements ClientInterface
 {
-    private const URL = 'https://api.boldcommerce.com/';
     private const BOLD_API_VERSION_DATE = '2022-10-14';
 
     /**
@@ -97,7 +96,7 @@ class BoldClient implements ClientInterface
     /**
      * @inheritDoc
      */
-    public function delete(int $websiteId, string $url): ResultInterface
+    public function delete(int $websiteId, string $url, array $data): ResultInterface
     {
         throw new LocalizedException(__('Delete method is not implemented.'));
     }
@@ -127,9 +126,10 @@ class BoldClient implements ClientInterface
      */
     private function getUrl(int $websiteId, string $url): string
     {
+        $apiUrl = $this->config->getApiUrl($websiteId);
         if (!$this->config->getShopId($websiteId)) {
-            return self::URL . $url;
+            return $apiUrl . $url;
         }
-        return self::URL . str_replace('{{shopId}}', $this->config->getShopId($websiteId), $url);
+        return $apiUrl . str_replace('{{shopId}}', $this->config->getShopId($websiteId), $url);
     }
 }
