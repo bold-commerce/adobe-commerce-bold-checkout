@@ -10,6 +10,7 @@ use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Quote\Api\Data\TotalsInterface;
 
 /**
  * Quote result builder.
@@ -112,12 +113,18 @@ class Builder
     {
         $items = [];
         foreach ($quote->getAllItems() as $item) {
-            if (!$item->getChildren()) {
-                $items[] = $item;
+            if ($item->getChildren()) {
+                continue;
             }
-        }
-        foreach ($items as $quoteItem) {
-            $quoteItem->getExtensionAttributes()->setProduct($quoteItem->getProduct());
+            
+            if ($item->getParentItem() !== null) {
+                $pi = $item->getParentItem();
+                $item->getExtensionAttributes()->setParentItemId($pi->getId());
+                $item->getExtensionAttributes()->setTaxDetails($pi->getExtensionAttributes()->getTaxDetails());
+            }
+
+            $item->getExtensionAttributes()->setProduct($item->getProduct());
+            $items[] = $item;
         }
         $quote->setItems($items);
     }
