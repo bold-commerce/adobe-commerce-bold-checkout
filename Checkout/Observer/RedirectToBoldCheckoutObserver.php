@@ -18,8 +18,6 @@ use Magento\Framework\Message\ManagerInterface;
  */
 class RedirectToBoldCheckoutObserver implements ObserverInterface
 {
-    private const CHECKOUT_URL = 'https://checkout.boldcommerce.com/bold_platform/';
-
     /**
      * @var IsBoldCheckoutAllowedForCart
      */
@@ -99,7 +97,8 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             $orderId = $checkoutData['data']['public_order_id'];
             $token = $checkoutData['data']['jwt_token'];
             $shopName = $checkoutData['data']['initial_data']['shop_name'];
-            $checkoutUrl = self::CHECKOUT_URL . $shopName . '/experience/resume?public_order_id=' . $orderId
+            $checkoutApiUrl = $this->config->getCheckoutUrl($websiteId);
+            $checkoutUrl = $checkoutApiUrl . $shopName . '/experience/resume?public_order_id=' . $orderId
                 . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);
         } catch (Exception $exception) {

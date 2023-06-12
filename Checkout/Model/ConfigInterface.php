@@ -138,6 +138,14 @@ interface ConfigInterface
     public function getApiUrl(int $websiteId): ?string;
 
     /**
+     * Get integration Checkout URL.
+     *
+     * @param int $websiteId
+     * @return string|null
+     */
+    public function getCheckoutUrl(int $websiteId): ?string;
+
+    /**
      * Get integration Identity link URL.
      *
      * @param int $websiteId
