@@ -70,7 +70,7 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     {
         try {
             $quote = $this->cartRepository->getActive($cartId);
-            if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsite())) {
+            if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
                 return $this->quoteResultBuilder->createSuccessResult($quote);
             }
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
