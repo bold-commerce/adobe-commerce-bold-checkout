@@ -183,7 +183,7 @@ interface OrderDataInterface
     /**
      * Set order request extension attributes.
      *
-     * @param OrderDataExtensionInterface $orderDataExtension
+     * @param \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataExtensionInterface $orderDataExtension
      * @return void
      */
     public function setExtensionAttributes(OrderDataExtensionInterface $orderDataExtension): void;
