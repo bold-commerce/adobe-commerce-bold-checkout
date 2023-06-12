@@ -94,7 +94,7 @@ class ProcessOrder
             $this->orderExtensionDataResource->load(
                 $orderExtensionData,
                 $orderPayload->getOrderNumber(),
-                'public_order_id'
+                'public_id'
             );
             $orderId = $orderExtensionData->getOrderId();
             if (!$orderId) {

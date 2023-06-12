@@ -97,7 +97,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             $orderId = $checkoutData['data']['public_order_id'];
             $token = $checkoutData['data']['jwt_token'];
             $shopName = $checkoutData['data']['initial_data']['shop_name'];
-            $checkoutApiUrl = $this->config->getCheckoutUrl($websiteId);
+            $checkoutApiUrl = rtrim($this->config->getCheckoutUrl($websiteId), '/') . '/bold_platform/';
             $checkoutUrl = $checkoutApiUrl . $shopName . '/experience/resume?public_order_id=' . $orderId
                 . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);

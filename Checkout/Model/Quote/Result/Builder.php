@@ -9,6 +9,7 @@ use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Api\Data\CartItemInterface;
 
 /**
  * Quote result builder.
@@ -109,11 +110,15 @@ class Builder
      */
     private function processQuoteItems(CartInterface $quote): void
     {
-        $quoteItems = $quote->getAllVisibleItems();
-        foreach ($quoteItems as $quoteItem) {
-            $children = $quoteItem->getChildren();
-            $product = $children ? reset($children)->getProduct() : $quoteItem->getProduct();
-            $quoteItem->getExtensionAttributes()->setProduct($product);
+        $items = [];
+        foreach ($quote->getAllItems() as $item) {
+            if (!$item->getChildren()) {
+                $items[] = $item;
+            }
         }
+        foreach ($items as $quoteItem) {
+            $quoteItem->getExtensionAttributes()->setProduct($quoteItem->getProduct());
+        }
+        $quote->setItems($items);
     }
 }

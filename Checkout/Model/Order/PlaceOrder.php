@@ -107,7 +107,7 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse($e->getMessage());
         }
         try {
-            $websiteId = $quote->getStore()->getWebsiteId();
+            $websiteId = (int)$quote->getStore()->getWebsiteId();
             $magentoOrder = $this->config->isCheckoutTypeSelfHosted($websiteId)
                 ? $this->processOrder->process($order)
                 : $this->createOrderFromPayload->createOrder($order, $quote);
@@ -169,10 +169,29 @@ class PlaceOrder implements PlaceOrderInterface
      */
     private function getSuccessResponse(OrderInterface $order): ResultInterface
     {
+        $this->processOrderItems($order);
         return $this->responseFactory->create(
             [
                 'order' => $order,
             ]
         );
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return void
+     */
+    private function processOrderItems(OrderInterface $order)
+    {
+        $items = [];
+        foreach ($order->getAllItems() as $item) {
+            if (!$item->getChildren()) {
+                $items[] = $item;
+            }
+        }
+        foreach ($items as $orderItem) {
+            $orderItem->getExtensionAttributes()->setProduct($orderItem->getProduct());
+        }
+        $order->setItems($items);
     }
 }
