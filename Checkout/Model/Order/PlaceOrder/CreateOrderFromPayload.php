@@ -101,8 +101,8 @@ class CreateOrderFromPayload
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $this->orderExtensionDataResource->load(
             $orderExtensionData,
-            $orderPayload->getOrderNumber(),
-            'public_order_id'
+            $orderPayload->getPublicId(),
+            'public_id'
         );
         $magentoOrder = $this->orderFactory->create();
         $this->orderResource->load($magentoOrder, $orderExtensionData->getOrderId());
@@ -115,7 +115,7 @@ class CreateOrderFromPayload
         $this->addCommentToOrder->addComment($magentoOrder, $orderPayload);
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $orderExtensionData->setPublicId($orderPayload->getPublicId());
-        $orderExtensionData->setOrderId($magentoOrder->getId());
+        $orderExtensionData->setOrderId((int)$magentoOrder->getId());
         $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
         $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
         $this->orderExtensionDataResource->save($orderExtensionData);
