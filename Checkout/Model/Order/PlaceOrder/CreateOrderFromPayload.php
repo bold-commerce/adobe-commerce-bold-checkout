@@ -101,7 +101,7 @@ class CreateOrderFromPayload
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $this->orderExtensionDataResource->load(
             $orderExtensionData,
-            $orderPayload->getOrderNumber(),
+            $orderPayload->getPublicId(),
             'public_id'
         );
         $magentoOrder = $this->orderFactory->create();
