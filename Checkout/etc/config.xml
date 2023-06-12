@@ -26,6 +26,7 @@
                 <enabled_for>0</enabled_for>
                 <platform_connector_url>https://adobe-commerce-connector.boldapps.net/platform/shops/</platform_connector_url>
                 <api_url>https://api.boldcommerce.com/</api_url>
+                <checkout_url>https://checkout.boldcommerce.com/</checkout_url>
             </bold_checkout_advanced>
         </checkout>
     </default>

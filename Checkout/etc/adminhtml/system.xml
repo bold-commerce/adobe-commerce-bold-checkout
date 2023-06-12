@@ -97,6 +97,11 @@
                 <field id="api_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
                     <label>Api URL</label>
                     <validate>required-url</validate>
+                    <comment><![CDATA[Bold API URL. Do not change..]]></comment>
+                </field>
+                <field id="checkout_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
+                    <label>Checkout URL</label>
+                    <validate>required-url</validate>
                     <comment><![CDATA[Bold Checkout API URL. Do not change..]]></comment>
                 </field>
                 <field id="log_enabled" translate="label" type="select" sortOrder="80" showInDefault="0" showInWebsite="1">
