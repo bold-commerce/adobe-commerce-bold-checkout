@@ -270,7 +270,7 @@ class CreateOrderTest extends WebapiAbstract
         self::assertEquals($state, $order['state']);
         self::assertEquals($status, $order['status']);
         self::assertEquals('bold', $order['payment']['method']);
-        self::assertEquals('Bold Payments', $order['payment']['additional_information'][0]);
+        self::assertEquals('Bold', $order['payment']['additional_information'][0]);
         self::assertEquals('ch_3M816MB5K8kykDdS00gmtLOO', $order['payment']['last_trans_id']);
         self::assertEquals('customer@example.com', $order['billing_address']['email']);
         self::assertEquals('Culver City', $order['billing_address']['city']);

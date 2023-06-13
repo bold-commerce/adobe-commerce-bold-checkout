@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="sales_quote_load_after">
-        <observer name="add_applied_taxes" instance="Bold\Checkout\Observer\AddAppliedTaxToQuoteObserver"/>
+        <observer name="add_applied_taxes" instance="Bold\Checkout\Observer\Quote\AddAppliedTaxToQuoteObserver"/>
     </event>
 </config>
