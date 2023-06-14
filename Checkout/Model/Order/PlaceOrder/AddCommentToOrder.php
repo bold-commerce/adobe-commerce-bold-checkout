@@ -38,7 +38,7 @@ class AddCommentToOrder
         OrderInterface $order,
         OrderDataInterface $orderData
     ) {
-        if ($order->getBaseGrandTotal() === $orderData->getTotal()) {
+        if ($order->getBaseGrandTotal() - $orderData->getTotal() !== 0) {
             return;
         }
         $operation = $order->hasInvoices() ? 'refund' : 'cancel';
@@ -51,6 +51,11 @@ class AddCommentToOrder
             $transactionType,
             $orderData->getTotal()
         );
+        foreach ($order->getStatusHistories() as $history) {
+            if ($history->getComment() === $comment->getText()) {
+                return;
+            }
+        }
         $order->addCommentToStatusHistory($comment);
         $this->orderResource->save($order);
     }

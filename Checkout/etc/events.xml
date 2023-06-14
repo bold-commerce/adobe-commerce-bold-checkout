@@ -1,48 +1,48 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_submit_all_after">
+        <observer name="save_order_extension_data" instance="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver"/>
+    </event>
     <event name="sales_order_place_after">
-        <observer name="process_order_on_bold" instance="Bold\Checkout\Observer\ProcessOrderObserver"/>
+        <observer name="process_order_on_bold" instance="Bold\Checkout\Observer\Order\ProcessOrderObserver"/>
     </event>
     <event name="sales_order_load_after">
-        <observer name="add_bold_data_to_order" instance="Bold\Checkout\Observer\AddBoldDataToOrderObserver"/>
-    </event>
-    <event name="sales_order_save_after">
-        <observer name="save_bold_data" instance="Bold\Checkout\Observer\SaveOrderBoldDataObserver"/>
+        <observer name="add_bold_data_to_order" instance="Bold\Checkout\Observer\Order\AddOrderExtensionDataObserver"/>
     </event>
     <event name="catalog_category_save_after">
-        <observer name="bold_checkout_category_save" instance="Bold\Checkout\Observer\CategorySave" />
+        <observer name="bold_checkout_category_save" instance="Bold\Checkout\Observer\Category\CategorySave" />
     </event>
     <event name="catalog_product_save_after">
-        <observer name="bold_checkout_product_save" instance="Bold\Checkout\Observer\ProductSave" />
+        <observer name="bold_checkout_product_save" instance="Bold\Checkout\Observer\Product\ProductSave" />
     </event>
     <event name="customer_save_after">
-        <observer name="bold_checkout_customer_save" instance="Bold\Checkout\Observer\CustomerSave" />
+        <observer name="bold_checkout_customer_save" instance="Bold\Checkout\Observer\Customer\CustomerSave" />
     </event>
     <event name="customer_address_save_after">
-        <observer name="bold_checkout_customer_address_save" instance="Bold\Checkout\Observer\CustomerAddressSave" />
+        <observer name="bold_checkout_customer_address_save" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressSave" />
     </event>
     <event name="admin_system_config_changed_section_checkout">
-        <observer name="bold_checkout_checkout_section_save" instance="Bold\Checkout\Observer\CheckoutSectionSave"/>
+        <observer name="bold_checkout_checkout_section_save" instance="Bold\Checkout\Observer\Checkout\CheckoutSectionSave"/>
     </event>
     <event name="catalog_category_delete_after">
-        <observer name="bold_checkout_category_delete" instance="Bold\Checkout\Observer\CategoryDelete" />
+        <observer name="bold_checkout_category_delete" instance="Bold\Checkout\Observer\Category\CategoryDelete" />
     </event>
     <event name="catalog_product_delete_after">
-        <observer name="bold_checkout_product_delete" instance="Bold\Checkout\Observer\ProductDelete" />
+        <observer name="bold_checkout_product_delete" instance="Bold\Checkout\Observer\Product\ProductDelete" />
     </event>
     <event name="customer_delete_after">
-        <observer name="bold_checkout_customer_delete" instance="Bold\Checkout\Observer\CustomerDelete" />
+        <observer name="bold_checkout_customer_delete" instance="Bold\Checkout\Observer\Customer\CustomerDelete" />
     </event>
     <event name="customer_address_delete_after">
-        <observer name="bold_checkout_customer_address_delete" instance="Bold\Checkout\Observer\CustomerAddressDelete" />
+        <observer name="bold_checkout_customer_address_delete" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressDelete" />
     </event>
     <event name="catalog_product_import_bunch_save_after">
-        <observer name="bold_checkout_product_import_update" instance="Bold\Checkout\Observer\ProductImportUpdate"/>
+        <observer name="bold_checkout_product_import_update" instance="Bold\Checkout\Observer\Product\Import\ProductImportUpdate"/>
     </event>
     <event name="catalog_product_import_bunch_delete_after">
-        <observer name="bold_checkout_product_import_delete" instance="Bold\Checkout\Observer\ProductImportDelete"/>
+        <observer name="bold_checkout_product_import_delete" instance="Bold\Checkout\Observer\Product\Import\ProductImportDelete"/>
     </event>
     <event name="shortcut_buttons_container">
-        <observer name="bold_checkout_parallel_checkout_button" instance="Bold\Checkout\Observer\AddParallelCheckoutButton"/>
+        <observer name="bold_checkout_parallel_checkout_button" instance="Bold\Checkout\Observer\Checkout\AddParallelCheckoutButton"/>
     </event>
 </config>

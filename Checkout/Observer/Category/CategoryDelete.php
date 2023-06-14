@@ -1,28 +1,34 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Category;
 
 use Bold\Checkout\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
-use Magento\Customer\Api\Data\CustomerInterface;
-use Magento\Customer\Model\Config\Share;
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Store\Api\Data\WebsiteInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Publish customer ids for delete observer.
+ * Publish category ids for delete observer.
  */
-class CustomerDelete implements ObserverInterface
+class CategoryDelete implements ObserverInterface
 {
-    private const TOPIC_NAME = 'bold.checkout.delete.customers';
+    private const TOPIC_NAME = 'bold.checkout.delete.categories';
 
     /**
      * @var EntitySyncPublisher
      */
     private $publisher;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
 
     /**
      * @var LoggerInterface
@@ -35,43 +41,40 @@ class CustomerDelete implements ObserverInterface
     private $metadataPool;
 
     /**
-     * @var Share
-     */
-    private $share;
-
-    /**
+     * @param StoreManagerInterface $storeManager
      * @param EntitySyncPublisher $publisher
      * @param LoggerInterface $logger
      * @param MetadataPool $metadataPool
-     * @param Share $share
      */
     public function __construct(
+        StoreManagerInterface $storeManager,
         EntitySyncPublisher $publisher,
         LoggerInterface $logger,
-        MetadataPool $metadataPool,
-        Share $share
+        MetadataPool $metadataPool
     ) {
         $this->publisher = $publisher;
+        $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->metadataPool = $metadataPool;
-        $this->share = $share;
     }
 
     /**
-     * Publish customer delete message.
+     * Publish category delete message.
      *
      * @param Observer $observer
      * @return void
-     * @throws \Exception
      */
     public function execute(Observer $observer)
     {
-        $customer = $observer->getEvent()->getCustomer();
-        $websiteIds = $this->share->isWebsiteScope()
-            ? [(int)$customer->getWebsiteId()]
-            : array_map('intval', $customer->getSharedWebsiteIds());
-        $linkField = $this->metadataPool->getMetadata(CustomerInterface::class)->getLinkField();
-        $entityId = (int)$customer->getData($linkField);
+        $category = $observer->getEvent()->getCategory();
+        $websiteIds = array_map(
+            function (WebsiteInterface $website) {
+                return (int)$website->getId();
+            },
+            $this->storeManager->getWebsites()
+        );
+        $linkField = $this->metadataPool->getMetadata(CategoryInterface::class)->getLinkField();
+        $entityId = (int)$category->getData($linkField);
         foreach ($websiteIds as $websiteId) {
             try {
                 $this->publisher->publish(self::TOPIC_NAME, $websiteId, [$entityId]);

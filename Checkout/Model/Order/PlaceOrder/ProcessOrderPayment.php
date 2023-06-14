@@ -42,29 +42,50 @@ class ProcessOrderPayment
      * @param OrderInterface $order
      * @param OrderDataInterface $orderData
      * @return void
-     * @throws LocalizedException
+     * @throws LocalizedException|\Exception
      */
     public function process(OrderInterface $order, OrderDataInterface $orderData): void
     {
         $orderPayment = $order->getPayment();
-        $orderPayment->setBaseAmountOrdered($orderData->getPayment()->getBaseAmountOrdered());
-        $orderPayment->setAmountOrdered(
-            $order->getBaseCurrency()->convert(
-                $orderData->getPayment()->getBaseAmountOrdered(),
+        if ($orderPayment->getBaseAmountAuthorized() || $orderPayment->getBaseAmountPaid()) {
+            return;
+        }
+        $baseAmountOrdered = $orderData->getPayment()->getBaseAmountOrdered()
+            ?: $order->getOrderCurrency()->convert(
+                $orderData->getPayment()->getAmountOrdered(),
+                $order->getBaseCurrency()
+            );
+        $amountOrdered = $orderData->getPayment()->getAmountOrdered()
+            ?: $order->getBaseCurrency()->convert(
+                $baseAmountOrdered,
                 $order->getOrderCurrency()
-            )
-        );
-        $orderPayment->setBaseAmountAuthorized($orderData->getPayment()->getBaseAmountOrdered());
-        $orderPayment->setAmountAuthorized(
-            $order->getBaseCurrency()->convert($orderData->getPayment()->getBaseAmountOrdered())
-        );
-        $orderPayment->setBaseAmountPaid($orderData->getPayment()->getBaseAmountPaid());
-        $orderPayment->setAmountPaid(
-            $order->getBaseCurrency()->convert(
-                $orderData->getPayment()->getBaseAmountPaid(),
+            );
+        $baseAmountAuthorized = $orderData->getPayment()->getBaseAmountAuthorized()
+            ?: $order->getOrderCurrency()->convert(
+                $orderData->getPayment()->getAmountAuthorized(),
+                $order->getBaseCurrency()
+            );
+        $amountAuthorized = $orderData->getPayment()->getAmountAuthorized()
+            ?: $order->getBaseCurrency()->convert(
+                $baseAmountAuthorized,
                 $order->getOrderCurrency()
-            )
-        );
+            );
+        $baseAmountPaid = $orderData->getPayment()->getBaseAmountPaid()
+            ?: $order->getOrderCurrency()->convert(
+                $orderData->getPayment()->getAmountPaid(),
+                $order->getBaseCurrency()
+            );
+        $amountPaid = $orderData->getPayment()->getAmountPaid()
+            ?: $order->getBaseCurrency()->convert(
+                $baseAmountPaid,
+                $order->getOrderCurrency()
+            );
+        $orderPayment->setBaseAmountOrdered($baseAmountOrdered);
+        $orderPayment->setAmountOrdered($amountOrdered);
+        $orderPayment->setBaseAmountAuthorized($baseAmountAuthorized);
+        $orderPayment->setAmountAuthorized($amountAuthorized ?: $amountOrdered);
+        $orderPayment->setBaseAmountPaid($baseAmountPaid);
+        $orderPayment->setAmountPaid($amountPaid);
         $orderPayment->setTransactionId($orderData->getTransaction()->getTxnId());
         $transaction = $orderPayment->addTransaction($orderData->getTransaction()->getTxnType());
         if (!$orderPayment->getIsTransactionClosed()) {

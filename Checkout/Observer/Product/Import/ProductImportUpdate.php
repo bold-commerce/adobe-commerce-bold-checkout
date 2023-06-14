@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Product\Import;
 
 use Bold\Checkout\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;

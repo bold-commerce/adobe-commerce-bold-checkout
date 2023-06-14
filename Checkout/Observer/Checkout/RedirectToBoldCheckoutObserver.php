@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Checkout;
 
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest;

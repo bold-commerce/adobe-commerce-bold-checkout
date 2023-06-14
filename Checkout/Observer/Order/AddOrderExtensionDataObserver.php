@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Order;
 
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData;
@@ -11,7 +11,7 @@ use Magento\Framework\Event\ObserverInterface;
 /**
  * Add bold data to magento order observer.
  */
-class AddBoldDataToOrderObserver implements ObserverInterface
+class AddOrderExtensionDataObserver implements ObserverInterface
 {
     /**
      * @var OrderExtensionDataFactory

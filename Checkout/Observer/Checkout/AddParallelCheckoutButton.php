@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Checkout;
 
 use Bold\Checkout\Block\Onepage\Button;
 use Magento\Catalog\Block\ShortcutButtons;
