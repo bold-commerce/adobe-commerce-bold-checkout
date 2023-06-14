@@ -15,6 +15,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
+use Throwable;
 
 /**
  * Get quote items inventory data.
@@ -136,11 +137,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      */
     private function getSalableQty(CartItemInterface $item): float
     {
-        try {
-            $getProductSalableQty = $this->objectManager->get(GetProductSalableQtyInterface::class);
-        } catch (Exception $e) {
-            $getProductSalableQty = null;
-        }
+        $getProductSalableQty = $this->getProductSalableQtyService();
         try {
             return $getProductSalableQty
                 ? $getProductSalableQty->execute($item->getProduct()->getSku(), $item->getStoreId())
@@ -148,5 +145,20 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         } catch (Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * Try to build GetProductSalableQtyInterface. If it's not possible, return null.
+     *
+     * @return GetProductSalableQtyInterface|null
+     */
+    public function getProductSalableQtyService(): ?GetProductSalableQtyInterface
+    {
+        try {
+            $getProductSalableQty = $this->objectManager->get(GetProductSalableQtyInterface::class);
+        } catch (Throwable $e) {
+            $getProductSalableQty = null;
+        }
+        return $getProductSalableQty;
     }
 }
