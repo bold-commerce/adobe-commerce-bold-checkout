@@ -7,7 +7,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
 use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
-use Bold\Checkout\Observer\RedirectToBoldCheckoutObserver as RedirectToBoldCheckout;
+use Bold\Checkout\Observer\Checkout\RedirectToBoldCheckoutObserver as RedirectToBoldCheckout;
 use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\ActionInterface;

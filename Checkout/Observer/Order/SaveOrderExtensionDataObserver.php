@@ -1,17 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Plugin\Checkout\Api\PaymentInformationManagement;
+namespace Bold\Checkout\Observer\Order;
 
-use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
-use Magento\Checkout\Api\PaymentInformationManagementInterface;
+use Exception;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 
 /**
  * Save order extension data.
  */
-class SaveOrderExtensionDataPlugin
+class SaveOrderExtensionDataObserver implements ObserverInterface
 {
     /**
      * @var OrderExtensionDataFactory
@@ -43,29 +45,32 @@ class SaveOrderExtensionDataPlugin
     }
 
     /**
-     * @param PaymentInformationManagementInterface $subject
-     * @param int $orderId
-     * @return int
+     * Save order extension data.
+     *
+     * @param Observer $observer
+     * @return void
      */
-    public function afterSavePaymentInformationAndPlaceOrder(
-        PaymentInformationManagementInterface $subject,
-        $orderId
-    ):int {
+    public function execute(Observer $observer)
+    {
+        $order = $observer->getEvent()->getOrder();
+        if ($order->getPayment()->getMethod() !== 'bold') {
+            return;
+        }
+        $orderId = (int)$order->getEntityId();
         $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
         $this->checkoutSession->setBoldCheckoutData(null);
         if (!$publicOrderId) {
-            return (int)$orderId;
+            return;
         }
         $orderExtensionData = $this->orderExtensionDataFactory->create();
-        $orderExtensionData->setOrderId((int)$orderId);
+        $orderExtensionData->setOrderId($orderId);
         $orderExtensionData->setPublicId($publicOrderId);
         $orderExtensionData->setFulfillmentStatus('pending');
         $orderExtensionData->setFinancialStatus('pending');
         try {
             $this->orderExtensionDataResource->save($orderExtensionData);
-        } catch (\Exception $e) {
-            return (int)$orderId;
+        } catch (Exception $e) {
+            return;
         }
-        return (int)$orderId;
     }
 }

@@ -110,6 +110,9 @@ define(
              * @returns void
              */
             sendGuestCustomerInfo: function () {
+                if (!this.customerIsGuest) {
+                    return;
+                }
                 const billingAddress = quote.billingAddress();
                 const firstname = billingAddress.firstname;
                 const lastname = billingAddress.lastname;
@@ -130,9 +133,7 @@ define(
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
-                    }.bind(this)).catch(function () {
-                    this.iframeSrc(null);
-                }.bind(this));
+                    }.bind(this));
             },
 
             /**
@@ -158,7 +159,13 @@ define(
                             case 'PIGI_REFRESH_ORDER':
                                 break;
                             case 'PIGI_ADD_PAYMENT':
+                                this.messageContainer.errorMessages([]);
                                 if (!data.payload.success) {
+                                    this.messageContainer.errorMessages(
+                                        [
+                                            'Please verify your payment information and try again.'
+                                        ]
+                                    );
                                     loader.stopLoader();
                                     this.paymentType = null;
                                     return;
@@ -182,9 +189,7 @@ define(
              * @returns {void}
              */
             syncBillingData() {
-                if (this.customerIsGuest) {
-                    this.sendGuestCustomerInfo();
-                }
+                this.sendGuestCustomerInfo();
                 const payload = boldAddress.getBillingAddress();
                 if (!payload) {
                     return;
@@ -197,8 +202,6 @@ define(
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function () {
-                    this.iframeSrc(null);
                 }.bind(this));
             },
 

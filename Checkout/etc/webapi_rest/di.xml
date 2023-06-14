@@ -9,9 +9,6 @@
         </arguments>
     </type>
 
-    <type name="Magento\Checkout\Api\PaymentInformationManagementInterface">
-        <plugin name="save_extension_order_data" type="Bold\Checkout\Plugin\Checkout\Api\PaymentInformationManagement\SaveOrderExtensionDataPlugin"/>
-    </type>
     <type name="Magento\Quote\Model\ResourceModel\Quote">
         <plugin name="persist_quote_currency" type="Bold\Checkout\Plugin\Sales\Model\ResourceModel\Quote\PersistQuoteCurrencyPlugin"/>
     </type>

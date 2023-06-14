@@ -38,7 +38,7 @@ class CreateInvoice
     public function create(OrderInterface $order)
     {
         $payment = $order->getPayment();
-        if (!$payment->getBaseAmountPaid()) {
+        if (!$payment->getBaseAmountPaid() || $order->hasInvoices()) {
             return;
         }
         $invoice = $order->prepareInvoice();
