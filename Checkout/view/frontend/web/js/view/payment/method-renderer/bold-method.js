@@ -128,12 +128,18 @@ define(
                     return;
                 }
                 this.guestCustomerPayload = payload;
-                boldClient.post('customer/guest', payload).then(
-                    function () {
-                        if (this.iframeWindow) {
-                            this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
-                        }
-                    }.bind(this));
+                boldClient.post('customer/guest', payload).then(function () {
+                    this.messageContainer.errorMessages([]);
+                    if (this.iframeWindow) {
+                        this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+                    }
+                }.bind(this)).catch(function () {
+                    this.messageContainer.errorMessages(
+                        [
+                            'Please verify your email and try again.'
+                        ]
+                    );
+                }.bind(this));
             },
 
             /**
@@ -199,9 +205,16 @@ define(
                 }
                 this.billingAddressPayload = payload;
                 boldClient.post('addresses/billing', payload).then(function () {
+                    this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
+                }.bind(this)).catch(function () {
+                    this.messageContainer.errorMessages(
+                        [
+                            'Please verify your billing information and try again.'
+                        ]
+                    );
                 }.bind(this));
             },
 
