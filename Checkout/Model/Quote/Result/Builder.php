@@ -9,8 +9,6 @@ use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Api\Data\TotalsInterface;
 
 /**
  * Quote result builder.
@@ -116,7 +114,7 @@ class Builder
             if ($item->getChildren()) {
                 continue;
             }
-            
+
             if ($item->getParentItem() !== null) {
                 $pi = $item->getParentItem();
                 $item->getExtensionAttributes()->setParentItemId($pi->getId());

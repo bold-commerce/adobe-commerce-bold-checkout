@@ -5,6 +5,25 @@
     <preference for="Bold\Checkout\Model\Queue\RequestInterface" type="Bold\Checkout\Model\Queue\Request"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Checkout\Model\Import\Address"/>
+    <preference for="Bold\Checkout\Api\PlaceOrderInterface" type="Bold\Checkout\Model\Order\PlaceOrder"/>
+    <preference for="Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Request\OrderData"/>
+    <preference for="Bold\Checkout\Api\Data\PlaceOrder\ResultInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Result"/>
+    <preference for="Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface" type="Bold\Checkout\Model\Http\Client\Response\Error"/>
+    <preference for="Bold\Checkout\Api\RegisterSharedSecretInterface" type="Bold\Checkout\Model\RegisterSharedSecret"/>
+    <preference for="Bold\Checkout\Api\Data\RegisterSharedSecret\ResultInterface" type="Bold\Checkout\Model\RegisterSharedSecret\Result"/>
+    <preference for="Bold\Checkout\Api\CustomerEmailValidatorInterface" type="Bold\Checkout\Model\Customer\EmailValidator"/>
+    <preference for="Bold\Checkout\Api\Data\CustomerEmailValidator\ResultInterface" type="Bold\Checkout\Model\Customer\EmailValidator\Result"/>
+    <preference for="Bold\Checkout\Api\CustomerAddressValidatorInterface" type="Bold\Checkout\Model\Customer\AddressValidator"/>
+    <preference for="Bold\Checkout\Api\Data\CustomerAddressValidator\ResultInterface" type="Bold\Checkout\Model\Customer\AddressValidator\Result"/>
+    <preference for="Bold\Checkout\Api\Quote\SetQuoteAddressesInterface" type="Bold\Checkout\Model\Quote\SetQuoteAddresses"/>
+    <preference for="Bold\Checkout\Api\Quote\SetQuoteShippingMethodInterface" type="Bold\Checkout\Model\Quote\SetQuoteShippingMethod"/>
+    <preference for="Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface" type="Bold\Checkout\Model\Quote\SetQuoteCouponCode"/>
+    <preference for="Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface" type="Bold\Checkout\Model\Quote\RemoveQuoteCouponCode"/>
+    <preference for="Bold\Checkout\Api\Quote\GetQuoteInterface" type="Bold\Checkout\Model\Quote\GetQuote"/>
+    <preference for="Bold\Checkout\Api\Data\Quote\ResultInterface" type="Bold\Checkout\Model\Quote\Result"/>
+    <preference for="Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface" type="Bold\Checkout\Model\Quote\GetQuoteInventoryData"/>
+    <preference for="Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface" type="Bold\Checkout\Model\Quote\Inventory\Result"/>
+    <preference for="Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterface" type="Bold\Checkout\Model\Quote\Inventory\Result\InventoryData"/>
 
     <type name="Bold\Checkout\Observer\ProcessOrderObserver">
         <arguments>
