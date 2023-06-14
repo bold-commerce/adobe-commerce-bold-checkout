@@ -110,6 +110,9 @@ define(
              * @returns void
              */
             sendGuestCustomerInfo: function () {
+                if (!this.customerIsGuest) {
+                    return;
+                }
                 const billingAddress = quote.billingAddress();
                 const firstname = billingAddress.firstname;
                 const lastname = billingAddress.lastname;
@@ -182,9 +185,7 @@ define(
              * @returns {void}
              */
             syncBillingData() {
-                if (this.customerIsGuest) {
-                    this.sendGuestCustomerInfo();
-                }
+                this.sendGuestCustomerInfo();
                 const payload = boldAddress.getBillingAddress();
                 if (!payload) {
                     return;
