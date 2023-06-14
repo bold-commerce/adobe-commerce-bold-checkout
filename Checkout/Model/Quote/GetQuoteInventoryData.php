@@ -9,8 +9,12 @@ use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\Data\CartItemInterface;
 
 /**
  * Get quote items inventory data.
@@ -43,8 +47,14 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private $inventoryDataFactory;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
+     * @param ObjectManagerInterface $objectManager
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param InventoryDataInterfaceFactory $inventoryDataFactory
@@ -52,6 +62,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     public function __construct(
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
+        ObjectManagerInterface $objectManager,
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory,
         InventoryDataInterfaceFactory $inventoryDataFactory
@@ -61,6 +72,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
         $this->inventoryDataFactory = $inventoryDataFactory;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -76,13 +88,13 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         }
         $inventoryResult = [];
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getShildren()) {
+            if ($item->getChildren()) {
                 continue;
             }
             $inventoryResult[] = $this->inventoryDataFactory->create(
                 [
                     'cartItemId' => $item->getId(),
-                    'salableQty' => $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty(),
+                    'salableQty' => $this->getSalableQty($item),
                 ]
             );
         }
@@ -114,5 +126,27 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
                 ],
             ]
         );
+    }
+
+    /**
+     * Get salable qty for the item.
+     *
+     * @param CartItemInterface $item
+     * @return float
+     */
+    private function getSalableQty(CartItemInterface $item): float
+    {
+        try {
+            $getProductSalableQty = $this->objectManager->get(GetProductSalableQtyInterface::class);
+        } catch (Exception $e) {
+            $getProductSalableQty = null;
+        }
+        try {
+            return $getProductSalableQty
+                ? $getProductSalableQty->execute($item->getProduct()->getSku(), $item->getStoreId())
+                : $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty();
+        } catch (Exception $e) {
+            return 0;
+        }
     }
 }

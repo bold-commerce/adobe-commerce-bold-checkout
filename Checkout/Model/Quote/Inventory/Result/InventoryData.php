@@ -41,6 +41,14 @@ class InventoryData implements InventoryDataInterface
     /**
      * @inheritdoc
      */
+    public function isSalable(): bool
+    {
+        return $this->salableQty > 0;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getSalableQty(): float
     {
         return $this->salableQty;

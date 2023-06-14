@@ -15,6 +15,13 @@ interface InventoryDataInterface
     public function getCartItemId(): int;
 
     /**
+     * Retrieve quote item salable status.
+     *
+     * @return bool
+     */
+    public function isSalable(): bool;
+
+    /**
      * Retrieve quote item salable quantity.
      *
      * @return float
