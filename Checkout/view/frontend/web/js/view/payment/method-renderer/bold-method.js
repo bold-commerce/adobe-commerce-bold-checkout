@@ -133,9 +133,7 @@ define(
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
-                    }.bind(this)).catch(function () {
-                    this.iframeSrc(null);
-                }.bind(this));
+                    }.bind(this));
             },
 
             /**
@@ -198,8 +196,6 @@ define(
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function () {
-                    this.iframeSrc(null);
                 }.bind(this));
             },
 
