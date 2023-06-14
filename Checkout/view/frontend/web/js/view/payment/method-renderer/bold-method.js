@@ -159,7 +159,13 @@ define(
                             case 'PIGI_REFRESH_ORDER':
                                 break;
                             case 'PIGI_ADD_PAYMENT':
+                                this.messageContainer.erroMessages([]);
                                 if (!data.payload.success) {
+                                    this.messageContainer.erroMessages(
+                                        [
+                                            'Please verify your payment information and try again.'
+                                        ]
+                                    );
                                     loader.stopLoader();
                                     this.paymentType = null;
                                     return;
