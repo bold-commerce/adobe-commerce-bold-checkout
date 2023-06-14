@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Customer\Address;
 
 use Bold\Checkout\Model\Queue\Publisher\EntitySyncPublisher;
 use Exception;
@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Publish customer ids for sync observer.
  */
-class CustomerAddressSave implements ObserverInterface
+class CustomerAddressDelete implements ObserverInterface
 {
     private const TOPIC_NAME = 'bold.checkout.sync.customers';
 

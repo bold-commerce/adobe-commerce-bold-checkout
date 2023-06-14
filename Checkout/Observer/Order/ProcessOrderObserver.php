@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Order;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Magento\Checkout\Model\Session;

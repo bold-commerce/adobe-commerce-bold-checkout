@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Observer;
+namespace Bold\Checkout\Observer\Quote;
 
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SimpleDataObjectConverter;

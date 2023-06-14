@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Payment\Gateway;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Exception;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Math\Random;
 use Magento\Sales\Api\Data\OrderInterface;
 
@@ -16,11 +17,11 @@ class Service
     public const CODE = 'bold';
     public const CANCEL = 'cancel';
     public const VOID = 'void';
-    private const CAPTURE_FULL_URL = '/checkout/orders/{{shopId}}/%s/payments/capture/full';
-    private const CAPTURE_PARTIALLY_URL = '/checkout/orders/{{shopId}}/%s/payments/capture';
-    private const REFUND_FULL_URL = '/checkout/orders/{{shopId}}/%s/refunds/full';
-    private const REFUND_PARTIALLY_URL = '/checkout/orders/{{shopId}}/%s/refunds';
-    private const CANCEL_URL = '/checkout/orders/{{shopId}}/%s/cancel';
+    private const CAPTURE_FULL_URL = 'checkout/orders/{{shopId}}/%s/payments/capture/full';
+    private const CAPTURE_PARTIALLY_URL = 'checkout/orders/{{shopId}}/%s/payments/capture';
+    private const REFUND_FULL_URL = 'checkout/orders/{{shopId}}/%s/refunds/full';
+    private const REFUND_PARTIALLY_URL = 'checkout/orders/{{shopId}}/%s/refunds';
+    private const CANCEL_URL = 'checkout/orders/{{shopId}}/%s/cancel';
 
     /**
      * @var ClientInterface
@@ -104,20 +105,18 @@ class Service
                 : __('Order payment has been voided.'),
         ];
         $result = $this->httpClient->post($websiteId, $url, $body);
-        $errors = $result->getErrors();
-        $errorMessage = $operation === self::CANCEL ? __('Cannot cancel the order') : __('Cannot void order payment.');
-        foreach ($errors as $error) {
-            $errorMessage = $error['message'];
-        }
-        if ($errors) {
-            throw new Exception($errorMessage);
+        if ($result->getErrors()) {
+            $message = isset(current($result->getErrors())['message'])
+                ? __(current($result->getErrors())['message'])
+                : __('Cannot void the payment.');
+            throw new LocalizedException($message);
         }
         $body = $result->getBody();
         if (!isset($body['data']['application_state'])) {
             $message = $operation === self::CANCEL
                 ? __('Cannot cancel order. Please try again later.')
                 : __('Cannot void the payment. Please try again later.');
-            throw new Exception($message);
+            throw new LocalizedException($message);
         }
     }
 
@@ -175,17 +174,15 @@ class Service
     private function sendCaptureRequest(int $websiteId, string $url, array $body): string
     {
         $result = $this->httpClient->post($websiteId, $url, $body);
-        $errors = $result->getErrors();
-        $errorMessage = __('Cannot capture the order.');
-        foreach ($errors as $error) {
-            $errorMessage .= ' ' . $error['message'];
-        }
-        if ($errors) {
-            throw new Exception($errorMessage);
+        if ($result->getErrors()) {
+            $message = isset(current($result->getErrors())['message'])
+                ? __(current($result->getErrors())['message'])
+                : __('Cannot capture the order.');
+            throw new LocalizedException($message);
         }
         $body = $result->getBody();
         if (!isset($body['data']['capture']['transactions'])) {
-            throw new Exception($errorMessage);
+            throw new LocalizedException(__('Cannot capture the order.'));
         }
         $transaction = current($body['data']['capture']['transactions']);
         return $transaction['transaction_id'];
@@ -203,17 +200,15 @@ class Service
     private function sendRefundRequest(int $websiteId, string $url, array $body): string
     {
         $result = $this->httpClient->post($websiteId, $url, $body);
-        $errors = $result->getErrors();
-        $errorMessage = __('Cannot refund order.');
-        foreach ($errors as $error) {
-            $errorMessage .= ' ' . $error['message'];
-        }
-        if ($errors) {
-            throw new Exception($errorMessage);
+        if ($result->getErrors()) {
+            $message = isset(current($result->getErrors())['message'])
+                ? __(current($result->getErrors())['message'])
+                : __('Cannot refund the order.');
+            throw new LocalizedException($message);
         }
         $body = $result->getBody();
         if (!isset($body['data']['refund']['transaction_details'])) {
-            throw new Exception($errorMessage);
+            throw new LocalizedException(__('Cannot refund the order.'));
         }
         $transactionDetails = current($body['data']['refund']['transaction_details']);
         return $transactionDetails['transaction_number'];
