@@ -159,9 +159,9 @@ define(
                             case 'PIGI_REFRESH_ORDER':
                                 break;
                             case 'PIGI_ADD_PAYMENT':
-                                this.messageContainer.erroMessages([]);
+                                this.messageContainer.errorMessages([]);
                                 if (!data.payload.success) {
-                                    this.messageContainer.erroMessages(
+                                    this.messageContainer.errorMessages(
                                         [
                                             'Please verify your payment information and try again.'
                                         ]
