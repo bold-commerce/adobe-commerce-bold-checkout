@@ -54,17 +54,17 @@ class ProcessOrderObserver implements ObserverInterface
         $websiteId = (int)$order->getStore()->getWebsiteId();
         $taxes = $this->client->post($websiteId, 'taxes', []);
         if ($taxes->getErrors()) {
-            throw new LocalizedException(__('Unable to set taxes.'));
+            throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
         }
         if ($order->getDiscountAmount()) {
             $discount = $this->client->post($websiteId, 'discounts', ['code' => 'Discount']);
             if ($discount->getErrors()) {
-                throw new LocalizedException(__('Unable to set discounts.'));
+                throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
             }
         }
         $boldOrder = $this->client->post($websiteId, 'process_order', []);
         if ($boldOrder->getErrors()) {
-            throw new LocalizedException(__('Could not process order.'));
+            throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
         }
     }
 }
