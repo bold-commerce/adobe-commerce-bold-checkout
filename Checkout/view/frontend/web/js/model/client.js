@@ -1,8 +1,7 @@
 define([
-    'jquery',
     'Magento_Checkout/js/model/url-builder',
     'mage/storage'
-], function ($, urlBuilder, storage) {
+], function (urlBuilder, storage) {
     'use strict';
 
     let requestInProgress = false;
