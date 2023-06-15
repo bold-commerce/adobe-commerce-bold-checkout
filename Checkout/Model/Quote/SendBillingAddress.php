@@ -11,6 +11,9 @@ use Bold\Checkout\Model\ResourceModel\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\AddressInterface;
 
+/**
+ * Send billing address to Bold.
+ */
 class SendBillingAddress implements SendBillingAddressInterface
 {
     /**
@@ -54,9 +57,13 @@ class SendBillingAddress implements SendBillingAddressInterface
         }
         try {
             $data = $this->addressConverter->convert($address);
-            return $this->client->post($websiteId, 'addresses/billing', $data);
+            $result = $this->client->post($websiteId, 'addresses/billing', $data);
         } catch (\Exception $e) {
             throw new LocalizedException(__('Could not send billing address: %1', $e->getMessage()));
         }
+        if ($result->getErrors()) {
+            throw new LocalizedException(__('Could not send billing address'));
+        }
+        return $result;
     }
 }
