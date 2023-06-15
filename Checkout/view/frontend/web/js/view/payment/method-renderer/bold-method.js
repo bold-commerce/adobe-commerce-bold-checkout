@@ -40,6 +40,7 @@ define(
                 this._super();
                 this.iframeSrc = ko.observable(window.checkoutConfig.bold.payment.iframeSrc);
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
+                this.shopId = window.checkoutConfig.bold.shopId;
                 if (checkoutData.getSelectedPaymentMethod() === 'bold') {
                     checkoutData.setSelectedPaymentMethod(null);
                     quote.paymentMethod(null);
@@ -128,7 +129,7 @@ define(
                     return;
                 }
                 this.guestCustomerPayload = payload;
-                boldClient.post('customer/guest', payload).then(function () {
+                boldClient.post(this.shopId + '/customer/guest', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
@@ -204,12 +205,13 @@ define(
                     return;
                 }
                 this.billingAddressPayload = payload;
-                boldClient.post('addresses/billing', payload).then(function () {
+                boldClient.post(this.shopId + '/addresses/billing', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function () {
+                }.bind(this)).catch(function (error) {
+                    console.log(error);
                     this.messageContainer.errorMessages(
                         [
                             'Please verify your billing information and try again.'

@@ -1,6 +1,8 @@
 define([
-    'jquery'
-], function ($) {
+    'jquery',
+    'Magento_Checkout/js/model/url-builder',
+    'mage/storage'
+], function ($, urlBuilder, storage) {
     'use strict';
 
     let requestInProgress = false;
@@ -17,16 +19,9 @@ define([
             return;
         }
         const nextRequest = requestQueue.shift();
+        const url = urlBuilder.createUrl(nextRequest.path, {});
         requestInProgress = true;
-        $.ajax({
-            url: client.url + nextRequest.path,
-            type: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + client.jwtToken,
-                'Content-Type': 'application/json',
-            },
-            data: JSON.stringify(nextRequest.data)
-        }).done(function (result) {
+        storage.post(url, JSON.stringify(nextRequest.data)).done(function (result) {
             nextRequest.resolve(result);
             requestInProgress = false;
             processNextRequest();
@@ -37,26 +32,9 @@ define([
         });
     }
 
-    /**
-     * Bold http client.
-     * @type {object}
-     */
-    const client = {
+    return {
         /**
-         * Initialize client.
-         *
-         * @return void
-         */
-        initialize: function () {
-            if (window.checkoutConfig.bold === undefined) {
-                return;
-            }
-            this.jwtToken = window.checkoutConfig.bold.jwtToken;
-            this.url = window.checkoutConfig.bold.url;
-        },
-
-        /**
-         * Post data to Bold API.
+         * Post data to server.
          *
          * @param path string
          * @param data object
@@ -74,26 +52,6 @@ define([
 
                 processNextRequest();
             });
-        },
-
-        /**
-         * Get data from Bold API.
-         *
-         * @param path
-         * @return {*}
-         */
-        get: function (path) {
-            return $.ajax({
-                url: this.url + path,
-                type: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + this.jwtToken,
-                    'Content-Type': 'application/json'
-                }
-            });
         }
     };
-
-    client.initialize();
-    return client;
 });
