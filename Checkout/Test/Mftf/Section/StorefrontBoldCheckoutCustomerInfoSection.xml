@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutCustomerInfoSection">
+        <element name="customerInfo" type="block" selector=".customer-information"/>
+        <!-- Form elements -->
+        <element name="emailAddressField" type="input" selector=".customer-information input#customer-information__email"/>
+        <element name="subscribeNewsletterCheckbox" type="checkbox" selector=".customer-information .customer-information__accepts-marketing input"/>
+    </section>
+</sections>

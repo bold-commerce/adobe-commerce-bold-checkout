@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutFormControlsSection">
+        <element name="continueToShippingButton" type="button" selector=".form-controls button.form-controls__continue-button[data-testid=footer-continue-to-shipping-button]"/>
+        <element name="continueToPaymentButton" type="button" selector=".form-controls button.form-controls__continue-button[data-testid=footer-continue-to-payment-button]"/>
+        <element name="returnBackLink" type="button" selector=".form-controls a.form-controls__back-link"/>
+    </section>
+</sections>

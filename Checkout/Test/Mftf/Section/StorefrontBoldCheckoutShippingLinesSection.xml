@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutShippingLinesSection">
+        <element name="shippingLines" type="block" selector=".shipping-lines .shipping-line__block"/>
+        <element name="shippingItemRadioByName" type="radio" selector="//div[contains(@class, 'shipping_line__items')]//label[contains(text(),'{{shippingMethodName}}')]/../span/input" parameterized="true"/>
+    </section>
+</sections>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutShippingAddressSection">
+        <element name="shippingAddressForm" type="block" selector=".shipping-address"/>
+        <!-- Form elements -->
+        <element name="firstNameField" type="input" selector=".shipping-address input#shipping-address__first_name"/>
+        <element name="lastNameField" type="input" selector=".shipping-address input#shipping-address__last_name"/>
+        <element name="companyField" type="input" selector=".shipping-address input#shipping-address__business_name"/>
+        <element name="addressField" type="input" selector=".shipping-address input#shipping-address__address_line_1"/>
+        <element name="aptSuiteField" type="input" selector=".shipping-address input#shipping-address__address_line_2"/>
+        <element name="cityField" type="input" selector=".shipping-address input#shipping-address__city"/>
+        <element name="countrySelect" type="select" selector=".shipping-address select#shipping-address__country"/>
+        <element name="stateSelect" type="select" selector=".shipping-address select#shipping-address__province"/>
+        <element name="postcodeField" type="input" selector=".shipping-address input#shipping-address__postal_code"/>
+        <element name="phoneField" type="input" selector=".shipping-address input#shipping-address__phone_number"/>
+    </section>
+</sections>

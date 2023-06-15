@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutBreadcrumbsSection">
+        <element name="breadcrumbs" type="block" selector="nav.Breadcrumb"/>
+        <element name="breadcrumbItemByNameActive" type="block" selector="//nav[contains(@class, Breadcrumb)]//li[contains(@class, 'Breadcrumb__Item--active')]//span[contains(text(), '{{itemName}}')]/.." parameterized="true"/>
+    </section>
+</sections>

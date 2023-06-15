@@ -50,9 +50,33 @@
         <!-- Go to Shopping cart page -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
 
-        <!-- Go to Bold Checkout page -->
-        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout"/>
-        <waitForElementVisible selector="{{StorefrontBoldCheckoutSection.checkoutExperienceContainer}}" stepKey="waitForCheckoutExperienceContainerVisible"/>
-        <seeInCurrentUrl url="{{StorefrontBoldCheckoutPage.url(_ENV.SHOP_DOMAIN, 'resume')}}" stepKey="assertBoldCheckoutResumePageUrl"/>
+        <!-- Go to Bold Checkout resume step -->
+        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickOnProceedToCheckoutButton"/>
+        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutResumeStepOpened"/>
+
+        <!-- Fill Customer information -->
+        <actionGroup ref="StorefrontBoldCheckoutFillEmailActionGroup" stepKey="fillGuestEmailField"/>
+
+        <!-- Fill Shipping address -->
+        <actionGroup ref="StorefrontBoldCheckoutFillShippingAddressActionGroup" stepKey="fillShippingAddress"/>
+
+        <!-- Go to Bold Checkout shipping lines step -->
+        <click selector="{{StorefrontBoldCheckoutFormControlsSection.continueToShippingButton}}" stepKey="continueToShipping"/>
+        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutShippingLinesStepOpened">
+            <argument name="stepPath" value="shipping_lines"/>
+            <argument name="breadcrumbName" value="Shipping method"/>
+        </actionGroup>
+
+        <!-- Select Shipping method -->
+        <actionGroup ref="StorefrontBoldCheckoutSelectShippingMethodActionGroup" stepKey="selectShippingMethod"/>
+
+        <!-- Go to Bold Checkout payment step -->
+        <click selector="{{StorefrontBoldCheckoutFormControlsSection.continueToPaymentButton}}" stepKey="continueToPayment"/>
+        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutPaymentStepOpened">
+            <argument name="stepPath" value="payment"/>
+            <argument name="breadcrumbName" value="Payment method"/>
+        </actionGroup>
+
+        <wait time="60" stepKey="testTimeout"/>
     </test>
 </tests>
