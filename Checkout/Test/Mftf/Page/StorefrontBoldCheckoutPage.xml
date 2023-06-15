@@ -8,9 +8,13 @@
           module="Bold_Checkout">
         <section name="StorefrontBoldCheckoutSection"/>
         <section name="StorefrontBoldCheckoutHeaderSection"/>
+        <section name="StorefrontBoldCheckoutBreadcrumbsSection"/>
         <section name="StorefrontBoldCheckoutCustomerInfoSection"/>
         <section name="StorefrontBoldCheckoutShippingAddressSection"/>
         <section name="StorefrontBoldCheckoutBillingAddressSection"/>
+        <section name="StorefrontBoldCheckoutShippingLinesSection"/>
+        <section name="StorefrontBoldCheckoutPaymentSection"/>
+        <section name="StorefrontBoldCheckoutThankYouSection"/>
         <section name="StorefrontBoldCheckoutFormControlsSection"/>
     </page>
 </pages>

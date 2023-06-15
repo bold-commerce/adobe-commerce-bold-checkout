@@ -17,6 +17,7 @@
             <argument name="postcode" type="string" defaultValue="{{US_Address_CA.postcode}}"/>
             <argument name="phone" type="string" defaultValue="{{US_Address_CA.telephone}}"/>
         </arguments>
+
         <waitForElementVisible selector="{{StorefrontBoldCheckoutShippingAddressSection.shippingAddressForm}}" stepKey="waitForShippingAddressFormVisible"/>
         <fillField userInput="{{firstname}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.firstNameField}}" stepKey="fillFirstnameField"/>
         <fillField userInput="{{lastname}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.lastNameField}}" stepKey="fillLastnameField"/>

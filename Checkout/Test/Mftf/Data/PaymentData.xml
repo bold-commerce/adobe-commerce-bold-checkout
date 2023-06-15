@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="VisaCardData">
+        <data key="number">4111111111111111</data>
+        <data key="expMonth">01</data>
+        <data key="expYear">2030</data>
+        <data key="cvv">123</data>
+    </entity>
+</entities>

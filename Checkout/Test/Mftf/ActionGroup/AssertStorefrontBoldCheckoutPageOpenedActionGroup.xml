@@ -10,6 +10,7 @@
             <argument name="stepPath" type="string" defaultValue="resume"/>
             <argument name="breadcrumbName" type="string" defaultValue="Customer information"/>
         </arguments>
+
         <waitForElement selector="{{StorefrontBoldCheckoutSection.overlayHidden}}" stepKey="waitForOverlayDisappear"/>
         <waitForElementVisible selector="{{StorefrontBoldCheckoutSection.checkoutExperience}}" stepKey="waitForCheckoutExperienceContainerVisible"/>
         <waitForElementVisible selector="{{StorefrontBoldCheckoutHeaderSection.websiteTitle}}" stepKey="waitForWebsiteTitleVisible"/>

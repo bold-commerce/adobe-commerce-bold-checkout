@@ -8,6 +8,7 @@
         <arguments>
             <argument name="email" type="string" defaultValue="{{Guest.email}}"/>
         </arguments>
+
         <waitForElementVisible selector="{{StorefrontBoldCheckoutCustomerInfoSection.customerInfo}}" stepKey="waitForCustomerInfoVisible"/>
         <fillField userInput="{{email}}" selector="{{StorefrontBoldCheckoutCustomerInfoSection.emailAddressField}}" stepKey="fillEmailAddressField"/>
     </actionGroup>

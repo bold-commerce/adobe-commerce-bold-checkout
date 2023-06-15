@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontBoldCheckoutThankYouPageActionGroup">
+        <annotations>
+            <description>Validates Bold Checkout Thank You page.</description>
+        </annotations>
+        <arguments>
+            <argument name="shopDomain" type="string" defaultValue="{{_ENV.SHOP_DOMAIN}}"/>
+            <argument name="firstname" type="string" defaultValue="{{US_Address_CA.firstname}}"/>
+            <argument name="messageTitle" type="string" defaultValue="Your order is confirmed"/>
+        </arguments>
+
+        <waitForElement selector="{{StorefrontBoldCheckoutSection.overlayHidden}}" stepKey="waitForOverlayDisappear"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutThankYouSection.messageBlock}}" stepKey="waitForMessageBlockVisible"/>
+        <see userInput="Thank you, {{firstname}}!" selector="{{StorefrontBoldCheckoutThankYouSection.sectionTitle}}" stepKey="assertSectionTitle"/>
+        <see userInput="Your order is confirmed" selector="{{StorefrontBoldCheckoutThankYouSection.messageTitle}}" stepKey="assertMessageTitle"/>
+        <seeInCurrentUrl url="{{StorefrontBoldCheckoutPage.url(shopDomain, 'thank_you')}}" stepKey="assertBoldCheckoutPageUrl"/>
+    </actionGroup>
+</actionGroups>

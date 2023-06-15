@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutFillCardDataActionGroup">
+        <annotations>
+            <description>Fills Credit Card Data.</description>
+        </annotations>
+        <arguments>
+            <argument name="cardData" defaultValue="VisaCardData"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.creditCardInfoForm}}" stepKey="waitForCreditCardInfoFormVisible"/>
+        <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.creditCardNumberIFrame}}" stepKey="switchToCreditCardNumberIFrame"/>
+        <fillField userInput="{{cardData.number}}" selector="{{StorefrontBoldCheckoutPaymentSection.creditCardNumberField}}" stepKey="fillCreditCardNumberField"/>
+        <switchToIFrame stepKey="switchOutFromCreditCardNumberIFrame"/>
+        <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.paymentIFrame}}" stepKey="switchToPaymentIFrame"/>
+        <fillField userInput="{{cardData.expMonth}} {{cardData.expYear}}" selector="{{StorefrontBoldCheckoutPaymentSection.creditCardExpirationDateField}}" stepKey="fillCreditCardExpirationDateField"/>
+        <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.creditCardCvvIFrame}}" stepKey="switchToCreditCardCvvIFrame"/>
+        <fillField userInput="{{cardData.cvv}}" selector="{{StorefrontBoldCheckoutPaymentSection.creditCardCvvField}}" stepKey="fillCreditCardCvvField"/>
+        <switchToIFrame stepKey="switchOutFromCreditCardCvvIFrame"/>
+    </actionGroup>
+</actionGroups>

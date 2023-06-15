@@ -3,7 +3,16 @@
           xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
     <section name="StorefrontBoldCheckoutPaymentSection">
         <element name="payment" type="block" selector=".payment .payment__block"/>
-        <element name="paymentItemByCodeCheckbox" type="block" selector="//input[@value='{{paymentMethodCode}}']//ancestor::div[contains(@class, 'TogglePanelGroup PaymentMethods')]/div[not(contains(@class, 'TogglePanel--alt'))]//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
+        <element name="paymentIFrame" type="iframe" selector=".payment .payment__block iframe.payment__iframe"/>
+        <element name="paymentItemByCodeCheckbox" type="block" selector="//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
+        <element name="paymentItemByCodeCheckboxInActive" type="block" selector="//input[@value='{{paymentMethodCode}}']//ancestor::div[contains(@class, 'TogglePanelGroup PaymentMethods')]/div[not(contains(@class, 'TogglePanel--alt'))]//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
         <element name="paymentItemByCodeCheckboxActive" type="block" selector="//input[@value='{{paymentMethodCode}}']//ancestor::div[contains(@class, 'TogglePanelGroup PaymentMethods')]/div[contains(@class, 'TogglePanel--alt')]//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
+        <!-- Credit Card -->
+        <element name="creditCardInfoForm" type="block" selector="#newCreditCardInfoGroup"/>
+        <element name="creditCardNumberIFrame" type="iframe" selector="#credit_card_number iframe"/>
+        <element name="creditCardNumberField" type="input" selector="#card_number"/>
+        <element name="creditCardExpirationDateField" type="input" selector="#credit_card_expiration_date"/>
+        <element name="creditCardCvvIFrame" type="iframe" selector="#credit_card_cvv iframe"/>
+        <element name="creditCardCvvField" type="input" selector="#cvv"/>
     </section>
 </sections>

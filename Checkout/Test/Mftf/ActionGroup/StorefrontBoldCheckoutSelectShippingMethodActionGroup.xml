@@ -8,6 +8,7 @@
         <arguments>
             <argument name="shippingMethodName" type="string" defaultValue="Flat Rate - Fixed"/>
         </arguments>
+
         <waitForElementVisible selector="{{StorefrontBoldCheckoutShippingLinesSection.shippingLines}}" stepKey="waitForShippingLinesVisible"/>
         <checkOption selector="{{StorefrontBoldCheckoutShippingLinesSection.shippingItemRadioByName(shippingMethodName)}}" stepKey="selectShippingMethod"/>
     </actionGroup>

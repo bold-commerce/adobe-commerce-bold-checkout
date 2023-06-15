@@ -50,9 +50,9 @@
         <!-- Go to Shopping cart page -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
 
-        <!-- Go to Bold Checkout resume step -->
-        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickOnProceedToCheckoutButton"/>
-        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutResumeStepOpened"/>
+        <!-- Go to Bold Checkout customer info step -->
+        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout"/>
+        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutCustomerInfoStepOpened"/>
 
         <!-- Fill Customer information -->
         <actionGroup ref="StorefrontBoldCheckoutFillEmailActionGroup" stepKey="fillGuestEmailField"/>
@@ -77,6 +77,14 @@
             <argument name="breadcrumbName" value="Payment method"/>
         </actionGroup>
 
-        <wait time="60" stepKey="testTimeout"/>
+        <!-- Select Payment method -->
+        <actionGroup ref="StorefrontBoldCheckoutSelectPaymentMethodActionGroup" stepKey="selectPaymentMethod"/>
+
+        <!-- Fill Credit Card info -->
+        <actionGroup ref="StorefrontBoldCheckoutFillCardDataActionGroup" stepKey="fillCreditCardInformation"/>
+
+        <!-- Place Order -->
+        <click selector="{{StorefrontBoldCheckoutFormControlsSection.completeOrderButton}}" stepKey="placeOrder"/>
+        <actionGroup ref="AssertStorefrontBoldCheckoutThankYouPageActionGroup" stepKey="assertBoldCheckoutThankYouPage"/>
     </test>
 </tests>
