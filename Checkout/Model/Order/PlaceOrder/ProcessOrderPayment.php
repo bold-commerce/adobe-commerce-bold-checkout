@@ -50,6 +50,7 @@ class ProcessOrderPayment
         if ($orderPayment->getBaseAmountAuthorized() || $orderPayment->getBaseAmountPaid()) {
             return;
         }
+        $orderPayment->addData($orderData->getPayment()->getData());
         $baseAmountOrdered = $orderData->getPayment()->getBaseAmountOrdered()
             ?: $order->getOrderCurrency()->convert(
                 $orderData->getPayment()->getAmountOrdered(),
