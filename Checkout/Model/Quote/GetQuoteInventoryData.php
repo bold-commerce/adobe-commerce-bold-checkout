@@ -140,7 +140,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $getProductSalableQty = $this->getProductSalableQtyService();
         try {
             return $getProductSalableQty
-                ? $getProductSalableQty->execute($item->getProduct()->getSku(), $item->getStoreId())
+                ? $getProductSalableQty->execute($item['product']['sku'], $item->getStoreId())
                 : $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty();
         } catch (Exception $e) {
             return 0;
