@@ -27,6 +27,8 @@
             <!-- Delete entities -->
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!-- Logout from Magento admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromMagentoAdmin"/>
         </after>
 
         <!-- Go to product page -->
@@ -114,6 +116,14 @@
 
         <!-- Get platform order ID -->
         <executeJS function="return publicOrderId;" stepKey="getPublicOrderId"/>
-        <actionGroup ref="StorefrontBoldCheckoutGetPlatformOrderIdActionGroup" stepKey="platformOrderId"/>
+        <actionGroup ref="StorefrontBoldCheckoutGetPlatformOrderIdActionGroup" stepKey="platformOrderId">
+            <argument name="publicOrderId" value="{$getPublicOrderId}"/>
+        </actionGroup>
+
+        <!-- Go to order in Magento admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginToMagentoAdmin"/>
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderPageInMagentoAdmin">
+            <argument name="entityId" value="{$getPlatformOrderId}"/>
+        </actionGroup>
     </test>
 </tests>

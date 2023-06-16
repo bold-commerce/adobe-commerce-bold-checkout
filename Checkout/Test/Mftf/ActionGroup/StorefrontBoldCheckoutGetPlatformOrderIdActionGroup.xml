@@ -11,7 +11,8 @@
 
         <wait time="5" stepKey="waitForGettingDataFromPlatform"/>
         <executeJS function="
-            fetch('https://api.boldcommerce.com/checkout/orders/{{_ENV.BOLD_CHECKOUT_SHOP_DOMAIN}}/{{publicOrderId}}', {
+            let publicOrderId='{{publicOrderId}}';
+            fetch('https://api.boldcommerce.com/checkout/orders/{{_ENV.BOLD_CHECKOUT_SHOP_DOMAIN}}/' + publicOrderId, {
                 method: 'GET',
                 headers: {
                     'Authorization': '{{_ENV.BOLD_CHECKOUT_API_TOKEN}}'
@@ -33,11 +34,12 @@
             })
             .catch((error) => console.log('There was an error:', error));
         " stepKey="createTemporaryHiddenInputWithData"/>
-        <wait time="5" stepKey="waitForAppendingDataToHiddenInput"/>
+        <wait time="10" stepKey="waitForAppendingDataToHiddenInput"/>
         <executeJS function="
             let hiddenInput = document.getElementById('temporary-hidden-input');
             if(hiddenInput) {
                 let hiddenValue = hiddenInput.value;
+                console.log(hiddenValue);
                 return hiddenValue;
             } else {
                 console.log('The hidden input does not exist.');
