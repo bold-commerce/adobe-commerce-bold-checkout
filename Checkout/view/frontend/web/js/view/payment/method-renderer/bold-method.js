@@ -27,8 +27,6 @@ define(
                 paymentType: null,
                 isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
-                billingAddressPayload: {},
-                guestCustomerPayload: {},
             },
 
             /**
@@ -127,17 +125,12 @@ define(
                     'firstName': firstname,
                     'lastName': lastname,
                 }
-                if (this.payloadCompare(payload, this.guestCustomerPayload)) {
-                    return;
-                }
-                this.guestCustomerPayload = payload;
                 boldClient.post('/shops/' + this.shopId + '/customer/guest', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function (error) {
-                    console.log(error);
+                }.bind(this)).catch(function () {
                     this.messageContainer.errorMessages(
                         [
                             'Please verify your email and try again.'
@@ -204,17 +197,12 @@ define(
                 if (!payload) {
                     return;
                 }
-                if (this.billingAddressPayload.address && this.payloadCompare(payload.address, this.billingAddressPayload.address)) {
-                    return;
-                }
-                this.billingAddressPayload.address = payload.address;
                 boldClient.post('/shops/' + this.shopId + '/addresses/billing', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function (error) {
-                    console.log(error);
+                }.bind(this)).catch(function () {
                     this.messageContainer.errorMessages(
                         [
                             'Please verify your billing information and try again.'
@@ -222,24 +210,5 @@ define(
                     );
                 }.bind(this));
             },
-
-            /**
-             * Compare two addresses to reduce api calls.
-             *
-             * @param newPayload object
-             * @param savedPayload object
-             * @return {boolean}
-             * @private
-             */
-            payloadCompare(newPayload, savedPayload) {
-                let result = true;
-                _.each(newPayload, function (value, key) {
-                    if (savedPayload[key] !== value) {
-                        result = false;
-                        return false;
-                    }
-                });
-                return result;
-            }
         });
     });
