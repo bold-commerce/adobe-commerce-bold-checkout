@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutSummaryTotalsSection">
+        <element name="summaryTotals" type="block" selector=".summary-section [data-testid=summary-totals__lines]"/>
+        <element name="subtotal" type="text" selector=".summary-section [data-testid=summary-line__subtotal-price] p"/>
+        <element name="shippingAmount" type="text" selector=".summary-section div.taxes-amount__shipping-line-price p"/>
+        <element name="taxesAmount" type="text" selector=".summary-section div.taxes-amount__taxes-line-price p"/>
+        <element name="total" type="text" selector=".summary-section [data-testid=summary-line__total-price] p"/>
+        <element name="paymentsAmount" type="text" selector=".summary-section [data-testid=summary-line__payments-container] p"/>
+        <element name="amountDue" type="text" selector=".summary-section [data-testid=summary-line__amount_due-container] p"/>
+    </section>
+</sections>

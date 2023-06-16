@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontBoldCheckoutProductInCartItemsActionGroup">
+        <annotations>
+            <description>Validates product data in cart items section.</description>
+        </annotations>
+        <arguments>
+            <argument name="productName" type="string" defaultValue="{{ApiSimpleProduct.name}}"/>
+            <argument name="productQty" type="string" defaultValue="1"/>
+            <argument name="productPrice" type="string" defaultValue="{{ApiSimpleProduct.price}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutCartItemsSection.cartItems}}" stepKey="waitForCartItemsVisible"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutCartItemsSection.cartItemByProductName(productName)}}" stepKey="assertProductInCartItems"/>
+        <see userInput="{{productQty}}" selector="{{StorefrontBoldCheckoutCartItemsSection.cartItemQtyByProductName(productName)}}" stepKey="assertProductQtyInCartItems"/>
+        <see userInput="{{productPrice}}" selector="{{StorefrontBoldCheckoutCartItemsSection.cartItemPriceByProductName(productName)}}" stepKey="assertProductPriceInCartItems"/>
+    </actionGroup>
+</actionGroups>

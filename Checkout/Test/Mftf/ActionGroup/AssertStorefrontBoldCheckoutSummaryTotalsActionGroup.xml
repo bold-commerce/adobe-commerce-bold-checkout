@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontBoldCheckoutSummaryTotalsActionGroup">
+        <annotations>
+            <description>Validates totals in summary section.</description>
+        </annotations>
+        <arguments>
+            <argument name="currencySymbol" type="string" defaultValue="$"/>
+            <argument name="subtotal" type="string" defaultValue=""/>
+            <argument name="shippingAmount" type="string" defaultValue=""/>
+            <argument name="taxesAmount" type="string" defaultValue="0.00"/>
+            <argument name="total" type="string" defaultValue=""/>
+            <argument name="paymentsAmount" type="string" defaultValue=""/>
+            <argument name="amountDue" type="string" defaultValue="0.00"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutSummaryTotalsSection.summaryTotals}}" stepKey="waitForSummaryTotalsVisible"/>
+        <see userInput="{{currencySymbol}}{{subtotal}}" selector="{{StorefrontBoldCheckoutSummaryTotalsSection.subtotal}}" stepKey="assertSubtotal"/>
+        <see userInput="{{currencySymbol}}{{shippingAmount}}" selector="{{StorefrontBoldCheckoutSummaryTotalsSection.shippingAmount}}" stepKey="assertShippingAmount"/>
+        <see userInput="{{currencySymbol}}{{taxesAmount}}" selector="{{StorefrontBoldCheckoutSummaryTotalsSection.taxesAmount}}" stepKey="assertTaxesAmount"/>
+        <see userInput="{{currencySymbol}}{{total}}" selector="{{StorefrontBoldCheckoutSummaryTotalsSection.total}}" stepKey="assertTotal"/>
+        <see userInput="{{currencySymbol}}{{paymentsAmount}}" selector="{{StorefrontBoldCheckoutSummaryTotalsSection.paymentsAmount}}" stepKey="assertPaymentsAmount"/>
+        <see userInput="{{currencySymbol}}{{amountDue}}" selector="{{StorefrontBoldCheckoutSummaryTotalsSection.amountDue}}" stepKey="assertAmountDue"/>
+    </actionGroup>
+</actionGroups>

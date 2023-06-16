@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutCartItemsSection">
+        <element name="cartItems" type="block" selector=".summary-section .cart-items"/>
+        <element name="cartItemByProductName" type="block" selector="//div[@class='summary-section']//ul[@class='cart-items']//h2[normalize-space()='{{productName}}']//ancestor::li[@class='cart-item']" parameterized="true"/>
+        <element name="cartItemQtyByProductName" type="text" selector="//div[@class='summary-section']//ul[@class='cart-items']//h2[normalize-space()='{{productName}}']/../..//span[@class='cart-item__quantity-number']" parameterized="true"/>
+        <element name="cartItemPriceByProductName" type="text" selector="//div[@class='summary-section']//ul[@class='cart-items']//h2[normalize-space()='{{productName}}']/../..//p[@class='stx-price__amount']" parameterized="true"/>
+    </section>
+</sections>

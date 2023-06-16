@@ -9,8 +9,8 @@
             <argument name="firstname" type="string" defaultValue="{{US_Address_CA.firstname}}"/>
             <argument name="lastname" type="string" defaultValue="{{US_Address_CA.lastname}}"/>
             <argument name="company" type="string" defaultValue=""/>
-            <argument name="address" type="string" defaultValue="{{US_Address_CA.street[0]}}"/>
-            <argument name="aptSuite" type="string" defaultValue=""/>
+            <argument name="addressLine1" type="string" defaultValue="{{US_Address_CA.street[0]}}"/>
+            <argument name="addressLine2" type="string" defaultValue=""/>
             <argument name="city" type="string" defaultValue="{{US_Address_CA.city}}"/>
             <argument name="country" type="string" defaultValue="{{US_Address_CA.country}}"/>
             <argument name="state" type="string" defaultValue="{{US_Address_CA.state}}"/>
@@ -22,8 +22,8 @@
         <fillField userInput="{{firstname}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.firstNameField}}" stepKey="fillFirstnameField"/>
         <fillField userInput="{{lastname}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.lastNameField}}" stepKey="fillLastnameField"/>
         <fillField userInput="{{company}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.companyField}}" stepKey="fillCompanyField"/>
-        <fillField userInput="{{address}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.addressField}}" stepKey="fillAddressField"/>
-        <fillField userInput="{{aptSuite}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.aptSuiteField}}" stepKey="fillAptSuiteField"/>
+        <fillField userInput="{{addressLine1}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.addressLine1Field}}" stepKey="fillAddressLine1Field"/>
+        <fillField userInput="{{addressLine2}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.addressLine1Field}}" stepKey="fillAddressLine2Field"/>
         <fillField userInput="{{city}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.cityField}}" stepKey="fillCityField"/>
         <selectOption userInput="{{country}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.countrySelect}}" stepKey="selectCountyOption"/>
         <selectOption userInput="{{state}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.stateSelect}}" stepKey="selectStateOption"/>

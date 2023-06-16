@@ -6,7 +6,7 @@
             <description>Validates Bold Checkout Thank You page.</description>
         </annotations>
         <arguments>
-            <argument name="shopDomain" type="string" defaultValue="{{_ENV.SHOP_DOMAIN}}"/>
+            <argument name="shopDomain" type="string" defaultValue="{{_ENV.BOLD_CHECKOUT_SHOP_DOMAIN}}"/>
             <argument name="firstname" type="string" defaultValue="{{US_Address_CA.firstname}}"/>
             <argument name="messageTitle" type="string" defaultValue="Your order is confirmed"/>
         </arguments>

@@ -17,15 +17,10 @@
                 <requiredEntity createDataKey="createCategory"/>
             </createData>
             <!-- Run entities sync -->
-<!--            <actionGroup ref="CliConsumerStartActionGroup" stepKey="syncCategories">-->
-<!--                <argument name="consumerName" value="{{BoldCheckoutSyncCategoriesConsumerData.consumerName}}"/>-->
-<!--                <argument name="maxMessages" value="{{BoldCheckoutSyncCategoriesConsumerData.messageLimit}}"/>-->
-<!--            </actionGroup>-->
 <!--            <actionGroup ref="CliConsumerStartActionGroup" stepKey="syncProducts">-->
 <!--                <argument name="consumerName" value="{{BoldCheckoutSyncProductsConsumerData.consumerName}}"/>-->
 <!--                <argument name="maxMessages" value="{{BoldCheckoutSyncProductsConsumerData.messageLimit}}"/>-->
 <!--            </actionGroup>-->
-<!--            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncCategoriesConsumerData.consumerName}}" timeout="10" stepKey="syncCategories"/>-->
 <!--            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncProductsConsumerData.consumerName}}" timeout="10" stepKey="syncProducts"/>-->
         </before>
         <after>
@@ -34,30 +29,36 @@
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
         </after>
 
-        <!-- Go to Product page -->
+        <!-- Go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
 <!--            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>-->
             <argument name="productUrl" value="test-product"/>
         </actionGroup>
 
-        <!-- Add Product to shopping cart -->
+        <!-- Add product to shopping cart -->
 <!--        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">-->
 <!--            <argument name="productName" value="$createProduct.name$"/>-->
 <!--        </actionGroup>-->
         <click selector="{{StorefrontProductActionSection.addToCart}}" stepKey="addProductToCart"/>
         <waitForElementVisible selector="{{StorefrontMessagesSection.success}}" stepKey="waitForProductAddedSuccessMessage"/>
 
-        <!-- Go to Shopping cart page -->
+        <!-- Go to shopping cart page -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
 
         <!-- Go to Bold Checkout customer info step -->
         <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout"/>
         <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutCustomerInfoStepOpened"/>
 
-        <!-- Fill Customer information -->
+        <!-- Check cart items -->
+        <actionGroup ref="AssertStorefrontBoldCheckoutProductInCartItemsActionGroup" stepKey="assertProductInCartItems">
+            <argument name="productName" value="Test Product"/>
+            <argument name="productPrice" value="100"/>
+        </actionGroup>
+
+        <!-- Fill customer information -->
         <actionGroup ref="StorefrontBoldCheckoutFillEmailActionGroup" stepKey="fillGuestEmailField"/>
 
-        <!-- Fill Shipping address -->
+        <!-- Fill shipping address -->
         <actionGroup ref="StorefrontBoldCheckoutFillShippingAddressActionGroup" stepKey="fillShippingAddress"/>
 
         <!-- Go to Bold Checkout shipping lines step -->
@@ -67,7 +68,7 @@
             <argument name="breadcrumbName" value="Shipping method"/>
         </actionGroup>
 
-        <!-- Select Shipping method -->
+        <!-- Select shipping method -->
         <actionGroup ref="StorefrontBoldCheckoutSelectShippingMethodActionGroup" stepKey="selectShippingMethod"/>
 
         <!-- Go to Bold Checkout payment step -->
@@ -77,14 +78,42 @@
             <argument name="breadcrumbName" value="Payment method"/>
         </actionGroup>
 
-        <!-- Select Payment method -->
+        <!-- Select payment method -->
         <actionGroup ref="StorefrontBoldCheckoutSelectPaymentMethodActionGroup" stepKey="selectPaymentMethod"/>
 
-        <!-- Fill Credit Card info -->
+        <!-- Fill credit card info -->
         <actionGroup ref="StorefrontBoldCheckoutFillCardDataActionGroup" stepKey="fillCreditCardInformation"/>
 
-        <!-- Place Order -->
+        <!-- Place order -->
         <click selector="{{StorefrontBoldCheckoutFormControlsSection.completeOrderButton}}" stepKey="placeOrder"/>
         <actionGroup ref="AssertStorefrontBoldCheckoutThankYouPageActionGroup" stepKey="assertBoldCheckoutThankYouPage"/>
+
+        <!-- Check order recap address section -->
+        <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapShippingAddress">
+            <argument name="stateCode" value="CA"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapBillingAddress">
+            <argument name="addressType" value="billing"/>
+            <argument name="stateCode" value="CA"/>
+        </actionGroup>
+
+        <!-- Check order recap shipping method -->
+        <see userInput="Flat Rate - Fixed" selector="{{StorefrontBoldCheckoutOrderRecapSection.shippingMethodName}}" stepKey="assertOrderRecapShippingMethod"/>
+
+        <!-- Check order recap payment method -->
+        <see userInput="{{VisaCardData.name}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cardBrandName}}" stepKey="assertOrderRecapCardBrandName"/>
+        <see userInput="{{VisaCardData.lastFourDigits}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cardLastFourDigits}}" stepKey="assertOrderRecapCardLastFourDigits"/>
+
+        <!-- Check summary totals -->
+        <actionGroup ref="AssertStorefrontBoldCheckoutSummaryTotalsActionGroup" stepKey="assertSummaryTotals">
+            <argument name="subtotal" value="100.00"/>
+            <argument name="shippingAmount" value="5.00"/>
+            <argument name="total" value="105.00"/>
+            <argument name="paymentsAmount" value="105.00"/>
+        </actionGroup>
+
+        <!-- Get platform order ID -->
+        <executeJS function="return publicOrderId;" stepKey="getPublicOrderId"/>
+        <actionGroup ref="StorefrontBoldCheckoutGetPlatformOrderIdActionGroup" stepKey="platformOrderId"/>
     </test>
 </tests>

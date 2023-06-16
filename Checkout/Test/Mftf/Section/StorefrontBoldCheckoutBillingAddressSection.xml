@@ -9,8 +9,8 @@
         <element name="firstNameField" type="input" selector=".billing-address input#billing-address__first_name"/>
         <element name="lastNameField" type="input" selector=".billing-address input#billing-address__last_name"/>
         <element name="companyField" type="input" selector=".billing-address input#billing-address__business_name"/>
-        <element name="addressField" type="input" selector=".billing-address input#billing-address__address_line_1"/>
-        <element name="aptSuiteField" type="input" selector=".billing-address input#billing-address__address_line_2"/>
+        <element name="addressLine1Field" type="input" selector=".billing-address input#billing-address__address_line_1"/>
+        <element name="addressLine2Field" type="input" selector=".billing-address input#billing-address__address_line_2"/>
         <element name="cityField" type="input" selector=".billing-address input#billing-address__city"/>
         <element name="countrySelect" type="select" selector=".billing-address select#billing-address__country"/>
         <element name="stateSelect" type="select" selector=".billing-address select#billing-address__province"/>

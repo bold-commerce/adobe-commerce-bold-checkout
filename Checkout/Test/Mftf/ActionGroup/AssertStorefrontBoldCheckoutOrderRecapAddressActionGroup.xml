@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup">
+        <annotations>
+            <description>Validates address in order recap customer info section.</description>
+        </annotations>
+        <arguments>
+            <argument name="addressType" type="string" defaultValue="shipping"/>
+            <argument name="firstname" type="string" defaultValue="{{US_Address_CA.firstname}}"/>
+            <argument name="lastname" type="string" defaultValue="{{US_Address_CA.lastname}}"/>
+            <argument name="addressLine1" type="string" defaultValue="{{US_Address_CA.street[0]}}"/>
+            <argument name="addressLine2" type="string" defaultValue=""/>
+            <argument name="city" type="string" defaultValue="{{US_Address_CA.city}}"/>
+            <argument name="stateCode" type="string" defaultValue=""/>
+            <argument name="postcode" type="string" defaultValue="{{US_Address_CA.postcode}}"/>
+            <argument name="country" type="string" defaultValue="{{US_Address_CA.country}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutOrderRecapSection.orderRecap}}" stepKey="waitForOrderRecapVisible"/>
+        <see userInput="{{firstname}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.firstnameByAddressType(addressType)}}" stepKey="assertAddressFirstname"/>
+        <see userInput="{{lastname}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.lastnameByAddressType(addressType)}}" stepKey="assertAddressLastname"/>
+        <see userInput="{{addressLine1}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.line1ByAddressType(addressType)}}" stepKey="assertAddressLine1"/>
+<!--        <see userInput="{{addressLine2}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.line2ByAddressType(addressType)}}" stepKey="assertAddressLine2"/>-->
+        <see userInput="{{city}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cityByAddressType(addressType)}}" stepKey="assertAddressCity"/>
+        <see userInput="{{stateCode}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.stateCodeByAddressType(addressType)}}" stepKey="assertAddressStateCode"/>
+        <see userInput="{{postcode}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.postcodeByAddressType(addressType)}}" stepKey="assertAddressPostcode"/>
+        <see userInput="{{country}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.countryByAddressType(addressType)}}" stepKey="assertAddressCountry"/>
+    </actionGroup>
+</actionGroups>

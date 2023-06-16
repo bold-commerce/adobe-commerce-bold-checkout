@@ -15,6 +15,10 @@
         <section name="StorefrontBoldCheckoutShippingLinesSection"/>
         <section name="StorefrontBoldCheckoutPaymentSection"/>
         <section name="StorefrontBoldCheckoutThankYouSection"/>
+        <section name="StorefrontBoldCheckoutOrderRecapSection"/>
         <section name="StorefrontBoldCheckoutFormControlsSection"/>
+        <!-- Summary -->
+        <section name="StorefrontBoldCheckoutCartItemsSection"/>
+        <section name="StorefrontBoldCheckoutSummaryTotalsSection"/>
     </page>
 </pages>

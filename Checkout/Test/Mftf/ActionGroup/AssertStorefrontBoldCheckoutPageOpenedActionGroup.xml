@@ -6,7 +6,7 @@
             <description>Validates that the Bold Checkout page opened.</description>
         </annotations>
         <arguments>
-            <argument name="shopDomain" type="string" defaultValue="{{_ENV.SHOP_DOMAIN}}"/>
+            <argument name="shopDomain" type="string" defaultValue="{{_ENV.BOLD_CHECKOUT_SHOP_DOMAIN}}"/>
             <argument name="stepPath" type="string" defaultValue="resume"/>
             <argument name="breadcrumbName" type="string" defaultValue="Customer information"/>
         </arguments>
