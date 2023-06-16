@@ -15,8 +15,8 @@ interface SendBillingAddressInterface
      *
      * @param string $shopId
      * @param AddressInterface $address
-     * @return \Bold\Checkout\Api\Data\Http\Client\ResultInterface
+     * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function send(string $shopId, AddressInterface $address): ResultInterface;
+    public function send(string $shopId, AddressInterface $address): void;
 }

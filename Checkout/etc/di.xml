@@ -165,6 +165,7 @@
             <argument name="handlers" xsi:type="array">
                 <item name="default" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\ConfigValueHandler</item>
                 <item name="can_use_checkout" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\CanUseCheckoutValueHandler</item>
+                <item name="title" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\TitleValueHandler</item>
             </argument>
         </arguments>
     </virtualType>

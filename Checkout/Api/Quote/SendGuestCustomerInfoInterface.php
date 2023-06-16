@@ -16,8 +16,8 @@ interface SendGuestCustomerInfoInterface
      * @param string $email
      * @param string $firstName
      * @param string $lastName
-     * @return \Bold\Checkout\Api\Data\Http\Client\ResultInterface
+     * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function send(string $shopId, string $email, string $firstName, string $lastName): ResultInterface;
+    public function send(string $shopId, string $email, string $firstName, string $lastName): void;
 }
