@@ -62,9 +62,14 @@ class SendShippingInformationPlugin
             $quote = $this->session->getQuote();
             $websiteId = (int)$quote->getStore()->getWebsiteId();
             $addressPayload = $this->addressConverter->convert($quote->getShippingAddress());
-            $shippingAddress = $boldCheckoutData['data']['application_state']['addresses']['shipping'] ?? [];
-            if ($shippingAddress !== $addressPayload) {
+            $existingAddress = $boldCheckoutData['data']['application_state']['addresses']['shipping'] ?? [];
+            if (!$this->isAddressSynced($existingAddress, $addressPayload)) {
                 $this->client->post($websiteId, 'addresses/shipping', $addressPayload);
+            }
+            $boldCheckoutData = $this->session->getBoldCheckoutData();
+            $shipping = $boldCheckoutData['data']['application_state']['shipping']['selected_shipping']['code'] ?? null;
+            if ($shipping === $quote->getShippingAddress()->getShippingMethod()) {
+                return $result;
             }
             $this->sendShippingMethodIndex($quote->getShippingAddress()->getShippingMethod());
         } catch (\Exception $e) {
@@ -83,7 +88,19 @@ class SendShippingInformationPlugin
      */
     private function sendShippingMethodIndex(string $shippingMethod): void
     {
+        $boldCheckoutData = $this->session->getBoldCheckoutData();
+        $lines = $boldCheckoutData['data']['application_state']['shipping']['available_shipping_lines'] ?? [];
         $websiteId = (int)$this->session->getQuote()->getStore()->getWebsiteId();
+        foreach ($lines as $line) {
+            if ($line['code'] === $shippingMethod) {
+                $this->client->post(
+                    $websiteId,
+                    'shipping_lines',
+                    ['index' => $line['id']]
+                );
+                return;
+            }
+        }
         $shippingLines = $this->getShippingLines();
         foreach ($shippingLines as $shippingLine) {
             if ($shippingLine['code'] === $shippingMethod) {
@@ -114,5 +131,20 @@ class SendShippingInformationPlugin
             return [];
         }
         return $lines->getBody()['data']['shipping_lines'];
+    }
+
+    /**
+     * Verify if the shipping address is the same as the one sent to Bold.
+     *
+     * @param array $existingAddress
+     * @param array $addressPayload
+     * @return bool
+     */
+    public function isAddressSynced(array $existingAddress, array $addressPayload): bool
+    {
+        $addressPayload['id'] = $existingAddress['id'] ?? null;
+        ksort($existingAddress);
+        ksort($addressPayload);
+        return $existingAddress === $addressPayload;
     }
 }

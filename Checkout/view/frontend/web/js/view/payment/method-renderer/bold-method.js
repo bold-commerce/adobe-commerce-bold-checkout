@@ -25,9 +25,8 @@ define(
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 paymentType: null,
+                isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
-                billingAddressPayload: {},
-                guestCustomerPayload: {},
             },
 
             /**
@@ -35,11 +34,12 @@ define(
              */
             initialize: function () {
                 if (window.checkoutConfig.bold === undefined) {
+                    this.isVisible(false);
                     return;
                 }
                 this._super();
-                this.iframeSrc = ko.observable(window.checkoutConfig.bold.payment.iframeSrc);
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
+                this.shopId = window.checkoutConfig.bold.shopId;
                 if (checkoutData.getSelectedPaymentMethod() === 'bold') {
                     checkoutData.setSelectedPaymentMethod(null);
                     quote.paymentMethod(null);
@@ -68,6 +68,7 @@ define(
                         }
                     }.bind(this));
                 }
+                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.subscribeToPIGI();
             },
 
@@ -116,19 +117,15 @@ define(
                 const billingAddress = quote.billingAddress();
                 const firstname = billingAddress.firstname;
                 const lastname = billingAddress.lastname;
+                if (!quote.guestEmail || !firstname || !lastname) {
+                    return;
+                }
                 const payload = {
-                    'email_address': quote.guestEmail,
-                    'first_name': firstname,
-                    'last_name': lastname,
+                    'email': quote.guestEmail,
+                    'firstName': firstname,
+                    'lastName': lastname,
                 }
-                if (!payload.email_address || !payload.first_name || !payload.last_name) {
-                    return;
-                }
-                if (this.payloadCompare(payload, this.guestCustomerPayload)) {
-                    return;
-                }
-                this.guestCustomerPayload = payload;
-                boldClient.post('customer/guest', payload).then(function () {
+                boldClient.post('/shops/' + this.shopId + '/customer/guest', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
@@ -200,11 +197,7 @@ define(
                 if (!payload) {
                     return;
                 }
-                if (this.payloadCompare(payload, this.billingAddressPayload)) {
-                    return;
-                }
-                this.billingAddressPayload = payload;
-                boldClient.post('addresses/billing', payload).then(function () {
+                boldClient.post('/shops/' + this.shopId + '/addresses/billing', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
@@ -217,24 +210,5 @@ define(
                     );
                 }.bind(this));
             },
-
-            /**
-             * Compare two addresses to reduce api calls.
-             *
-             * @param newPayload object
-             * @param savedPayload object
-             * @return {boolean}
-             * @private
-             */
-            payloadCompare(newPayload, savedPayload) {
-                let result = true;
-                _.each(newPayload, function (value, key) {
-                    if (savedPayload[key] !== value) {
-                        result = false;
-                        return false;
-                    }
-                });
-                return result;
-            }
         });
     });

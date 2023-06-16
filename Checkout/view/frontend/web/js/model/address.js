@@ -29,26 +29,23 @@ define([
             if (!address) {
                 return null;
             }
-            const countryId = address.countryId;
-            const country = this.countries.find(country => country.value === countryId);
-            const countryName = country ? country.label : '';
             const payload = {
-                'id': address.customerAddressId ? Number(address.customerAddressId) : null,
-                'business_name': address.company ? address.company : '',
-                'country_code': countryId,
-                'country': countryName,
-                'city': address.city ? address.city : '',
-                'first_name': address.firstname ? address.firstname : '',
-                'last_name': address.lastname ? address.lastname : '',
-                'phone_number': address.telephone ? address.telephone : '',
-                'postal_code': address.postcode ? address.postcode : '',
-                'province': address.region ? address.region : '',
-                'province_code': address.regionCode ? address.regionCode : '',
-                'address_line_1': address.street !== undefined && address.street[0] ? address.street[0] : '',
-                'address_line_2': address.street !== undefined && address.street[1] ? address.street[1] : '',
-            }
+               'address' : {
+                   'id': address.customerAddressId ? Number(address.customerAddressId) : null,
+                   'company': address.company ? address.company : '',
+                   'country_id': address.countryId,
+                   'city': address.city ? address.city : '',
+                   'firstname': address.firstname ? address.firstname : '',
+                   'lastname': address.lastname ? address.lastname : '',
+                   'telephone': address.telephone ? address.telephone : '',
+                   'postcode': address.postcode ? address.postcode : '',
+                   'region': address.region ? address.region : '',
+                   'region_id': address.regionId ? Number(address.regionId) : null,
+                   'street': address.street,
+               }
+            };
             try {
-                this.validatePayload(payload);
+                this.validateAddress(payload.address);
             } catch (e) {
                 return null;
             }
@@ -63,19 +60,19 @@ define([
          * @throws Error
          * @private
          */
-        validatePayload(payload) {
+        validateAddress(payload) {
             let requiredFields = [
-                'first_name',
-                'last_name',
-                'postal_code',
-                'phone_number',
-                'country',
+                'firstname',
+                'lastname',
+                'postcode',
+                'country_id',
+                'street',
                 'city',
             ];
             const country = this.countries.find(country => country.value === payload.country_code);
             if (country && country.is_region_visible) {
-                requiredFields.push('province');
-                requiredFields.push('province_code');
+                requiredFields.push('region');
+                requiredFields.push('region_id');
             }
             _.each(requiredFields, function (field) {
                 if (!payload[field]) {

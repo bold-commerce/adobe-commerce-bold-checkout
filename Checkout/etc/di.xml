@@ -24,7 +24,19 @@
     <preference for="Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface" type="Bold\Checkout\Model\Quote\GetQuoteInventoryData"/>
     <preference for="Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface" type="Bold\Checkout\Model\Quote\Inventory\Result"/>
     <preference for="Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterface" type="Bold\Checkout\Model\Quote\Inventory\Result\InventoryData"/>
+    <preference for="Bold\Checkout\Api\Quote\SendBillingAddressInterface" type="Bold\Checkout\Model\Quote\SendBillingAddress"/>
+    <preference for="Bold\Checkout\Api\Quote\SendGuestCustomerInfoInterface" type="Bold\Checkout\Model\Quote\SendGuestCustomerInfo"/>
 
+    <type name="Bold\Checkout\Model\Quote\SendBillingAddress">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Quote\SendGuestCustomerInfo">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Observer\Order\ProcessOrderObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
@@ -153,6 +165,7 @@
             <argument name="handlers" xsi:type="array">
                 <item name="default" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\ConfigValueHandler</item>
                 <item name="can_use_checkout" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\CanUseCheckoutValueHandler</item>
+                <item name="title" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\TitleValueHandler</item>
             </argument>
         </arguments>
     </virtualType>

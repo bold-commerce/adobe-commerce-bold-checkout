@@ -109,10 +109,6 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Log Bold Checkout requests for debugging purpose.]]></comment>
                 </field>
-                <field id="self_hosted_enabled" translate="label" type="select" sortOrder="90" showInDefault="0" showInWebsite="1">
-                    <label>Enable Self-Hosted Checkout</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
             </group>
         </section>
     </system>
