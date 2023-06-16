@@ -60,4 +60,16 @@
             <resource ref="Magento_Customer::customer"/>
         </resources>
     </route>
+    <route method="POST" url="/V1/shops/:shopId/addresses/billing">
+        <service class="Bold\Checkout\Api\Quote\SendBillingAddressInterface" method="send"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/shops/:shopId/customer/guest">
+        <service class="Bold\Checkout\Api\Quote\SendGuestCustomerInfoInterface" method="send"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
 </routes>

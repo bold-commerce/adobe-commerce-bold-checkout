@@ -25,6 +25,7 @@ define(
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 paymentType: null,
+                isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
                 billingAddressPayload: {},
                 guestCustomerPayload: {},
@@ -35,11 +36,12 @@ define(
              */
             initialize: function () {
                 if (window.checkoutConfig.bold === undefined) {
+                    this.isVisible(false);
                     return;
                 }
                 this._super();
-                this.iframeSrc = ko.observable(window.checkoutConfig.bold.payment.iframeSrc);
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
+                this.shopId = window.checkoutConfig.bold.shopId;
                 if (checkoutData.getSelectedPaymentMethod() === 'bold') {
                     checkoutData.setSelectedPaymentMethod(null);
                     quote.paymentMethod(null);
@@ -68,6 +70,7 @@ define(
                         }
                     }.bind(this));
                 }
+                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.subscribeToPIGI();
             },
 
@@ -116,24 +119,25 @@ define(
                 const billingAddress = quote.billingAddress();
                 const firstname = billingAddress.firstname;
                 const lastname = billingAddress.lastname;
-                const payload = {
-                    'email_address': quote.guestEmail,
-                    'first_name': firstname,
-                    'last_name': lastname,
-                }
-                if (!payload.email_address || !payload.first_name || !payload.last_name) {
+                if (!quote.guestEmail || !firstname || !lastname) {
                     return;
+                }
+                const payload = {
+                    'email': quote.guestEmail,
+                    'firstName': firstname,
+                    'lastName': lastname,
                 }
                 if (this.payloadCompare(payload, this.guestCustomerPayload)) {
                     return;
                 }
                 this.guestCustomerPayload = payload;
-                boldClient.post('customer/guest', payload).then(function () {
+                boldClient.post('/shops/' + this.shopId + '/customer/guest', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function () {
+                }.bind(this)).catch(function (error) {
+                    console.log(error);
                     this.messageContainer.errorMessages(
                         [
                             'Please verify your email and try again.'
@@ -200,16 +204,17 @@ define(
                 if (!payload) {
                     return;
                 }
-                if (this.payloadCompare(payload, this.billingAddressPayload)) {
+                if (this.billingAddressPayload.address && this.payloadCompare(payload.address, this.billingAddressPayload.address)) {
                     return;
                 }
-                this.billingAddressPayload = payload;
-                boldClient.post('addresses/billing', payload).then(function () {
+                this.billingAddressPayload.address = payload.address;
+                boldClient.post('/shops/' + this.shopId + '/addresses/billing', payload).then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                     }
-                }.bind(this)).catch(function () {
+                }.bind(this)).catch(function (error) {
+                    console.log(error);
                     this.messageContainer.errorMessages(
                         [
                             'Please verify your billing information and try again.'
