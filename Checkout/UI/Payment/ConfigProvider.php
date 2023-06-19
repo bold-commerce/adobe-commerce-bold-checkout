@@ -130,7 +130,7 @@ class ConfigProvider implements ConfigProviderInterface
             'bold' => [
                 'payment' => [
                     'iframeSrc' => $this->getIframeSrc(),
-                    'title' => __('Pay Pal'),
+                    'title' => __('PayPal'),
                     'method' => Service::CODE,
                 ],
                 'shopId' => $shopId,
