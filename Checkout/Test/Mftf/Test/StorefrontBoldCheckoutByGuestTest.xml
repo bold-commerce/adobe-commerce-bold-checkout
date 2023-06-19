@@ -9,6 +9,7 @@
             <description value="Guest should be able to place an order via Bold Checkout"/>
             <severity value="MAJOR"/>
             <group value="bold_checkout"/>
+            <group value="bold_checkout_standard"/>
         </annotations>
         <before>
             <!-- Set configuration -->
