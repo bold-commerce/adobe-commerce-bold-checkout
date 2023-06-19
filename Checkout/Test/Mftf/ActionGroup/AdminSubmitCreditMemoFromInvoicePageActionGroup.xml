@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSubmitCreditMemoFromInvoicePageActionGroup">
+        <annotations>
+            <description>Clicks on the refund button by its type (online/offline) on the Credit Memo page opened from invoice page.</description>
+        </annotations>
+        <arguments>
+            <argument name="refundButtonElement" type="string" defaultValue="{{AdminCreditMemoTotalSection.refundButton}}"/>
+        </arguments>
+
+        <scrollTo selector="{{refundButtonElement}}" stepKey="scrollToRefundButton"/>
+        <click selector="{{refundButtonElement}}" stepKey="clickOnRefundButton"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageVisible"/>
+        <see userInput="You created the credit memo." selector="{{AdminMessagesSection.success}}" stepKey="assertCreateCreditMemoSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

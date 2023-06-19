@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminOrderTotalsSection">
+        <element name="subTotal" type="text" selector="//table[contains(@class, 'order-subtotal-table')]//td[normalize-space(.)='Subtotal']/following-sibling::td//span[@class='price']"/>
+        <element name="shippingAndHandling" type="text" selector="//table[contains(@class, 'order-subtotal-table')]//td[normalize-space(.)='Shipping &amp; Handling']/following-sibling::td//span[@class='price']"/>
+        <element name="grandTotal" type="text" selector="//table[contains(@class, 'order-subtotal-table')]//td[normalize-space(.)='Grand Total']/following-sibling::td//span[@class='price']"/>
+        <element name="totalPaid" type="text" selector="//table[contains(@class, 'order-subtotal-table')]//td[normalize-space(.)='Total Paid']/following-sibling::td//span[@class='price']"/>
+        <element name="totalRefunded" type="text" selector="//table[contains(@class, 'order-subtotal-table')]//td[normalize-space(.)='Total Refunded']/following-sibling::td//span[@class='price']"/>
+        <element name="totalDue" type="text" selector="//table[contains(@class, 'order-subtotal-table')]//td[normalize-space(.)='Total Due']/following-sibling::td//span[@class='price']"/>
+    </section>
+</sections>

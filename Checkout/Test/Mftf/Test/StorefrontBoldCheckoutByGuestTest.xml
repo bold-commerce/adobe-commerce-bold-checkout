@@ -11,6 +11,8 @@
             <group value="bold_checkout"/>
         </annotations>
         <before>
+            <!-- Set configuration -->
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRateShippingMethod"/>
             <!-- Create entities -->
             <createData entity="ApiCategory" stepKey="createCategory"/>
             <createData entity="ApiSimpleProduct" stepKey="createProduct">
@@ -27,6 +29,10 @@
             <!-- Delete entities -->
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteGuestEntity">
+                <argument name="email" value="{{Guest.email}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetDataGrid"/>
             <!-- Logout from Magento admin -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromMagentoAdmin"/>
         </after>
@@ -125,5 +131,40 @@
         <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderPageInMagentoAdmin">
             <argument name="entityId" value="{$getPlatformOrderId}"/>
         </actionGroup>
+
+        <!-- Check order info in Magento admin -->
+        <see userInput="Pending" selector="{{AdminOrderDetailsInformationSection.orderStatus}}" stepKey="assertOrderStatusInMagentoAdmin"/>
+        <see userInput="Guest" selector="{{AdminOrderDetailsInformationSection.accountInformation}}" stepKey="assertOrderCustomerNameInMagentoAdmin"/>
+        <see userInput="{{Guest.email}}" selector="{{AdminOrderDetailsInformationSection.customerEmail}}" stepKey="assertOrderCustomerEmailInMagentoAdmin"/>
+        <actionGroup ref="AssertAdminOrderBillingAddressInformationActionGroup" stepKey="assertOrderBillingAddressInMagentoAdmin"/>
+        <actionGroup ref="AssertAdminOrderShippingAddressInformationActionGroup" stepKey="assertOrderShippingAddressInMagentoAdmin"/>
+        <actionGroup ref="AssertAdminOrderPaymentInformationActionGroup" stepKey="assertOrderPaymentInfoInMagentoAdmin"/>
+        <actionGroup ref="AdminAssertOrderShippingMethodActionGroup" stepKey="assertOrderShippingInfoInMagentoAdmin"/>
+        <actionGroup ref="AssertAdminOrderedItemActionGroup" stepKey="assertOrderedItemInMagentoAdmin">
+            <argument name="name" value="Test Product"/>
+            <argument name="sku" value="Test Product"/>
+            <argument name="price" value="100"/>
+            <argument name="subtotal" value="100"/>
+            <argument name="rowTotal" value="100"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminOrderTotalsActionGroup" stepKey="assertOrderTotalsInMagentoAdmin">
+            <argument name="subtotal" value="100.00"/>
+            <argument name="shippingPrice" value="5.00"/>
+            <argument name="grandTotal" value="105.00"/>
+            <argument name="totalDue" value="105.00"/>
+        </actionGroup>
+
+        <!-- Create invoice in Magento admin -->
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startToCreateInvoiceInMagentoAdmin"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceInMagentoAdmin"/>
+
+        <!-- Create shipment in Magento admin -->
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="startToCreateShipmentInMagentoAdmin"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipmentInMagentoAdmin"/>
+
+        <!-- Create Credit Memo in Magento admin -->
+        <actionGroup ref="AdminOpenInvoiceFromOrderPageActionGroup" stepKey="openInvoiceFromOrderInMagentoAdmin"/>
+        <click selector="{{AdminInvoiceMainActionsSection.creditMemoButton}}" stepKey="openCreditMemoPageFromInvoiceInMagentoAdmin"/>
+        <actionGroup ref="AdminSubmitCreditMemoFromInvoicePageActionGroup" stepKey="submitCreditMemoInMagentoAdmin"/>
     </test>
 </tests>

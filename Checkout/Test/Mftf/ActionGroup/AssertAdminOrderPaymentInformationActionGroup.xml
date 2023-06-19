@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminOrderPaymentInformationActionGroup">
+        <annotations>
+            <description>Validates order payment information.</description>
+        </annotations>
+        <arguments>
+            <argument name="paymentName" type="string" defaultValue="visa: ••••• •••••• 1111"/>
+            <argument name="paymentCurrency" type="string" defaultValue="The order was placed using USD."/>
+        </arguments>
+
+        <see userInput="{{paymentName}}" selector="{{AdminOrderPaymentInformationSection.paymentMethod}}" stepKey="assertPaymentName"/>
+        <see userInput="{{paymentCurrency}}" selector="{{AdminOrderPaymentInformationSection.paymentCurrency}}" stepKey="assertPaymentCurrency"/>
+    </actionGroup>
+</actionGroups>
