@@ -40,11 +40,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $quoteResultBuilder;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
@@ -54,14 +49,12 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
-        Builder $quoteResultBuilder,
-        ConfigInterface $config
+        Builder $quoteResultBuilder
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->quoteResultBuilder = $quoteResultBuilder;
-        $this->config = $config;
     }
 
     /**
@@ -76,9 +69,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
-            if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
-                return $this->quoteResultBuilder->createSuccessResult($quote);
-            }
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

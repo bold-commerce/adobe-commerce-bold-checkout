@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Data\Http\Client\ResultInterfaceFactory;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
+use Bold\Checkout\Model\Http\Client\Command\PatchCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
 use Bold\Checkout\Model\Http\Client\UserAgent;
 use Magento\Framework\Exception\LocalizedException;
@@ -40,21 +41,29 @@ class BoldClient implements ClientInterface
     private $postCommand;
 
     /**
+     * @var PatchCommand
+     */
+    private $patchCommand;
+
+    /**
      * @param ConfigInterface $config
      * @param UserAgent $userAgent
      * @param GetCommand $getCommand
      * @param PostCommand $postCommand
+     * @param PatchCommand $patchCommand
      */
     public function __construct(
         ConfigInterface $config,
         UserAgent $userAgent,
         GetCommand $getCommand,
-        PostCommand $postCommand
+        PostCommand $postCommand,
+        PatchCommand $patchCommand
     ) {
         $this->config = $config;
         $this->userAgent = $userAgent;
         $this->getCommand = $getCommand;
         $this->postCommand = $postCommand;
+        $this->patchCommand = $patchCommand;
     }
 
     /**
@@ -90,7 +99,9 @@ class BoldClient implements ClientInterface
      */
     public function patch(int $websiteId, string $url, array $data): ResultInterface
     {
-        throw new LocalizedException(__('Patch method is not implemented.'));
+        $url = $this->getUrl($websiteId, $url);
+        $headers = $this->getHeaders($websiteId);
+        return $this->patchCommand->execute($websiteId, $url, $headers, $data);
     }
 
     /**

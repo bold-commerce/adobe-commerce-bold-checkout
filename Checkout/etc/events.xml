@@ -9,6 +9,9 @@
     <event name="sales_order_load_after">
         <observer name="add_bold_data_to_order" instance="Bold\Checkout\Observer\Order\AddOrderExtensionDataObserver"/>
     </event>
+    <event name="sales_order_shipment_save_after">
+        <observer name="fulfill_order_items" instance="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver"/>
+    </event>
     <event name="catalog_category_save_after">
         <observer name="bold_checkout_category_save" instance="Bold\Checkout\Observer\Category\CategorySave" />
     </event>
