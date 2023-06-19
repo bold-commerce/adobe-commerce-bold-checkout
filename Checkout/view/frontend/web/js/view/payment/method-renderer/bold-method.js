@@ -2,7 +2,6 @@ define(
     [
         'Magento_Checkout/js/view/payment/default',
         'Bold_Checkout/js/model/client',
-        'Bold_Checkout/js/model/address',
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
         'uiRegistry',
@@ -12,7 +11,6 @@ define(
     ], function (
         Component,
         boldClient,
-        boldAddress,
         quote,
         loader,
         registry,
@@ -39,7 +37,6 @@ define(
                 }
                 this._super();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
-                this.shopId = window.checkoutConfig.bold.shopId;
                 if (checkoutData.getSelectedPaymentMethod() === 'bold') {
                     checkoutData.setSelectedPaymentMethod(null);
                     quote.paymentMethod(null);
@@ -114,18 +111,7 @@ define(
                 if (!this.customerIsGuest) {
                     return;
                 }
-                const billingAddress = quote.billingAddress();
-                const firstname = billingAddress.firstname;
-                const lastname = billingAddress.lastname;
-                if (!quote.guestEmail || !firstname || !lastname) {
-                    return;
-                }
-                const payload = {
-                    'email': quote.guestEmail,
-                    'firstName': firstname,
-                    'lastName': lastname,
-                }
-                boldClient.post('/shops/' + this.shopId + '/customer/guest', payload).then(function () {
+                boldClient.post('customer/guest', 'customer').then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
@@ -193,11 +179,7 @@ define(
              */
             syncBillingData() {
                 this.sendGuestCustomerInfo();
-                const payload = boldAddress.getBillingAddress();
-                if (!payload) {
-                    return;
-                }
-                boldClient.post('/shops/' + this.shopId + '/addresses/billing', payload).then(function () {
+                boldClient.post('addresses/billing', 'address').then(function () {
                     this.messageContainer.errorMessages([]);
                     if (this.iframeWindow) {
                         this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
