@@ -33,6 +33,17 @@ class Curl extends CurlCore
     }
 
     /**
+     * Perform patch request.
+     *
+     * @param string $url
+     * @param string $params
+     */
+    public function patch(string $url, string $params): void
+    {
+        $this->makeRequest('PATCH', $url, $params);
+    }
+
+    /**
      * @inheritDoc
      */
     protected function makeRequest($method, $uri, $params = [])
@@ -78,5 +89,4 @@ class Curl extends CurlCore
         }
         curl_close($this->_ch);
     }
-
 }
