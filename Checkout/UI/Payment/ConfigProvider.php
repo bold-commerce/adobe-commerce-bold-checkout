@@ -124,16 +124,21 @@ class ConfigProvider implements ConfigProviderInterface
         }
         $websiteId = (int)$this->storeManager->getWebsite()->getId();
         $shopId = $this->config->getShopId($websiteId);
+        $orderId = $boldCheckoutData['data']['public_order_id'] ?? null;
+        $jwtToken = $boldCheckoutData['data']['jwt_token'] ?? null;
         return [
             'bold' => [
                 'payment' => [
                     'iframeSrc' => $this->getIframeSrc(),
-                    'title' => __('Bold'),
+                    'title' => __('Pay Pal'),
                     'method' => Service::CODE,
                 ],
                 'shopId' => $shopId,
                 'customerIsGuest' => $this->checkoutSession->getQuote()->getCustomerIsGuest(),
+                'publicOrderId' => $orderId,
+                'jwtToken' => $jwtToken,
                 'countries' => $this->getAllowedCountries(),
+                'url' => BoldStorefrontClient::URL . $shopId . '/' . $orderId . '/',
             ],
         ];
     }
