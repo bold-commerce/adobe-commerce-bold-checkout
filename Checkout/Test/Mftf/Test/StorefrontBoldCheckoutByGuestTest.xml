@@ -155,6 +155,10 @@
             <argument name="totalDue" value="105.00"/>
         </actionGroup>
 
+        <!-- Open Checkout app on Bold Cashier -->
+<!--        <actionGroup ref="AdminBoldAppsLoginToAccountActionGroup" stepKey="loginToBoldAppsAccount"/>-->
+<!--        <actionGroup ref="AdminBoldAppsOpenAppActionGroup" stepKey="openCheckoutAppPage"/>-->
+
         <!-- Create invoice in Magento admin -->
         <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startToCreateInvoiceInMagentoAdmin"/>
         <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceInMagentoAdmin"/>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminBoldAppsLoginShopSelectionSection">
+        <element name="shopSelection" type="block" selector=".login-shop-selection-page__shops-container"/>
+        <element name="shopSelectionItemByDomain" type="block" selector="//div[contains(@class, 'login-shop-selection-page__shop-row-domain') and contains(text(), '{{shopDomain}}')]//ancestor::div[contains(@class, 'bv-tile--single-select')]" parameterized="true"/>
+        <element name="continueButton" type="button" selector="button.login-shop-selection-page__submit"/>
+    </section>
+</sections>
