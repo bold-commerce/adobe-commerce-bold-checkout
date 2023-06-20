@@ -65,7 +65,9 @@ define(
                         }
                     }.bind(this));
                 }
-                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                if (!this.customerIsGuest) {
+                    this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                }
                 this.subscribeToPIGI();
             },
 
@@ -112,17 +114,23 @@ define(
                     return;
                 }
                 boldClient.post('customer/guest', 'customer').then(function () {
-                    this.messageContainer.errorMessages([]);
-                    if (this.iframeWindow) {
-                        this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
-                    }
-                }.bind(this)).catch(function () {
-                    this.messageContainer.errorMessages(
-                        [
-                            'Please verify your email and try again.'
-                        ]
-                    );
-                }.bind(this));
+                        this.messageContainer.errorMessages([]);
+                        if (this.iframeWindow) {
+                            this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+                        }
+                    }.bind(this)
+                ).then(
+                    function () {
+                        this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                    }.bind(this)
+                ).catch(function () {
+                        this.messageContainer.errorMessages(
+                            [
+                                'Please verify your email and try again.'
+                            ]
+                        );
+                    }.bind(this)
+                );
             },
 
             /**

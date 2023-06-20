@@ -21,7 +21,7 @@ define([
         const savedPayload = window.checkoutConfig.bold[dataType] || {};
         let result = true;
         _.each(newPayload, function (value, key) {
-            if (savedPayload[key] !== value) {
+            if (savedPayload[key] !== value && key !== 'id') {
                 result = false;
                 return false;
             }

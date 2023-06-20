@@ -16,6 +16,9 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class Index implements ActionInterface, CspAwareActionInterface
 {
+    /**
+     * @var PageFactory
+     */
     private $resultPageFactory;
 
     /**
@@ -29,6 +32,8 @@ class Index implements ActionInterface, CspAwareActionInterface
     private $config;
 
     /**
+     * @param StoreManagerInterface $storeManager
+     * @param ScopeConfigInterface $config
      * @param PageFactory $resultPageFactory
      */
     public function __construct(
