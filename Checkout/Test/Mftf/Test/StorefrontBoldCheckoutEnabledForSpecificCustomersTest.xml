@@ -16,17 +16,17 @@
             <createData entity="ApiSimpleProduct" stepKey="createProduct">
                 <requiredEntity createDataKey="createCategory"/>
             </createData>
-            <createData entity="Simple_US_Customer" stepKey="createCustomer1"/>
-            <createData entity="Simple_US_Customer" stepKey="createCustomer2"/>
-            <createData entity="Simple_US_Customer" stepKey="createCustomer3"/>
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer1"/>
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer2"/>
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer3"/>
             <!-- Set configuration -->
             <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRateShippingMethod"/>
             <magentoCLI command="config:set {{EnableCheckMoneyOrderPaymentMethod.path}} {{EnableCheckMoneyOrderPaymentMethod.value}}" stepKey="enableCheckMorPaymentMethod"/>
             <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutAdvancedEnabledForConfigData.path}} {{BoldCheckoutAdvancedEnabledForConfigData.specificCustomers}}" stepKey="setBoldCheckoutEnabledForSpecificCustomersConfig"/>
             <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutAdvancedCustomerWhitelistConfigData.path}} $createCustomer1.email$,$createCustomer2.email$" stepKey="setBoldCheckoutCustomerWhitelistConfig"/>
             <!-- Run entities sync -->
-            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncProductsConsumerData.consumerName}}" timeout="5" stepKey="syncProducts"/>
-            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncCustomersConsumerData.consumerName}}" timeout="5" stepKey="syncCustomers"/>
+            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncProductsConsumerData.consumerName}}" timeout="10" stepKey="syncProducts"/>
+            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncCustomersConsumerData.consumerName}}" timeout="10" stepKey="syncCustomers"/>
         </before>
         <after>
             <!-- Set default values for changed configuration -->
@@ -42,7 +42,7 @@
 
         <!-- Login as Customer 3 -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer3">
-            <argument name="Customer" value="$createCustomer3$" />
+            <argument name="Customer" value="$createCustomer3$"/>
         </actionGroup>
         <!-- Go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
@@ -70,7 +70,7 @@
 
         <!-- Login as Customer 1 -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer1">
-            <argument name="Customer" value="$createCustomer1$" />
+            <argument name="Customer" value="$createCustomer1$"/>
         </actionGroup>
         <!-- Go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage1">
@@ -93,7 +93,7 @@
         <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutBaseTypeConfigData.path}} {{BoldCheckoutBaseTypeConfigData.selfHosted}}" stepKey="setBoldCheckoutTypeToSelfHostedConfig"/>
         <!-- Login as Customer 2 -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer2">
-            <argument name="Customer" value="$createCustomer2$" />
+            <argument name="Customer" value="$createCustomer2$"/>
         </actionGroup>
         <!-- Go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage2">
@@ -121,7 +121,7 @@
 
         <!-- Login as Customer 3 -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer3Again">
-            <argument name="Customer" value="$createCustomer3$" />
+            <argument name="Customer" value="$createCustomer3$"/>
         </actionGroup>
         <!-- Go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage3">

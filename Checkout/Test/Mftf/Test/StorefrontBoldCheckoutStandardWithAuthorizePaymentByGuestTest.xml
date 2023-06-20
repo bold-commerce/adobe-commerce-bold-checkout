@@ -84,12 +84,9 @@
         <actionGroup ref="AssertStorefrontBoldCheckoutThankYouPageActionGroup" stepKey="assertBoldCheckoutThankYouPage"/>
 
         <!-- Check order recap address section -->
-        <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapShippingAddress">
-            <argument name="stateCode" value="CA"/>
-        </actionGroup>
+        <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapShippingAddress"/>
         <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapBillingAddress">
             <argument name="addressType" value="billing"/>
-            <argument name="stateCode" value="CA"/>
         </actionGroup>
         <!-- Check order recap shipping method -->
         <see userInput="Flat Rate - Fixed" selector="{{StorefrontBoldCheckoutOrderRecapSection.shippingMethodName}}" stepKey="assertOrderRecapShippingMethod"/>
@@ -138,6 +135,7 @@
             <argument name="totalDue" value="128.00"/>
         </actionGroup>
 
+        <!-- TODO: Need to write assertions on Bold platform side (by UI or API) -->
         <!-- Open Checkout app on Bold Cashier -->
 <!--        <actionGroup ref="AdminBoldAppsLoginToAccountActionGroup" stepKey="loginToBoldAppsAccount"/>-->
 <!--        <actionGroup ref="AdminBoldAppsOpenAppActionGroup" stepKey="openCheckoutAppPage"/>-->
