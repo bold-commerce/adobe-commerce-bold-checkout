@@ -65,9 +65,9 @@ define(
                     }.bind(this));
                 }
                 if (!this.customerIsGuest) {
+                    this.isVisible(true);
                     this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                     this.subscribeToPIGI();
-                    this.isVisible(true);
                 }
             },
 
@@ -121,9 +121,9 @@ define(
                     }.bind(this)
                 ).then(
                     function () {
+                        this.isVisible(true);
                         this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                         this.subscribeToPIGI();
-                        this.isVisible(true);
                     }.bind(this)
                 ).catch(function () {
                         this.messageContainer.errorMessages(
