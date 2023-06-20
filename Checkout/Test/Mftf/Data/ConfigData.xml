@@ -33,4 +33,8 @@
         <data key="specificCustomers">2</data>
         <data key="percentageOfOrders">3</data>
     </entity>
+
+    <entity name="BoldCheckoutAdvancedCustomerWhitelistConfigData">
+        <data key="path">checkout/bold_checkout_advanced/customer_whitelist</data>
+    </entity>
 </entities>

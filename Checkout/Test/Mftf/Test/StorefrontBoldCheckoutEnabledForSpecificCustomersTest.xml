@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontBoldCheckoutEnabledForSpecificCustomersTest">
+        <annotations>
+            <features value="Bold Checkout"/>
+            <stories value="Checkout as Customer"/>
+            <title value="Checking that Bold Checkout only available for specific customers"/>
+            <description value="Only specific customers should be able to use Bold Checkout"/>
+            <severity value="MAJOR"/>
+            <group value="bold_checkout_standard"/>
+        </annotations>
+        <before>
+            <!-- Create entities -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer1"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer2"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer3"/>
+            <!-- Set configuration -->
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRateShippingMethod"/>
+            <magentoCLI command="config:set {{EnableCheckMoneyOrderPaymentMethod.path}} {{EnableCheckMoneyOrderPaymentMethod.value}}" stepKey="enableCheckMorPaymentMethod"/>
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutAdvancedEnabledForConfigData.path}} {{BoldCheckoutAdvancedEnabledForConfigData.specificCustomers}}" stepKey="setBoldCheckoutEnabledForSpecificCustomersConfig"/>
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutAdvancedCustomerWhitelistConfigData.path}} $createCustomer1.email$,$createCustomer2.email$" stepKey="setBoldCheckoutCustomerWhitelistConfig"/>
+            <!-- Run entities sync -->
+            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncProductsConsumerData.consumerName}}" timeout="5" stepKey="syncProducts"/>
+            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncCustomersConsumerData.consumerName}}" timeout="5" stepKey="syncCustomers"/>
+        </before>
+        <after>
+            <!-- Set default values for changed configuration -->
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutAdvancedEnabledForConfigData.path}} {{BoldCheckoutAdvancedEnabledForConfigData.all}}" stepKey="setDefaultBoldCheckoutEnabledForConfig"/>
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutAdvancedCustomerWhitelistConfigData.path}} ''" stepKey="setDefaultBoldCheckoutCustomerWhitelistConfig"/>
+            <!-- Delete entities -->
+            <deleteData createDataKey="createCustomer1" stepKey="deleteCustomer1"/>
+            <deleteData createDataKey="createCustomer2" stepKey="deleteCustomer2"/>
+            <deleteData createDataKey="createCustomer3" stepKey="deleteCustomer3"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Login as Customer 3 -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer3">
+            <argument name="Customer" value="$createCustomer3$" />
+        </actionGroup>
+        <!-- Go to product page -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
+            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <!-- Add product to shopping cart -->
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <!-- Go to shopping cart page -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
+        <!-- Proceed to Checkout -->
+        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout"/>
+        <!-- Check Magento Checkout page opened -->
+        <waitForPageLoad stepKey="waitForMagentoCheckoutPageLoad"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}" stepKey="assertMagentoCheckoutPageUrl"/>
+        <!-- Go to Magento Checkout payment step -->
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToMagentoCheckoutPaymentStep"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}/#payment" stepKey="assertMagentoCheckoutPaymentPageUrl"/>
+        <!-- Check Bold payment method not present in Magento Checkout payment step -->
+        <dontSeeElement selector="{{StorefrontCheckoutPaymentMethodSection.paymentMethodItemByCode('bold')}}" stepKey="dontSeeBoldPaymentMethodInMagentoCheckoutPage"/>
+        <!-- Logout from Customer3 account -->
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromCustomer3"/>
+
+        <!-- Login as Customer 1 -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer1">
+            <argument name="Customer" value="$createCustomer1$" />
+        </actionGroup>
+        <!-- Go to product page -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage1">
+            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <!-- Add product to shopping cart -->
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart1">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <!-- Go to shopping cart page -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage1"/>
+        <!-- Proceed to Checkout -->
+        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout1"/>
+        <!-- Check Bold Checkout page opened -->
+        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutCustomerInfoStepOpened"/>
+        <!-- Logout from Customer1 account -->
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromCustomer1"/>
+
+        <!-- Set configuration -->
+        <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutBaseTypeConfigData.path}} {{BoldCheckoutBaseTypeConfigData.selfHosted}}" stepKey="setBoldCheckoutTypeToSelfHostedConfig"/>
+        <!-- Login as Customer 2 -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer2">
+            <argument name="Customer" value="$createCustomer2$" />
+        </actionGroup>
+        <!-- Go to product page -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage2">
+            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <!-- Add product to shopping cart -->
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart2">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <!-- Go to shopping cart page -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage2"/>
+        <!-- Proceed to Checkout -->
+        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout2"/>
+        <!-- Check Magento Checkout page opened -->
+        <waitForPageLoad stepKey="waitForMagentoCheckoutPageLoad2"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}" stepKey="assertMagentoCheckoutPageUrl2"/>
+        <!-- Go to Magento Checkout payment step -->
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectShippingMethod2"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToMagentoCheckoutPaymentStep2"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}/#payment" stepKey="assertMagentoCheckoutPaymentPageUrl2"/>
+        <!-- Check Bold payment method in Magento Checkout payment step -->
+        <seeElement selector="{{StorefrontCheckoutPaymentMethodSection.paymentMethodItemByCode('bold')}}" stepKey="seeBoldPaymentMethodInMagentoCheckoutPage"/>
+        <!-- Logout from Customer2 account -->
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromCustomer2"/>
+
+        <!-- Login as Customer 3 -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer3Again">
+            <argument name="Customer" value="$createCustomer3$" />
+        </actionGroup>
+        <!-- Go to product page -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage3">
+            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <!-- Add product to shopping cart -->
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart3">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <!-- Go to shopping cart page -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage3"/>
+        <!-- Proceed to Checkout -->
+        <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout3"/>
+        <!-- Check Magento Checkout page opened -->
+        <waitForPageLoad stepKey="waitForMagentoCheckoutPageLoad3"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}" stepKey="assertMagentoCheckoutPageUrl3"/>
+        <!-- Go to Magento Checkout payment step -->
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectShippingMethod3"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToMagentoCheckoutPaymentStep3"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}/#payment" stepKey="assertMagentoCheckoutPaymentPageUrl3"/>
+        <!-- Check Bold payment method in Magento Checkout payment step -->
+        <dontSeeElement selector="{{StorefrontCheckoutPaymentMethodSection.paymentMethodItemByCode('bold')}}" stepKey="dontSeeBoldPaymentMethodInMagentoCheckoutPage3"/>
+        <!-- Logout from Customer3 account -->
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromCustomer3Again"/>
+    </test>
+</tests>
