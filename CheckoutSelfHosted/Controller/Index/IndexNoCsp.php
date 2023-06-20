@@ -6,6 +6,9 @@ namespace Bold\CheckoutSelfHosted\Controller\Index;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\View\Result\PageFactory;
 
+/**
+ * Render Bold Checkout Self-Hosted page.
+ */
 class IndexNoCsp implements ActionInterface
 {
     private $resultPageFactory;
