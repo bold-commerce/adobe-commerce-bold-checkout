@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontBoldCheckoutStandardWithAuthorizePaymentByGuestTest">
+    <test name="StorefrontBoldCheckoutSelfHostedWithAuthorizePaymentByGuestTest">
         <annotations>
             <features value="Bold Checkout"/>
             <stories value="Checkout as Guest"/>
-            <title value="Checking placing order by Guest via standard Bold Checkout type with enabled delayed payment capture"/>
-            <description value="Guest should be able to place an order via standard Bold Checkout type with enabled delayed payment capture"/>
+            <title value="Checking placing order by Guest via self-hosted Bold Checkout type with enabled delayed payment capture"/>
+            <description value="Guest should be able to place an order via self-hosted Bold Checkout type with enabled delayed payment capture"/>
             <severity value="MAJOR"/>
-            <group value="bold_checkout_standard"/>
+            <group value="bold_checkout_self-hosted"/>
             <group value="bold_checkout_authorize_payment"/>
         </annotations>
         <before>
@@ -42,76 +42,38 @@
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
             <argument name="productName" value="$createProduct.name$"/>
         </actionGroup>
+
         <!-- Go to shopping cart page -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
-
-        <!-- Go to Bold Checkout customer info step -->
+        <!-- Proceed to Checkout -->
         <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout"/>
-        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutCustomerInfoStepOpened"/>
-        <!-- Check cart items -->
-        <actionGroup ref="AssertStorefrontBoldCheckoutProductInCartItemsActionGroup" stepKey="assertProductInCartItems">
-            <argument name="productName" value="$createProduct.name$"/>
-            <argument name="productPrice" value="$createProduct.price$"/>
+        <!-- Check Magento Checkout page opened -->
+        <waitForPageLoad stepKey="waitForMagentoCheckoutPageLoad"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}" stepKey="assertMagentoCheckoutPageUrl"/>
+
+        <!-- Fill shipping information -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="fillShippingSectionAsGuest">
+            <argument name="customerVar" value="Simple_US_Customer_CA"/>
+            <argument name="customerAddressVar" value="US_Address_CA"/>
+            <argument name="shippingMethod" value="Flat Rate"/>
         </actionGroup>
 
-        <!-- Fill customer information -->
-        <actionGroup ref="StorefrontBoldCheckoutFillEmailActionGroup" stepKey="fillGuestEmailField"/>
-
-        <!-- Fill shipping address -->
-        <actionGroup ref="StorefrontBoldCheckoutFillShippingAddressActionGroup" stepKey="fillShippingAddress"/>
-        <!-- Go to Bold Checkout shipping lines step -->
-        <click selector="{{StorefrontBoldCheckoutFormControlsSection.continueToShippingButton}}" stepKey="continueToShipping"/>
-        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutShippingLinesStepOpened">
-            <argument name="stepPath" value="shipping_lines"/>
-            <argument name="breadcrumbName" value="Shipping method"/>
-        </actionGroup>
-        <!-- Select shipping method -->
-        <actionGroup ref="StorefrontBoldCheckoutSelectShippingMethodActionGroup" stepKey="selectShippingMethod"/>
-
-        <!-- Go to Bold Checkout payment step -->
-        <click selector="{{StorefrontBoldCheckoutFormControlsSection.continueToPaymentButton}}" stepKey="continueToPayment"/>
-        <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutPaymentStepOpened">
-            <argument name="stepPath" value="payment"/>
-            <argument name="breadcrumbName" value="Payment method"/>
-        </actionGroup>
-        <!-- Select payment method -->
-        <actionGroup ref="StorefrontBoldCheckoutSelectPaymentMethodActionGroup" stepKey="selectPaymentMethod"/>
+        <!-- Select Bold payment method -->
+        <actionGroup ref="StorefrontCheckoutSelectBoldPaymentMethodActionGroup" stepKey="selectBoldPaymentMethod"/>
         <!-- Fill credit card info -->
-        <actionGroup ref="StorefrontBoldCheckoutFillCardDataActionGroup" stepKey="fillCreditCardInformation"/>
+        <actionGroup ref="StorefrontCheckoutFillBoldPaymentCardDataActionGroup" stepKey="fillCreditCardInformation"/>
 
         <!-- Place order -->
-        <click selector="{{StorefrontBoldCheckoutFormControlsSection.completeOrderButton}}" stepKey="placeOrder"/>
-        <actionGroup ref="AssertStorefrontBoldCheckoutThankYouPageActionGroup" stepKey="assertBoldCheckoutThankYouPage"/>
-
-        <!-- Check order recap address section -->
-        <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapShippingAddress"/>
-        <actionGroup ref="AssertStorefrontBoldCheckoutOrderRecapAddressActionGroup" stepKey="assertOrderRecapBillingAddress">
-            <argument name="addressType" value="billing"/>
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
         </actionGroup>
-        <!-- Check order recap shipping method -->
-        <see userInput="Flat Rate - Fixed" selector="{{StorefrontBoldCheckoutOrderRecapSection.shippingMethodName}}" stepKey="assertOrderRecapShippingMethod"/>
-        <!-- Check order recap payment method -->
-        <see userInput="{{VisaCardData.name}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cardBrandName}}" stepKey="assertOrderRecapCardBrandName"/>
-        <see userInput="{{VisaCardData.lastFourDigits}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cardLastFourDigits}}" stepKey="assertOrderRecapCardLastFourDigits"/>
-
-        <!-- Check summary totals -->
-        <actionGroup ref="AssertStorefrontBoldCheckoutSummaryTotalsActionGroup" stepKey="assertSummaryTotals">
-            <argument name="subtotal" value="123.00"/>
-            <argument name="shippingAmount" value="5.00"/>
-            <argument name="total" value="128.00"/>
-            <argument name="paymentsAmount" value="128.00"/>
-        </actionGroup>
-
-        <!-- Get platform order ID -->
-        <executeJS function="return publicOrderId;" stepKey="getPublicOrderId"/>
-        <actionGroup ref="StorefrontBoldCheckoutGetPlatformOrderIdActionGroup" stepKey="platformOrderId">
-            <argument name="publicOrderId" value="{$getPublicOrderId}"/>
-        </actionGroup>
+        <grabTextFrom selector="{{CheckoutSuccessRegisterSection.orderNumber}}" stepKey="grabOrderNumber"/>
 
         <!-- Go to order in Magento admin -->
         <actionGroup ref="AdminLoginActionGroup" stepKey="loginToMagentoAdmin"/>
         <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderPageInMagentoAdmin">
-            <argument name="entityId" value="{$getPlatformOrderId}"/>
+            <argument name="entityId" value="{$grabOrderNumber}"/>
         </actionGroup>
 
         <!-- Check order info in Magento admin -->

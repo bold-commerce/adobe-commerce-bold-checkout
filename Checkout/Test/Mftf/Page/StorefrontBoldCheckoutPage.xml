@@ -14,6 +14,7 @@
         <section name="StorefrontBoldCheckoutBillingAddressSection"/>
         <section name="StorefrontBoldCheckoutShippingLinesSection"/>
         <section name="StorefrontBoldCheckoutPaymentSection"/>
+        <section name="StorefrontBoldPaymentCreditCardSection"/>
         <section name="StorefrontBoldCheckoutThankYouSection"/>
         <section name="StorefrontBoldCheckoutOrderRecapSection"/>
         <section name="StorefrontBoldCheckoutFormControlsSection"/>

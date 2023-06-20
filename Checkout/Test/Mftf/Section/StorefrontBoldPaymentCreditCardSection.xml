@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldPaymentCreditCardSection">
+        <element name="creditCardIFrame" type="iframe" selector="#PIGI"/>
+        <element name="creditCardInfoForm" type="block" selector="#newCreditCardInfoGroup"/>
+        <element name="creditCardNumberIFrame" type="iframe" selector="#credit_card_number iframe"/>
+        <element name="creditCardNumberField" type="input" selector="#card_number"/>
+        <element name="creditCardExpirationDateField" type="input" selector="#credit_card_expiration_date"/>
+        <element name="creditCardCvvIFrame" type="iframe" selector="#credit_card_cvv iframe"/>
+        <element name="creditCardCvvField" type="input" selector="#cvv"/>
+    </section>
+</sections>

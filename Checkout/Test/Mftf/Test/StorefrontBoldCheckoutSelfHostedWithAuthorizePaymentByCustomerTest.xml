@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontBoldCheckoutSelfHostedWithAuthorizePaymentByCustomerTest" extends="StorefrontBoldCheckoutSelfHostedWithAuthorizePaymentByGuestTest">
+        <annotations>
+            <features value="Bold Checkout"/>
+            <stories value="Checkout as Customer"/>
+            <title value="Checking placing order by Customer via self-hosted Bold Checkout type with enabled delayed payment capture"/>
+            <description value="Customer should be able to place an order via self-hosted Bold Checkout type with enabled delayed payment capture"/>
+            <severity value="MAJOR"/>
+            <group value="bold_checkout_self-hosted"/>
+            <group value="bold_checkout_authorize_payment"/>
+        </annotations>
+        <before>
+            <createData entity="Simple_US_Customer_CA" after="createProduct" stepKey="createCustomer"/>
+            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncCustomersConsumerData.consumerName}}" timeout="10" after="syncProducts" stepKey="syncCustomers"/>
+        </before>
+        <after>
+            <remove keyForRemoval="deleteGuestEntity"/>
+            <remove keyForRemoval="resetDataGrid"/>
+            <deleteData createDataKey="createCustomer" before="deleteProduct" stepKey="deleteCustomer"/>
+        </after>
+
+        <remove keyForRemoval="fillShippingSectionAsGuest"/>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" before="openProductPage" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" before="selectBoldPaymentMethod" stepKey="selectShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" after="selectShippingMethod" stepKey="goToMagentoCheckoutPaymentStep"/>
+
+        <see userInput="$createCustomer.name$" selector="{{AdminOrderDetailsInformationSection.accountInformation}}" stepKey="assertOrderCustomerNameInMagentoAdmin"/>
+        <see userInput="$createCustomer.email$" selector="{{AdminOrderDetailsInformationSection.customerEmail}}" stepKey="assertOrderCustomerEmailInMagentoAdmin"/>
+    </test>
+</tests>
