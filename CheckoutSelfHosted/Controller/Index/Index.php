@@ -29,6 +29,8 @@ class Index implements ActionInterface, CspAwareActionInterface
     private $config;
 
     /**
+     * @param StoreManagerInterface $storeManager
+     * @param ScopeConfigInterface $config
      * @param PageFactory $resultPageFactory
      */
     public function __construct(
