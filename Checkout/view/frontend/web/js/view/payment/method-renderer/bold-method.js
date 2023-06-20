@@ -23,7 +23,7 @@ define(
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 paymentType: null,
-                isVisible: ko.observable(true),
+                isVisible: ko.observable(false),
                 iframeSrc: ko.observable(null),
             },
 
@@ -32,7 +32,6 @@ define(
              */
             initialize: function () {
                 if (window.checkoutConfig.bold === undefined) {
-                    this.isVisible(false);
                     return;
                 }
                 this._super();
@@ -66,9 +65,10 @@ define(
                     }.bind(this));
                 }
                 if (!this.customerIsGuest) {
+                    this.isVisible(true);
                     this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                    this.subscribeToPIGI();
                 }
-                this.subscribeToPIGI();
             },
 
             /**
@@ -121,7 +121,9 @@ define(
                     }.bind(this)
                 ).then(
                     function () {
+                        this.isVisible(true);
                         this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                        this.subscribeToPIGI();
                     }.bind(this)
                 ).catch(function () {
                         this.messageContainer.errorMessages(
