@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontBoldCheckoutStandardByGuestTest">
+    <test name="StorefrontBoldCheckoutStandardWithAuthorizePaymentByGuestTest">
         <annotations>
             <features value="Bold Checkout"/>
             <stories value="Checkout as Guest"/>
-            <title value="Checking placing order by Guest via standard Bold Checkout type"/>
-            <description value="Guest should be able to place an order via standard Bold Checkout type"/>
+            <title value="Checking placing order by Guest via standard Bold Checkout type with enabled delayed payment capture"/>
+            <description value="Guest should be able to place an order via standard Bold Checkout type with enabled delayed payment capture"/>
             <severity value="MAJOR"/>
             <group value="bold_checkout_standard"/>
+            <group value="bold_checkout_authorize_payment"/>
         </annotations>
         <before>
             <!-- Set configuration -->
@@ -19,11 +20,7 @@
                 <requiredEntity createDataKey="createCategory"/>
             </createData>
             <!-- Run entities sync -->
-<!--            <actionGroup ref="CliConsumerStartActionGroup" stepKey="syncProducts">-->
-<!--                <argument name="consumerName" value="{{BoldCheckoutSyncProductsConsumerData.consumerName}}"/>-->
-<!--                <argument name="maxMessages" value="{{BoldCheckoutSyncProductsConsumerData.messageLimit}}"/>-->
-<!--            </actionGroup>-->
-<!--            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncProductsConsumerData.consumerName}}" timeout="10" stepKey="syncProducts"/>-->
+            <magentoCLI command="queue:consumers:start {{BoldCheckoutSyncProductsConsumerData.consumerName}}" timeout="10" stepKey="syncProducts"/>
         </before>
         <after>
             <!-- Delete entities -->
@@ -39,28 +36,22 @@
 
         <!-- Go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
-<!--            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>-->
-            <argument name="productUrl" value="test-product"/>
+            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
         </actionGroup>
-
         <!-- Add product to shopping cart -->
-<!--        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">-->
-<!--            <argument name="productName" value="$createProduct.name$"/>-->
-<!--        </actionGroup>-->
-        <click selector="{{StorefrontProductActionSection.addToCart}}" stepKey="addProductToCart"/>
-        <waitForElementVisible selector="{{StorefrontMessagesSection.success}}" stepKey="waitForProductAddedSuccessMessage"/>
-
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
         <!-- Go to shopping cart page -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openShoppingCartPage"/>
 
         <!-- Go to Bold Checkout customer info step -->
         <click selector="{{StorefrontCheckoutCartSummarySection.proceedToCheckout}}" stepKey="proceedToCheckout"/>
         <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutCustomerInfoStepOpened"/>
-
         <!-- Check cart items -->
         <actionGroup ref="AssertStorefrontBoldCheckoutProductInCartItemsActionGroup" stepKey="assertProductInCartItems">
-            <argument name="productName" value="Test Product"/>
-            <argument name="productPrice" value="100"/>
+            <argument name="productName" value="$createProduct.name$"/>
+            <argument name="productPrice" value="$createProduct.price$"/>
         </actionGroup>
 
         <!-- Fill customer information -->
@@ -68,14 +59,12 @@
 
         <!-- Fill shipping address -->
         <actionGroup ref="StorefrontBoldCheckoutFillShippingAddressActionGroup" stepKey="fillShippingAddress"/>
-
         <!-- Go to Bold Checkout shipping lines step -->
         <click selector="{{StorefrontBoldCheckoutFormControlsSection.continueToShippingButton}}" stepKey="continueToShipping"/>
         <actionGroup ref="AssertStorefrontBoldCheckoutPageOpenedActionGroup" stepKey="assertBoldCheckoutShippingLinesStepOpened">
             <argument name="stepPath" value="shipping_lines"/>
             <argument name="breadcrumbName" value="Shipping method"/>
         </actionGroup>
-
         <!-- Select shipping method -->
         <actionGroup ref="StorefrontBoldCheckoutSelectShippingMethodActionGroup" stepKey="selectShippingMethod"/>
 
@@ -85,10 +74,8 @@
             <argument name="stepPath" value="payment"/>
             <argument name="breadcrumbName" value="Payment method"/>
         </actionGroup>
-
         <!-- Select payment method -->
         <actionGroup ref="StorefrontBoldCheckoutSelectPaymentMethodActionGroup" stepKey="selectPaymentMethod"/>
-
         <!-- Fill credit card info -->
         <actionGroup ref="StorefrontBoldCheckoutFillCardDataActionGroup" stepKey="fillCreditCardInformation"/>
 
@@ -104,20 +91,18 @@
             <argument name="addressType" value="billing"/>
             <argument name="stateCode" value="CA"/>
         </actionGroup>
-
         <!-- Check order recap shipping method -->
         <see userInput="Flat Rate - Fixed" selector="{{StorefrontBoldCheckoutOrderRecapSection.shippingMethodName}}" stepKey="assertOrderRecapShippingMethod"/>
-
         <!-- Check order recap payment method -->
         <see userInput="{{VisaCardData.name}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cardBrandName}}" stepKey="assertOrderRecapCardBrandName"/>
         <see userInput="{{VisaCardData.lastFourDigits}}" selector="{{StorefrontBoldCheckoutOrderRecapSection.cardLastFourDigits}}" stepKey="assertOrderRecapCardLastFourDigits"/>
 
         <!-- Check summary totals -->
         <actionGroup ref="AssertStorefrontBoldCheckoutSummaryTotalsActionGroup" stepKey="assertSummaryTotals">
-            <argument name="subtotal" value="100.00"/>
+            <argument name="subtotal" value="123.00"/>
             <argument name="shippingAmount" value="5.00"/>
-            <argument name="total" value="105.00"/>
-            <argument name="paymentsAmount" value="105.00"/>
+            <argument name="total" value="128.00"/>
+            <argument name="paymentsAmount" value="128.00"/>
         </actionGroup>
 
         <!-- Get platform order ID -->
@@ -141,17 +126,16 @@
         <actionGroup ref="AssertAdminOrderPaymentInformationActionGroup" stepKey="assertOrderPaymentInfoInMagentoAdmin"/>
         <actionGroup ref="AdminAssertOrderShippingMethodActionGroup" stepKey="assertOrderShippingInfoInMagentoAdmin"/>
         <actionGroup ref="AssertAdminOrderedItemActionGroup" stepKey="assertOrderedItemInMagentoAdmin">
-            <argument name="name" value="Test Product"/>
-            <argument name="sku" value="Test Product"/>
-            <argument name="price" value="100"/>
-            <argument name="subtotal" value="100"/>
-            <argument name="rowTotal" value="100"/>
+            <argument name="name" value="$createProduct.name$"/>
+            <argument name="price" value="123.00"/>
+            <argument name="subtotal" value="123.00"/>
+            <argument name="rowTotal" value="123.00"/>
         </actionGroup>
         <actionGroup ref="AssertAdminOrderTotalsActionGroup" stepKey="assertOrderTotalsInMagentoAdmin">
-            <argument name="subtotal" value="100.00"/>
+            <argument name="subtotal" value="123.00"/>
             <argument name="shippingPrice" value="5.00"/>
-            <argument name="grandTotal" value="105.00"/>
-            <argument name="totalDue" value="105.00"/>
+            <argument name="grandTotal" value="128.00"/>
+            <argument name="totalDue" value="128.00"/>
         </actionGroup>
 
         <!-- Open Checkout app on Bold Cashier -->

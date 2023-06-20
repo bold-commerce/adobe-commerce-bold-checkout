@@ -12,7 +12,7 @@
             <argument name="sku" type="string" defaultValue=""/>
             <argument name="status" type="string" defaultValue="Ordered"/>
             <argument name="price" type="string" defaultValue=""/>
-            <argument name="qtyWithStatus" type="string" defaultValue="Ordered	1"/>
+            <argument name="qtyWithStatus" type="string" defaultValue="Ordered 1"/>
             <argument name="subtotal" type="string" defaultValue=""/>
             <argument name="taxAmount" type="string" defaultValue="0.00"/>
             <argument name="taxPercent" type="string" defaultValue="0"/>

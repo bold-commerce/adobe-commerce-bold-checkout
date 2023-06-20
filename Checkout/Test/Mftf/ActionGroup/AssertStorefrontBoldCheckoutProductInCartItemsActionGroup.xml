@@ -6,9 +6,9 @@
             <description>Validates product data in cart items section.</description>
         </annotations>
         <arguments>
-            <argument name="productName" type="string" defaultValue="{{ApiSimpleProduct.name}}"/>
+            <argument name="productName" type="string" defaultValue=""/>
             <argument name="productQty" type="string" defaultValue="1"/>
-            <argument name="productPrice" type="string" defaultValue="{{ApiSimpleProduct.price}}"/>
+            <argument name="productPrice" type="string" defaultValue=""/>
         </arguments>
 
         <waitForElementVisible selector="{{StorefrontBoldCheckoutCartItemsSection.cartItems}}" stepKey="waitForCartItemsVisible"/>

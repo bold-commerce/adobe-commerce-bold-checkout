@@ -11,11 +11,14 @@
 
         <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.creditCardInfoForm}}" stepKey="waitForCreditCardInfoFormVisible"/>
         <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.creditCardNumberIFrame}}" stepKey="switchToCreditCardNumberIFrame"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.creditCardNumberField}}" stepKey="waitForCreditCardNumberFieldVisible"/>
         <fillField userInput="{{cardData.number}}" selector="{{StorefrontBoldCheckoutPaymentSection.creditCardNumberField}}" stepKey="fillCreditCardNumberField"/>
         <switchToIFrame stepKey="switchOutFromCreditCardNumberIFrame"/>
         <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.paymentIFrame}}" stepKey="switchToPaymentIFrame"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.creditCardExpirationDateField}}" stepKey="waitForCreditCardExpirationDateFieldVisible"/>
         <fillField userInput="{{cardData.expMonth}} {{cardData.expYear}}" selector="{{StorefrontBoldCheckoutPaymentSection.creditCardExpirationDateField}}" stepKey="fillCreditCardExpirationDateField"/>
         <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.creditCardCvvIFrame}}" stepKey="switchToCreditCardCvvIFrame"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.creditCardCvvField}}" stepKey="waitForCreditCardCvvFieldVisible"/>
         <fillField userInput="{{cardData.cvv}}" selector="{{StorefrontBoldCheckoutPaymentSection.creditCardCvvField}}" stepKey="fillCreditCardCvvField"/>
         <switchToIFrame stepKey="switchOutFromCreditCardCvvIFrame"/>
     </actionGroup>
