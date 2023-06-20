@@ -12,7 +12,7 @@
         <data key="path">checkout/bold_checkout_base/type</data>
         <data key="standard">0</data>
         <data key="parallel">1</data>
-        <data key="self-hosted">2</data>
+        <data key="selfHosted">2</data>
     </entity>
 
     <entity name="BoldCheckoutBaseApiTokenConfigData">
@@ -29,8 +29,8 @@
     <entity name="BoldCheckoutAdvancedEnabledForConfigData">
         <data key="path">checkout/bold_checkout_advanced/enabled_for</data>
         <data key="all">0</data>
-        <data key="specific-ips">1</data>
-        <data key="specific-customers">2</data>
-        <data key="percentage-of-orders">3</data>
+        <data key="specificIps">1</data>
+        <data key="specificCustomers">2</data>
+        <data key="percentageOfOrders">3</data>
     </entity>
 </entities>

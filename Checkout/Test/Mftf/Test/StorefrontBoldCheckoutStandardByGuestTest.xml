@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="StorefrontBoldCheckoutByGuestTest">
+    <test name="StorefrontBoldCheckoutStandardByGuestTest">
         <annotations>
             <features value="Bold Checkout"/>
             <stories value="Checkout as Guest"/>
-            <title value="Checking placing order by Guest via Bold Checkout"/>
-            <description value="Guest should be able to place an order via Bold Checkout"/>
+            <title value="Checking placing order by Guest via standard Bold Checkout type"/>
+            <description value="Guest should be able to place an order via standard Bold Checkout type"/>
             <severity value="MAJOR"/>
-            <group value="bold_checkout"/>
             <group value="bold_checkout_standard"/>
         </annotations>
         <before>
