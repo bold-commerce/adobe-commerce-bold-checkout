@@ -10,7 +10,9 @@ use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Exception;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
 use Magento\InventorySalesApi\Api\StockResolverInterface;
@@ -151,7 +153,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $stockResolver = $this->getStockResolverService();
         try {
             return ($getProductSalableQty && $stockResolver)
-                ? $this->getSalableQuantity($item)
+                ? $this->getSalableQuantity($getProductSalableQty, $stockResolver, $item)
                 : $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty();
         } catch (Exception $e) {
             return 0;
@@ -161,19 +163,19 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     /**
      * Get product salable qty.
      *
+     * @param GetProductSalableQtyInterface $getProductSalableQty
+     * @param StockResolverInterface $stockResolver
      * @param CartItemInterface $item
      * @return float
      * @throws LocalizedException
-     * @throws \Magento\Framework\Exception\InputException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws InputException
+     * @throws NoSuchEntityException
      */
-    private function getSalableQuantity(CartItemInterface $item): float
-    {
-        $getProductSalableQty = $this->getProductSalableQtyService();
-        $stockResolver = $this->getStockResolverService();
-        if (!$getProductSalableQty || !$stockResolver) {
-            return 0.0;
-        }
+    private function getSalableQuantity(
+        GetProductSalableQtyInterface $getProductSalableQty,
+        StockResolverInterface        $stockResolver,
+        CartItemInterface             $item
+    ): float {
         $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
         $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
         $stockId = $stockResolver->execute('website', $websiteCode)->getStockId();
