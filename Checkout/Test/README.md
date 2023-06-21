@@ -58,6 +58,12 @@ To work with MFTF you will need to run the following:
     }
   }
   ```
+- add `"--disable-web-security", "--allow-running-insecure-content"` to `src/dev/tests/acceptance/tests/functional.suite.yml` file at:
+  ```
+  capabilities:
+    chromeOptions:
+      args:  
+  ```
 - install **VNC client** (Remmina)
 - connect with the VNC by `127.0.0.1:5900`, (default password: `secret`)
 - run single test:
