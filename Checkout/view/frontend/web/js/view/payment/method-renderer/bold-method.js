@@ -67,8 +67,8 @@ define(
                 if (!this.customerIsGuest) {
                     this.isVisible(true);
                     this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
-                    this.subscribeToPIGI();
                 }
+                this.subscribeToPIGI();
             },
 
             /**
@@ -113,7 +113,8 @@ define(
                 if (!this.customerIsGuest) {
                     return;
                 }
-                boldClient.post('customer/guest', 'customer').then(function () {
+                boldClient.post('customer/guest', 'customer').then(
+                    function () {
                         this.messageContainer.errorMessages([]);
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
@@ -123,9 +124,9 @@ define(
                     function () {
                         this.isVisible(true);
                         this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
-                        this.subscribeToPIGI();
                     }.bind(this)
-                ).catch(function () {
+                ).catch(
+                    function () {
                         this.messageContainer.errorMessages(
                             [
                                 'Please verify your email and try again.'
@@ -189,18 +190,22 @@ define(
              */
             syncBillingData() {
                 this.sendGuestCustomerInfo();
-                boldClient.post('addresses/billing', 'address').then(function () {
-                    this.messageContainer.errorMessages([]);
-                    if (this.iframeWindow) {
-                        this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
-                    }
-                }.bind(this)).catch(function () {
-                    this.messageContainer.errorMessages(
-                        [
-                            'Please verify your billing information and try again.'
-                        ]
-                    );
-                }.bind(this));
+                boldClient.post('addresses/billing', 'address').then(
+                    function () {
+                        this.messageContainer.errorMessages([]);
+                        if (this.iframeWindow) {
+                            this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+                        }
+                    }.bind(this)
+                ).catch(
+                    function () {
+                        this.messageContainer.errorMessages(
+                            [
+                                'Please verify your billing information and try again.'
+                            ]
+                        );
+                    }.bind(this)
+                );
             },
         });
     });

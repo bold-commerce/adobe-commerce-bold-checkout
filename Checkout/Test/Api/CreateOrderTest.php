@@ -187,21 +187,6 @@ class CreateOrderTest extends WebapiAbstract
         return [
             'order' => [
                 'quoteId' => $this->quote->getId(),
-                'billingAddress' => [
-                    'city' => 'Culver City',
-                    'company' => '',
-                    'country_id' => 'US',
-                    'email' => 'customer@example.com',
-                    'firstname' => 'John',
-                    'lastname' => 'Doe',
-                    'telephone' => '555-55-555-55',
-                    'postcode' => '90230',
-                    'region' => 'California',
-                    'region_code' => 'CA',
-                    'street' => [
-                        'West Centinela Avenue',
-                    ],
-                ],
                 'browserIp' => '',
                 'publicId' => 'test_bold_order_public_id',
                 'financialStatus' => 'pending',
