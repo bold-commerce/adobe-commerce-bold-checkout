@@ -10,11 +10,15 @@ use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Exception;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
+use Magento\InventorySalesApi\Api\StockResolverInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Throwable;
 
 /**
@@ -53,12 +57,18 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private $objectManager;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ObjectManagerInterface $objectManager
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param InventoryDataInterfaceFactory $inventoryDataFactory
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
@@ -66,7 +76,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         ObjectManagerInterface $objectManager,
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory,
-        InventoryDataInterfaceFactory $inventoryDataFactory
+        InventoryDataInterfaceFactory $inventoryDataFactory,
+        StoreManagerInterface $storeManager
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
@@ -74,6 +85,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $this->errorFactory = $errorFactory;
         $this->inventoryDataFactory = $inventoryDataFactory;
         $this->objectManager = $objectManager;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -138,13 +150,37 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private function getSalableQty(CartItemInterface $item): float
     {
         $getProductSalableQty = $this->getProductSalableQtyService();
+        $stockResolver = $this->getStockResolverService();
         try {
-            return $getProductSalableQty
-                ? $getProductSalableQty->execute($item['product']['sku'], $item->getStoreId())
+            return ($getProductSalableQty && $stockResolver)
+                ? $this->getSalableQuantity($getProductSalableQty, $stockResolver, $item)
                 : $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty();
         } catch (Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * Get product salable qty.
+     *
+     * @param GetProductSalableQtyInterface $getProductSalableQty
+     * @param StockResolverInterface $stockResolver
+     * @param CartItemInterface $item
+     * @return float
+     * @throws LocalizedException
+     * @throws InputException
+     * @throws NoSuchEntityException
+     */
+    private function getSalableQuantity(
+        GetProductSalableQtyInterface $getProductSalableQty,
+        StockResolverInterface        $stockResolver,
+        CartItemInterface             $item
+    ): float {
+        $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
+        $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
+        $stockId = $stockResolver->execute('website', $websiteCode)->getStockId();
+
+        return $getProductSalableQty->execute($item['product']['sku'], $stockId);
     }
 
     /**
@@ -160,5 +196,20 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
             $getProductSalableQty = null;
         }
         return $getProductSalableQty;
+    }
+
+    /**
+     * Try to build StockResolverInterface. If it's not possible, return null.
+     *
+     * @return StockResolverInterface|null
+     */
+    public function getStockResolverService(): ?StockResolverInterface
+    {
+        try {
+            $stockResolver = $this->objectManager->get(StockResolverInterface::class);
+        } catch (Throwable $e) {
+            $stockResolver = null;
+        }
+        return $stockResolver;
     }
 }
