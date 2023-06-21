@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutSelectShippingMethodActionGroup">
+        <annotations>
+            <description>Selects shipping method by its name.</description>
+        </annotations>
+        <arguments>
+            <argument name="shippingMethodName" type="string" defaultValue="Flat Rate - Fixed"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutShippingLinesSection.shippingLines}}" stepKey="waitForShippingLinesVisible"/>
+        <checkOption selector="{{StorefrontBoldCheckoutShippingLinesSection.shippingItemRadioByName(shippingMethodName)}}" stepKey="selectShippingMethod"/>
+    </actionGroup>
+</actionGroups>

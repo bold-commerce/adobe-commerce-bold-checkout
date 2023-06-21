@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
+    <page name="StorefrontBoldCheckoutPage"
+          url="https://checkout.boldcommerce.com/bold_platform/{{shopDomain}}/experience/{{stepPath}}"
+          area="external"
+          parameterized="true"
+          module="Bold_Checkout">
+        <section name="StorefrontBoldCheckoutSection"/>
+        <section name="StorefrontBoldCheckoutHeaderSection"/>
+        <section name="StorefrontBoldCheckoutBreadcrumbsSection"/>
+        <section name="StorefrontBoldCheckoutCustomerInfoSection"/>
+        <section name="StorefrontBoldCheckoutShippingAddressSection"/>
+        <section name="StorefrontBoldCheckoutBillingAddressSection"/>
+        <section name="StorefrontBoldCheckoutShippingLinesSection"/>
+        <section name="StorefrontBoldCheckoutPaymentSection"/>
+        <section name="StorefrontBoldPaymentCreditCardSection"/>
+        <section name="StorefrontBoldCheckoutThankYouSection"/>
+        <section name="StorefrontBoldCheckoutOrderRecapSection"/>
+        <section name="StorefrontBoldCheckoutFormControlsSection"/>
+        <!-- Summary -->
+        <section name="StorefrontBoldCheckoutCartItemsSection"/>
+        <section name="StorefrontBoldCheckoutSummaryTotalsSection"/>
+    </page>
+</pages>

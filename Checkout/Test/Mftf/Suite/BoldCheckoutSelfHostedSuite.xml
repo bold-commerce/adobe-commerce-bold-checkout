@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Suite/etc/suiteSchema.xsd">
+    <suite name="BoldCheckoutSelfHostedSuite">
+        <before>
+            <!-- Enable Bold Checkout integration -->
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutBaseEnabledConfigData.path}} {{BoldCheckoutBaseEnabledConfigData.enable}}" stepKey="enableBoldCheckoutIntegration"/>
+            <!-- Set Bold Checkout type to Self-Hosted -->
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutBaseTypeConfigData.path}} {{BoldCheckoutBaseTypeConfigData.selfHosted}}" stepKey="setBoldCheckoutTypeToSelfHostedConfig"/>
+            <!-- Set Bold Checkout API Token -->
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutBaseApiTokenConfigData.path}} {{BoldCheckoutBaseApiTokenConfigData.value}}" stepKey="setBoldCheckoutApiTokenConfig"/>
+            <!-- Set Bold Checkout integration callback URL -->
+            <magentoCLI command="config:set --scope=websites --scope-code=base {{BoldCheckoutBaseIntegrationCallbackUrlConfigData.path}} {{BoldCheckoutBaseIntegrationCallbackUrlConfigData.value}}" stepKey="setBoldCheckoutIntegrationCallbackUrlConfig"/>
+        </before>
+        <after>
+        </after>
+        <include>
+            <group name="bold_checkout_self-hosted"/>
+        </include>
+    </suite>
+</suites>

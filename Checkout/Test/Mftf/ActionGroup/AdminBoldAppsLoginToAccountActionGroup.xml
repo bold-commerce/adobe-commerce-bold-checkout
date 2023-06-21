@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminBoldAppsLoginToAccountActionGroup">
+        <annotations>
+            <description>Log in to the Bold Account Center.</description>
+        </annotations>
+        <arguments>
+            <argument name="email" type="string" defaultValue="{{_ENV.BOLD_ACCOUNT_EMAIL}}"/>
+            <argument name="password" type="string" defaultValue="{{_ENV.BOLD_ACCOUNT_PASSWORD}}"/>
+            <argument name="pageTitle" type="string" defaultValue="Launchpad"/>
+        </arguments>
+
+        <amOnUrl url="{{AdminBoldAppsWelcomePage.url}}" stepKey="goToBoldAppsWelcomePage"/>
+        <waitForElementVisible selector="{{AdminBoldAppsLoginFormSection.loginForm}}" stepKey="waitForLoginFormVisible"/>
+        <fillField userInput="{{email}}" selector="{{AdminBoldAppsLoginFormSection.emailField}}" stepKey="fillEmailField"/>
+        <fillField userInput="{{password}}" selector="{{AdminBoldAppsLoginFormSection.passwordField}}" stepKey="fillPasswordField"/>
+        <click selector="{{AdminBoldAppsLoginFormSection.loginButton}}" stepKey="clickOnLoginButton"/>
+        <!-- If shop selection is appeared, select the shop -->
+        <conditionalClick selector="{{AdminBoldAppsLoginShopSelectionSection.shopSelectionItemByDomain(_ENV.BOLD_CHECKOUT_SHOP_DOMAIN)}}" dependentSelector="{{AdminBoldAppsLoginShopSelectionSection.shopSelectionItemByDomain(_ENV.BOLD_CHECKOUT_SHOP_DOMAIN)}}" visible="true" stepKey="selectShop"/>
+        <conditionalClick selector="{{AdminBoldAppsLoginShopSelectionSection.continueButton}}" dependentSelector="{{AdminBoldAppsLoginShopSelectionSection.continueButton}}" visible="true" stepKey="clickOnContinueButton"/>
+        <waitForElementVisible selector="{{AdminBoldAppsSection.pageTitle}}" stepKey="waitForPageTitleVisible"/>
+        <see userInput="{{pageTitle}}" selector="{{AdminBoldAppsSection.pageTitle}}" stepKey="assertPageTitle"/>
+    </actionGroup>
+</actionGroups>

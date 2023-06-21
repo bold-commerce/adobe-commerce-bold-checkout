@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutGetPlatformOrderIdActionGroup">
+        <annotations>
+            <description>Retrieves platform order ID by public Order ID.</description>
+        </annotations>
+        <arguments>
+            <argument name="publicOrderId" type="string" defaultValue=""/>
+        </arguments>
+
+        <wait time="5" stepKey="waitForGettingDataFromPlatform"/>
+        <executeJS function="
+            let publicOrderId='{{publicOrderId}}';
+            fetch('https://api.boldcommerce.com/checkout/orders/{{_ENV.BOLD_CHECKOUT_SHOP_DOMAIN}}/' + publicOrderId, {
+                method: 'GET',
+                headers: {
+                    'Authorization': '{{_ENV.BOLD_CHECKOUT_API_TOKEN}}'
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                let hiddenInput = document.createElement('input');
+                let platformOrderId = data.data.application_state.platform_order_id;
+                hiddenInput.type = 'hidden';
+                hiddenInput.id = 'temporary-hidden-input';
+                hiddenInput.value = platformOrderId;
+                document.body.appendChild(hiddenInput);
+            })
+            .catch((error) => console.log('There was an error:', error));
+        " stepKey="createTemporaryHiddenInputWithData"/>
+        <wait time="10" stepKey="waitForAppendingDataToHiddenInput"/>
+        <executeJS function="
+            let hiddenInput = document.getElementById('temporary-hidden-input');
+            if(hiddenInput) {
+                let hiddenValue = hiddenInput.value;
+                console.log(hiddenValue);
+                return hiddenValue;
+            } else {
+                console.log('The hidden input does not exist.');
+            }
+        " stepKey="get"/>
+    </actionGroup>
+</actionGroups>

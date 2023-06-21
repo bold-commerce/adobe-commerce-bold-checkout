@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminBoldAppsLaunchpadSection">
+        <element name="openButton" type="button" selector="//h2[contains(@class, 'app-card__name') and contains(text(), '{{appName}}')]//ancestor::div[contains(@class, 'bv-card app-card')]//button[contains(@class, 'installed-app-card__open-button')]" parameterized="true"/>
+    </section>
+</sections>

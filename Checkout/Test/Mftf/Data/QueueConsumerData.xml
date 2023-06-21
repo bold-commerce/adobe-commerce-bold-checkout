@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="BoldCheckoutSyncCategoriesConsumerData">
+        <data key="consumerName">bold.checkout.sync.categories</data>
+        <data key="messageLimit">1</data>
+    </entity>
+
+    <entity name="BoldCheckoutSyncProductsConsumerData">
+        <data key="consumerName">bold.checkout.sync.products</data>
+        <data key="messageLimit">1</data>
+    </entity>
+
+    <entity name="BoldCheckoutSyncCustomersConsumerData">
+        <data key="consumerName">bold.checkout.sync.customers</data>
+        <data key="messageLimit">1</data>
+    </entity>
+</entities>

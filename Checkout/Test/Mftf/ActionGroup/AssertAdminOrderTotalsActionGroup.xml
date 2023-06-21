@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminOrderTotalsActionGroup">
+        <annotations>
+            <description>Validates order totals.</description>
+        </annotations>
+        <arguments>
+            <argument name="currencySymbol" type="string" defaultValue="$"/>
+            <argument name="subtotal" type="string" defaultValue=""/>
+            <argument name="shippingPrice" type="string" defaultValue="5.00"/>
+            <argument name="grandTotal" type="string" defaultValue=""/>
+            <argument name="totalPaid" type="string" defaultValue="0.00"/>
+            <argument name="totalRefunded" type="string" defaultValue="0.00"/>
+            <argument name="totalDue" type="string" defaultValue=""/>
+        </arguments>
+
+        <scrollTo selector="{{AdminOrderTotalsSection.subTotal}}" stepKey="scrollToOrderTotalsSection"/>
+        <see userInput="{{currencySymbol}}{{subtotal}}" selector="{{AdminOrderTotalsSection.subTotal}}" stepKey="assertOrderSubtotal"/>
+        <see userInput="{{currencySymbol}}{{shippingPrice}}" selector="{{AdminOrderTotalsSection.shippingAndHandling}}" stepKey="assertOrderShippingAndHandling"/>
+        <see userInput="{{currencySymbol}}{{grandTotal}}" selector="{{AdminOrderTotalsSection.grandTotal}}" stepKey="assertOrderGrandTotal"/>
+        <see userInput="{{currencySymbol}}{{totalPaid}}" selector="{{AdminOrderTotalsSection.totalPaid}}" stepKey="assertOrderTotalPaid"/>
+        <see userInput="{{currencySymbol}}{{totalRefunded}}" selector="{{AdminOrderTotalsSection.totalRefunded}}" stepKey="assertOrderTotalRefunded"/>
+        <see userInput="{{currencySymbol}}{{totalDue}}" selector="{{AdminOrderTotalsSection.totalDue}}" stepKey="assertOrderTotalDue"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminBoldAppsLoginFormSection">
+        <element name="loginForm" type="block" selector=".welcome-forms__card-login form.login-form-container"/>
+        <element name="emailField" type="input" selector="form.login-form-container input#email"/>
+        <element name="passwordField" type="input" selector="form.login-form-container input#password"/>
+        <element name="loginButton" type="button" selector="form.login-form-container button.login-form-submit__button" timeout="5"/>
+    </section>
+</sections>

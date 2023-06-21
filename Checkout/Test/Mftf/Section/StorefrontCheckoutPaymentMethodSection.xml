@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCheckoutPaymentMethodSection">
+        <element name="paymentMethodItemByCode" type="block" selector="//input[@name='payment[method]' and @value='{{paymentMethodCode}}']//../.." parameterized="true"/>
+        <element name="paymentMethodRadioByCode" type="radio" selector="//input[@name='payment[method]' and @value='{{paymentMethodCode}}']" parameterized="true"/>
+    </section>
+</sections>

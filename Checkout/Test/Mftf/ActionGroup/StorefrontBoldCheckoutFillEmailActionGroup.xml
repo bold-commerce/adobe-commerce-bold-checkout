@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutFillEmailActionGroup">
+        <annotations>
+            <description>Fills email address at Customer information section.</description>
+        </annotations>
+        <arguments>
+            <argument name="email" type="string" defaultValue="{{Guest.email}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutCustomerInfoSection.customerInfo}}" stepKey="waitForCustomerInfoVisible"/>
+        <fillField userInput="{{email}}" selector="{{StorefrontBoldCheckoutCustomerInfoSection.emailAddressField}}" stepKey="fillEmailAddressField"/>
+    </actionGroup>
+</actionGroups>

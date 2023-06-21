@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminBoldAppsOpenAppActionGroup">
+        <annotations>
+            <description>Clicks on the open button of provided app.</description>
+        </annotations>
+        <arguments>
+            <argument name="appName" type="string" defaultValue="Checkout"/>
+            <argument name="pageTitle" type="string" defaultValue="Home"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminBoldAppsLaunchpadSection.openButton(appName)}}" stepKey="waitForAppOpenButtonVisible"/>
+        <click selector="{{AdminBoldAppsLaunchpadSection.openButton(appName)}}" stepKey="clickOnAppOpenButton"/>
+        <waitForElementVisible selector="{{AdminBoldCashierHeaderSection.pageTitle}}" stepKey="waitForAppPageTitleVisible"/>
+        <see userInput="{{pageTitle}}" selector="{{AdminBoldCashierHeaderSection.pageTitle}}" stepKey="assertAppPageTitle"/>
+    </actionGroup>
+</actionGroups>

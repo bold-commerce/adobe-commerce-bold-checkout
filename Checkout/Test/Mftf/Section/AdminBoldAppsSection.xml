@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminBoldAppsSection">
+        <element name="pageTitle" type="text" selector=".ac-container h1.bv-page__title"/>
+    </section>
+</sections>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <!-- Bold Checkout Integration -->
+    <entity name="BoldCheckoutBaseEnabledConfigData">
+        <data key="path">checkout/bold_checkout_base/enabled</data>
+        <data key="enable">1</data>
+        <data key="disable">0</data>
+    </entity>
+
+    <entity name="BoldCheckoutBaseTypeConfigData">
+        <data key="path">checkout/bold_checkout_base/type</data>
+        <data key="standard">0</data>
+        <data key="parallel">1</data>
+        <data key="selfHosted">2</data>
+    </entity>
+
+    <entity name="BoldCheckoutBaseApiTokenConfigData">
+        <data key="path">checkout/bold_checkout_base/api_token</data>
+        <data key="value">{{_ENV.BOLD_CHECKOUT_API_TOKEN}}</data>
+    </entity>
+
+    <entity name="BoldCheckoutBaseIntegrationCallbackUrlConfigData">
+        <data key="path">checkout/bold_checkout_base/integration_callback_url</data>
+        <data key="value">https://adobe-commerce-connector.boldapps.net/platform/oauth/callback/{{_ENV.BOLD_CHECKOUT_SHOP_ID}}</data>
+    </entity>
+
+    <!-- Bold Checkout Integration Advanced Setting -->
+    <entity name="BoldCheckoutAdvancedEnabledForConfigData">
+        <data key="path">checkout/bold_checkout_advanced/enabled_for</data>
+        <data key="all">0</data>
+        <data key="specificIps">1</data>
+        <data key="specificCustomers">2</data>
+        <data key="percentageOfOrders">3</data>
+    </entity>
+
+    <entity name="BoldCheckoutAdvancedCustomerWhitelistConfigData">
+        <data key="path">checkout/bold_checkout_advanced/customer_whitelist</data>
+    </entity>
+</entities>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutOrderRecapSection">
+        <element name="orderRecap" type="block" selector="div.order-recap__container"/>
+        <!-- Address -->
+        <element name="firstnameByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-first-name']" parameterized="true"/>
+        <element name="lastnameByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-last-name']" parameterized="true"/>
+        <element name="line1ByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-line-1']" parameterized="true"/>
+        <element name="line2ByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-line-2']" parameterized="true"/>
+        <element name="cityByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-city']" parameterized="true"/>
+        <element name="stateCodeByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-province-code']" parameterized="true"/>
+        <element name="postcodeByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-postal-code']" parameterized="true"/>
+        <element name="countryByAddressType" type="text" selector="[data-testid='display-{{addressType}}-address-country']" parameterized="true"/>
+        <!-- Shipping method -->
+        <element name="shippingMethodName" type="text" selector="[data-testid='display-item-shipping-method-content']"/>
+        <!-- Payment method -->
+        <element name="cardBrandName" type="text" selector="span.card-type__brand-name"/>
+        <element name="cardLastFourDigits" type="text" selector="span.card-type__last-four-digits"/>
+    </section>
+</sections>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminBoldCashierOpenPageByUrlPathActionGroup">
+        <annotations>
+            <description>Opens Bold Cashier page by its URL path.</description>
+        </annotations>
+        <arguments>
+            <argument name="urlPath" type="string" defaultValue=""/>
+            <argument name="pageTitle" type="string" defaultValue="Home"/>
+        </arguments>
+
+        <amOnUrl url="{{AdminBoldCashierPage.url(urlPath)}}" stepKey="goToBoldCashierPage"/>
+        <waitForElementVisible selector="{{AdminBoldCashierHeaderSection.pageTitle}}" stepKey="waitForPageTitleVisible"/>
+        <see userInput="{{pageTitle}}" selector="{{AdminBoldCashierHeaderSection.pageTitle}}" stepKey="assertPageTitle"/>
+    </actionGroup>
+</actionGroups>

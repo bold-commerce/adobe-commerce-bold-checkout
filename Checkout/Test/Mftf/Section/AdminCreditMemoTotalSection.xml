@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCreditMemoTotalSection">
+        <element name="refundButton" type="button"  selector=".order-totals-actions button[data-ui-id='order-items-submit-button']" timeout="30"/>
+        <element name="refundOfflineButton" type="button"  selector=".order-totals-actions button[data-ui-id='order-items-submit-offline']" timeout="30"/>
+    </section>
+</sections>

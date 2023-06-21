@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutBillingAddressSection">
+        <!-- Billing address switcher elements -->
+        <element name="sameAsShippingRadio" type="radio" selector=".billing-address .shipping-same input"/>
+        <element name="useDifferentAddressRadio" type="radio" selector=".billing-address .shipping-different input"/>
+        <!-- Form elements -->
+        <element name="firstNameField" type="input" selector=".billing-address input#billing-address__first_name"/>
+        <element name="lastNameField" type="input" selector=".billing-address input#billing-address__last_name"/>
+        <element name="companyField" type="input" selector=".billing-address input#billing-address__business_name"/>
+        <element name="addressLine1Field" type="input" selector=".billing-address input#billing-address__address_line_1"/>
+        <element name="addressLine2Field" type="input" selector=".billing-address input#billing-address__address_line_2"/>
+        <element name="cityField" type="input" selector=".billing-address input#billing-address__city"/>
+        <element name="countrySelect" type="select" selector=".billing-address select#billing-address__country"/>
+        <element name="stateSelect" type="select" selector=".billing-address select#billing-address__province"/>
+        <element name="postalCodeField" type="input" selector=".billing-address input#billing-address__postal_code"/>
+        <element name="phoneField" type="input" selector=".billing-address input#billing-address__phone_number"/>
+    </section>
+</sections>

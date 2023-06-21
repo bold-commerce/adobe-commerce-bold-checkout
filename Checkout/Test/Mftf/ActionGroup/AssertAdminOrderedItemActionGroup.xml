@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminOrderedItemActionGroup">
+        <annotations>
+            <description>Validates product info in items ordered table.</description>
+        </annotations>
+        <arguments>
+            <argument name="rowNumber" type="string" defaultValue="1"/>
+            <argument name="currencySymbol" type="string" defaultValue="$"/>
+            <argument name="name" type="string" defaultValue=""/>
+            <argument name="sku" type="string" defaultValue=""/>
+            <argument name="status" type="string" defaultValue="Ordered"/>
+            <argument name="price" type="string" defaultValue=""/>
+            <argument name="qtyWithStatus" type="string" defaultValue="Ordered 1"/>
+            <argument name="subtotal" type="string" defaultValue=""/>
+            <argument name="taxAmount" type="string" defaultValue="0.00"/>
+            <argument name="taxPercent" type="string" defaultValue="0"/>
+            <argument name="discountAmount" type="string" defaultValue="0.00"/>
+            <argument name="rowTotal" type="string" defaultValue=""/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.itemsOrdered}}" stepKey="waitForItemsOrderedVisible"/>
+        <see userInput="{{name}}" selector="{{AdminOrderItemsOrderedSection.itemProductName(rowNumber)}}" stepKey="assertOrderedItemName"/>
+        <see userInput="{{sku}}" selector="{{AdminOrderItemsOrderedSection.itemProductSku(rowNumber)}}" stepKey="assertOrderedItemSku"/>
+        <see userInput="{{status}}" selector="{{AdminOrderItemsOrderedSection.itemStatus(rowNumber)}}" stepKey="assertOrderedItemStatus"/>
+        <see userInput="{{currencySymbol}}{{price}}" selector="{{AdminOrderItemsOrderedSection.itemPrice(rowNumber)}}" stepKey="assertOrderedItemPrice"/>
+        <see userInput="{{qtyWithStatus}}" selector="{{AdminOrderItemsOrderedSection.itemQty(rowNumber)}}" stepKey="assertOrderedItemQty"/>
+        <see userInput="{{currencySymbol}}{{subtotal}}" selector="{{AdminOrderItemsOrderedSection.itemSubtotal(rowNumber)}}" stepKey="assertOrderedItemSubtotal"/>
+        <see userInput="{{currencySymbol}}{{taxAmount}}" selector="{{AdminOrderItemsOrderedSection.itemTaxAmount(rowNumber)}}" stepKey="assertOrderedItemTaxAmount"/>
+        <see userInput="{{taxPercent}}" selector="{{AdminOrderItemsOrderedSection.itemTaxPercent(rowNumber)}}" stepKey="assertOrderedItemTaxPercent"/>
+        <see userInput="{{currencySymbol}}{{discountAmount}}" selector="{{AdminOrderItemsOrderedSection.itemDiscountAmount(rowNumber)}}" stepKey="assertOrderedItemDiscountAmount"/>
+        <see userInput="{{currencySymbol}}{{rowTotal}}" selector="{{AdminOrderItemsOrderedSection.itemTotal(rowNumber)}}" stepKey="assertOrderedItemRowTotal"/>
+    </actionGroup>
+</actionGroups>

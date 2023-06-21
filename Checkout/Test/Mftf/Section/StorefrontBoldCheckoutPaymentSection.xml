@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontBoldCheckoutPaymentSection">
+        <element name="payment" type="block" selector=".payment .payment__block"/>
+        <element name="paymentIFrame" type="iframe" selector=".payment .payment__block iframe.payment__iframe"/>
+        <element name="paymentItemByCodeCheckbox" type="block" selector="//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
+        <element name="paymentItemByCodeCheckboxInActive" type="block" selector="//input[@value='{{paymentMethodCode}}']//ancestor::div[contains(@class, 'TogglePanelGroup PaymentMethods')]/div[not(contains(@class, 'TogglePanel--alt'))]//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
+        <element name="paymentItemByCodeCheckboxActive" type="block" selector="//input[@value='{{paymentMethodCode}}']//ancestor::div[contains(@class, 'TogglePanelGroup PaymentMethods')]/div[contains(@class, 'TogglePanel--alt')]//input[@value='{{paymentMethodCode}}']" parameterized="true"/>
+    </section>
+</sections>

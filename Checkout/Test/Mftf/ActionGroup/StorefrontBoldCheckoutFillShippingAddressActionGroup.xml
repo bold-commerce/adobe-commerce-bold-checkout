@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutFillShippingAddressActionGroup">
+        <annotations>
+            <description>Fills shipping address form.</description>
+        </annotations>
+        <arguments>
+            <argument name="firstname" type="string" defaultValue="{{US_Address_CA.firstname}}"/>
+            <argument name="lastname" type="string" defaultValue="{{US_Address_CA.lastname}}"/>
+            <argument name="company" type="string" defaultValue=""/>
+            <argument name="addressLine1" type="string" defaultValue="{{US_Address_CA.street[0]}}"/>
+            <argument name="addressLine2" type="string" defaultValue=""/>
+            <argument name="city" type="string" defaultValue="{{US_Address_CA.city}}"/>
+            <argument name="country" type="string" defaultValue="{{US_Address_CA.country}}"/>
+            <argument name="state" type="string" defaultValue="{{US_Address_CA.state}}"/>
+            <argument name="postcode" type="string" defaultValue="{{US_Address_CA.postcode}}"/>
+            <argument name="phone" type="string" defaultValue="{{US_Address_CA.telephone}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutShippingAddressSection.shippingAddressForm}}" stepKey="waitForShippingAddressFormVisible"/>
+        <fillField userInput="{{firstname}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.firstNameField}}" stepKey="fillFirstnameField"/>
+        <fillField userInput="{{lastname}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.lastNameField}}" stepKey="fillLastnameField"/>
+        <fillField userInput="{{company}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.companyField}}" stepKey="fillCompanyField"/>
+        <fillField userInput="{{addressLine1}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.addressLine1Field}}" stepKey="fillAddressLine1Field"/>
+        <fillField userInput="{{addressLine2}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.addressLine1Field}}" stepKey="fillAddressLine2Field"/>
+        <fillField userInput="{{city}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.cityField}}" stepKey="fillCityField"/>
+        <selectOption userInput="{{country}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.countrySelect}}" stepKey="selectCountyOption"/>
+        <selectOption userInput="{{state}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.stateSelect}}" stepKey="selectStateOption"/>
+        <fillField userInput="{{postcode}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.postcodeField}}" stepKey="fillPostcodeField"/>
+        <fillField userInput="{{phone}}" selector="{{StorefrontBoldCheckoutShippingAddressSection.phoneField}}" stepKey="fillPhoneField"/>
+    </actionGroup>
+</actionGroups>

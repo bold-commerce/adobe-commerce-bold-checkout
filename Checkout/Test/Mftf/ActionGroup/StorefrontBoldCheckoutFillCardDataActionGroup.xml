@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutFillCardDataActionGroup">
+        <annotations>
+            <description>Fills Credit Card Data on Bold Checkout page.</description>
+        </annotations>
+        <arguments>
+            <argument name="cardData" defaultValue="VisaCardData"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldPaymentCreditCardSection.creditCardInfoForm}}" stepKey="waitForCreditCardInfoFormVisible"/>
+        <switchToIFrame selector="{{StorefrontBoldPaymentCreditCardSection.creditCardNumberIFrame}}" stepKey="switchToCreditCardNumberIFrame"/>
+        <waitForElementVisible selector="{{StorefrontBoldPaymentCreditCardSection.creditCardNumberField}}" stepKey="waitForCreditCardNumberFieldVisible"/>
+        <fillField userInput="{{cardData.number}}" selector="{{StorefrontBoldPaymentCreditCardSection.creditCardNumberField}}" stepKey="fillCreditCardNumberField"/>
+        <switchToIFrame stepKey="switchOutFromCreditCardNumberIFrame"/>
+        <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.paymentIFrame}}" stepKey="switchToPaymentIFrame"/>
+        <waitForElementVisible selector="{{StorefrontBoldPaymentCreditCardSection.creditCardExpirationDateField}}" stepKey="waitForCreditCardExpirationDateFieldVisible"/>
+        <fillField userInput="{{cardData.expMonth}} {{cardData.expYear}}" selector="{{StorefrontBoldPaymentCreditCardSection.creditCardExpirationDateField}}" stepKey="fillCreditCardExpirationDateField"/>
+        <switchToIFrame selector="{{StorefrontBoldPaymentCreditCardSection.creditCardCvvIFrame}}" stepKey="switchToCreditCardCvvIFrame"/>
+        <waitForElementVisible selector="{{StorefrontBoldPaymentCreditCardSection.creditCardCvvField}}" stepKey="waitForCreditCardCvvFieldVisible"/>
+        <fillField userInput="{{cardData.cvv}}" selector="{{StorefrontBoldPaymentCreditCardSection.creditCardCvvField}}" stepKey="fillCreditCardCvvField"/>
+        <switchToIFrame stepKey="switchOutFromCreditCardCvvIFrame"/>
+    </actionGroup>
+</actionGroups>

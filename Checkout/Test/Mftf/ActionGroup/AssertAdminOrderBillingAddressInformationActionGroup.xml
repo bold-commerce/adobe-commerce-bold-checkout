@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminOrderBillingAddressInformationActionGroup">
+        <annotations>
+            <description>Validates order billing address information.</description>
+        </annotations>
+        <arguments>
+            <argument name="firstname" type="string" defaultValue="{{US_Address_CA.firstname}}"/>
+            <argument name="lastname" type="string" defaultValue="{{US_Address_CA.lastname}}"/>
+            <argument name="addressLine1" type="string" defaultValue="{{US_Address_CA.street[0]}}"/>
+            <argument name="addressLine2" type="string" defaultValue=""/>
+            <argument name="city" type="string" defaultValue="{{US_Address_CA.city}}"/>
+            <argument name="state" type="string" defaultValue="{{US_Address_CA.state}}"/>
+            <argument name="postcode" type="string" defaultValue="{{US_Address_CA.postcode}}"/>
+            <argument name="country" type="string" defaultValue="{{US_Address_CA.country}}"/>
+        </arguments>
+
+        <see userInput="{{firstname}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressFirstname"/>
+        <see userInput="{{lastname}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressLastname"/>
+        <see userInput="{{addressLine1}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressLine1"/>
+        <see userInput="{{addressLine2}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressLine2"/>
+        <see userInput="{{city}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressCity"/>
+        <see userInput="{{state}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressState"/>
+        <see userInput="{{postcode}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressPostcode"/>
+        <see userInput="{{country}}" selector="{{AdminOrderAddressInformationSection.billingAddress}}" stepKey="assertBillingAddressCountry"/>
+    </actionGroup>
+</actionGroups>

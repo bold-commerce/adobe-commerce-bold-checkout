@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontBoldCheckoutPageOpenedActionGroup">
+        <annotations>
+            <description>Validates that the Bold Checkout page opened.</description>
+        </annotations>
+        <arguments>
+            <argument name="shopDomain" type="string" defaultValue="{{_ENV.BOLD_CHECKOUT_SHOP_DOMAIN}}"/>
+            <argument name="stepPath" type="string" defaultValue="resume"/>
+            <argument name="breadcrumbName" type="string" defaultValue="Customer information"/>
+        </arguments>
+
+        <waitForElement selector="{{StorefrontBoldCheckoutSection.overlayHidden}}" stepKey="waitForOverlayDisappear"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutSection.checkoutExperience}}" stepKey="waitForCheckoutExperienceContainerVisible"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutHeaderSection.websiteTitle}}" stepKey="waitForWebsiteTitleVisible"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutBreadcrumbsSection.breadcrumbItemByNameActive(breadcrumbName)}}" stepKey="waitForBreadcrumbActiveItemVisible"/>
+        <seeInCurrentUrl url="{{StorefrontBoldCheckoutPage.url(shopDomain, stepPath)}}" stepKey="assertBoldCheckoutPageUrl"/>
+    </actionGroup>
+</actionGroups>

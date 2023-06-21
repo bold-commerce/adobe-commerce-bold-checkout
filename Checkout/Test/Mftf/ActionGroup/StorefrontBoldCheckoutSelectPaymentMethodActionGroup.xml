@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontBoldCheckoutSelectPaymentMethodActionGroup">
+        <annotations>
+            <description>Selects payment method by its name.</description>
+        </annotations>
+        <arguments>
+            <argument name="paymentMethodCode" type="string" defaultValue="credit_card"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.payment}}" stepKey="waitForPaymentSectionVisible"/>
+        <waitForElementVisible selector="{{StorefrontBoldCheckoutPaymentSection.paymentIFrame}}" stepKey="waitForPaymentIFrameVisible"/>
+        <switchToIFrame selector="{{StorefrontBoldCheckoutPaymentSection.paymentIFrame}}" stepKey="switchToPaymentIFrame"/>
+        <conditionalClick selector="{{StorefrontBoldCheckoutPaymentSection.paymentItemByCodeCheckbox(paymentMethodCode)}}" dependentSelector="{{StorefrontBoldCheckoutPaymentSection.paymentItemByCodeCheckboxActive(paymentMethodCode)}}" visible="false" stepKey="selectPaymentMethod"/>
+    </actionGroup>
+</actionGroups>
