@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Payment\Gateway\Command;
 
+use Bold\Checkout\Model\Order\SetIsDelayedCapture;
 use Bold\Checkout\Model\Payment\Gateway\Service;
 use Exception;
 use Magento\Payment\Gateway\CommandInterface;
@@ -18,11 +19,18 @@ class CapturePayment implements CommandInterface
     private $gatewayService;
 
     /**
-     * @param Service $gatewayService
+     * @var SetIsDelayedCapture
      */
-    public function __construct(Service $gatewayService)
+    private $setIsDelayedCapture;
+
+    /**
+     * @param Service $gatewayService
+     * @param SetIsDelayedCapture $setIsDelayedCapture
+     */
+    public function __construct(Service $gatewayService, SetIsDelayedCapture $setIsDelayedCapture)
     {
         $this->gatewayService = $gatewayService;
+        $this->setIsDelayedCapture = $setIsDelayedCapture;
     }
 
     /**
@@ -35,6 +43,7 @@ class CapturePayment implements CommandInterface
         $paymentDataObject = $commandSubject['payment'];
         $payment = $paymentDataObject->getPayment();
         $order = $payment->getOrder();
+        $this->setIsDelayedCapture->set($order);
         $amount = (float)$commandSubject['amount'];
         if ((float)$order->getGrandTotal() === $amount) {
             $payment->setTransactionId($this->gatewayService->captureFull($order))

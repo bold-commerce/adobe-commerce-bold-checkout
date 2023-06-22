@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Order\OrderExtensionData;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
@@ -33,11 +34,6 @@ class ProcessOrder
     private $processOrderPayment;
 
     /**
-     * @var CreateInvoice
-     */
-    private $createInvoice;
-
-    /**
      * @var OrderExtensionData
      */
     private $orderExtensionDataResource;
@@ -55,7 +51,6 @@ class ProcessOrder
     /**
      * @param Order $orderResource
      * @param ProcessOrderPayment $processOrderPayment
-     * @param CreateInvoice $createInvoice
      * @param OrderInterfaceFactory $orderFactory
      * @param AddCommentToOrder $addCommentToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
@@ -64,7 +59,6 @@ class ProcessOrder
     public function __construct(
         Order $orderResource,
         ProcessOrderPayment $processOrderPayment,
-        CreateInvoice $createInvoice,
         OrderInterfaceFactory $orderFactory,
         AddCommentToOrder $addCommentToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
@@ -73,7 +67,6 @@ class ProcessOrder
         $this->orderResource = $orderResource;
         $this->orderFactory = $orderFactory;
         $this->processOrderPayment = $processOrderPayment;
-        $this->createInvoice = $createInvoice;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->addCommentToOrder = $addCommentToOrder;
@@ -84,7 +77,7 @@ class ProcessOrder
      *
      * @param OrderDataInterface $orderPayload
      * @return OrderInterface
-     * @throws LocalizedException
+     * @throws Exception
      */
     public function process(OrderDataInterface $orderPayload): OrderInterface
     {
@@ -107,8 +100,10 @@ class ProcessOrder
         if (!$order->getId()) {
             throw new LocalizedException(__('Order not found'));
         }
-        $this->processOrderPayment->process($order, $orderPayload);
-        $this->createInvoice->create($order);
+        $this->processOrderPayment->process($order,
+            $orderPayload->getPayment(),
+            $orderPayload->getTransaction()
+        );
         $this->addCommentToOrder->addComment($order, $orderPayload);
         $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
         $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());

@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order\PlaceOrder;
 
-use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Magento\Framework\Exception\LocalizedException;
+use Exception;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Api\OrderPaymentRepositoryInterface;
 use Magento\Sales\Api\TransactionRepositoryInterface;
 
@@ -40,43 +41,44 @@ class ProcessOrderPayment
      * Populate magento order payment with bold order payment data.
      *
      * @param OrderInterface $order
-     * @param OrderDataInterface $orderData
+     * @param OrderPaymentInterface $payment
+     * @param TransactionInterface $transaction
      * @return void
-     * @throws LocalizedException|\Exception
+     * @throws Exception
      */
-    public function process(OrderInterface $order, OrderDataInterface $orderData): void
-    {
+    public function process(
+        OrderInterface $order,
+        OrderPaymentInterface $payment,
+        TransactionInterface $transaction
+    ): void {
         $orderPayment = $order->getPayment();
-        if ($orderPayment->getBaseAmountAuthorized() || $orderPayment->getBaseAmountPaid()) {
-            return;
-        }
-        $orderPayment->addData($orderData->getPayment()->getData());
-        $baseAmountOrdered = $orderData->getPayment()->getBaseAmountOrdered()
+        $orderPayment->addData($payment->getData());
+        $baseAmountOrdered = $payment->getBaseAmountOrdered()
             ?: $order->getOrderCurrency()->convert(
-                $orderData->getPayment()->getAmountOrdered(),
+                $payment->getAmountOrdered(),
                 $order->getBaseCurrency()
             );
-        $amountOrdered = $orderData->getPayment()->getAmountOrdered()
+        $amountOrdered = $payment->getAmountOrdered()
             ?: $order->getBaseCurrency()->convert(
                 $baseAmountOrdered,
                 $order->getOrderCurrency()
             );
-        $baseAmountAuthorized = $orderData->getPayment()->getBaseAmountAuthorized()
+        $baseAmountAuthorized = $payment->getBaseAmountAuthorized()
             ?: $order->getOrderCurrency()->convert(
-                $orderData->getPayment()->getAmountAuthorized(),
+                $payment->getAmountAuthorized(),
                 $order->getBaseCurrency()
             );
-        $amountAuthorized = $orderData->getPayment()->getAmountAuthorized()
+        $amountAuthorized = $payment->getAmountAuthorized()
             ?: $order->getBaseCurrency()->convert(
                 $baseAmountAuthorized,
                 $order->getOrderCurrency()
             );
-        $baseAmountPaid = $orderData->getPayment()->getBaseAmountPaid()
+        $baseAmountPaid = $payment->getBaseAmountPaid()
             ?: $order->getOrderCurrency()->convert(
-                $orderData->getPayment()->getAmountPaid(),
+                $payment->getAmountPaid(),
                 $order->getBaseCurrency()
             );
-        $amountPaid = $orderData->getPayment()->getAmountPaid()
+        $amountPaid = $payment->getAmountPaid()
             ?: $order->getBaseCurrency()->convert(
                 $baseAmountPaid,
                 $order->getOrderCurrency()
@@ -87,15 +89,15 @@ class ProcessOrderPayment
         $orderPayment->setAmountAuthorized($amountAuthorized ?: $amountOrdered);
         $orderPayment->setBaseAmountPaid($baseAmountPaid);
         $orderPayment->setAmountPaid($amountPaid);
-        $orderPayment->setTransactionId($orderData->getTransaction()->getTxnId());
-        $transaction = $orderPayment->addTransaction($orderData->getTransaction()->getTxnType());
+        $orderPayment->setTransactionId($transaction->getTxnId());
+        $transaction = $orderPayment->addTransaction($transaction->getTxnType());
         if (!$orderPayment->getIsTransactionClosed()) {
             $transaction->setIsClosed(0);
         }
         $orderPayment->setAdditionalInformation(
             array_merge(
                 $orderPayment->getAdditionalInformation() ?: [],
-                $orderData->getPayment()->getExtensionAttributes()->getAdditionalInformation() ?: []
+                $payment->getExtensionAttributes()->getAdditionalInformation() ?: []
             )
         );
         $this->transactionRepository->save($transaction);
