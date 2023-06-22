@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Order\OrderExtensionData;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
@@ -39,11 +40,6 @@ class CreateOrderFromPayload
     private $processOrderPayment;
 
     /**
-     * @var CreateInvoice
-     */
-    private $createInvoice;
-
-    /**
      * @var OrderExtensionData
      */
     private $orderExtensionDataResource;
@@ -62,7 +58,6 @@ class CreateOrderFromPayload
      * @param Order $orderResource
      * @param CreateOrderFromQuote $createOrderFromQuote
      * @param ProcessOrderPayment $processOrderPayment
-     * @param CreateInvoice $createInvoice
      * @param OrderInterfaceFactory $orderFactory
      * @param AddCommentToOrder $addCommentToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
@@ -72,7 +67,6 @@ class CreateOrderFromPayload
         Order $orderResource,
         CreateOrderFromQuote $createOrderFromQuote,
         ProcessOrderPayment $processOrderPayment,
-        CreateInvoice $createInvoice,
         OrderInterfaceFactory $orderFactory,
         AddCommentToOrder $addCommentToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
@@ -82,7 +76,6 @@ class CreateOrderFromPayload
         $this->orderFactory = $orderFactory;
         $this->createOrderFromQuote = $createOrderFromQuote;
         $this->processOrderPayment = $processOrderPayment;
-        $this->createInvoice = $createInvoice;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->addCommentToOrder = $addCommentToOrder;
@@ -94,7 +87,7 @@ class CreateOrderFromPayload
      * @param OrderDataInterface $orderPayload
      * @param CartInterface $quote
      * @return OrderInterface
-     * @throws LocalizedException
+     * @throws Exception
      */
     public function createOrder(OrderDataInterface $orderPayload, CartInterface $quote): OrderInterface
     {
@@ -110,8 +103,11 @@ class CreateOrderFromPayload
             return $magentoOrder;
         }
         $magentoOrder = $this->createOrderFromQuote->create($quote, $orderPayload);
-        $this->processOrderPayment->process($magentoOrder, $orderPayload);
-        $this->createInvoice->create($magentoOrder);
+        $this->processOrderPayment->process(
+            $magentoOrder,
+            $orderPayload->getPayment(),
+            $orderPayload->getTransaction()
+        );
         $this->addCommentToOrder->addComment($magentoOrder, $orderPayload);
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $orderExtensionData->setPublicId($orderPayload->getPublicId());

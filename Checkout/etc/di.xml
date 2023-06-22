@@ -24,7 +24,9 @@
     <preference for="Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface" type="Bold\Checkout\Model\Quote\GetQuoteInventoryData"/>
     <preference for="Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface" type="Bold\Checkout\Model\Quote\Inventory\Result"/>
     <preference for="Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterface" type="Bold\Checkout\Model\Quote\Inventory\Result\InventoryData"/>
-
+    <preference for="Bold\Checkout\Api\Data\Order\Payment\RequestInterface" type="Bold\Checkout\Model\Order\UpdatePayment\Request"/>
+    <preference for="Bold\Checkout\Api\Order\UpdatePaymentInterface" type="Bold\Checkout\Model\Order\UpdatePayment"/>
+    <preference for="Bold\Checkout\Api\Data\Order\Payment\ResultInterface" type="Bold\Checkout\Model\Order\UpdatePayment\Result"/>
     <type name="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>

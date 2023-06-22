@@ -104,4 +104,25 @@ class OrderExtensionData extends AbstractModel
     {
         return $this->getData(OrderExtensionDataResource::FULFILLMENT_STATUS);
     }
+
+    /**
+     * Set is order using delayed payment capture.
+     *
+     * @param int $isDelayedCapture
+     * @return void
+     */
+    public function setIsDelayedCapture(int $isDelayedCapture)
+    {
+        $this->setData(OrderExtensionDataResource::IS_DELAYED_CAPTURE, $isDelayedCapture);
+    }
+
+    /**
+     * Retrieve is order using delayed payment capture flag.
+     *
+     * @return int
+     */
+    public function getIsDelayedCapture(): int
+    {
+        return (int)$this->getData(OrderExtensionDataResource::IS_DELAYED_CAPTURE);
+    }
 }

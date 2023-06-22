@@ -42,6 +42,12 @@
             <resource ref="Magento_Sales::create"/>
         </resources>
     </route>
+    <route method="PUT" url="/V1/shops/:shopId/payments">
+        <service class="Bold\Checkout\Api\Order\UpdatePaymentInterface" method="update"/>
+        <resources>
+            <resource ref="Magento_Sales::create"/>
+        </resources>
+    </route>
     <route method="POST" url="/V1/shops/:shopId/secret/register">
         <service class="Bold\Checkout\Api\RegisterSharedSecretInterface" method="register"/>
         <resources>
