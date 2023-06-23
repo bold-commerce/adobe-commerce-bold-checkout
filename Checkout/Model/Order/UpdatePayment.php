@@ -166,7 +166,7 @@ class UpdatePayment implements UpdatePaymentInterface
         $orderExtData = $this->orderExtensionDataFactory->create();
         $this->orderExtensionDataResource->load(
             $orderExtData,
-            $order->getExtOrderId(),
+            $order->getId(),
             OrderExtensionResource::ORDER_ID
         );
         return $orderExtData->getIsDelayedCapture();
