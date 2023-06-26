@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Block\Onepage;
 
 use Bold\Checkout\Model\ConfigInterface;
+use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
 use Magento\Catalog\Block\ShortcutInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template;
@@ -30,21 +31,28 @@ class Button extends Template implements ShortcutInterface
     private $config;
 
     /**
+     * @var IsBoldCheckoutAllowedForCart
+     */
+    private $allowedForCart;
+
+    /**
      * @param Context $context
      * @param Session $checkoutSession
      * @param ConfigInterface $config
+     * @param IsBoldCheckoutAllowedForCart $allowedForCart
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
-        Session          $checkoutSession,
-        ConfigInterface  $config,
-        array            $data = []
-    )
-    {
+        Session $checkoutSession,
+        ConfigInterface $config,
+        IsBoldCheckoutAllowedForCart $allowedForCart,
+        array $data = []
+    ) {
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
         $this->config = $config;
+        $this->allowedForCart = $allowedForCart;
     }
 
     /**
@@ -67,7 +75,7 @@ class Button extends Template implements ShortcutInterface
         $quote = $this->checkoutSession->getQuote();
         $websiteId = (int)$quote->getStore()->getWebsiteId();
 
-        return $this->config->isCheckoutEnabled($websiteId) && $this->config->isCheckoutTypeParallel($websiteId);
+        return $this->allowedForCart->isAllowed($quote) && $this->config->isCheckoutTypeParallel($websiteId);
     }
 
     /**
