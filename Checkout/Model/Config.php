@@ -19,6 +19,7 @@ class Config implements ConfigInterface
     private const PATH_ENABLED = 'checkout/bold_checkout_base/enabled';
     private const PATH_TYPE = 'checkout/bold_checkout_base/type';
     private const PATH_PAYMENT_TITLE = 'checkout/bold_checkout_base/payment_title';
+    private const PATH_PARALLEL_CHECKOUT_BUTTON_TITLE = 'checkout/bold_checkout_base/parallel_checkout_button_title';
     private const PATH_ENABLED_FOR = 'checkout/bold_checkout_advanced/enabled_for';
     private const PATH_IP_WHITELIST = 'checkout/bold_checkout_advanced/ip_whitelist';
     private const PATH_CUSTOMER_WHITELIST = 'checkout/bold_checkout_advanced/customer_whitelist';
@@ -291,6 +292,18 @@ class Config implements ConfigInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::PATH_PAYMENT_TITLE,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParallelCheckoutButtonTitle(int $websiteId): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::PATH_PARALLEL_CHECKOUT_BUTTON_TITLE,
             ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );

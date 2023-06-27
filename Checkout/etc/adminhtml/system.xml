@@ -30,6 +30,13 @@
                         <field id="type">2</field>
                     </depends>
                 </field>
+                <field id="parallel_checkout_button_title" translate="label" type="text" sortOrder="17" showInDefault="0" showInWebsite="1">
+                    <label>Bold Checkout Button Title</label>
+                    <comment>Bold Checkout button title that will be displayed on the checkout page.</comment>
+                    <depends>
+                        <field id="type">1</field>
+                    </depends>
+                </field>
                 <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="0"
                        showInWebsite="1">
                     <label>API Token</label>

@@ -79,6 +79,18 @@ class Button extends Template implements ShortcutInterface
     }
 
     /**
+     * Get button title.
+     *
+     * @return string
+     */
+    public function getButtonTitle(): string
+    {
+        $quote = $this->checkoutSession->getQuote();
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
+        return $this->config->getParallelCheckoutButtonTitle($websiteId);
+    }
+
+    /**
      * Check if checkout is disabled by quote.
      *
      * @return bool

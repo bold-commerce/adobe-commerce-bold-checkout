@@ -184,4 +184,12 @@ interface ConfigInterface
      * @return string
      */
     public function getPaymentTitle(int $websiteId): string;
+
+    /**
+     * Get Bold Checkout button title.
+     *
+     * @param int $websiteId
+     * @return string
+     */
+    public function getParallelCheckoutButtonTitle(int $websiteId): string;
 }
