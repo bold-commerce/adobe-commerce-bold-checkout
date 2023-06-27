@@ -14,6 +14,7 @@ use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\InventorySalesApi\Api\AreProductsSalableInterface;
 use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
 use Magento\InventorySalesApi\Api\StockResolverInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -107,7 +108,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
             $inventoryResult[] = $this->inventoryDataFactory->create(
                 [
                     'cartItemId' => $item->getId(),
-                    'salableQty' => $this->getSalableQty($item),
+                    'salableQty' => abs($this->getSalableQty($item)),
+                    'isSalable' => $this->isProductSalable($item),
                 ]
             );
         }
@@ -152,7 +154,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $getProductSalableQty = $this->getProductSalableQtyService();
         $stockResolver = $this->getStockResolverService();
         try {
-            return ($getProductSalableQty && $stockResolver)
+            return $getProductSalableQty && $stockResolver
                 ? $this->getSalableQuantity($getProductSalableQty, $stockResolver, $item)
                 : $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty();
         } catch (Exception $e) {
@@ -173,8 +175,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      */
     private function getSalableQuantity(
         GetProductSalableQtyInterface $getProductSalableQty,
-        StockResolverInterface        $stockResolver,
-        CartItemInterface             $item
+        StockResolverInterface $stockResolver,
+        CartItemInterface $item
     ): float {
         $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
         $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
@@ -184,11 +186,36 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     }
 
     /**
+     * Get product salable status.
+     *
+     * @param CartItemInterface $item
+     * @return bool
+     */
+    private function isProductSalable(CartItemInterface $item): bool
+    {
+        try {
+            $stockResolver = $this->getStockResolverService();
+            $areProductsSalable = $this->getAreProductsSalableService();
+            if (!$stockResolver || !$areProductsSalable) {
+                return (bool)$item->getProduct()->getExtensionAttributes()->getStockItem()->getIsInStock();
+            }
+            $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
+            $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
+            $stockId = $stockResolver->execute('website', $websiteCode)->getStockId();
+            $sku = $item['product']['sku'];
+            $isProductSalableResult = current($areProductsSalable->execute([$sku], $stockId));
+            return $isProductSalableResult->isSalable();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * Try to build GetProductSalableQtyInterface. If it's not possible, return null.
      *
      * @return GetProductSalableQtyInterface|null
      */
-    public function getProductSalableQtyService(): ?GetProductSalableQtyInterface
+    private function getProductSalableQtyService(): ?GetProductSalableQtyInterface
     {
         try {
             $getProductSalableQty = $this->objectManager->get(GetProductSalableQtyInterface::class);
@@ -203,7 +230,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      *
      * @return StockResolverInterface|null
      */
-    public function getStockResolverService(): ?StockResolverInterface
+    private function getStockResolverService(): ?StockResolverInterface
     {
         try {
             $stockResolver = $this->objectManager->get(StockResolverInterface::class);
@@ -211,5 +238,20 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
             $stockResolver = null;
         }
         return $stockResolver;
+    }
+
+    /**
+     * Try to build AreProductsSalableInterface. If it's not possible, return null.
+     *
+     * @return AreProductsSalableInterface|null
+     */
+    private function getAreProductsSalableService(): ?AreProductsSalableInterface
+    {
+        try {
+            $areProductsSalable = $this->objectManager->get(AreProductsSalableInterface::class);
+        } catch (Throwable $e) {
+            $areProductsSalable = null;
+        }
+        return $areProductsSalable;
     }
 }

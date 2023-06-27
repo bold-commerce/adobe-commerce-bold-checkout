@@ -21,13 +21,20 @@ class InventoryData implements InventoryDataInterface
     private $salableQty;
 
     /**
+     * @var bool
+     */
+    private $isSalable;
+
+    /**
      * @param int $cartItemId
      * @param float $salableQty
+     * @param bool $isSalable
      */
-    public function __construct(int $cartItemId, float $salableQty)
+    public function __construct(int $cartItemId, float $salableQty, bool $isSalable)
     {
         $this->cartItemId = $cartItemId;
         $this->salableQty = $salableQty;
+        $this->isSalable = $isSalable;
     }
 
     /**
@@ -43,7 +50,7 @@ class InventoryData implements InventoryDataInterface
      */
     public function isSalable(): bool
     {
-        return $this->salableQty > 0;
+        return $this->isSalable;
     }
 
     /**
