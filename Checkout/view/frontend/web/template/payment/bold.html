@@ -16,6 +16,11 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
+        <!-- ko if: !iframeSrc() -->
+        <div class="message notice">
+            <span data-bind="i18n: 'Please enter billing address.'"></span>
+        </div>
+        <!-- /ko -->
         <iframe id="PIGI" data-bind="attr: {src: iframeSrc()}" scrolling="no" frameborder="0" width="100%"></iframe>
         <div class="actions-toolbar">
             <div class="primary">
