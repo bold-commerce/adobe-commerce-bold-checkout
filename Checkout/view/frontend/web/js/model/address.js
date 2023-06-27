@@ -22,6 +22,7 @@ define([
          */
         getBillingAddress: function () {
             const address = quote.billingAddress();
+            const shippingAddress = quote.shippingAddress();
             if (!address) {
                 return null;
             }
@@ -32,6 +33,20 @@ define([
             const countryId = address.countryId;
             const country = this.countries.find(country => country.value === countryId);
             const countryName = country ? country.label : '';
+            let street1 = '';
+            let street2 = '';
+            if (address.street && address.street[0]) {
+                street1 = address.street[0];
+            }
+            if (address.street && address.street[1]) {
+                street2 = address.street[1];
+            }
+            if (!street1 && shippingAddress && shippingAddress.street && shippingAddress.street[0]) {
+                street1 = shippingAddress.street[0];
+            }
+            if (!street2 && shippingAddress && shippingAddress.street && shippingAddress.street[1]) {
+                street2 = shippingAddress.street[1];
+            }
             const payload = {
                 'id': address.customerAddressId ? Number(address.customerAddressId) : null,
                 'business_name': address.company ? address.company : '',
@@ -44,8 +59,8 @@ define([
                 'postal_code': address.postcode ? address.postcode : '',
                 'province': address.region ? address.region : '',
                 'province_code': address.regionCode ? address.regionCode : '',
-                'address_line_1': address.street !== undefined && address.street[0] ? address.street[0] : '',
-                'address_line_2': address.street !== undefined && address.street[1] ? address.street[1] : '',
+                'address_line_1': street1,
+                'address_line_2': street2,
             }
             try {
                 this.validatePayload(payload);

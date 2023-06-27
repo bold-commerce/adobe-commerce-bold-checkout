@@ -2,6 +2,8 @@
 
 namespace Bold\Checkout\Api\Data\Quote\Inventory\Result;
 
+use \Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface;
+
 /**
  * Quote item inventory data.
  */
@@ -22,9 +24,17 @@ interface InventoryDataInterface
     public function isSalable(): bool;
 
     /**
-     * Retrieve quote item salable quantity.
+     * Set inventory result extension attributes.
      *
-     * @return float
+     * @param \Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface $extensionAttributes
+     * @return void
      */
-    public function getSalableQty(): float;
+    public function setExtensionAttributes(InventoryDataExtensionInterface $extensionAttributes): void;
+
+    /**
+     * Retrieve inventory result extension attributes.
+     *
+     * @return \Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface|null
+     */
+    public function getExtensionAttributes(): ?InventoryDataExtensionInterface;
 }
