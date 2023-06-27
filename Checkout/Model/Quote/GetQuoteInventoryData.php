@@ -108,7 +108,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
             $inventoryResult[] = $this->inventoryDataFactory->create(
                 [
                     'cartItemId' => $item->getId(),
-                    'salableQty' => abs($this->getSalableQty($item)),
+                    'salableQty' => $this->getSalableQty($item),
                     'isSalable' => $this->isProductSalable($item),
                 ]
             );
