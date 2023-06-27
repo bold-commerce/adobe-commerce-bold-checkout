@@ -153,12 +153,13 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
             $stockResolver = $this->getStockResolverService();
             $productSalableForRequestedQtyService = $this->getProductSalableForRequestedQtyService();
             $sku = $item['product']['sku'];
+            $requestedQty = $item->getParentItem() ? (float)$item->getParentItem()->getQty() : (float)$item->getQty();
             $request = $this->getRequest(
                 (string)$sku,
-                $item->getParentItem() ? (float)$item->getParentItem()->getQty() : (float)$item->getQty()
+                $requestedQty
             );
             if (!$request || !$stockResolver || !$productSalableForRequestedQtyService) {
-                return $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty() >= $item->getQty();
+                return $item->getProduct()->getExtensionAttributes()->getStockItem()->getQty() >= $requestedQty;
             }
             $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
             $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
