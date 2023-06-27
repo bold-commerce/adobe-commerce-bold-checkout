@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote\Inventory\Result;
 
+use Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface;
 use Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterface;
 
 /**
@@ -16,25 +17,28 @@ class InventoryData implements InventoryDataInterface
     private $cartItemId;
 
     /**
-     * @var float
-     */
-    private $salableQty;
-
-    /**
      * @var bool
      */
     private $isSalable;
 
     /**
-     * @param int $cartItemId
-     * @param float $salableQty
-     * @param bool $isSalable
+     * @var InventoryDataExtensionInterface|null
      */
-    public function __construct(int $cartItemId, float $salableQty, bool $isSalable)
-    {
+    private $extensionAttributes;
+
+    /**
+     * @param int $cartItemId
+     * @param bool $isSalable
+     * @param InventoryDataExtensionInterface|null $extensionAttributes
+     */
+    public function __construct(
+        int $cartItemId,
+        bool $isSalable,
+        InventoryDataExtensionInterface $extensionAttributes = null
+    ) {
         $this->cartItemId = $cartItemId;
-        $this->salableQty = $salableQty;
         $this->isSalable = $isSalable;
+        $this->extensionAttributes = $extensionAttributes;
     }
 
     /**
@@ -54,10 +58,17 @@ class InventoryData implements InventoryDataInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getSalableQty(): float
+    public function setExtensionAttributes(InventoryDataExtensionInterface $extensionAttributes): void {
+        $this->extensionAttributes = $extensionAttributes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes(): ?InventoryDataExtensionInterface
     {
-        return $this->salableQty;
+        return $this->extensionAttributes;
     }
 }
