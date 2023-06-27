@@ -22,7 +22,6 @@ define([
          */
         getBillingAddress: function () {
             const address = quote.billingAddress();
-            const shippingAddress = quote.shippingAddress();
             if (!address) {
                 return null;
             }
@@ -41,11 +40,22 @@ define([
             if (address.street && address.street[1]) {
                 street2 = address.street[1];
             }
-            if (!street1 && shippingAddress && shippingAddress.street && shippingAddress.street[0]) {
-                street1 = shippingAddress.street[0];
+            const billing = registry.get('index = billingAddress');
+            if (!street1) {
+                const street1Field = billing && billing.isAddressSameAsShipping()
+                    ? registry.get('dataScope = shippingAddress.street.0')
+                    : registry.get('dataScope = billingAddress.street.0');
+                if (street1Field) {
+                    street1 = street1Field.value();
+                }
             }
-            if (!street2 && shippingAddress && shippingAddress.street && shippingAddress.street[1]) {
-                street2 = shippingAddress.street[1];
+            if (!street2) {
+                const street2Field = billing && billing.isAddressSameAsShipping()
+                    ? registry.get('dataScope = shippingAddress.street.1')
+                    : registry.get('dataScope = billingAddress.street.1');
+                if (street2Field) {
+                    street2 = street2Field.value();
+                }
             }
             const payload = {
                 'id': address.customerAddressId ? Number(address.customerAddressId) : null,
