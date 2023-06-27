@@ -12,16 +12,12 @@ use Magento\Checkout\Model\Session;
 use Magento\Directory\Model\AllowedCountries;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\ValidatorException;
-use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadFactory;
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Module\Dir\Reader;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\View\Element\Template\File\Resolver;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -84,12 +80,11 @@ class ConfigProvider implements ConfigProviderInterface
      * @param ConfigInterface $config
      * @param ClientInterface $client
      * @param StoreManagerInterface $storeManager
-     * @param Filesystem $filesystem
-     * @param DirectoryList $directoryList
-     * @param ComponentRegistrar $componentRegistrar
-     * @param Resolver $fileResolver
-     * @param \Magento\Framework\View\FileSystem $viewFileSystem
+     * @param AllowedCountries $allowedCountries
+     * @param CollectionFactory $collectionFactory
      * @param Json $json
+     * @param Reader $moduleReader
+     * @param ReadFactory $readFactory
      */
     public function __construct(
         Session $checkoutSession,
@@ -130,7 +125,6 @@ class ConfigProvider implements ConfigProviderInterface
             'bold' => [
                 'payment' => [
                     'iframeSrc' => $this->getIframeSrc(),
-                    'title' => __('PayPal'),
                     'method' => Service::CODE,
                 ],
                 'shopId' => $shopId,

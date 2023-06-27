@@ -4,6 +4,7 @@ define(
         'Bold_Checkout/js/model/client',
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Checkout/js/model/payment-service',
         'uiRegistry',
         'checkoutData',
         'underscore',
@@ -13,6 +14,7 @@ define(
         boldClient,
         quote,
         loader,
+        paymentService,
         registry,
         checkoutData,
         _,
@@ -23,7 +25,7 @@ define(
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 paymentType: null,
-                isVisible: ko.observable(false),
+                isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
             },
 
@@ -32,11 +34,12 @@ define(
              */
             initialize: function () {
                 if (window.checkoutConfig.bold === undefined) {
+                    this.isVisible(false);
                     return;
                 }
                 this._super();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
-                if (checkoutData.getSelectedPaymentMethod() === 'bold') {
+                if (checkoutData.getSelectedPaymentMethod() === 'bold' && this.isRadioButtonVisible()) {
                     checkoutData.setSelectedPaymentMethod(null);
                     quote.paymentMethod(null);
                 }
@@ -65,7 +68,6 @@ define(
                     }.bind(this));
                 }
                 if (!this.customerIsGuest) {
-                    this.isVisible(true);
                     this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 }
                 this.subscribeToPIGI();
@@ -83,6 +85,10 @@ define(
                 }
                 return true;
             },
+
+            isRadioButtonVisible: ko.computed(function () {
+                return paymentService.getAvailablePaymentMethods().length !== 1;
+            }),
 
             /**
              * @inheritDoc
@@ -113,7 +119,7 @@ define(
                 if (!this.customerIsGuest) {
                     return;
                 }
-                boldClient.post('customer/guest', 'customer').then(
+                boldClient.post('customer').then(
                     function () {
                         this.messageContainer.errorMessages([]);
                         if (this.iframeWindow) {
@@ -122,7 +128,6 @@ define(
                     }.bind(this)
                 ).then(
                     function () {
-                        this.isVisible(true);
                         this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                     }.bind(this)
                 ).catch(
@@ -190,7 +195,7 @@ define(
              */
             syncBillingData() {
                 this.sendGuestCustomerInfo();
-                boldClient.post('addresses/billing', 'address').then(
+                boldClient.post('address').then(
                     function () {
                         this.messageContainer.errorMessages([]);
                         if (this.iframeWindow) {

@@ -42,11 +42,14 @@ define([
         requestInProgress = true;
         const nextRequest = requestQueue.shift();
         let newPayload;
+        let path;
         switch (nextRequest.dataType) {
             case 'address' :
+                path = 'addresses/billing';
                 newPayload = boldAddress.getBillingAddress();
                 break;
             case 'customer' :
+                path = window.checkoutConfig.bold[nextRequest.dataType] ? 'customer' : 'customer/guest';
                 newPayload = boldCustomer.getCustomer();
                 break;
         }
@@ -56,8 +59,8 @@ define([
             return;
         }
         $.ajax({
-            url: client.url + nextRequest.path,
-            type: 'POST',
+            url: client.url + path,
+            type: window.checkoutConfig.bold[nextRequest.dataType] ? 'PUT' : 'POST',
             headers: {
                 'Authorization': 'Bearer ' + client.jwtToken,
                 'Content-Type': 'application/json',
@@ -96,14 +99,12 @@ define([
         /**
          * Post data to Bold API.
          *
-         * @param path string
          * @param dataType string
          * @return {Promise}
          */
-        post: function (path, dataType) {
+        post: function (dataType) {
             return new Promise((resolve, reject) => {
                 requestQueue.push({
-                    path: path,
                     resolve: resolve,
                     reject: reject,
                     dataType: dataType
