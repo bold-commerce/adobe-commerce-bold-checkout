@@ -6,7 +6,6 @@
                 <active>1</active>
                 <model>Bold\Checkout\Model\Method\Adapter</model>
                 <order_status>pending</order_status>
-                <title>Bold</title>
                 <allowspecific>0</allowspecific>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
@@ -21,6 +20,8 @@
                 <enabled>0</enabled>
                 <integration_callback_url>https://adobe-commerce-connector.boldapps.net/platform/oauth/callback/{{shopId}}</integration_callback_url>
                 <integration_identity_url>https://adobe-commerce-connector.boldapps.net/platform/oauth/identify</integration_identity_url>
+                <payment_title>Bold Payments</payment_title>
+                <parallel_checkout_button_title>Proceed to Bold Checkout</parallel_checkout_button_title>
             </bold_checkout_base>
             <bold_checkout_advanced>
                 <enabled_for>0</enabled_for>

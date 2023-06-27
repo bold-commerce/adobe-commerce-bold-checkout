@@ -176,4 +176,20 @@ interface ConfigInterface
      * @return bool
      */
     public function isCheckoutTypeSelfHosted(int $websiteId): bool;
+
+    /**
+     * Get Bold Payment storefront title.
+     *
+     * @param int $websiteId
+     * @return string
+     */
+    public function getPaymentTitle(int $websiteId): string;
+
+    /**
+     * Get Bold Checkout button title.
+     *
+     * @param int $websiteId
+     * @return string
+     */
+    public function getParallelCheckoutButtonTitle(int $websiteId): string;
 }

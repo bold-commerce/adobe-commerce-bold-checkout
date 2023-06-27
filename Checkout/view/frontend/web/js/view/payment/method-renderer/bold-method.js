@@ -23,7 +23,7 @@ define(
             defaults: {
                 template: 'Bold_Checkout/payment/bold.html',
                 paymentType: null,
-                isVisible: ko.observable(false),
+                isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
             },
 
@@ -32,13 +32,14 @@ define(
              */
             initialize: function () {
                 if (window.checkoutConfig.bold === undefined) {
+                    this.isVisible(false);
                     return;
                 }
                 this._super();
+                this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
-                if (checkoutData.getSelectedPaymentMethod() === 'bold') {
-                    checkoutData.setSelectedPaymentMethod(null);
-                    quote.paymentMethod(null);
+                if (!this.customerIsGuest) {
+                    this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 }
                 this.syncBillingData();
                 quote.billingAddress.subscribe(function () {
@@ -64,19 +65,19 @@ define(
                         }
                     }.bind(this));
                 }
-                if (!this.customerIsGuest) {
-                    this.isVisible(true);
-                    this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                if (checkoutData.getSelectedPaymentMethod() === 'bold') {
+                    checkoutData.setSelectedPaymentMethod(null);
+                    quote.paymentMethod(null);
                 }
-                this.subscribeToPIGI();
+                if (!this.isRadioButtonVisible()) {
+                    this.selectPaymentMethod();
+                }
             },
 
             /**
              * @inheritDoc
              */
             selectPaymentMethod: function () {
-                const iframeElement = document.getElementById('PIGI');
-                this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
                 this._super();
                 if (this.iframeWindow) {
                     this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
@@ -113,17 +114,13 @@ define(
                 if (!this.customerIsGuest) {
                     return;
                 }
-                boldClient.post('customer/guest', 'customer').then(
+                boldClient.post('customer').then(
                     function () {
                         this.messageContainer.errorMessages([]);
+                        this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
-                    }.bind(this)
-                ).then(
-                    function () {
-                        this.isVisible(true);
-                        this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                     }.bind(this)
                 ).catch(
                     function () {
@@ -145,16 +142,17 @@ define(
             subscribeToPIGI() {
                 window.addEventListener('message', ({data}) => {
                     const responseType = data.responseType;
+                    const iframeElement = document.getElementById('PIGI');
                     if (responseType) {
                         switch (responseType) {
                             case 'PIGI_UPDATE_HEIGHT':
-                                const iframeElement = document.querySelector('iframe#PIGI');
                                 if (iframeElement.style.height === Math.round(data.payload.height) + 'px') {
                                     return;
                                 }
                                 iframeElement.style.height = Math.round(data.payload.height) + 'px';
                                 break;
                             case 'PIGI_INITIALIZED':
+                                this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
                                 break;
                             case 'PIGI_REFRESH_ORDER':
                                 break;
@@ -190,7 +188,7 @@ define(
              */
             syncBillingData() {
                 this.sendGuestCustomerInfo();
-                boldClient.post('addresses/billing', 'address').then(
+                boldClient.post('address').then(
                     function () {
                         this.messageContainer.errorMessages([]);
                         if (this.iframeWindow) {
