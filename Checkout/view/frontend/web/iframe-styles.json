@@ -13,13 +13,13 @@
       "cssText": ".LoadingSpinner { display: block; width: 20px; height: 20px; position: relative; }"
     },
     {
-      "cssText": ".LoadingSpinner::before { content: \"\"; border-width: 2px; border-style: solid; border-color: currentcolor rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15); border-image: none; border-radius: 50%; position: absolute; width: 100%; height: 100%; left: 50%; top: 50%; margin-left: -10px; margin-top: -10px; animation: 0.5s linear infinite spin; display: block; }"
+      "cssText": ".LoadingSpinner::before { content: \"\"; border-width: 2px; border-style: solid; border-color: currentcolor rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15); border-image: initial; border-radius: 50%; position: absolute; width: 100%; height: 100%; left: 50%; top: 50%; margin-left: -10px; margin-top: -10px; animation: 0.5s linear 0s infinite normal none running spin; display: block; }"
     },
     {
-      "cssText": ".Button { appearance: none; box-sizing: border-box; display: inline-block; cursor: pointer; font-size: inherit; padding: 1rem 1.25rem; background: rgb(252, 252, 252); border: medium; box-shadow: rgb(230, 230, 230) 0px 0px 0px 1px inset; font-weight: 500; border-radius: 4px; transition: background-color 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out; position: relative; }"
+      "cssText": ".Button { appearance: none; box-sizing: border-box; display: inline-block; cursor: pointer; font-size: inherit; padding: 1rem 1.25rem; background: rgb(252, 252, 252); border: none; box-shadow: rgb(230, 230, 230) 0px 0px 0px 1px inset; font-weight: 500; border-radius: 4px; transition: background-color 0.2s ease-out 0s, color 0.2s ease-out 0s, box-shadow 0.2s ease-out 0s; position: relative; }"
     },
     {
-      "cssText": ".Button:focus { outline: currentcolor; }"
+      "cssText": ".Button:focus { outline: none; }"
     },
     {
       "cssText": ".Button:hover { background-color: rgb(255, 255, 255); }"
@@ -43,22 +43,22 @@
       "cssText": ".Button:disabled,  .Button:disabled:hover,  .Button:disabled:focus,  .Button:disabled:active { background-color: rgb(204, 204, 204); color: rgb(255, 255, 255); cursor: not-allowed; }"
     },
     {
-      "cssText": ".InputField,  .CreditCardInputField { appearance: none; font-size: inherit; border: medium; background-color: rgb(255, 255, 255); box-shadow: rgb(148, 148, 148) 0px 0px 0px 1px inset; padding: 1rem 0.5rem; border-radius: 5px; }"
+      "cssText": ".InputField,  .CreditCardInputField { appearance: none; font-size: inherit; border: none; background-color: rgb(255, 255, 255); box-shadow: rgb(148, 148, 148) 0px 0px 0px 1px inset; padding: 1rem 0.5rem; border-radius: 5px; }"
     },
     {
-      "cssText": ".InputField:focus,  .CreditCardInputField:focus { outline: currentcolor; box-shadow: rgb(10, 117, 194) 0px 0px 0px 2px inset; }"
+      "cssText": ".InputField:focus,  .CreditCardInputField:focus { outline: none; box-shadow: rgb(10, 117, 194) 0px 0px 0px 2px inset; }"
     },
     {
-      "cssText": ".ToggleField__Input { font-size: inherit; width: 18px; height: 18px; cursor: pointer; box-shadow: rgb(148, 148, 148) 0px 0px 0px 1px inset; transition: all 0.2s ease-in-out; border: medium; border-radius: 4px; appearance: none; background: none; box-sizing: border-box; vertical-align: middle; position: relative; top: -0.1rem; }"
+      "cssText": ".ToggleField__Input { font-size: inherit; width: 18px; height: 18px; cursor: pointer; box-shadow: rgb(148, 148, 148) 0px 0px 0px 1px inset; transition: all 0.2s ease-in-out 0s; border: none; border-radius: 4px; appearance: none; background: transparent; box-sizing: border-box; vertical-align: middle; position: relative; top: -0.1rem; }"
     },
     {
       "cssText": ".ToggleField__Input--Checkbox,  .ToggleField__Input--Radio { margin: 0px 0.5rem 0px 0px; }"
     },
     {
-      "cssText": ".ToggleField__Input--Checkbox { width: 18px; height: 18px; cursor: pointer; transition: all 0.2s ease-in-out; border: medium; border-radius: 4px; background: 0px 0px; box-sizing: border-box; vertical-align: middle; padding: initial; margin: 0px 15px 0px 0px; }"
+      "cssText": ".ToggleField__Input--Checkbox { width: 18px; height: 18px; cursor: pointer; transition: all 0.2s ease-in-out 0s; border: none; border-radius: 4px; background: 0px 0px; box-sizing: border-box; vertical-align: middle; padding: initial; margin: 0px 15px 0px 0px; }"
     },
     {
-      "cssText": ".ToggleField__Input--Checkbox::after { content: \"\"; display: block; position: absolute; width: 18px; height: 18px; top: 0px; left: 0px; background-image: url(\"https://static.boldcommerce.com/images/checkout/experience/checkbox_white.svg\"); background-position: center; background-repeat: no-repeat; transition: all 0.2s ease-in-out 0.1s; transform: scale(0); }"
+      "cssText": ".ToggleField__Input--Checkbox::after { content: \"\"; display: block; position: absolute; width: 18px; height: 18px; top: 0px; left: 0px; background-image: url(\"https://static.boldcommerce.com/images/checkout/experience/checkbox_white.svg\"); background-position: center center; background-repeat: no-repeat; transition: all 0.2s ease-in-out 0.1s; transform: scale(0); }"
     },
     {
       "cssText": ".ToggleField__Input:focus { box-shadow: rgb(10, 117, 194) 0px 0px 0px 2px inset; }"
@@ -79,10 +79,10 @@
       "cssText": ".Field { width: 100%; position: relative; }"
     },
     {
-      "cssText": ".Field--WithInputField .Field__Label,  .Field--WithCreditCardField .Field__Label { position: absolute; font-size: 80%; padding-left: 0.5em; padding-top: 0.5em; color: rgb(136, 136, 136); transform: translateY(0.5em); opacity: 0; transition: all 0.2s; }"
+      "cssText": ".Field--WithInputField .Field__Label,  .Field--WithCreditCardField .Field__Label { position: absolute; font-size: 80%; padding-left: 0.5em; padding-top: 0.5em; color: rgb(136, 136, 136); transform: translateY(0.5em); opacity: 0; transition: all 0.2s ease 0s; }"
     },
     {
-      "cssText": ".Field .InputField,  .Field .CreditCardInputField { display: block; width: 100%; transition: all 0.2s ease-out; }"
+      "cssText": ".Field .InputField,  .Field .CreditCardInputField { display: block; width: 100%; transition: all 0.2s ease-out 0s; }"
     },
     {
       "cssText": ".Field .CreditCardInputField { padding-top: 1.5rem; padding-bottom: 0.5rem; }"
@@ -91,10 +91,10 @@
       "cssText": ".Field--WithCreditCardField .Field__Label { transform: translateY(0px); opacity: 1; }"
     },
     {
-      "cssText": ".TogglePanel { border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(217, 217, 217); }"
+      "cssText": ".TogglePanel { border-bottom: 1px solid rgb(217, 217, 217); }"
     },
     {
-      "cssText": ".TogglePanel:last-of-type { border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; }"
+      "cssText": ".TogglePanel:last-of-type { border-bottom: none; }"
     },
     {
       "cssText": ".TogglePanel:last-of-type .TogglePanel__Content { border-radius: 0px 0px 4px 4px; }"
@@ -103,7 +103,7 @@
       "cssText": ".TogglePanel__Header { padding: 10px; }"
     },
     {
-      "cssText": ".TogglePanel__Content { display: none; padding: 10px; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(230, 230, 230); background-color: rgb(250, 250, 250); }"
+      "cssText": ".TogglePanel__Content { display: none; padding: 10px; border-top: 1px solid rgb(230, 230, 230); background-color: rgb(250, 250, 250); }"
     },
     {
       "cssText": ".TogglePanel__Content::after { display: table; content: \"\"; clear: both; }"
@@ -142,10 +142,10 @@
       "cssText": "#gift_card_cvv { }"
     },
     {
-      "cssText": ".Field--WithInputField .Field__Label { position: absolute; font-size: 80%; padding-left: 0.5em; padding-top: 0.5em; color: rgb(136, 136, 136); transform: translateY(0.5em); opacity: 0; transition: all 0.2s; }"
+      "cssText": ".Field--WithInputField .Field__Label { position: absolute; font-size: 80%; padding-left: 0.5em; padding-top: 0.5em; color: rgb(136, 136, 136); transform: translateY(0.5em); opacity: 0; transition: all 0.2s ease 0s; }"
     },
     {
-      "cssText": ".Field .InputField { display: block; width: 100%; transition: all 0.2s ease-out; }"
+      "cssText": ".Field .InputField { display: block; width: 100%; transition: all 0.2s ease-out 0s; }"
     },
     {
       "cssText": ".TogglePanel--alt.PaymentMethod--GiftCard > .TogglePanel__Content { display: flex; flex-wrap: wrap; }"
@@ -169,7 +169,7 @@
       "cssText": ".Message__Content :last-child { margin-bottom: 0px; }"
     },
     {
-      "cssText": ".Message::before { width: 1.25rem; height: 1.25rem; content: \"\"; display: block; position: absolute; left: 1rem; top: 1rem; background-image: url(\"https://static.boldcommerce.com/images/checkout/experience/message_info_grey.svg\"); background-position: center; background-repeat: no-repeat; background-size: contain; }"
+      "cssText": ".Message::before { width: 1.25rem; height: 1.25rem; content: \"\"; display: block; position: absolute; left: 1rem; top: 1rem; background-image: url(\"https://static.boldcommerce.com/images/checkout/experience/message_info_grey.svg\"); background-position: center center; background-repeat: no-repeat; background-size: contain; }"
     },
     {
       "cssText": ".Message--HasError { background-color: white; border-color: red; color: red; }"
@@ -190,7 +190,7 @@
       "cssText": ".Message--HasSuccess::before { background-image: url(\"https://static.boldcommerce.com/images/checkout/experience/message_success_green.svg\"); }"
     },
     {
-      "cssText": ".Message--HasInfo { background-color: white; border: 0px; }"
+      "cssText": ".Message--HasInfo { background-color: white; border: 0px none; }"
     },
     {
       "cssText": ".Message--HasInfo::before { background-image: url(\"https://static.boldcommerce.com/images/checkout/experience/message_info_current_color.svg\"); }"
@@ -199,7 +199,7 @@
       "cssText": ".TogglePanel--alt.PaymentMethod--BrandedCard > .TogglePanel__Content > .Flexiti--BrandedCardInfoGroup,  .TogglePanel--alt.PaymentMethod--GiftCard > .TogglePanel__Content,  .TogglePanel--alt.PaymentMethod--CreditCard > .TogglePanel__Content,  .TogglePanel--alt.PaymentMethod--CreditCard__StoredOption > .TogglePanel__Content,  .TogglePanel--alt.BillingAddressOption--DifferentAddress > .TogglePanel__Content { display: flex; flex-wrap: wrap; }"
     },
     {
-      "cssText": ".Field .InputField, .Field .SelectField,  .Field .CreditCardInputField { display: block; width: 100%; transition: all 0.2s ease-out; }"
+      "cssText": ".Field .InputField, .Field .SelectField,  .Field .CreditCardInputField { display: block; width: 100%; transition: all 0.2s ease-out 0s; }"
     },
     {
       "cssText": ".Field--HasValue .InputField,  .Field .SelectField,  .Field .CreditCardInputField { padding-top: 1.5rem; padding-bottom: 0.5rem; }"
@@ -212,9 +212,6 @@
     },
     {
       "cssText": ".Field--GiftCardNumber,  .Field--CreditCardNumber { flex: 1 1 0%; }"
-    },
-    {
-      "cssText": ".PaymentMethod--GiftCard { display: none }"
     },
     {
       "cssText": ".Field--GiftCardCVV,  .Field--CreditCardCVV,  .Field--CreditCardExpiration { flex: 0 0 auto; width: 25%; }"
@@ -262,7 +259,7 @@
       "cssText": ".PaymentMethod--BrandedCard .FlexitiFinancingOptionsGroup { padding: 10px 0px 0px; }"
     },
     {
-      "cssText": "#flexiti-widget { transition: all 0.1s ease-out; position: fixed; background-color: rgb(255, 255, 255); width: 100%; height: 100%; z-index: 9999999; text-align: center; display: table; opacity: 1; inset: 0px; }"
+      "cssText": "#flexiti-widget { transition: all 0.1s ease-out 0s; position: fixed; background-color: rgb(255, 255, 255); width: 100%; height: 100%; z-index: 9999999; text-align: center; display: table; opacity: 1; inset: 0px; }"
     },
     {
       "cssText": "#flexiti-widget.hidden { opacity: 0.01; z-index: -1000; }"
@@ -331,7 +328,7 @@
       "cssText": "#ppcp-acdc-form .InputField { height: 50px; }"
     },
     {
-      "cssText": "#overlay { transition: all 0.5s ease-out; position: fixed; background-color: rgba(0, 0, 0, 0.85); color: rgb(255, 255, 255); width: 100%; height: 100%; z-index: 50; text-align: center; display: table; opacity: 1; inset: 0px; }"
+      "cssText": "#overlay { transition: all 0.5s ease-out 0s; position: fixed; background-color: rgba(0, 0, 0, 0.85); color: rgb(255, 255, 255); width: 100%; height: 100%; z-index: 50; text-align: center; display: table; opacity: 1; inset: 0px; }"
     },
     {
       "cssText": ".message { vertical-align: middle; display: table-cell; }"
@@ -356,82 +353,15 @@
     },
     {
       "cssText": "#overlay.hidden { opacity: 0.01; z-index: -1000; }"
-    }
-  ],
-  "media_rules": [
-    {
-      "conditionText": "only screen and (min-width: 1000px)",
-      "cssRules": [
-        {
-          "cssText": "#main { overflow-x: hidden; width: 100%; }"
-        },
-        {
-          "cssText": ".Checkout { display: flex; flex-wrap: wrap; max-width: 1300px; margin: 0px auto; position: relative; }"
-        },
-        {
-          "cssText": ".Main { order: 1; flex: 1 1 0%; max-width: 62%; padding-top: 4rem; }"
-        },
-        {
-          "cssText": ".TogglePanel__Content .Field { float: left; }"
-        }
-      ]
     },
     {
-      "conditionText": "only screen and (max-width: 499px)",
-      "cssRules": [
-        {
-          "cssText": ".Field--GiftCardCVV, .Field--CreditCardExpiration { padding: 10px 0px; }"
-        }
-      ]
+      "cssText": ".CreditCardInfoGroup { flex-wrap: wrap; }"
     },
     {
-      "conditionText": "only screen and (max-width: 768px)",
-      "cssRules": [
-        {
-          "cssText": ".Adyen--CreditCardInfoGroup { display: block; margin-bottom: -0.5rem; }"
-        },
-        {
-          "cssText": ".Adyen--CreditCardInfoGroup .Field--AdyenCreditCardNumber,  .Adyen--CreditCardInfoGroup .Field--AdyenCreditCardExpiration,  .Adyen--CreditCardInfoGroup .Field--AdyenCreditCardCVV { width: 100%; margin-bottom: 1rem; padding: 0px !important; }"
-        }
-      ]
+      "cssText": ".Field--CreditCardNumber { flex: auto; }"
     },
     {
-      "conditionText": "only screen and (max-width: 999px)",
-      "cssRules": [
-        {
-          "cssText": "html { font-size: 16px; }"
-        },
-        {
-          "cssText": ".Checkout { padding-top: 100px; position: relative; }"
-        }
-      ]
-    },
-    {
-      "conditionText": "only screen and (max-width: 499px)",
-      "cssRules": [
-        {
-          "cssText": ".Field--GiftCardCVV,  .Field--CreditCardCVV,  .Field--CreditCardExpiration { flex: 0 0 auto; width: 100%; padding: 0px 0px 10px; }"
-        },
-        {
-          "cssText": ".CreditCardInfoGroup { flex-wrap: wrap; }"
-        }
-      ]
-    },
-    {
-      "conditionText": "only screen and (max-width: 499px)",
-      "cssRules": [
-        {
-          "cssText": "#ppcp-acdc-form { flex-direction: column; align-items: center; }"
-        }
-      ]
-    },
-    {
-      "conditionText": "only screen and (max-width: 499px)",
-      "cssRules": [
-        {
-          "cssText": "#ppcp-acdc-form { flex-direction: column; align-items: center; }"
-        }
-      ]
+      "cssText": ".Field--CreditCardCVV, .Field--CreditCardExpiration { width: 50%; padding-left: 0; padding-top: 10px; }"
     }
   ]
 }
