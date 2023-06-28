@@ -214,6 +214,9 @@
       "cssText": ".Field--GiftCardNumber,  .Field--CreditCardNumber { flex: 1 1 0%; }"
     },
     {
+      "cssText": ".PaymentMethod--GiftCard { display: none }"
+    },
+    {
       "cssText": ".Field--GiftCardCVV,  .Field--CreditCardCVV,  .Field--CreditCardExpiration { flex: 0 0 auto; width: 25%; }"
     },
     {
