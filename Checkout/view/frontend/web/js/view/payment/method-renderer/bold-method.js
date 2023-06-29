@@ -169,12 +169,8 @@ define(
                                     return;
                                 }
                                 this.paymentType = data.payload.paymentType;
-                                if (this.paymentType !== 'paypal') {
-                                    loader.startLoader();
-                                    this.placeOrder({}, null);
-                                    return;
-                                }
-                                this.messageContainer.successMessages(['Success']);
+                                loader.startLoader();
+                                this.placeOrder({}, null);
                         }
                     }
                 });
