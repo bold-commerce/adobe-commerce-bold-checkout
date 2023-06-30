@@ -159,7 +159,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
                 $requestedQty
             );
             if (!$request || !$stockResolver || !$productSalableForRequestedQtyService) {
-                return $item->getProduct()->getExtensionAttributes()->getStockItem()->getIsInStock();
+                return (bool)$item->getProduct()->isSalable();
             }
             $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
             $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
