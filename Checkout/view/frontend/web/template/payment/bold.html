@@ -16,12 +16,7 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <!-- ko if: !iframeSrc() -->
-        <div class="message notice">
-            <span data-bind="i18n: 'Please ensure all required billing information is entered.'"></span>
-        </div>
-        <!-- /ko -->
-        <iframe id="PIGI" data-bind="attr: {src: iframeSrc()}" scrolling="no" frameborder="0" width="100%"></iframe>
+        <iframe id="PIGI" data-bind="attr: {src: iframeSrc()}" scrolling="no" frameborder="0" height="0px" width="100%"></iframe>
         <div class="actions-toolbar">
             <div class="primary">
                 <button class="action primary checkout"

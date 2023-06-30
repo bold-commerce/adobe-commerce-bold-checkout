@@ -1,0 +1,22 @@
+{
+  "name": "bold/module-checkout-vat-exempt",
+  "version": "1.0.0",
+  "description": "Adapt Milople_Vatexempt module for Bold Hosted Checkout.",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*",
+    "magento/module-checkout": "*",
+    "milople/vatexempt": "1.2.2"
+  },
+  "license": [
+    "Academic Free License (AFL)"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Bold\\CheckoutVatExempt\\": ""
+    }
+  }
+}

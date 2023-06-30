@@ -1,0 +1,16 @@
+{
+  "bold_checkout_order": {
+    "column": {
+      "id": true,
+      "quote_id": true,
+      "vat_exempt_status": true,
+      "vat_applient_name": true,
+      "vat_selected_reason": true,
+      "vat_agree_terms_and_conditions": true
+    },
+    "constraint": {
+      "PRIMARY": true,
+      "BOLD_CHECKOUT_VAT_EXEMPT_UNIQUE": true
+    }
+  }
+}

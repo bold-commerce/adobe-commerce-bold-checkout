@@ -122,14 +122,6 @@ define(
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
                     }.bind(this)
-                ).catch(
-                    function () {
-                        this.messageContainer.errorMessages(
-                            [
-                                'Please verify your email and try again.'
-                            ]
-                        );
-                    }.bind(this)
                 );
             },
 
@@ -159,11 +151,6 @@ define(
                             case 'PIGI_ADD_PAYMENT':
                                 this.messageContainer.errorMessages([]);
                                 if (!data.payload.success) {
-                                    this.messageContainer.errorMessages(
-                                        [
-                                            'Please verify your payment information and try again.'
-                                        ]
-                                    );
                                     loader.stopLoader();
                                     this.paymentType = null;
                                     return;
@@ -190,14 +177,6 @@ define(
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
-                    }.bind(this)
-                ).catch(
-                    function () {
-                        this.messageContainer.errorMessages(
-                            [
-                                'Please verify your billing information and try again.'
-                            ]
-                        );
                     }.bind(this)
                 );
             },
