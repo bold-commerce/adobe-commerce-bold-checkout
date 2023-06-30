@@ -1,0 +1,61 @@
+<!--The 'vat_exempt' value from the .js file should be used-->
+<!--<li id="vat_exempt" data-bind="fadeVisible: isVisible">
+-->
+<div id="checkout-step-title"
+	 class="step-content"
+	 data-role="content">
+	<form data-bind="submit: applyExempt" autocomplete="off">
+		<!-- ko if: (vatStatus == 1) -->
+		<div class="fieldset form-shipping-address">
+			<div class="field">
+				<label class="label">VAT Exempt is available on following products:</label>
+				<ul data-bind='foreach:vatProductList'>
+					<li data-bind="text:name"></li>
+				</ul>
+			</div>
+			<div class="field required">
+				<label class="label">Do you want to apply for VAT Exempt?</label>
+				<select data-bind="options: VatStatus, value: selectedVatStatus,optionsText: 'text', optionsValue: 'value', event:{ change: hideOptions}"></select>
+			</div>
+			<div id='applientNameId' class="field required">
+				<label class="label">Name of Claimer</label>
+				<input id="applientBox" type="text" data-bind="value:applientName"  required="required"/>
+			</div>
+			<div id='vatMedicalConditionsId' class="field required">
+				<label class="label">Reason of Claiming</label>
+				<select id="medicalSelect" data-bind="foreach:vatMedicalConditions, value: selectedReason" required="required">
+					<!-- ko if: $index() == 0 -->
+					<option value="">-- Select a Reason --</option>
+					<!-- /ko -->
+					<!-- ko if: (status == 1) -->
+					<option data-bind="text:condition_name, value:condition_id"></option>
+					<!-- /ko -->
+				</select>
+			</div>
+			<!-- ko if: (vatFile == 1) -->
+			<div id='applientFile' >
+				<label class="label">Upload File</label>
+				<input id="file" type="file"  data-bind="value:selectedFile, event: { change: upd}" multiple="multiple" />
+			</div>
+			<!-- /ko -->
+			<br>
+			<!-- ko if:	(vatShowLink == 1) -->
+			<div id="vatTermsandconditionsId" class="field required">
+				<input id="termCheck" type="checkbox" data-bind="checked: agreeTermsandconditions" required="required"/><a id="termsandconditions" data-bind="text:vatLinkText, click: showFormPopUp" href="javascript:void(0);"></a>
+			</div>
+			<div style="display:none;">
+				<p id="dialogContent" data-bind="text:vatTermsandconditions" style="width: 600px;"></p>
+			</div>
+			<!-- /ko -->
+		</div>
+		<!-- /ko -->
+		<div class="actions-toolbar">
+			<div class="primary">
+				<button data-role="opc-continue" type="submit" class="button action continue primary">
+					<span><!-- ko i18n: 'Apply'--><!-- /ko --></span>
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!--</li>-->
