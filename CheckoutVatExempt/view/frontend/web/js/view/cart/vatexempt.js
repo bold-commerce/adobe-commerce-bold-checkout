@@ -62,6 +62,7 @@ define(
              */
             initialize: function () {
                 this._super();
+                window.vatexemptConfig.apllied = false;
                 this.selectedVatStatus.subscribe(function (value) {
                     vatexempt.setSelectedVatStatus(value);
                 });
@@ -138,6 +139,7 @@ define(
                             quote.setTotals(response);
                             $(document.body).trigger('processStop');
                             $('#block-shipping').collapsible('deactivate');
+                            window.vatexemptConfig.apllied = true;
                         }).fail(function () {
                             $(document.body).trigger('processStop');
                         });

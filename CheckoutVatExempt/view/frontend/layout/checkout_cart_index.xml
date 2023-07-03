@@ -21,5 +21,10 @@
                 </argument>
             </arguments>
         </referenceBlock>
+        <referenceBlock name="checkout.cart.methods.onepage.bottom">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Bold_CheckoutVatExempt::onepage/link.phtml</argument>
+            </action>
+        </referenceBlock>
     </body>
 </page>
