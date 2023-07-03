@@ -66,4 +66,10 @@
             <resource ref="Magento_Customer::customer"/>
         </resources>
     </route>
+    <route method="GET" url="/V1/shops/:shopId/products">
+        <service class="Bold\Checkout\Api\Catalog\GetProductsInterface" method="getList"/>
+        <resources>
+            <resource ref="Magento_Catalog::products"/>
+        </resources>
+    </route>
 </routes>

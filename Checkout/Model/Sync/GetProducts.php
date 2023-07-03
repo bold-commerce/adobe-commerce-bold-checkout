@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Sync;
 
+use Bold\Checkout\Api\Catalog\GetProductsInterface;
+use Bold\Checkout\Model\ConfigInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -18,9 +20,9 @@ class GetProducts
     private $skipProductTypes;
 
     /**
-     * @var ProductRepositoryInterface
+     * @var GetProductsInterface
      */
-    private $productRepository;
+    private $getProducts;
 
     /**
      * @var SearchCriteriaBuilder
@@ -43,7 +45,12 @@ class GetProducts
     private $dataObjectProcessor;
 
     /**
-     * @param ProductRepositoryInterface $productRepository
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
+     * @param ProductRepositoryInterface $getProducts
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param StoreManagerInterface $storeManager
      * @param MetadataPool $metadataPool
@@ -51,19 +58,21 @@ class GetProducts
      * @param array $skipProductTypes
      */
     public function __construct(
-        ProductRepositoryInterface $productRepository,
+        GetProductsInterface $getProducts,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
         DataObjectProcessor $dataObjectProcessor,
+        ConfigInterface $config,
         array $skipProductTypes
     ) {
-        $this->productRepository = $productRepository;
+        $this->getProducts = $getProducts;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->skipProductTypes = $skipProductTypes;
         $this->storeManager = $storeManager;
         $this->metadataPool = $metadataPool;
         $this->dataObjectProcessor = $dataObjectProcessor;
+        $this->config = $config;
     }
 
     /**
@@ -76,7 +85,8 @@ class GetProducts
         $this->searchCriteriaBuilder->addFilter($linkField, $entityIds, 'in');
         $this->searchCriteriaBuilder->addFilter(ProductInterface::TYPE_ID, $this->skipProductTypes, 'nin');
         $this->searchCriteriaBuilder->addFilter('store_id', $storeId);
-        $products = $this->productRepository->getList($this->searchCriteriaBuilder->create())->getItems();
+        $shopId = $this->config->getShopId($websiteId);
+        $products = $this->getProducts->getList($shopId, $this->searchCriteriaBuilder->create())->getProducts();
         return array_map(
             function (ProductInterface $product) {
                 return $this->dataObjectProcessor->buildOutputDataArray($product, ProductInterface::class);
