@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
+use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
 /**
@@ -36,21 +37,29 @@ class Builder
     private $extractCartTotals;
 
     /**
+     * @var ProductAttributeMediaGalleryManagementInterface
+     */
+    private $mediaGalleryManagement;
+
+    /**
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param ExtractShippingMethods $extractShippingMethods
      * @param ExtractCartTotals $extractCartTotals
+     * @param ProductAttributeMediaGalleryManagementInterface $mediaGalleryManagement
      */
     public function __construct(
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory,
         ExtractShippingMethods $extractShippingMethods,
-        ExtractCartTotals $extractCartTotals
+        ExtractCartTotals $extractCartTotals,
+        ProductAttributeMediaGalleryManagementInterface $mediaGalleryManagement
     ) {
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
         $this->extractShippingMethods = $extractShippingMethods;
         $this->extractCartTotals = $extractCartTotals;
+        $this->mediaGalleryManagement = $mediaGalleryManagement;
     }
 
     /**
@@ -114,14 +123,21 @@ class Builder
             if ($item->getChildren()) {
                 continue;
             }
-
+            $parentProduct = null;
             if ($item->getParentItem() !== null) {
-                $pi = $item->getParentItem();
-                $item->getExtensionAttributes()->setParentItemId($pi->getId());
-                $item->getExtensionAttributes()->setTaxDetails($pi->getExtensionAttributes()->getTaxDetails());
+                $parentItem = $item->getParentItem();
+                $item->getExtensionAttributes()->setParentItemId($parentItem->getId());
+                $item->getExtensionAttributes()->setTaxDetails($parentItem->getExtensionAttributes()->getTaxDetails());
+                $parentProduct = $parentItem->getProduct();
             }
-
-            $item->getExtensionAttributes()->setProduct($item->getProduct());
+            $product = $item->getProduct();
+            $product = $product->load($product->getEntityId());
+            $mediaGallery = $this->mediaGalleryManagement->getList($product['sku']);
+            if (!$mediaGallery && $parentProduct) {
+                $mediaGallery = $this->mediaGalleryManagement->getList($parentProduct['sku']);
+                $product->setMediaGalleryEntries($mediaGallery);
+            }
+            $item->getExtensionAttributes()->setProduct($product);
             $items[] = $item;
         }
         $quote->setItems($items);
