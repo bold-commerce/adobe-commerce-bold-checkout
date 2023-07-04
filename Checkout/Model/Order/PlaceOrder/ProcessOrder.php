@@ -87,14 +87,14 @@ class ProcessOrder
             $this->orderExtensionDataResource->load(
                 $orderExtensionData,
                 $orderPayload->getPublicId(),
-                'public_id'
+                OrderExtensionDataResource::PUBLIC_ID
             );
             $orderId = $orderExtensionData->getOrderId();
             if (!$orderId) {
                 $attempt++;
                 sleep(1);
             }
-        } while (!$orderId && $attempt > 5);
+        } while (!$orderId && $attempt < 3);
         $order = $this->orderFactory->create();
         $this->orderResource->load($order, $orderId);
         if (!$order->getId()) {
