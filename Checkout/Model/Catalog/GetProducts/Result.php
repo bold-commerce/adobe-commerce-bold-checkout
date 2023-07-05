@@ -23,13 +23,20 @@ class Result implements GetProductsResultInterface
     private $errors;
 
     /**
+     * @var int
+     */
+    private $totalCount;
+
+    /**
      * @param ProductInterface[] $products
      * @param ErrorInterface[] $errors
+     * @param int $totalCount
      */
-    public function __construct(array $products = [], array $errors = [])
+    public function __construct(array $products = [], array $errors = [], int $totalCount = 0)
     {
         $this->products = $products;
         $this->errors = $errors;
+        $this->totalCount = $totalCount;
     }
 
     /**
@@ -46,5 +53,13 @@ class Result implements GetProductsResultInterface
     public function getProducts(): array
     {
         return $this->products;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTotalCount(): int
+    {
+        return $this->totalCount;
     }
 }

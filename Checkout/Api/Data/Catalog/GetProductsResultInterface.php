@@ -20,4 +20,11 @@ interface GetProductsResultInterface
      * @return \Magento\Catalog\Api\Data\ProductInterface[]
      */
     public function getProducts(): array;
+
+    /**
+     * Get result total count.
+     *
+     * @return int
+     */
+    public function getTotalCount(): int;
 }

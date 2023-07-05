@@ -14,7 +14,6 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -92,16 +91,17 @@ class GetProducts implements GetProductsInterface
         try {
             $this->shopIdValidator->validate($shopId, (int)$this->storeManager->getStore()->getId());
         } catch (LocalizedException $e) {
-            $error = $this->errorFactory->create(
-                [
-                    'type' => 'server.validation_error',
-                    'code' => 422,
-                    'message' => $e->getMessage(),
-                ]
-            );
             return $this->resultFactory->create(
                 [
-                    'errors' => [$error],
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'type' => 'server.validation_error',
+                                'code' => 422,
+                                'message' => $e->getMessage(),
+                            ]
+                        ),
+                    ],
                 ]
             );
         }
@@ -119,17 +119,19 @@ class GetProducts implements GetProductsInterface
             return $this->resultFactory->create(
                 [
                     'products' => $productSearchResults->getItems(),
+                    'totalCount' => $productSearchResults->getTotalCount(),
                 ]
             );
         } catch (Exception $e) {
-            $error = $this->errorFactory->create(
-                [
-                    'message' => $e->getMessage(),
-                ]
-            );
             return $this->resultFactory->create(
                 [
-                    'errors' => [$error],
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'message' => $e->getMessage(),
+                            ]
+                        ),
+                    ],
                 ]
             );
         }
