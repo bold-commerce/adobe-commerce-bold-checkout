@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="\Milople\Vatexempt\Api\VatexemptInformationManagementInterface">
-        <plugin name="persist_vat_exempt_information" type="Bold\CheckoutVatExempt\Plugin\Milople\VatExempt\Model\VatExemptInformationManagement\PersistVatExemptInfoPlugin"/>
-    </type>
-</config>
