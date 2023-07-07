@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Quote\SetQuoteAddressesInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
+use Magento\Checkout\Model\Cart;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -45,10 +46,16 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $config;
 
     /**
+     * @var Cart
+     */
+    private $cart;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
      * @param Builder $quoteResultBuilder
+     * @param Cart $cart
      * @param ConfigInterface $config
      */
     public function __construct(
@@ -56,6 +63,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         ShopIdValidator $shopIdValidator,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
         Builder $quoteResultBuilder,
+        Cart $cart, // used for the backward compatibility with earlier versions of Magento.
         ConfigInterface $config
     ) {
         $this->cartRepository = $cartRepository;
@@ -63,6 +71,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->config = $config;
+        $this->cart = $cart;
     }
 
     /**
@@ -87,6 +96,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         if (!$this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
             $this->setShippingAddress($quote, $shippingAddress);
         }
+        $this->cart->setQuote($quote);
         $quote->collectTotals();
         $this->cartRepository->save($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);
