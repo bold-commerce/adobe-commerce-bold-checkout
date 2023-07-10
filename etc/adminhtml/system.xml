@@ -20,7 +20,8 @@
                     <comment><![CDATA[
                         Standard - replace the native checkout with Bold Checkout's three-page checkout.<br>
                         Parallel - allow customers to choose between the native checkout or Bold Checkout.<br>
-                        Self-Hosted - use the native checkout with Bold Checkout's payment options.
+                        Self-Hosted (Magento storefront) - use the native checkout with Bold Checkout's payment options.<br>
+                        Self-Hosted (React application) - replace the native checkout with Bold Checkout's React application.
                     ]]></comment>
                 </field>
                 <field id="payment_title" translate="label" type="text" sortOrder="16" showInDefault="0" showInWebsite="1">
@@ -111,12 +112,12 @@
                 <field id="api_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
                     <label>Api URL</label>
                     <validate>required-url</validate>
-                    <comment><![CDATA[Bold API URL. Do not change..]]></comment>
+                    <comment><![CDATA[Bold API URL. Do not change.]]></comment>
                 </field>
                 <field id="checkout_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
                     <label>Checkout URL</label>
                     <validate>required-url</validate>
-                    <comment><![CDATA[Bold Checkout API URL. Do not change..]]></comment>
+                    <comment><![CDATA[Bold Checkout API URL. Do not change.]]></comment>
                 </field>
                 <field id="log_enabled" translate="label" type="select" sortOrder="80" showInDefault="0" showInWebsite="1">
                     <label>Enable Bold Checkout Requests Log</label>
