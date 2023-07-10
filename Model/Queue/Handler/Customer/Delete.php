@@ -15,7 +15,7 @@ use Exception;
 class Delete
 {
     private const CHUNK_SIZE = 500;
-    private const URL = '/{{shopId}}/webhooks/customer/deleted';
+    private const URL = '/{{shopId}}/webhooks/customers/deleted';
 
     /**
      * @var ConfigInterface
@@ -59,10 +59,10 @@ class Delete
         if (!$this->config->isCheckoutEnabled($request->getWebsiteId())) {
             return;
         }
+
         $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
-        foreach ($idsChunks as $entityIds) {
-            $items = $this->getCustomers->getItems($request->getWebsiteId(), $entityIds);
-            $this->client->post($request->getWebsiteId(), self::URL, $items);
+        foreach ($idsChunks as $idsChunk) {
+            $this->client->post($request->getWebsiteId(), self::URL, ['ids' => $idsChunk]);
         }
     }
 }

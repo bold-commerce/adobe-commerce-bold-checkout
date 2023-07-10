@@ -59,10 +59,10 @@ class Delete
         if (!$this->config->isCheckoutEnabled($request->getWebsiteId())) {
             return;
         }
+        
         $idsChunks = array_chunk($request->getEntityIds(), self::CHUNK_SIZE);
-        foreach ($idsChunks as $entityIds) {
-            $items = $this->getProducts->getItems($request->getWebsiteId(), $entityIds);
-            $this->client->post($request->getWebsiteId(),  self::URL, $items);
+        foreach ($idsChunks as $idsChunk) {
+            $this->client->post($request->getWebsiteId(), self::URL, ['ids' => $idsChunk]);
         }
     }
 }
