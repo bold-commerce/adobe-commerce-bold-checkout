@@ -8,13 +8,13 @@
                 <field id="comment" translate="label" type="note" sortOrder="1" showInDefault="1">
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Note</frontend_model>
                 </field>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1">
                     <label>Enable Bold Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
                         <![CDATA[Refer to the <a target='_blank' href="https://developer.boldcommerce.com/default/guides/platform-integration/magento-1">documentation</a> for more details.]]></comment>
                 </field>
-                <field id="type" translate="label" type="select" sortOrder="15" showInDefault="0" showInWebsite="1">
+                <field id="type" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1">
                     <label>Bold Checkout Type</label>
                     <source_model>Bold\Checkout\Model\Config\Source\CheckoutTypeSource</source_model>
                     <comment><![CDATA[
@@ -24,21 +24,21 @@
                         Self-Hosted (React application) - replace the native checkout with Bold Checkout's React application.
                     ]]></comment>
                 </field>
-                <field id="payment_title" translate="label" type="text" sortOrder="16" showInDefault="0" showInWebsite="1">
+                <field id="payment_title" translate="label" type="text" sortOrder="16" showInDefault="1" showInWebsite="1">
                     <label>Payment Title</label>
                     <comment>Payment title that will be displayed on the checkout page.</comment>
                     <depends>
                         <field id="type">2</field>
                     </depends>
                 </field>
-                <field id="parallel_checkout_button_title" translate="label" type="text" sortOrder="17" showInDefault="0" showInWebsite="1">
+                <field id="parallel_checkout_button_title" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1">
                     <label>Bold Checkout Button Title</label>
                     <comment>Bold Checkout button title that will be displayed on the checkout page.</comment>
                     <depends>
                         <field id="type">1</field>
                     </depends>
                 </field>
-                <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="0"
+                <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="1"
                        showInWebsite="1">
                     <label>API Token</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
@@ -47,39 +47,39 @@
                         Center.
                     </comment>
                 </field>
-                <field id="integration_email" translate="select" type="select" sortOrder="30" showInDefault="0"
+                <field id="integration_email" translate="select" type="select" sortOrder="30" showInDefault="1"
                        showInWebsite="1">
                     <label>Bold Integration Email</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
                 </field>
-                <field id="integration_callback_url" translate="label" type="text" sortOrder="40" showInDefault="0"
+                <field id="integration_callback_url" translate="label" type="text" sortOrder="40" showInDefault="1"
                        showInWebsite="1">
                     <label>Bold Integration Callback URL</label>
                     <validate>required-entry</validate>
                     <comment><![CDATA[Please do not change.]]></comment>
                 </field>
-                <field id="integration_identity_url" translate="label" type="text" sortOrder="50" showInDefault="0"
+                <field id="integration_identity_url" translate="label" type="text" sortOrder="50" showInDefault="1"
                        showInWebsite="1">
                     <label>Bold Integration Identity Link URL</label>
                     <validate>required-entry</validate>
                     <comment><![CDATA[Please do not change.]]></comment>
                 </field>
-                <field id="integration_status" translate="label" type="note" sortOrder="60" showInDefault="0" showInWebsite="1">
+                <field id="integration_status" translate="label" type="note" sortOrder="60" showInDefault="1" showInWebsite="1">
                     <label>Bold Integration Status</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Status</frontend_model>
                     <comment><![CDATA[In case the status is 'Not Found', please re-save configuration.
                      Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named '{{integrationName}}' and Activate or Reauthorize it.]]></comment>
                 </field>
             </group>
-            <group id="bold_checkout_advanced" translate="label" sortOrder="110" showInDefault="0" showInWebsite="1">
+            <group id="bold_checkout_advanced" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Integration Advanced Setting</label>
-                <field id="enabled_for" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1">
+                <field id="enabled_for" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1">
                     <label>Enabled For</label>
                     <source_model>\Bold\Checkout\Model\Config\Source\EnabledForSource</source_model>
                     <comment>Configure Bold Checkout access limitations. Select 'All' to remove all limitations.
                     </comment>
                 </field>
-                <field id="ip_whitelist" translate="label" type="textarea" sortOrder="20" showInDefault="0" showInWebsite="1">
+                <field id="ip_whitelist" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1">
                     <label>IP List</label>
                     <depends>
                         <field id="enabled_for">1</field>
@@ -87,7 +87,7 @@
                     <comment>Only customers with listed IPs will be able to navigate to Bold Checkout.
                         Please add whitelisted IPs separated by comma.</comment>
                 </field>
-                <field id="customer_whitelist" translate="label" type="textarea" sortOrder="30" showInDefault="0" showInWebsite="1">
+                <field id="customer_whitelist" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1">
                     <label>Customer List</label>
                     <depends>
                         <field id="enabled_for">2</field>
@@ -95,7 +95,7 @@
                     <comment>Only customers with listed emails will be able to navigate to Bold Checkout.
                         Please add whitelisted Customer emails separated by comma.</comment>
                 </field>
-                <field id="orders_percentage" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="1">
+                <field id="orders_percentage" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1">
                     <label>Orders Percentage</label>
                     <source_model>\Bold\Checkout\Model\Config\Source\PercentageSource</source_model>
                     <depends>
@@ -104,22 +104,22 @@
                     <comment>Percentage of carts will be redirected to Bold Checkout.
                         Please select the percentage of Orders to be placed using Bold Checkout.</comment>
                 </field>
-                <field id="platform_connector_url" translate="label" type="text" sortOrder="60" showInDefault="0" showInWebsite="1">
+                <field id="platform_connector_url" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1">
                     <label>M2 Platform Connector API Url</label>
                     <validate>required-url</validate>
                     <comment>M2 Platform Connector API URL.</comment>
                 </field>
-                <field id="api_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
+                <field id="api_url" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1">
                     <label>Api URL</label>
                     <validate>required-url</validate>
                     <comment><![CDATA[Bold API URL. Do not change.]]></comment>
                 </field>
-                <field id="checkout_url" translate="label" type="text" sortOrder="70" showInDefault="0" showInWebsite="1">
+                <field id="checkout_url" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1">
                     <label>Checkout URL</label>
                     <validate>required-url</validate>
                     <comment><![CDATA[Bold Checkout API URL. Do not change.]]></comment>
                 </field>
-                <field id="log_enabled" translate="label" type="select" sortOrder="80" showInDefault="0" showInWebsite="1">
+                <field id="log_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1">
                     <label>Enable Bold Checkout Requests Log</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Log Bold Checkout requests for debugging purpose.]]></comment>

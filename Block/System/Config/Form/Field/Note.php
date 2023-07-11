@@ -17,7 +17,7 @@ class Note extends Field
      */
     protected function _renderValue(AbstractElement $element)
     {
-        $text = __('Bold Integration settings can by set on the Website scope level.');
+        $text = __('Please set up a separate Bold Store for each Magento website.');
         $element->setText($text);
 
         return parent::_renderValue($element);
