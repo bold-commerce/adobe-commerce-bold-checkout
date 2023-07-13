@@ -6,9 +6,9 @@ namespace Bold\Checkout\Model\Order\PlaceOrder;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Order\OrderExtensionData;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
+use Bold\Checkout\Model\Order\PlaceOrder\Request\OrderMetadataProcessorPool;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
@@ -55,6 +55,11 @@ class CreateOrderFromPayload
     private $addCommentToOrder;
 
     /**
+     * @var OrderMetadataProcessorPool
+     */
+    private $orderMetadataProcessorPool;
+
+    /**
      * @param Order $orderResource
      * @param CreateOrderFromQuote $createOrderFromQuote
      * @param ProcessOrderPayment $processOrderPayment
@@ -62,6 +67,7 @@ class CreateOrderFromPayload
      * @param AddCommentToOrder $addCommentToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
+     * @param OrderMetadataProcessorPool $orderMetadataProcessorPool
      */
     public function __construct(
         Order $orderResource,
@@ -70,7 +76,8 @@ class CreateOrderFromPayload
         OrderInterfaceFactory $orderFactory,
         AddCommentToOrder $addCommentToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
-        OrderExtensionDataResource $orderExtensionDataResource
+        OrderExtensionDataResource $orderExtensionDataResource,
+        OrderMetadataProcessorPool $orderMetadataProcessorPool
     ) {
         $this->orderResource = $orderResource;
         $this->orderFactory = $orderFactory;
@@ -79,6 +86,7 @@ class CreateOrderFromPayload
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->addCommentToOrder = $addCommentToOrder;
+        $this->orderMetadataProcessorPool = $orderMetadataProcessorPool;
     }
 
     /**
@@ -115,6 +123,12 @@ class CreateOrderFromPayload
         $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
         $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
         $this->orderExtensionDataResource->save($orderExtensionData);
+
+        $this->orderMetadataProcessorPool->process(
+            $orderPayload->getExtensionAttributes(),
+            $magentoOrder
+        );
+
         return $magentoOrder;
     }
 }
