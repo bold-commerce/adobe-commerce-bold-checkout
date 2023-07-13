@@ -20,7 +20,7 @@ class OrderMetadataProcessorPool implements OrderMetadataProcessorInterface
      * @param OrderMetadataProcessorInterface[] $processors
      */
     public function __construct(
-        array $processors
+        array $processors = []
     )
     {
         $this->processors = $processors;
