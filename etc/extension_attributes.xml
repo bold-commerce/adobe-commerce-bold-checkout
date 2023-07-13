@@ -35,5 +35,6 @@
     <extension_attributes for="Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface">
         <attribute code="bold_cashier_public_order_id" type="string"/>
         <attribute code="quote_id" type="string"/>
+        <attribute code="note_attributes" type="string[]"/>
     </extension_attributes>
 </config>
