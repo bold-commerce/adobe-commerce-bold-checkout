@@ -124,10 +124,12 @@ class CreateOrderFromPayload
         $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
         $this->orderExtensionDataResource->save($orderExtensionData);
 
-        $this->orderMetadataProcessorPool->process(
-            $orderPayload->getExtensionAttributes(),
-            $magentoOrder
-        );
+        if ($orderPayload->getExtensionAttributes() !== null) {
+            $this->orderMetadataProcessorPool->process(
+                $orderPayload->getExtensionAttributes(),
+                $magentoOrder
+            );
+        }
 
         return $magentoOrder;
     }
