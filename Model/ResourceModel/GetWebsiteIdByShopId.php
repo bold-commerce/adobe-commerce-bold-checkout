@@ -39,13 +39,12 @@ class GetWebsiteIdByShopId
             ->select()
             ->from($this->connection->getTableName('core_config_data'), ['scope_id'])
             ->where('path = ?', ConfigInterface::PATH_SHOP_ID)
-            ->where('scope = ?', ScopeInterface::SCOPE_WEBSITES)
             ->where('value = ?', $shopId);
-        $websiteId = (int)$this->connection->getConnection()->fetchOne($select);
-        if (!$websiteId) {
+        $websiteId = $this->connection->getConnection()->fetchOne($select);
+        if ($websiteId === false) {
             throw new LocalizedException(__('No website found for "%1" shop Id.', $shopId));
         }
 
-        return $websiteId;
+        return (int)$websiteId;
     }
 }
