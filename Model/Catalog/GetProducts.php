@@ -14,6 +14,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -21,6 +22,11 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class GetProducts implements GetProductsInterface
 {
+    /**
+     * @var int[]
+     */
+    private $websiteIds = [];
+
     /**
      * @var ShopIdValidator
      */
@@ -106,6 +112,15 @@ class GetProducts implements GetProductsInterface
             );
         }
         try {
+            foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
+                foreach ($filterGroup->getFilters() as $filter) {
+                    if ($filter->getField() === 'website_id' && $filter->getValue() === '0') {
+                        $filter->setValue(
+                            implode(',', $this->getWebsiteIds())
+                        );
+                    }
+                }
+            }
             $productSearchResults = $this->productRepository->getList($searchCriteria);
             foreach ($productSearchResults->getItems() as $product) {
                 if (!$product->getMediaGalleryEntries()) {
@@ -135,5 +150,24 @@ class GetProducts implements GetProductsInterface
                 ]
             );
         }
+    }
+
+    /**
+     * Get all website ids.
+     *
+     * @return int[]
+     */
+    public function getWebsiteIds(): array
+    {
+        if (!$this->websiteIds) {
+            $this->websiteIds = array_map(
+                function (WebsiteInterface $website) {
+                    return (int)$website->getId();
+                },
+                $this->storeManager->getWebsites()
+            );
+        }
+
+        return $this->websiteIds;
     }
 }

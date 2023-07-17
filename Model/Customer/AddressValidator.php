@@ -81,7 +81,7 @@ class AddressValidator implements CustomerAddressValidatorInterface
         try {
             $websiteId = $this->getWebsiteIdByShopId->getWebsiteId($shopId);
             $website = $this->storeManager->getWebsite($websiteId);
-            if (!$website->getId()) {
+            if ($website->getId() === null) {
                 return $this->resultFactory->create(
                     [
                         'errors' => [
