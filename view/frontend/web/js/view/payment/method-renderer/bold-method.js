@@ -38,9 +38,7 @@ define(
                 this._super();
                 this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
-                if (!this.customerIsGuest) {
-                    this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
-                }
+                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.syncBillingData();
                 quote.billingAddress.subscribe(function () {
                     const sendBillingAddress = _.debounce(
@@ -101,7 +99,8 @@ define(
                     return;
                 }
                 this.paymentType = null;
-                this._super(data, event);
+                loader.stopLoader();
+                return this._super(data, event)
             },
 
             /**
@@ -117,7 +116,6 @@ define(
                 boldClient.post('customer').then(
                     function () {
                         this.messageContainer.errorMessages([]);
-                        this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }

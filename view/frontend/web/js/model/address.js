@@ -99,7 +99,7 @@ define([
                 'city',
             ];
             const country = this.countries.find(country => country.value === payload.country_code);
-            if (country && country.is_region_visible) {
+            if (country && country.is_region_required) {
                 requiredFields.push('province');
                 requiredFields.push('province_code');
             }
