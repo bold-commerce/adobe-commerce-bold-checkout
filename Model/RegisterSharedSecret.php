@@ -70,6 +70,21 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
         try {
             $websiteId = $this->getWebsiteIdByShopId->getWebsiteId($shopId);
             $website = $this->storeManager->getWebsite($websiteId);
+            if ($website->getId() === null) {
+                return $this->resultFactory->create(
+                    [
+                        'errors' => [
+                            $this->errorFactory->create(
+                                [
+                                    'message' => __('Incorrect "%1" Shop Id is provided.'),
+                                    'code' => 422,
+                                    'type' => 'server.validation_error',
+                                ]
+                            ),
+                        ],
+                    ]
+                );
+            }
         } catch (LocalizedException $e) {
             return $this->resultFactory->create(
                 [

@@ -62,7 +62,10 @@ class EmailValidator implements CustomerEmailValidatorInterface
     {
         try {
             $websiteId = $this->getWebsiteIdByShopId->getWebsiteId($shopId);
-             $this->storeManager->getWebsite($websiteId);
+            $website = $this->storeManager->getWebsite($websiteId);
+            if ($website->getId() === null) {
+                return $this->getErrorResult(__('Incorrect "%1" Shop Id is provided.'));
+            }
         } catch (LocalizedException $e) {
             return $this->resultFactory->create(
                 [
