@@ -34,9 +34,17 @@ class ExtractShippingMethods
     public function extract(CartInterface $quote): array
     {
         $shippingMethods = [];
+        $quote->getShippingAddress()->requestShippingRates();
         $shippingRates = $quote->getShippingAddress()->getGroupedAllShippingRates();
+        $shippingMethodSet = [];
         foreach ($shippingRates as $carrierRates) {
             foreach ($carrierRates as $rate) {
+                // Filtering out the same shipping method
+                if (isset($shippingMethodSet[$rate->getCode()])) {
+                    continue;
+                }
+                $shippingMethodSet[$rate->getCode()] = true;
+
                 $shippingMethods[] = $this->shippingMethodConverter->modelToDataObject(
                     $rate,
                     $quote->getQuoteCurrencyCode()
