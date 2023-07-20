@@ -3,6 +3,9 @@
     <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
         <plugin name="send_shipping_information_plugin" type="Bold\Checkout\Plugin\Checkout\Api\ShippingInformationManagement\SendShippingInformationPlugin"/>
     </type>
+    <type name="Magento\Customer\Api\CustomerRepositoryInterface">
+        <plugin name="bold_checkout_customer_repository_add_website_ids" type="Bold\Checkout\Plugin\Customer\CustomerRepository\AddAllWebsitesPlugin"/>
+    </type>
     <type name="Bold\Checkout\Plugin\Checkout\Api\ShippingInformationManagement\SendShippingInformationPlugin">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
