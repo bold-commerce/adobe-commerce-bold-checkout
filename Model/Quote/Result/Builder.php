@@ -128,6 +128,8 @@ class Builder
                 $parentItem = $item->getParentItem();
                 $item->getExtensionAttributes()->setParentItemId($parentItem->getId());
                 $item->getExtensionAttributes()->setTaxDetails($parentItem->getExtensionAttributes()->getTaxDetails());
+                $item->setQty($parentItem->getQty());
+                $item->setPrice($parentItem->getPrice());
                 $parentProduct = $parentItem->getProduct();
             }
             $product = $item->getProduct();
