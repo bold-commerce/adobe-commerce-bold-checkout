@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote\Result\Builder;
 
+use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals\UpdateProductOptionValues;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -44,24 +45,32 @@ class ExtractCartTotals
     private $totalsConverter;
 
     /**
+     * @var UpdateProductOptionValues
+     */
+    private $updateProductOptionValues;
+
+    /**
      * @param TotalsInterfaceFactory $totalsFactory
      * @param DataObjectHelper $dataObjectHelper
      * @param ItemConverter $itemConverter
      * @param CouponManagementInterface $couponService
      * @param TotalsConverter $totalsConverter
+     * @param UpdateProductOptionValues $updateProductOptionValues
      */
     public function __construct(
         TotalsInterfaceFactory $totalsFactory,
         DataObjectHelper $dataObjectHelper,
         ItemConverter $itemConverter,
         CouponManagementInterface $couponService,
-        TotalsConverter $totalsConverter
+        TotalsConverter $totalsConverter,
+        UpdateProductOptionValues $updateProductOptionValues
     ) {
         $this->totalsFactory = $totalsFactory;
         $this->dataObjectHelper = $dataObjectHelper;
         $this->itemConverter = $itemConverter;
         $this->couponService = $couponService;
         $this->totalsConverter = $totalsConverter;
+        $this->updateProductOptionValues = $updateProductOptionValues;
     }
 
     /**
@@ -83,6 +92,7 @@ class ExtractCartTotals
             TotalsInterface::class
         );
         $items = array_map([$this->itemConverter, 'modelToDataObject'], $quote->getAllVisibleItems());
+        $this->updateProductOptionValues->updateValues($items);
         $calculatedTotals = $this->totalsConverter->process($addressTotals);
         $quoteTotals->setTotalSegments($calculatedTotals);
         $amount = $quoteTotals->getGrandTotal() - $quoteTotals->getTaxAmount();
