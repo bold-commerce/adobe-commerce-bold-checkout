@@ -201,4 +201,12 @@ interface ConfigInterface
      * @return string
      */
     public function getParallelCheckoutButtonTitle(int $websiteId): string;
+
+    /**
+     * Get Bold Checkout (LiFE) elements.
+     *
+     * @param int $websiteId
+     * @return array
+     */
+    public function getLifeElements(int $websiteId): array;
 }
