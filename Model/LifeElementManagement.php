@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Api\LifeElementManagementInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * (LiFE) Elements management.
@@ -17,12 +18,20 @@ class LifeElementManagement implements LifeElementManagementInterface
     private $client;
 
     /**
+     * @var Json
+     */
+    private $serializer;
+
+    /**
      * @param ClientInterface $client
+     * @param Json $serializer
      */
     public function __construct(
-        ClientInterface $client
+        ClientInterface $client,
+        Json $serializer
     ) {
         $this->client = $client;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -33,6 +42,9 @@ class LifeElementManagement implements LifeElementManagementInterface
         $result = $this->client->post($websiteId, self::LIFE_ELEMENTS_API_URI, $elementData);
         if ($result->getErrors()) {
             $error = current($result->getErrors());
+            if (is_array($error)) {
+                $error = $this->serializer->serialize($error);
+            }
             throw new \Exception($error);
         }
         $lifeElements = $result->getBody()['data']['life_elements'];
@@ -48,6 +60,9 @@ class LifeElementManagement implements LifeElementManagementInterface
         $result = $this->client->get($websiteId, self::LIFE_ELEMENTS_API_URI);
         if ($result->getErrors()) {
             $error = current($result->getErrors());
+            if (is_array($error)) {
+                $error = $this->serializer->serialize($error);
+            }
             throw new \Exception($error);
         }
 
@@ -62,6 +77,9 @@ class LifeElementManagement implements LifeElementManagementInterface
         $result = $this->client->patch($websiteId, self::LIFE_ELEMENTS_API_URI . '/' . $publicElementId, $elementData);
         if ($result->getErrors()) {
             $error = current($result->getErrors());
+            if (is_array($error)) {
+                $error = $this->serializer->serialize($error);
+            }
             throw new \Exception($error);
         }
         $lifeElements = $result->getBody()['data']['life_elements'];
@@ -77,6 +95,9 @@ class LifeElementManagement implements LifeElementManagementInterface
         $result = $this->client->delete($websiteId, self::LIFE_ELEMENTS_API_URI . '/' . $publicElementId, []);
         if ($result->getErrors()) {
             $error = current($result->getErrors());
+            if (is_array($error)) {
+                $error = $this->serializer->serialize($error);
+            }
             throw new \Exception($error);
         }
     }
