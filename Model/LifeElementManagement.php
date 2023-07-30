@@ -66,7 +66,7 @@ class LifeElementManagement implements LifeElementManagementInterface
         }
         $lifeElements = $result->getBody()['data']['life_elements'];
 
-        return current($lifeElements)['public_id'];
+        return $lifeElements['public_id'];
     }
 
     /**
