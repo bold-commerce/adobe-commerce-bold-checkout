@@ -21,7 +21,7 @@ interface LifeElementManagementInterface
     public function create(int $websiteId, array $elementData): string;
 
     /**
-     * Retrieve list fo (LiFE) Elements from Bold Platform.
+     * Retrieve list of (LiFE) Elements from Bold Platform.
      *
      * @param int $websiteId
      * @return array
