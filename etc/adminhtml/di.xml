@@ -1,14 +1,8 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Bold\Checkout\Api\SyncLifeElementsProcessorInterface"
-                type="Bold\Checkout\Model\Config\SyncLifeElementsProcessor"/>
-    <type name="Bold\Checkout\Observer\Checkout\SyncLifeElements">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Api\SyncLifeElementsProcessorInterface">
+    <preference for="Bold\Checkout\Api\LifeElementManagementInterface" type="Bold\Checkout\Model\LifeElementManagement"/>
+    <type name="Bold\Checkout\Api\LifeElementManagementInterface">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>

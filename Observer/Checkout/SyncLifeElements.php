@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Checkout;
 
-use Bold\Checkout\Api\Http\ClientInterface;
-use Bold\Checkout\Api\SyncLifeElementsProcessorInterface;
+use Bold\Checkout\Api\LifeElementManagementInterface;
 use Bold\Checkout\Model\ConfigInterface;
-use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManager;
@@ -22,14 +20,9 @@ class SyncLifeElements implements ObserverInterface
     private $config;
 
     /**
-     * @var ClientInterface
+     * @var LifeElementManagementInterface
      */
-    private $client;
-
-    /**
-     * @var SyncLifeElementsProcessorInterface
-     */
-    private $syncLifeElementsProcessor;
+    private $lifeElementManagement;
 
     /**
      * @var MessageManager
@@ -38,19 +31,16 @@ class SyncLifeElements implements ObserverInterface
 
     /**
      * @param ConfigInterface $config
-     * @param ClientInterface $client
-     * @param SyncLifeElementsProcessorInterface $syncLifeElementsProcessor
+     * @param LifeElementManagementInterface $lifeElementManagement
      * @param MessageManager $messageManager
      */
     public function __construct(
         ConfigInterface $config,
-        ClientInterface $client,
-        SyncLifeElementsProcessorInterface $syncLifeElementsProcessor,
+        LifeElementManagementInterface $lifeElementManagement,
         MessageManager $messageManager
     ) {
         $this->config = $config;
-        $this->client = $client;
-        $this->syncLifeElementsProcessor = $syncLifeElementsProcessor;
+        $this->lifeElementManagement = $lifeElementManagement;
         $this->messageManager = $messageManager;
     }
 
@@ -73,30 +63,145 @@ class SyncLifeElements implements ObserverInterface
         }
 
         $magentoLifeElements = $this->config->getLifeElements($websiteId);
-        if (empty($magentoLifeElements)) {
+        $boldLifeElements = $this->lifeElementManagement->getList($websiteId);
+
+        if (empty($magentoLifeElements) && empty($boldLifeElements)) {
             return;
         }
-        $boldLifeElements = $this->getBoldListElements($websiteId);
-        $this->syncLifeElementsProcessor->process($websiteId, $magentoLifeElements, $boldLifeElements);
+
+        $this->sync($websiteId, $magentoLifeElements, $boldLifeElements);
     }
 
-
     /**
-     * Retrieve list fo elements from Bold Platform.
+     * Synchronize (LiFE) Elements between Magento and Bold Platform.
      *
-     * @param int $websiteId
-     * @return array
+     * @param $websiteId
+     * @param $magentoLifeElements
+     * @param $boldLifeElements
+     * @return void
      */
-    private function getBoldListElements(int $websiteId): array
+    private function sync($websiteId, $magentoLifeElements, $boldLifeElements): void
     {
-        $result = $this->client->get($websiteId, SyncLifeElementsProcessorInterface::LIFE_ELEMENTS_API_URI);
-        if ($result->getErrors()) {
-            $error = current($result->getErrors());
-            $this->messageManager->addErrorMessage(
-                __('There is an error while getting (LiFE) Elements: ') . ' ' . $error
-            );
+        $magentoLifeMetaFields = array_values(
+            array_map(function ($element) {
+                return $element['meta_data_field'] ?? null;
+            }, $magentoLifeElements)
+        );
+
+        $boldLifeMetaFields = array_map(function ($element) {
+            return $element['meta_data_field'] ?? null;
+        }, $boldLifeElements);
+
+        $metaFieldsToAdd = array_diff($magentoLifeMetaFields, $boldLifeMetaFields);
+        $metaFieldsToUpdate = array_diff($magentoLifeMetaFields, $metaFieldsToAdd);
+        $metaFieldsToDelete = array_diff($boldLifeMetaFields, $magentoLifeMetaFields);
+
+        // Create (LiFE) Elements on Bold Platform
+        if (!empty($metaFieldsToAdd)) {
+            $lifeElementsToAdd = [];
+            foreach ($magentoLifeElements as $magentoLifeElement) {
+                if (in_array($magentoLifeElement["meta_data_field"], $metaFieldsToAdd)) {
+                    $magentoLifeElement['input_required'] = (bool)$magentoLifeElement['input_required'];
+                    $lifeElementsToAdd[] = $magentoLifeElement;
+                }
+            }
+            $this->createBoldLifeElements($websiteId, $lifeElementsToAdd);
         }
 
-        return $result->getBody()['data']['life_elements'];
+        // Update (LiFE) Elements on Bold Platform
+        if (!empty($metaFieldsToUpdate)) {
+            $lifeElementsToUpdate = [];
+            foreach ($magentoLifeElements as $magentoLifeElement) {
+                if (in_array($magentoLifeElement["meta_data_field"], $metaFieldsToUpdate)) {
+                    foreach ($boldLifeElements as $boldLifeElement) {
+                        if ($boldLifeElement['meta_data_field'] === $magentoLifeElement['meta_data_field']) {
+                            $magentoLifeElement['input_required'] = (bool)$magentoLifeElement['input_required'];
+                            $lifeElementsToUpdate[$boldLifeElement['public_id']] = $magentoLifeElement;
+                        }
+                    }
+                }
+            }
+            $this->updateBoldLifeElements($websiteId, $lifeElementsToUpdate);
+        }
+
+        // Delete (LiFE) Elements from Bold Platform
+        if (!empty($metaFieldsToDelete)) {
+            $lifeElementsToDelete = [];
+            foreach ($boldLifeElements as $boldLifeElement) {
+                if (in_array($boldLifeElement["meta_data_field"], $metaFieldsToDelete)) {
+                    $lifeElementsToDelete[] = $boldLifeElement['public_id'];
+                }
+            }
+            $this->deleteBoldLifeElements($websiteId, $lifeElementsToDelete);
+        }
+    }
+
+    /**
+     * Create (LiFE) Elements on Bold Platform.
+     *
+     * @param $websiteId
+     * @param array $elements
+     * @return void
+     */
+    private function createBoldLifeElements($websiteId, array $elements)
+    {
+        try {
+            foreach ($elements as $element) {
+                $this->lifeElementManagement->create($websiteId, $element);
+            }
+            $this->messageManager->addSuccessMessage(
+                __("A total of %1 (LiFE) Element(s) have been added.", count($elements))
+            );
+        } catch (\Exception $exception) {
+            $this->messageManager->addErrorMessage(
+                __('There is an error while creating (LiFE) Elements: ') . ' ' . $exception->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Update (LiFE) Elements on Bold Platform.
+     *
+     * @param $websiteId
+     * @param array $elements
+     * @return void
+     */
+    private function updateBoldLifeElements($websiteId, array $elements)
+    {
+        try {
+            foreach ($elements as $publicElementId => $elementData) {
+                $this->lifeElementManagement->update($websiteId, $publicElementId, $elementData);
+            }
+            $this->messageManager->addSuccessMessage(
+                __("A total of %1 (LiFE) Element(s) have been updated.", count($elements))
+            );
+        } catch (\Exception $exception) {
+            $this->messageManager->addErrorMessage(
+                __('There is an error while updating (LiFE) Elements: ') . ' ' . $exception->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Delete (LiFE) Elements from Bold Platform.
+     *
+     * @param $websiteId
+     * @param array $elements
+     * @return void
+     */
+    private function deleteBoldLifeElements($websiteId, array $elements)
+    {
+        try {
+            foreach ($elements as $element) {
+                $this->lifeElementManagement->delete($websiteId, $element);
+            }
+            $this->messageManager->addSuccessMessage(
+                __("A total of %1 (LiFE) Element(s) have been deleted.", count($elements))
+            );
+        } catch (\Exception $exception) {
+            $this->messageManager->addErrorMessage(
+                __('There is an error while deleting (LiFE) Elements: ') . ' ' . $exception->getMessage()
+            );
+        }
     }
 }
