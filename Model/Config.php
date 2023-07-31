@@ -7,6 +7,7 @@ use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 
 /**
@@ -31,6 +32,7 @@ class Config implements ConfigInterface
     private const PATH_INTEGRATION_API_URL = 'checkout/bold_checkout_advanced/api_url';
     private const PATH_INTEGRATION_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
     private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
+    private const PATH_LIFE_ELEMENTS = 'checkout/bold_checkout_life_elements/life_elements';
 
     public const INTEGRATION_PATHS = [
         self::PATH_INTEGRATION_EMAIL,
@@ -59,21 +61,29 @@ class Config implements ConfigInterface
     private $cacheTypeList;
 
     /**
+     * @var Json
+     */
+    private Json $serializer;
+
+    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param WriterInterface $configWriter
      * @param EncryptorInterface $encryptor
      * @param TypeListInterface $cacheTypeList
+     * @param Json $serializer
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         WriterInterface $configWriter,
         EncryptorInterface $encryptor,
-        TypeListInterface $cacheTypeList
+        TypeListInterface $cacheTypeList,
+        Json $serializer
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->configWriter = $configWriter;
         $this->encryptor = $encryptor;
         $this->cacheTypeList = $cacheTypeList;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -316,5 +326,24 @@ class Config implements ConfigInterface
             ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLifeElements(int $websiteId): array
+    {
+        $lifeElements = $this->scopeConfig->getValue(
+            self::PATH_LIFE_ELEMENTS,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
+
+        if (!$lifeElements) {
+            return [];
+        }
+
+        $lifeElements = $this->serializer->unserialize($lifeElements);
+        return is_array($lifeElements) ? $lifeElements : [];
     }
 }
