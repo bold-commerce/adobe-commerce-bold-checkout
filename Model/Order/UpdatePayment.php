@@ -97,7 +97,7 @@ class UpdatePayment implements UpdatePaymentInterface
         } catch (LocalizedException $e) {
             return $this->getValidationErrorResponse($e->getMessage());
         }
-        if ($this->isDelayedCapture($order)) {
+        if ($this->isDelayedCapture($order) || $order->hasInvoices()) {
             return $this->responseFactory->create(
                 [
                     'payment' => $order->getPayment(),
