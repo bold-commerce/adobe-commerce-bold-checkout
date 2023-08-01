@@ -130,7 +130,6 @@ define(
              */
             subscribeToPIGI() {
                 window.addEventListener('message', ({data}) => {
-                    console.log(data);
                     const responseType = data.responseType;
                     const iframeElement = document.getElementById('PIGI');
                     if (responseType) {
