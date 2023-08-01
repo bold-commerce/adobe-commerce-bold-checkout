@@ -63,7 +63,7 @@ class Config implements ConfigInterface
     /**
      * @var Json
      */
-    private Json $serializer;
+    private $serializer;
 
     /**
      * @param ScopeConfigInterface $scopeConfig

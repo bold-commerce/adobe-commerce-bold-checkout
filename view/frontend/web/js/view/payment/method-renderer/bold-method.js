@@ -87,20 +87,22 @@ define(
              * @inheritDoc
              */
             placeOrder: function (data, event) {
+                loader.startLoader();
                 if (!this.iframeWindow) {
-                    return;
+                    return false;
                 }
                 if (!this.paymentType) {
-                    loader.startLoader();
                     const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
                     const addPaymentAction = {actionType: 'PIGI_ADD_PAYMENT'};
                     this.iframeWindow.postMessage(clearAction, '*');
                     this.iframeWindow.postMessage(addPaymentAction, '*');
-                    return;
+                    return false;
                 }
-                this.paymentType = null;
-                loader.stopLoader();
-                return this._super(data, event)
+                const orderPlacementResult = this._super(data, event);
+                if (!orderPlacementResult) {
+                    loader.stopLoader();
+                }
+                return orderPlacementResult;
             },
 
             /**
@@ -148,13 +150,12 @@ define(
                                 break;
                             case 'PIGI_ADD_PAYMENT':
                                 this.messageContainer.errorMessages([]);
+                                loader.stopLoader();
                                 if (!data.payload.success) {
-                                    loader.stopLoader();
                                     this.paymentType = null;
                                     return;
                                 }
                                 this.paymentType = data.payload.paymentType;
-                                loader.startLoader();
                                 this.placeOrder({}, null);
                         }
                     }
