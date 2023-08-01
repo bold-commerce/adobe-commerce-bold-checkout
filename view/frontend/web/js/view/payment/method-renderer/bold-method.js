@@ -98,8 +98,11 @@ define(
                     this.iframeWindow.postMessage(addPaymentAction, '*');
                     return false;
                 }
-                loader.stopLoader();
-                return this._super(data, event);
+                const orderPlacementResult = this._super(data, event);
+                if (!orderPlacementResult) {
+                    loader.stopLoader();
+                }
+                return orderPlacementResult;
             },
 
             /**
