@@ -22,6 +22,7 @@
                 <integration_identity_url>https://adobe-commerce-connector.boldapps.net/platform/oauth/identify</integration_identity_url>
                 <payment_title>Bold Payments</payment_title>
                 <parallel_checkout_button_title>Proceed to Bold Checkout</parallel_checkout_button_title>
+                <integration_email>general</integration_email>
             </bold_checkout_base>
             <bold_checkout_advanced>
                 <enabled_for>0</enabled_for>

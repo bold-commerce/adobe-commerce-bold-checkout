@@ -173,11 +173,13 @@ class UpdatePayment implements UpdatePaymentInterface
     }
 
     /**
+     * Validate update payment request.
+     *
      * @param RequestInterface $payment
      * @return void
      * @throws LocalizedException
      */
-    public function validateRequest(RequestInterface $payment): void
+    private function validateRequest(RequestInterface $payment): void
     {
         if (!$payment->getPayment()) {
             throw new LocalizedException(__('Provided request has no payment.'));
