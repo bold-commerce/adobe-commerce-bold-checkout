@@ -6,6 +6,7 @@ namespace Bold\Checkout\Observer\Order;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
@@ -31,17 +32,26 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     private $checkoutSession;
 
     /**
+     * @var EventManagerInterface
+     */
+    private $eventManager;
+
+    /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
+     * @param Session $checkoutSession
+     * @param EventManagerInterface $eventManager
      */
     public function __construct(
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
-        Session $checkoutSession
+        Session $checkoutSession,
+        EventManagerInterface $eventManager
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->checkoutSession = $checkoutSession;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -67,6 +77,12 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $orderExtensionData->setPublicId($publicOrderId);
         $orderExtensionData->setFulfillmentStatus('pending');
         $orderExtensionData->setFinancialStatus('pending');
+
+        $this->eventManager->dispatch(
+            'checkout_save_order_extension_data_before',
+            ['order' => $order, 'orderExtensionData' => $orderExtensionData]
+        );
+
         try {
             $this->orderExtensionDataResource->save($orderExtensionData);
         } catch (Exception $e) {
