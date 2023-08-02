@@ -6,9 +6,9 @@ namespace Bold\Checkout\Model\Order\PlaceOrder;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Order\OrderExtensionData;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
-use Bold\Checkout\Model\Order\PlaceOrder\Request\OrderMetadataProcessorPool;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
@@ -55,9 +55,9 @@ class CreateOrderFromPayload
     private $addCommentToOrder;
 
     /**
-     * @var OrderMetadataProcessorPool
+     * @var EventManagerInterface
      */
-    private $orderMetadataProcessorPool;
+    private $eventManager;
 
     /**
      * @param Order $orderResource
@@ -67,7 +67,7 @@ class CreateOrderFromPayload
      * @param AddCommentToOrder $addCommentToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
-     * @param OrderMetadataProcessorPool $orderMetadataProcessorPool
+     * @param EventManagerInterface $eventManager
      */
     public function __construct(
         Order $orderResource,
@@ -77,7 +77,7 @@ class CreateOrderFromPayload
         AddCommentToOrder $addCommentToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
-        OrderMetadataProcessorPool $orderMetadataProcessorPool
+        EventManagerInterface $eventManager
     ) {
         $this->orderResource = $orderResource;
         $this->orderFactory = $orderFactory;
@@ -86,7 +86,7 @@ class CreateOrderFromPayload
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->addCommentToOrder = $addCommentToOrder;
-        $this->orderMetadataProcessorPool = $orderMetadataProcessorPool;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -122,14 +122,13 @@ class CreateOrderFromPayload
         $orderExtensionData->setOrderId((int)$magentoOrder->getId());
         $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
         $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
-        $this->orderExtensionDataResource->save($orderExtensionData);
 
-        if ($orderPayload->getExtensionAttributes() !== null) {
-            $this->orderMetadataProcessorPool->process(
-                $orderPayload->getExtensionAttributes(),
-                $magentoOrder
-            );
-        }
+        $this->eventManager->dispatch(
+            'create_order_from_payload_extension_data_save_before',
+            ['orderPayload' => $orderPayload, 'orderExtensionData' => $orderExtensionData]
+        );
+
+        $this->orderExtensionDataResource->save($orderExtensionData);
 
         return $magentoOrder;
     }

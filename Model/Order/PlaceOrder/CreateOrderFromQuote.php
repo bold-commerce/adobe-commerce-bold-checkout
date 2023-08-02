@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order\PlaceOrder;
 
-use Bold\Checkout\Model\Payment\Gateway\Service;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
+use Bold\Checkout\Model\Payment\Gateway\Service;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\GroupManagement;
+use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartManagementInterface;
@@ -96,7 +97,14 @@ class CreateOrderFromQuote
             self::FINANCIAL_STATUS => $orderPayload->getFinancialStatus(),
             self::FULFILLMENT_STATUS => $orderPayload->getFulfillmentStatus(),
         ];
-        $order = $this->cartManagement->submit($cart, $orderData);
+        $orderData = new DataObject($orderData);
+
+        $this->eventManager->dispatch(
+            'create_order_from_quote_submit_before',
+            ['orderPayload' => $orderPayload, 'orderData' => $orderData]
+        );
+
+        $order = $this->cartManagement->submit($cart, $orderData->getData());
         $this->setOrderTaxDetails($order);
         $this->setShippingAssignments($order);
         $this->eventManager->dispatch(
