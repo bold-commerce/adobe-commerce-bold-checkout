@@ -4,6 +4,7 @@
         <policy id="connect-src">
             <values>
                 <value id="bold_commerce" type="host">https://api.boldcommerce.com</value>
+                <value id="bold_commerce_staging" type="host">https://api.staging.boldcommerce.com</value>
                 <value id="cashier" type="host">https://cashier.boldcommerce.com</value>
             </values>
         </policy>
