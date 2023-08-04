@@ -103,7 +103,9 @@ class CreateOrderFromQuote
             'create_order_from_quote_submit_before',
             ['orderPayload' => $orderPayload, 'orderData' => $orderData]
         );
-
+        $cart->getShippingAddress()->setCollectShippingRates(true);
+        $cart->setTotalsCollectedFlag(false);
+        $cart->collectTotals();
         $order = $this->cartManagement->submit($cart, $orderData->getData());
         $this->setOrderTaxDetails($order);
         $this->setShippingAssignments($order);
