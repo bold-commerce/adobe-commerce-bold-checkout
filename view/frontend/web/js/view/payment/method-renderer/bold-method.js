@@ -63,13 +63,6 @@ define(
                         }
                     }.bind(this));
                 }
-                if (checkoutData.getSelectedPaymentMethod() === 'bold') {
-                    checkoutData.setSelectedPaymentMethod(null);
-                    quote.paymentMethod(null);
-                }
-                if (!this.isRadioButtonVisible()) {
-                    this.selectPaymentMethod();
-                }
             },
 
             /**
@@ -118,6 +111,9 @@ define(
                 boldClient.post('customer').then(
                     function () {
                         this.messageContainer.errorMessages([]);
+                        if (!this.isRadioButtonVisible() && quote.shippingMethod()) {
+                            return this.selectPaymentMethod(); // some one-step checkout updates shipping lines only after payment method is selected.
+                        }
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
@@ -173,6 +169,9 @@ define(
                 boldClient.post('address').then(
                     function () {
                         this.messageContainer.errorMessages([]);
+                        if (!this.isRadioButtonVisible() && !quote.shippingMethod()) {
+                            return this.selectPaymentMethod(); // some one-step checkout updates shipping lines only after payment method is selected.
+                        }
                         if (this.iframeWindow) {
                             this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                         }
