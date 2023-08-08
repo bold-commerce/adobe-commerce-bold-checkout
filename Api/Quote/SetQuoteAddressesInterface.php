@@ -16,14 +16,14 @@ interface SetQuoteAddressesInterface
      *
      * @param string $shopId
      * @param int $cartId
-     * @param \Magento\Quote\Api\Data\AddressInterface $billingAddress
+     * @param \Magento\Quote\Api\Data\AddressInterface|null $billingAddress
      * @param \Magento\Quote\Api\Data\AddressInterface|null $shippingAddress
      * @return \Bold\Checkout\Api\Data\Quote\ResultInterface
      */
     public function setAddresses(
         string $shopId,
         int $cartId,
-        AddressInterface $billingAddress,
+        AddressInterface $billingAddress = null,
         AddressInterface $shippingAddress = null
     ): ResultInterface;
 }
