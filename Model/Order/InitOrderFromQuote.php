@@ -11,6 +11,7 @@ use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 
@@ -20,6 +21,8 @@ use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 class InitOrderFromQuote
 {
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
+
+    private const FLOW_ID = 'Bold-Magento2';
 
     /**
      * @var ClientInterface
@@ -71,10 +74,12 @@ class InitOrderFromQuote
      * Initialize order on bold side.
      *
      * @param CartInterface $quote
+     * @param string $flowId
      * @return array
-     * @throws Exception
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    public function init(CartInterface $quote): array
+    public function init(CartInterface $quote, string $flowId = self::FLOW_ID): array
     {
         $maskedQuoteId = $quote->getCustomerIsGuest() ? $this->quoteIdToMaskedQuoteId->execute((int)$quote->getId()) : null;
         $websiteId = (int)$quote->getStore()->getWebsiteId();
@@ -84,6 +89,7 @@ class InitOrderFromQuote
         }, []);
 
         $body = [
+            'flow_id' => $flowId,
             'cart_items' => $this->getCartLineItems->getItems($quote),
             'actions' => $mergedActions,
             'order_meta_data' => [

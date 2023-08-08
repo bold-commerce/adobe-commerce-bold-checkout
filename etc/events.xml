@@ -24,9 +24,6 @@
     <event name="customer_address_save_after">
         <observer name="bold_checkout_customer_address_save" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressSave" />
     </event>
-    <event name="admin_system_config_changed_section_checkout">
-        <observer name="bold_checkout_checkout_section_save" instance="Bold\Checkout\Observer\Checkout\CheckoutSectionSave"/>
-    </event>
     <event name="catalog_category_delete_after">
         <observer name="bold_checkout_category_delete" instance="Bold\Checkout\Observer\Category\CategoryDelete" />
     </event>

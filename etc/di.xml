@@ -29,6 +29,7 @@
     <preference for="Bold\Checkout\Api\Data\Order\Payment\ResultInterface" type="Bold\Checkout\Model\Order\UpdatePayment\Result"/>
     <preference for="Bold\Checkout\Api\Catalog\GetProductsInterface" type="Bold\Checkout\Model\Catalog\GetProducts"/>
     <preference for="Bold\Checkout\Api\Data\Catalog\GetProductsResultInterface" type="Bold\Checkout\Model\Catalog\GetProducts\Result"/>
+    <preference for="Bold\Checkout\Api\GetVersionInterface" type="Bold\Checkout\Model\GetVersion"/>
     <type name="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>

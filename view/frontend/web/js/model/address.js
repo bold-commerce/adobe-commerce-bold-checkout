@@ -92,7 +92,6 @@ define([
             let requiredFields = [
                 'first_name',
                 'last_name',
-                'postal_code',
                 'phone_number',
                 'country',
                 'address_line_1',
@@ -102,6 +101,9 @@ define([
             if (country && country.is_region_required) {
                 requiredFields.push('province');
                 requiredFields.push('province_code');
+            }
+            if (country && country.is_zipcode_optional !== true) {
+                requiredFields.push('postal_code');
             }
             _.each(requiredFields, function (field) {
                 if (!payload[field]) {

@@ -5,7 +5,6 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteAddressesInterface;
-use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Checkout\Model\Cart;
@@ -41,11 +40,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $quoteResultBuilder;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
      * @var Cart
      */
     private $cart;
@@ -55,22 +49,19 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
      * @param ShopIdValidator $shopIdValidator
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
      * @param Builder $quoteResultBuilder
-     * @param Cart $cart
-     * @param ConfigInterface $config
+     * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
         Builder $quoteResultBuilder,
-        Cart $cart, // used for the backward compatibility with earlier versions of Magento.
-        ConfigInterface $config
+        Cart $cart
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->quoteResultBuilder = $quoteResultBuilder;
-        $this->config = $config;
         $this->cart = $cart;
     }
 
@@ -80,7 +71,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     public function setAddresses(
         string $shopId,
         int $cartId,
-        AddressInterface $billingAddress,
+        AddressInterface $billingAddress = null,
         AddressInterface $shippingAddress = null
     ): ResultInterface {
         try {
@@ -89,13 +80,16 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }
+        if ($billingAddress === null) {
+            $quote->removeAddress($quote->getBillingAddress()->getId());
+            $quote->removeAddress($quote->getShippingAddress()->getId());
+            return $this->quoteResultBuilder->createSuccessResult($quote);
+        }
         $shippingAddress = $shippingAddress === null || $shippingAddress->getSameAsBilling()
             ? $billingAddress
             : $shippingAddress;
         $this->setBillingAddress($quote, $billingAddress);
-        if (!$this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
-            $this->setShippingAddress($quote, $shippingAddress);
-        }
+        $this->setShippingAddress($quote, $shippingAddress);
         $this->cart->setQuote($quote);
         $quote->collectTotals();
         $this->cartRepository->save($quote);

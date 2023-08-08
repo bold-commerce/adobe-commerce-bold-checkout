@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Api\Data\Http\Client\ResultInterfaceFactory;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
+use Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PatchCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
@@ -46,24 +47,32 @@ class BoldClient implements ClientInterface
     private $patchCommand;
 
     /**
+     * @var DeleteCommand
+     */
+    private $deleteCommand;
+
+    /**
      * @param ConfigInterface $config
      * @param UserAgent $userAgent
      * @param GetCommand $getCommand
      * @param PostCommand $postCommand
      * @param PatchCommand $patchCommand
+     * @param DeleteCommand $deleteCommand
      */
     public function __construct(
         ConfigInterface $config,
         UserAgent $userAgent,
         GetCommand $getCommand,
         PostCommand $postCommand,
-        PatchCommand $patchCommand
+        PatchCommand $patchCommand,
+        DeleteCommand $deleteCommand
     ) {
         $this->config = $config;
         $this->userAgent = $userAgent;
         $this->getCommand = $getCommand;
         $this->postCommand = $postCommand;
         $this->patchCommand = $patchCommand;
+        $this->deleteCommand = $deleteCommand;
     }
 
     /**
@@ -109,7 +118,9 @@ class BoldClient implements ClientInterface
      */
     public function delete(int $websiteId, string $url, array $data): ResultInterface
     {
-        throw new LocalizedException(__('Delete method is not implemented.'));
+        $url = $this->getUrl($websiteId, $url);
+        $headers = $this->getHeaders($websiteId);
+        return $this->deleteCommand->execute($websiteId, $url, $headers, $data);
     }
 
     /**
