@@ -32,7 +32,6 @@ interface OrderDataInterface
         self::PROPERTY_ORDER_NUMBER,
         self::PROPERTY_TOTAL,
         self::PROPERTY_PAYMENT,
-        self::PROPERTY_TRANSACTION,
     ];
 
     /**
