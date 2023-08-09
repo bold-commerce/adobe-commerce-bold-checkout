@@ -43,27 +43,6 @@ class OrderExtensionData extends AbstractModel
     }
 
     /**
-     * Set order quote entity id.
-     *
-     * @param int $quoteId
-     * @return void
-     */
-    public function setQuoteId(int $quoteId): void
-    {
-        $this->setData(OrderExtensionDataResource::QUOTE_ID, $quoteId);
-    }
-
-    /**
-     * get order quote id.
-     *
-     * @return int|null
-     */
-    public function getQuoteId(): ?int
-    {
-        return (int)$this->getData(OrderExtensionDataResource::QUOTE_ID) ?: null;
-    }
-
-    /**
      * Set order public id.
      *
      * @param string $publicId
