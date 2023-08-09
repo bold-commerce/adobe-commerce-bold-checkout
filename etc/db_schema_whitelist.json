@@ -14,5 +14,17 @@
     "constraint": {
       "PRIMARY": true
     }
+  },
+  "bold_checkout_quote_progress": {
+    "column": {
+      "id": true,
+      "quote_id": true
+    },
+    "index": {
+      "BOLD_CHECKOUT_QUOTE_PROGRESS_QUOTE_ID": true
+    },
+    "constraint": {
+      "PRIMARY": true
+    }
   }
 }
