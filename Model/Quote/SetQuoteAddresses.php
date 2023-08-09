@@ -127,6 +127,10 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         CartInterface $quote,
         AddressInterface $shippingAddress
     ) {
+        $shippingMethod = $quote->getShippingAddress()->getShippingMethod();
+        if (!$shippingAddress->getShippingMethod() && $shippingMethod) {
+            $shippingAddress->setShippingMethod($shippingMethod);
+        }
         $shippingAddress->setCustomerId($quote->getCustomerId());
         $quote->removeAddress($quote->getShippingAddress()->getId());
         $quote->setShippingAddress($shippingAddress);
