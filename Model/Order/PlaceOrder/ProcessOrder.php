@@ -106,6 +106,9 @@ class ProcessOrder
             $orderPayload->getTransaction()
         );
         $this->addCommentToOrder->addComment($order, $orderPayload);
+        $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
+        $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
+        $this->orderExtensionDataResource->save($orderExtensionData);
         return $order;
     }
 }

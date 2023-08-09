@@ -108,11 +108,9 @@ class PlaceOrder implements PlaceOrderInterface
     public function place(string $shopId, OrderDataInterface $order): ResultInterface
     {
         if ($this->progress->isInProgress($order)) {
-            if ($this->progress->getOrder()) {
-                return $this->getSuccessResponse($this->progress->getOrder());
-            }
             return $this->getValidationErrorResponse(
-                __('Order for cart id: "%s" already in progress.', $order->getQuoteId())->getText());
+                __('Order for cart id: "%1" already in progress.', $order->getQuoteId())->render()
+            );
         }
         $this->progress->start($order);
         try {
@@ -120,7 +118,7 @@ class PlaceOrder implements PlaceOrderInterface
             $quote = $this->cartRepository->get($order->getQuoteId());
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
         } catch (LocalizedException $e) {
-            $this->progress->stop();
+            $this->progress->stop($order);
             return $this->getValidationErrorResponse($e->getMessage());
         }
         try {
@@ -129,9 +127,10 @@ class PlaceOrder implements PlaceOrderInterface
                 ? $this->processOrder->process($order)
                 : $this->createOrderFromPayload->createOrder($order, $quote);
         } catch (Exception $e) {
-            $this->progress->stop();
+            $this->progress->stop($order);
             return $this->getErrorResponse($e->getMessage());
         }
+        $this->progress->stop($order);
         return $this->getSuccessResponse($magentoOrder);
     }
 
