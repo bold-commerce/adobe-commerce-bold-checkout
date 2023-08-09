@@ -118,16 +118,16 @@ class CreateOrderFromPayload
         );
         $this->addCommentToOrder->addComment($magentoOrder, $orderPayload);
         $orderExtensionData = $this->orderExtensionDataFactory->create();
-        $orderExtensionData->setPublicId($orderPayload->getPublicId());
+        $this->orderExtensionDataResource->load(
+            $orderExtensionData,
+            $quote->getId(),
+            OrderExtensionDataResource::QUOTE_ID
+        );
         $orderExtensionData->setOrderId((int)$magentoOrder->getId());
-        $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
-        $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
-
         $this->eventManager->dispatch(
             'create_order_from_payload_extension_data_save_before',
             ['orderPayload' => $orderPayload, 'orderExtensionData' => $orderExtensionData]
         );
-
         $this->orderExtensionDataResource->save($orderExtensionData);
 
         return $magentoOrder;

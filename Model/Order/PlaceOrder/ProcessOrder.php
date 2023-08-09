@@ -100,14 +100,12 @@ class ProcessOrder
         if (!$order->getId()) {
             throw new LocalizedException(__('Order not found'));
         }
-        $this->processOrderPayment->process($order,
+        $this->processOrderPayment->process(
+            $order,
             $orderPayload->getPayment(),
             $orderPayload->getTransaction()
         );
         $this->addCommentToOrder->addComment($order, $orderPayload);
-        $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
-        $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
-        $this->orderExtensionDataResource->save($orderExtensionData);
         return $order;
     }
 }

@@ -11,14 +11,13 @@ use Bold\Checkout\Api\PlaceOrderInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
-use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromPayload;
 use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrder;
+use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\ResourceModel\Order;
 
 /**
  * Place magento order with bold payment service.
@@ -66,13 +65,20 @@ class PlaceOrder implements PlaceOrderInterface
     private $processOrder;
 
     /**
+     * @var Progress
+     */
+    private $progress;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param OrderPayloadValidator $orderPayloadValidator
-     * @param Order $orderResource
      * @param CartRepositoryInterface $cartRepository
      * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param ConfigInterface $config
+     * @param CreateOrderFromPayload $createOrderFromPayload
+     * @param ProcessOrder $processOrder
+     * @param Progress $progress
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
@@ -82,7 +88,8 @@ class PlaceOrder implements PlaceOrderInterface
         ErrorInterfaceFactory $errorFactory,
         ConfigInterface $config,
         CreateOrderFromPayload $createOrderFromPayload,
-        ProcessOrder $processOrder
+        ProcessOrder $processOrder,
+        Progress $progress
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
@@ -92,6 +99,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->config = $config;
         $this->createOrderFromPayload = $createOrderFromPayload;
         $this->processOrder = $processOrder;
+        $this->progress = $progress;
     }
 
     /**
@@ -99,11 +107,20 @@ class PlaceOrder implements PlaceOrderInterface
      */
     public function place(string $shopId, OrderDataInterface $order): ResultInterface
     {
+        if ($this->progress->isInProgress($order)) {
+            if ($this->progress->getOrder()) {
+                return $this->getSuccessResponse($this->progress->getOrder());
+            }
+            return $this->getValidationErrorResponse(
+                __('Order for cart id: "%s" already in progress.', $order->getQuoteId())->getText());
+        }
+        $this->progress->start($order);
         try {
             $this->orderPayloadValidator->validate($order);
             $quote = $this->cartRepository->get($order->getQuoteId());
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
         } catch (LocalizedException $e) {
+            $this->progress->stop();
             return $this->getValidationErrorResponse($e->getMessage());
         }
         try {
@@ -112,6 +129,7 @@ class PlaceOrder implements PlaceOrderInterface
                 ? $this->processOrder->process($order)
                 : $this->createOrderFromPayload->createOrder($order, $quote);
         } catch (Exception $e) {
+            $this->progress->stop();
             return $this->getErrorResponse($e->getMessage());
         }
         return $this->getSuccessResponse($magentoOrder);
