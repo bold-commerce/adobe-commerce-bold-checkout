@@ -31,7 +31,7 @@ class ProgressResource
      * @param int $quoteId
      * @return bool
      */
-    public function getInIsInProgress(int $quoteId): bool
+    public function getIsInProgress(int $quoteId): bool
     {
         $sql = $this->connection->getConnection()->select()->from(
             $this->connection->getTableName(self::TABLE)

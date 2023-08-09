@@ -33,7 +33,7 @@ class Progress
      */
     public function isInProgress(OrderDataInterface $orderData): bool
     {
-        return $this->progressResource->getInIsInProgress($orderData->getQuoteId());
+        return $this->progressResource->getIsInProgress($orderData->getQuoteId());
     }
 
     /**
