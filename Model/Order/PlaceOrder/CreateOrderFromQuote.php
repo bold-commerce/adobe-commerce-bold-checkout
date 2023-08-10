@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Order\PlaceOrder;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Payment\Gateway\Service;
+use Magento\Checkout\Model\Cart;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Framework\DataObject;
@@ -53,24 +54,32 @@ class CreateOrderFromQuote
     private $shippingAssignmentBuilder;
 
     /**
+     * @var Cart
+     */
+    private $cart;
+
+    /**
      * @param CartManagementInterface $cartManagement
      * @param CustomerRepositoryInterface $customerRepository
      * @param OrderTaxManagementInterface $orderTaxManagement
      * @param ShippingAssignmentBuilder $shippingAssignmentBuilder
      * @param ManagerInterface $eventManager
+     * @param Cart $cart // used for the backward compatibility with earlier versions of Magento.
      */
     public function __construct(
         CartManagementInterface $cartManagement,
         CustomerRepositoryInterface $customerRepository,
         OrderTaxManagementInterface $orderTaxManagement,
         ShippingAssignmentBuilder $shippingAssignmentBuilder,
-        ManagerInterface $eventManager
+        ManagerInterface $eventManager,
+        Cart $cart
     ) {
         $this->cartManagement = $cartManagement;
         $this->eventManager = $eventManager;
         $this->customerRepository = $customerRepository;
         $this->orderTaxManagement = $orderTaxManagement;
         $this->shippingAssignmentBuilder = $shippingAssignmentBuilder;
+        $this->cart = $cart;
     }
 
     /**
@@ -98,12 +107,12 @@ class CreateOrderFromQuote
             self::FULFILLMENT_STATUS => $orderPayload->getFulfillmentStatus(),
         ];
         $orderData = new DataObject($orderData);
-
         $this->eventManager->dispatch(
             'create_order_from_quote_submit_before',
             ['orderPayload' => $orderPayload, 'orderData' => $orderData]
         );
         $cart->getShippingAddress()->setCollectShippingRates(true);
+        $this->cart->setQuote($cart);
         $cart->setTotalsCollectedFlag(false);
         $cart->collectTotals();
         $order = $this->cartManagement->submit($cart, $orderData->getData());
