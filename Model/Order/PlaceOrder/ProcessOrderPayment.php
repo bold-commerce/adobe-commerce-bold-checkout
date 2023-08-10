@@ -42,14 +42,14 @@ class ProcessOrderPayment
      *
      * @param OrderInterface $order
      * @param OrderPaymentInterface $payment
-     * @param TransactionInterface $transaction
+     * @param TransactionInterface|null $transaction
      * @return void
      * @throws Exception
      */
     public function process(
         OrderInterface $order,
         OrderPaymentInterface $payment,
-        TransactionInterface $transaction
+        ?TransactionInterface $transaction = null
     ): void {
         $orderPayment = $order->getPayment();
         $orderPayment->addData($payment->getData());
@@ -89,18 +89,22 @@ class ProcessOrderPayment
         $orderPayment->setAmountAuthorized($amountAuthorized ?: $amountOrdered);
         $orderPayment->setBaseAmountPaid($baseAmountPaid);
         $orderPayment->setAmountPaid($amountPaid);
-        $orderPayment->setTransactionId($transaction->getTxnId());
-        $transaction = $orderPayment->addTransaction($transaction->getTxnType());
-        if (!$orderPayment->getIsTransactionClosed()) {
-            $transaction->setIsClosed(0);
-        }
         $orderPayment->setAdditionalInformation(
             array_merge(
                 $orderPayment->getAdditionalInformation() ?: [],
                 $payment->getExtensionAttributes()->getAdditionalInformation() ?: []
             )
         );
-        $this->transactionRepository->save($transaction);
+        if ($transaction) {
+            $orderPayment->setTransactionId($transaction->getTxnId());
+            $transaction = $orderPayment->addTransaction($transaction->getTxnType());
+            if (!$orderPayment->getIsTransactionClosed()) {
+                $transaction->setIsClosed(0);
+            }
+            
+            $this->transactionRepository->save($transaction);
+        }
+        
         $this->orderPaymentRepository->save($orderPayment);
     }
 }
