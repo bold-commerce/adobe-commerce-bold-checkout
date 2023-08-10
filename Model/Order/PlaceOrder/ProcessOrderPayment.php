@@ -42,14 +42,14 @@ class ProcessOrderPayment
      *
      * @param OrderInterface $order
      * @param OrderPaymentInterface $payment
-     * @param ?TransactionInterface $transaction
+     * @param TransactionInterface|null $transaction
      * @return void
      * @throws Exception
      */
     public function process(
         OrderInterface $order,
         OrderPaymentInterface $payment,
-        ?TransactionInterface $transaction
+        ?TransactionInterface $transaction = null
     ): void {
         $orderPayment = $order->getPayment();
         $orderPayment->addData($payment->getData());
@@ -95,7 +95,7 @@ class ProcessOrderPayment
                 $payment->getExtensionAttributes()->getAdditionalInformation() ?: []
             )
         );
-        if (!empty($transaction)) {
+        if ($transaction) {
             $orderPayment->setTransactionId($transaction->getTxnId());
             $transaction = $orderPayment->addTransaction($transaction->getTxnType());
             if (!$orderPayment->getIsTransactionClosed()) {
