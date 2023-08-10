@@ -61,9 +61,7 @@ class IsBoldCheckoutAllowedForCart
                 return false;
             }
         }
-        return $this->scopeConfig->getValue(Config::CONFIG_XML_PATH_BASED_ON) === 'shipping'
-        && !$this->scopeConfig->isSetFlag(Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX)
-        && $this->scopeConfig->isSetFlag(Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT);
+        return $this->scopeConfig->isSetFlag(Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT);
     }
 
     /**
