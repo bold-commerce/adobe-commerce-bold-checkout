@@ -1,5 +1,5 @@
 {
-  "name": "bold/module-checkout",
+  "name": "bold-commerce/module-checkout",
   "description": "Bold Checkout integration module",
   "type": "magento2-module",
   "license": [
