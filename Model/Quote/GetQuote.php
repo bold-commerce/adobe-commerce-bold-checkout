@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\GetQuoteInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
+use Magento\Checkout\Model\Cart;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 
@@ -31,18 +32,26 @@ class GetQuote implements GetQuoteInterface
     private $quoteResultBuilder;
 
     /**
+     * @var Cart
+     */
+    private $cart;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param Builder $quoteResultBuilder
+     * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
-        Builder $quoteResultBuilder
+        Builder $quoteResultBuilder,
+        Cart $cart
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->quoteResultBuilder = $quoteResultBuilder;
+        $this->cart = $cart;
     }
 
     /**
@@ -58,7 +67,7 @@ class GetQuote implements GetQuoteInterface
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }
-        
+        $this->cart->setQuote($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);
     }
 }
