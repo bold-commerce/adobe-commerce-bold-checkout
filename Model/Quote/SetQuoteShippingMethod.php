@@ -10,6 +10,7 @@ use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Checkout\Api\Data\ShippingInformationInterfaceFactory;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
+use Magento\Checkout\Model\Cart;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 
@@ -54,12 +55,18 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
     private $config;
 
     /**
+     * @var Cart
+     */
+    private $cart;
+
+    /**
      * @param ShippingInformationManagementInterface $shippingInformationManagement
      * @param ShippingInformationInterfaceFactory $shippingInformationFactory
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param Builder $quoteResultBuilder
      * @param ConfigInterface $config
+     * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
      */
     public function __construct(
         ShippingInformationManagementInterface $shippingInformationManagement,
@@ -67,7 +74,8 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         Builder $quoteResultBuilder,
-        ConfigInterface $config
+        ConfigInterface $config,
+        Cart $cart
     ) {
         $this->shippingInformationManagement = $shippingInformationManagement;
         $this->shippingInformationFactory = $shippingInformationFactory;
@@ -75,6 +83,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->shopIdValidator = $shopIdValidator;
         $this->config = $config;
+        $this->cart = $cart;
     }
 
     /**
@@ -95,6 +104,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
             $this->quoteResultBuilder->createSuccessResult($quote);
         }
+        $this->cart->setQuote($quote);
         $shippingInformation = $this->shippingInformationFactory->create()
             ->setShippingAddress($quote->getShippingAddress())
             ->setBillingAddress($quote->getBillingAddress())
