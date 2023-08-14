@@ -83,6 +83,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         if ($billingAddress === null) {
             $quote->removeAddress($quote->getBillingAddress()->getId());
             $quote->removeAddress($quote->getShippingAddress()->getId());
+            $quote->getExtensionAttributes()->setShippingAssignments([]);
             return $this->quoteResultBuilder->createSuccessResult($quote);
         }
         $shippingAddress = $shippingAddress === null || $shippingAddress->getSameAsBilling()
