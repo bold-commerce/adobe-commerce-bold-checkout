@@ -67,6 +67,7 @@ class GetQuote implements GetQuoteInterface
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }
+        $quote->collectTotals();
         $this->cart->setQuote($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);
     }

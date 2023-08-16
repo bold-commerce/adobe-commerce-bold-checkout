@@ -47,12 +47,10 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $quote = $observer->getEvent()->getQuote();
-        $shippingAddress = $quote->getShippingAddress();
         foreach ($quote->getAllItems() as $item) {
-            if ($shippingAddress->getAppliedTaxes()) {
-                $this->addAppliedTaxesToItem($shippingAddress->getAppliedTaxes(), $item);
-            }
+            $this->addAppliedTaxesToItem($item);
         }
+        $shippingAddress = $quote->getShippingAddress();
         $quote->getExtensionAttributes()->setShippingTaxAmount($shippingAddress->getShippingTaxAmount());
         $quote->getExtensionAttributes()->setBaseShippingTaxAmount($shippingAddress->getBaseShippingTaxAmount());
     }
@@ -60,25 +58,31 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
     /**
      * Populate cart item with applied taxes.
      *
-     * @param array $appliedTaxes
      * @param CartItemInterface $item
      * @return void
      */
-    private function addAppliedTaxesToItem(array $appliedTaxes, CartItemInterface $item): void
+    private function addAppliedTaxesToItem(CartItemInterface $item): void
     {
-        $taxDetails = [];
-        foreach ($appliedTaxes as $appliedTaxData) {
-            if ((int)$item->getItemId() !== (int)$appliedTaxData['item_id']) {
-                continue;
-            }
-            $appliedTax = $this->appliedTaxFactory->create();
+        if ($item->getChildren()) {
+            return;
+        }
+        $origItem = $item;
+        if ($item->getParentItem()) {
+            $item = $item->getParentItem();
+        }
+        if (!$item->getAppliedTaxes()) {
+            return;
+        }
+        $itemTaxDetails = [];
+        foreach ($item->getAppliedTaxes() as $tax) {
+            $itemAppliedTax = $this->appliedTaxFactory->create();
             $this->objectHelper->populateWithArray(
-                $appliedTax,
-                $appliedTaxData,
+                $itemAppliedTax,
+                $tax,
                 AppliedTaxInterface::class
             );
-            $taxDetails[] = $appliedTax;
+            $itemTaxDetails[] = $itemAppliedTax;
         }
-        $item->getExtensionAttributes()->setTaxDetails($taxDetails);
+        $origItem->getExtensionAttributes()->setTaxDetails($itemTaxDetails);
     }
 }
