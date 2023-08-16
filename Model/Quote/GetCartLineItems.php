@@ -4,13 +4,11 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Quote;
 
 use Magento\Bundle\Model\Product\Type;
+use Magento\Catalog\Helper\Product\Configuration;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Helper\Product\Configuration;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
-use Magento\Catalog\Model\Product\Type as Virtual;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Downloadable\Model\Product\Type as Downloadable;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
@@ -18,6 +16,8 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Catalog\Model\Product\Type as Virtual;
+use Magento\Downloadable\Model\Product\Type as Downloadable;
 
 /**
  * Cart line items builder.
@@ -102,6 +102,7 @@ class GetCartLineItems
                 $lineItems[] = $this->getLineItem($cartItem);
             }
         }
+
         if (!$lineItems) {
             throw new LocalizedException(__('There are no cart items to checkout.'));
         }
@@ -118,7 +119,7 @@ class GetCartLineItems
     {
         $parentItem = $item->getParentItem();
         $parentIsBundle = $parentItem && $parentItem->getProductType() === Bundle::TYPE_CODE;
-        return (!$item->getChildren() && !$parentIsBundle) || $item->getProductType() === 'bundle';
+        return (!$item->getChildren() && !$parentIsBundle) || $item->getProductType() === Bundle::TYPE_CODE;
     }
 
     /**
@@ -141,6 +142,7 @@ class GetCartLineItems
             'line_item_key' => (string)$item->getId(),
             'price' => $this->getLineItemPrice($item),
         ];
+
         $item = $item->getParentItem() ?: $item;
         if ($item->getProductType() === Configurable::TYPE_CODE) {
             $lineItem = $this->addConfigurableOptions($item, $lineItem);
@@ -314,11 +316,10 @@ class GetCartLineItems
     /**
      * Converts a dollar amount to cents
      *
-     * @param float $price
+     * @param string|float $dollars
      * @return integer
      */
-    private function convertToCents(float $price): int
-    {
-        return (int)round($price * 100);
+    private function convertToCents($dollars): int {
+        return (int) round(floatval($dollars) * 100);
     }
 }
