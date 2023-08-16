@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
+use Magento\Bundle\Model\Product\Type as Bundle;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Exception;
@@ -97,7 +98,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         }
         $inventoryResult = [];
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getChildren()) {
+            if (!GetCartLineItems::shouldAppearInCart($item)) {
                 continue;
             }
             $inventoryResult[] = $this->inventoryDataFactory->create(
@@ -145,6 +146,17 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      */
     private function isProductSalable(CartItemInterface $item): bool
     {
+        // If the product is a bundle type, get the salabilty of all it's children instead
+        if ($item->getProductType() === Bundle::TYPE_CODE) {
+            foreach ($item->getChildren() as $childItem) {
+                if (!$this->isProductSalable($childItem)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         try {
             $stockResolver = $this->getStockResolverService();
             $productSalableForRequestedQtyService = $this->getProductSalableForRequestedQtyService();
