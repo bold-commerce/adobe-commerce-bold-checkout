@@ -124,10 +124,9 @@ class Builder
                 continue;
             }
             $parentProduct = null;
-            if ($item->getParentItem() !== null) {
+            if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();
                 $item->getExtensionAttributes()->setParentItemId($parentItem->getId());
-                $item->getExtensionAttributes()->setTaxDetails($parentItem->getExtensionAttributes()->getTaxDetails());
                 $item->setQty($parentItem->getQty());
                 $item->setPrice($parentItem->getPrice());
                 $parentProduct = $parentItem->getProduct();
