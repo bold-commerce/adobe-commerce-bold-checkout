@@ -90,7 +90,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
             ? $billingAddress
             : $shippingAddress;
         $this->setBillingAddress($quote, $billingAddress);
-        if (!$quote->getIsVirtual()) {
+        if (!$quote->isVirtual()) {
             $this->setShippingAddress($quote, $shippingAddress);
         }
         $this->cart->setQuote($quote);
