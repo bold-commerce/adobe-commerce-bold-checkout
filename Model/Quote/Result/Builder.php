@@ -6,6 +6,7 @@ namespace Bold\Checkout\Model\Quote\Result;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
+use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
 use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface;
@@ -120,9 +121,10 @@ class Builder
     {
         $items = [];
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getChildren()) {
+            if (!GetCartLineItems::shouldAppearInCart($item)) {
                 continue;
             }
+            
             $parentProduct = null;
             if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();

@@ -6,7 +6,6 @@ namespace Bold\Checkout\Model\Order;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\QuoteAction;
-use Exception;
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
@@ -21,7 +20,6 @@ use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 class InitOrderFromQuote
 {
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
-
     private const FLOW_ID = 'Bold-Magento2';
 
     /**
@@ -101,7 +99,7 @@ class InitOrderFromQuote
                 ],
                 'note_attributes' => [
                     'quote_id' => $quote->getId(),
-                ]
+                ],
             ],
         ];
 
@@ -120,13 +118,11 @@ class InitOrderFromQuote
                 'saved_addresses' => $customerAddresses,
             ];
         }
-
         $orderData = $this->client->post($websiteId, self::INIT_URL, $body)->getBody();
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
             throw new LocalizedException(__('Cannot initialize order for quote with id = "%s"', $quote->getId()));
         }
-
         if ($quote->getCustomer()->getId() && !isset($orderData['data']['application_state']['customer']['public_id'])) {
             throw new LocalizedException(__('Cannot authenticate customer with id="%s"', $quote->getCustomerId()));
         }

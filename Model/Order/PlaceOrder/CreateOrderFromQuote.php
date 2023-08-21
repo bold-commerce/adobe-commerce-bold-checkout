@@ -111,13 +111,17 @@ class CreateOrderFromQuote
             'create_order_from_quote_submit_before',
             ['orderPayload' => $orderPayload, 'orderData' => $orderData]
         );
-        $cart->getShippingAddress()->setCollectShippingRates(true);
-        $this->cart->setQuote($cart);
+        if (!$cart->isVirtual()) {
+            $cart->getShippingAddress()->setCollectShippingRates(true);
+        }
         $cart->setTotalsCollectedFlag(false);
         $cart->collectTotals();
+        $this->cart->setQuote($cart);
         $order = $this->cartManagement->submit($cart, $orderData->getData());
         $this->setOrderTaxDetails($order);
-        $this->setShippingAssignments($order);
+        if (!$cart->getIsVirtual()) {
+            $this->setShippingAssignments($order);
+        }
         $this->eventManager->dispatch(
             'checkout_type_onepage_save_order_after',
             ['order' => $order, 'quote' => $cart]
