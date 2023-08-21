@@ -3,20 +3,21 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote;
 
-use Magento\Bundle\Api\Data\OptionInterface;
-use Magento\Catalog\Helper\Product\Configuration;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Bundle\Model\Product\Type;
 use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Helper\Product\Configuration;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
+use Magento\Catalog\Model\Product\Type as Virtual;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Downloadable\Model\Product\Type as Downloadable;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Item;
-use Magento\Catalog\Model\Product\Type as Virtual;
-use Magento\Downloadable\Model\Product\Type as Downloadable;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Cart line items builder.
@@ -46,7 +47,7 @@ class GetCartLineItems
     /**
      * @var ProductRepositoryInterface
      */
-    private $productRepo;
+    private $productRepository;
 
     /**
      * @var UrlBuilder
@@ -54,25 +55,35 @@ class GetCartLineItems
     private $productUrlBuilder;
 
     /**
+     * @var Bundle
+     */
+    private $bundleType;
+
+    /**
      * @param Configuration $configuration
      * @param Configurable $configurableType
      * @param Escaper $escaper
+     * @param ScopeConfigInterface $scopeConfig
+     * @param ProductRepositoryInterface $productRepository
+     * @param UrlBuilder $productUrlBuilder
+     * @param Bundle $bundleType
      */
     public function __construct(
         Configuration $configuration,
         Configurable $configurableType,
         Escaper $escaper,
         ScopeConfigInterface $scopeConfig,
-        ProductRepositoryInterface $productRepo,
-        UrlBuilder $productUrlBuilder
-    )
-    {
+        ProductRepositoryInterface $productRepository,
+        UrlBuilder $productUrlBuilder,
+        Type $bundleType
+    ) {
         $this->configuration = $configuration;
         $this->configurableType = $configurableType;
         $this->escaper = $escaper;
         $this->scopeConfig = $scopeConfig;
-        $this->productRepo = $productRepo;
+        $this->productRepository = $productRepository;
         $this->productUrlBuilder = $productUrlBuilder;
+        $this->bundleType = $bundleType;
     }
 
     /**
@@ -91,11 +102,9 @@ class GetCartLineItems
                 $lineItems[] = $this->getLineItem($cartItem);
             }
         }
-
         if (!$lineItems) {
             throw new LocalizedException(__('There are no cart items to checkout.'));
         }
-
         return $lineItems;
     }
 
@@ -109,10 +118,7 @@ class GetCartLineItems
     {
         $parentItem = $item->getParentItem();
         $parentIsBundle = $parentItem && $parentItem->getProductType() === Bundle::TYPE_CODE;
-
-        return (
-            !$item->getChildren() && !$parentIsBundle
-        ) || $item->getProductType() === 'bundle';
+        return (!$item->getChildren() && !$parentIsBundle) || $item->getProductType() === 'bundle';
     }
 
     /**
@@ -135,16 +141,13 @@ class GetCartLineItems
             'line_item_key' => (string)$item->getId(),
             'price' => $this->getLineItemPrice($item),
         ];
-
         $item = $item->getParentItem() ?: $item;
         if ($item->getProductType() === Configurable::TYPE_CODE) {
             $lineItem = $this->addConfigurableOptions($item, $lineItem);
         }
-
         if ($item->getProductType() === Bundle::TYPE_CODE) {
             $lineItem = $this->addBundleOptions($item, $lineItem);
         }
-
         foreach ($this->configuration->getCustomOptions($item) as $customOption) {
             $lineItem = $this->addCustomOptions($customOption, $lineItem);
         }
@@ -157,11 +160,9 @@ class GetCartLineItems
      * @param CartItemInterface $item
      * @return string
      */
-    private function getLineItemName(CartItemInterface $item)
+    private function getLineItemName(CartItemInterface $item): string
     {
-        /** @var CartItemInterface */
         $item = $item->getParentItem() ?: $item;
-
         return $item->getName();
     }
 
@@ -173,28 +174,21 @@ class GetCartLineItems
      */
     private function getLineItemPrice(CartItemInterface $item)
     {
-        /** @var CartItemInterface */
-        $pi = $item->getParentItem();
-        if ($pi) {
-            return static::convertToCents($pi->getPrice());
-        }
-
-        return static::convertToCents($item->getPrice());
+        $item = $item->getParentItem() ?: $item;
+        return $this->convertToCents((float)$item->getPrice());
     }
-    
+
     /**
      * Gets the weight of a line item in grams
      *
      * @param CartItemInterface $item
      * @return float
      */
-    private function getLineItemWeightInGrams(CartItemInterface $item)
+    private function getLineItemWeightInGrams(CartItemInterface $item): float
     {
-        $unit = strtolower($this->scopeConfig->getValue(
-            'general/locale/weight_unit',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        ));
-
+        $unit = strtolower(
+            $this->scopeConfig->getValue('general/locale/weight_unit', ScopeInterface::SCOPE_STORE)
+        );
         $weight = $item->getWeight();
         if ($unit === 'kgs') {
             return round($weight * 1000, 2);
@@ -210,28 +204,21 @@ class GetCartLineItems
      * item does not have an image
      *
      * @param CartItemInterface $item
-     * @return void
+     * @return string
      */
-    private function getLineItemImage(CartItemInterface $item)
+    private function getLineItemImage(CartItemInterface $item): string
     {
-        $product = $this->productRepo->getById($item->getProductId());
-        $thumbnail = $product->getThumbnail();
-        if ($thumbnail && $thumbnail !== 'no_selection') {
-            return $this->productUrlBuilder->getUrl($thumbnail, 'product_thumbnail_image');
+        $product = $this->productRepository->getById($item->getProductId());
+        if ($product->getThumbnail() && $product->getThumbnail() !== 'no_selection') {
+            return $this->productUrlBuilder->getUrl($product->getThumbnail(), 'product_thumbnail_image');
         }
-
         // Attempting to get the parent product if there is one
-        $item = $item->getParentItem();
-        if (!$item) {
-            return $this->productUrlBuilder->getUrl('no_selection', 'product_thumbnail_image');
+        if ($item->getParentItem()) {
+            $image = $this->productRepository->getById($item->getParentItem()->getProductId())->getThumbnail();
+            if ($image) {
+                return $this->productUrlBuilder->getUrl($image, 'product_thumbnail_image');
+            }
         }
-
-        $product = $this->productRepo->getById($item->getProductId());
-        $thumbnail = $product->getThumbnail();
-        if ($thumbnail) {
-            return $this->productUrlBuilder->getUrl($thumbnail, 'product_thumbnail_image');
-        }
-
         return $this->productUrlBuilder->getUrl('no_selection', 'product_thumbnail_image');
     }
 
@@ -247,7 +234,6 @@ class GetCartLineItems
         if ($parentItem) {
             $item = $parentItem;
         }
-
         return (int)$item->getQty();
     }
 
@@ -298,42 +284,41 @@ class GetCartLineItems
      */
     private function addBundleOptions(CartItemInterface $item, array $lineItem): array
     {
-        /** @var OptionInterface[] */
-        $options = $item->getProduct()->getData('_cache_instance_options_collection');
-        $childItems = $item->getChildren();
-        $lineItem['line_item_properties'] ??= [];
-
+        $options = $this->bundleType->getOptionsCollection($item->getProduct());
+        $children = $item->getChildren();
+        $lineItem['line_item_properties'] = [];
         foreach (array_values($options->getItems()) as $i => $option) {
-            $childItem = $childItems[$i];
-            $qty = (int) $childItem->getQty();
+            $childItem = $children[$i] ?? null;
+            if (!$childItem) {
+                continue;
+            }
+            $qty = (int)$childItem->getQty();
             $name = $childItem->getName();
-
             $lineItem['line_item_properties'][$option['title']] = "$qty x $name";
         }
-
         return $lineItem;
     }
 
-     /**
+    /**
      * Get requires shipping considering product type
-     * 
+     *
      * @param CartItemInterface $item
      * @return bool
      */
     private function getRequiresShipping(CartItemInterface $item): bool
     {
         $type = $item->getProductType();
-
         return $type !== Virtual::TYPE_VIRTUAL && $type !== Downloadable::TYPE_DOWNLOADABLE;
     }
 
     /**
      * Converts a dollar amount to cents
      *
-     * @param string|float $dollars
+     * @param float $price
      * @return integer
      */
-    private static function convertToCents($dollars): int {
-        return (int) round(floatval($dollars) * 100);
+    private function convertToCents(float $price): int
+    {
+        return (int)round($price * 100);
     }
 }
