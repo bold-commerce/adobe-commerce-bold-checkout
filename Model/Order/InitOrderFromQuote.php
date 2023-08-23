@@ -124,11 +124,11 @@ class InitOrderFromQuote
         $orderData = $this->client->post($websiteId, self::INIT_URL, $body)->getBody();
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
-            throw new LocalizedException(__('Cannot initialize order for quote with id = "%s"', $quote->getId()));
+            throw new LocalizedException(__('Cannot initialize order for quote with id = "%1"', $quote->getId()));
         }
 
         if ($quote->getCustomer()->getId() && !isset($orderData['data']['application_state']['customer']['public_id'])) {
-            throw new LocalizedException(__('Cannot authenticate customer with id="%s"', $quote->getCustomerId()));
+            throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
 
         return $orderData;
