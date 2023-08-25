@@ -57,9 +57,6 @@ class IsBoldCheckoutAllowedForCart
             if ($item->getIsQtyDecimal()) {
                 return false;
             }
-            if ($item->getProductType() === Type::TYPE_BUNDLE) {
-                return false;
-            }
         }
         return $this->scopeConfig->isSetFlag(Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT);
     }
