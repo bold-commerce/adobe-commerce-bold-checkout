@@ -272,7 +272,7 @@ class GetCartLineItems
                 ['max_length' => 55],
             ]
         );
-        $lineItem['line_item_properties'][$label] = $value['value'] ?? '';
+        $lineItem['line_item_properties'][\html_entity_decode($label)] = \html_entity_decode($value['value']) ?? '';
         return $lineItem;
     }
 

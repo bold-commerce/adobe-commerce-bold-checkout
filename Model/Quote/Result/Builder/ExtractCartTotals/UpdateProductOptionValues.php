@@ -35,17 +35,14 @@ class UpdateProductOptionValues
     public function updateValues(array $items): void
     {
         foreach ($items as $item) {
-            $changed = false;
             $options = $this->serializer->unserialize($item->getOptions());
             foreach ($options as $index => $option) {
+                $options[$index]['value'] = \html_entity_decode($option['value']);
                 if (isset($option['full_view'])) {
-                    $options[$index]['value'] = $option['full_view'];
-                    $changed = true;
+                    $options[$index]['value'] = \html_entity_decode($option['full_view']);
                 }
             }
-            if ($changed) {
-                $item->setOptions($this->serializer->serialize($options));
-            }
+            $item->setOptions($this->serializer->serialize($options));
         }
     }
 }
