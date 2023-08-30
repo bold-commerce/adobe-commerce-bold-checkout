@@ -92,9 +92,7 @@ define(
                     return false;
                 }
                 const orderPlacementResult = this._super(data, event);
-                if (!orderPlacementResult) {
-                    loader.stopLoader();
-                }
+                loader.stopLoader();
                 return orderPlacementResult;
             },
 

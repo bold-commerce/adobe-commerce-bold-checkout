@@ -8,6 +8,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Api\Data\OrderInterface;
 
 /**
  * Place order on Bold side observer.
@@ -62,8 +63,32 @@ class ProcessOrderObserver implements ObserverInterface
                 throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
             }
         }
+        $this->verifyApplicationState($order, $websiteId);
         $boldOrder = $this->client->post($websiteId, 'process_order', []);
         if ($boldOrder->getErrors()) {
+            throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
+        }
+    }
+
+    /**
+     * Verify if Bold application has all required data.
+     *
+     * @param OrderInterface $order
+     * @param int $websiteId
+     * @return void
+     * @throws LocalizedException
+     */
+    private function verifyApplicationState(OrderInterface $order, int $websiteId)
+    {
+        $result = $this->client->get($websiteId, 'refresh', [])->getBody();
+        $applicationState = $result['data']['application_state'] ?? null;
+        if (!$applicationState) {
+            throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
+        }
+        if (\round($order->getGrandTotal() * 100) !== \round($applicationState['order_total'])) {
+            throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
+        }
+        if (!$applicationState['payments']) {
             throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
         }
     }
