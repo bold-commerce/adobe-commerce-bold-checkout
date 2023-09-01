@@ -7,12 +7,17 @@ use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
-use Magento\Bundle\Model\Product\Type as Bundle;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Exception;
+use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\InventorySalesApi\Api\AreProductsSalableForRequestedQtyInterface;
+use Magento\InventorySalesApi\Api\Data\IsProductSalableForRequestedQtyRequestInterface;
+use Magento\InventorySalesApi\Api\Data\IsProductSalableForRequestedQtyRequestInterfaceFactory;
+use Magento\InventorySalesApi\Api\StockResolverInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -59,6 +64,11 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private $storeManager;
 
     /**
+     * @var Manager
+     */
+    private $moduleManager;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ObjectManagerInterface $objectManager
@@ -66,6 +76,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      * @param ErrorInterfaceFactory $errorFactory
      * @param InventoryDataInterfaceFactory $inventoryDataFactory
      * @param StoreManagerInterface $storeManager
+     * @param Manager $moduleManager
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
@@ -74,7 +85,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory,
         InventoryDataInterfaceFactory $inventoryDataFactory,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Manager $moduleManager
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
@@ -83,6 +95,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $this->inventoryDataFactory = $inventoryDataFactory;
         $this->objectManager = $objectManager;
         $this->storeManager = $storeManager;
+        $this->moduleManager = $moduleManager;
     }
 
     /**
@@ -158,6 +171,9 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         }
 
         try {
+            if (!$this->moduleManager->isEnabled('Magento_InventorySalesApi')) {
+                return (bool)$item->getProduct()->isSalable();
+            }
             $stockResolver = $this->getStockResolverService();
             $productSalableForRequestedQtyService = $this->getProductSalableForRequestedQtyService();
             $sku = $item['product']['sku'];
@@ -166,9 +182,6 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
                 (string)$sku,
                 $requestedQty
             );
-            if (!$request || !$stockResolver || !$productSalableForRequestedQtyService) {
-                return (bool)$item->getProduct()->isSalable();
-            }
             $websiteId = (int)$this->storeManager->getStore($item->getStoreId())->getWebsiteId();
             $websiteCode = $this->storeManager->getWebsite($websiteId)->getCode();
             $stockId = $stockResolver->execute('website', $websiteCode)->getStockId();
@@ -182,14 +195,12 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     /**
      * Try to build \Magento\InventorySalesApi\Api\AreProductsSalableForRequestedQtyInterface. If it's not possible, return null.
      *
-     * @return \Magento\InventorySalesApi\Api\AreProductsSalableForRequestedQtyInterface|null
+     * @return AreProductsSalableForRequestedQtyInterface|null
      */
-    private function getProductSalableForRequestedQtyService(): ?\Magento\InventorySalesApi\Api\AreProductsSalableForRequestedQtyInterface
+    private function getProductSalableForRequestedQtyService(): ?AreProductsSalableForRequestedQtyInterface
     {
         try {
-            $areProductsSalable = $this->objectManager->get(
-                \Magento\InventorySalesApi\Api\AreProductsSalableForRequestedQtyInterface::class
-            );
+            $areProductsSalable = $this->objectManager->get(AreProductsSalableForRequestedQtyInterface::class);
         } catch (Throwable $e) {
             $areProductsSalable = null;
         }
@@ -199,12 +210,12 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     /**
      * Try to build \Magento\InventorySalesApi\Api\StockResolverInterface. If it's not possible, return null.
      *
-     * @return \Magento\InventorySalesApi\Api\StockResolverInterface|null
+     * @return StockResolverInterface|null
      */
-    private function getStockResolverService(): ?\Magento\InventorySalesApi\Api\StockResolverInterface
+    private function getStockResolverService(): ?StockResolverInterface
     {
         try {
-            $stockResolver = $this->objectManager->get(\Magento\InventorySalesApi\Api\StockResolverInterface::class);
+            $stockResolver = $this->objectManager->get(StockResolverInterface::class);
         } catch (Throwable $e) {
             $stockResolver = null;
         }
@@ -217,16 +228,14 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      *
      * @param string $sku
      * @param float $qty
-     * @return \Magento\InventorySalesApi\Api\Data\IsProductSalableForRequestedQtyRequestInterface|null
+     * @return IsProductSalableForRequestedQtyRequestInterface|null
      */
     private function getRequest(
         string $sku,
         float $qty
-    ): ?\Magento\InventorySalesApi\Api\Data\IsProductSalableForRequestedQtyRequestInterface {
+    ): ?IsProductSalableForRequestedQtyRequestInterface {
         try {
-            $requestFactory = $this->objectManager->get(
-                \Magento\InventorySalesApi\Api\Data\IsProductSalableForRequestedQtyRequestInterfaceFactory::class
-            );
+            $requestFactory = $this->objectManager->get(IsProductSalableForRequestedQtyRequestInterfaceFactory::class);
             $request = $requestFactory->create(
                 [
                     'sku' => $sku,
