@@ -49,7 +49,7 @@ jobs:
                         patch=`expr $patch + 1`
                         ;;
                 esac
-                new_version=v$major.$minor.$patch
+                new_version=$major.$minor.$patch
                 echo "New release is $new_version"
                 echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
 
@@ -67,6 +67,6 @@ jobs:
 
             - name: Create github release
               env:
-                new_version: ${{ steps.determine_new_version.outputs.new_version }}
+                new_version: v${{ steps.determine_new_version.outputs.new_version }}
               run: |
                 gh release create --generate-notes --latest $new_version
