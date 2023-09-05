@@ -58,7 +58,7 @@ class CheckoutSectionSave implements ObserverInterface
     {
         $event = $observer->getEvent();
         $websiteId = (int)$event->getWebsite();
-        if (!$this->config->isCheckoutEnabled($websiteId) || $websiteId === 0) {
+        if (!$this->config->isCheckoutEnabled($websiteId)) {
             return;
         }
         $this->config->setShopId($websiteId, null);
