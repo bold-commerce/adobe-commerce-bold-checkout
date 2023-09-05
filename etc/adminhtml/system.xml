@@ -38,7 +38,7 @@
                         <field id="type">1</field>
                     </depends>
                 </field>
-                <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="0"
+                <field id="api_token" translate="label" type="obscure" sortOrder="20" showInDefault="1"
                        showInWebsite="1">
                     <label>API Token</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
@@ -46,10 +46,6 @@
                     <comment>API token used to communicate with the Bold Checkout APIs. Obtain in the Bold Account
                         Center.
                     </comment>
-                </field>
-                <field id="api_token_note" translate="label" type="note" sortOrder="25" showInDefault="1">
-                    <label>API Token</label>
-                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\ApiNote</frontend_model>
                 </field>
                 <field id="integration_email" translate="select" type="select" sortOrder="30" showInDefault="1"
                        showInWebsite="1">
@@ -68,7 +64,7 @@
                     <validate>required-entry</validate>
                     <comment><![CDATA[Please do not change.]]></comment>
                 </field>
-                <field id="integration_status" translate="label" type="note" sortOrder="60" showInDefault="0" showInWebsite="1">
+                <field id="integration_status" translate="label" type="note" sortOrder="60" showInDefault="1" showInWebsite="1">
                     <label>Bold Integration Status</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Status</frontend_model>
                     <comment><![CDATA[In case the status is 'Not Found', please re-save configuration.
