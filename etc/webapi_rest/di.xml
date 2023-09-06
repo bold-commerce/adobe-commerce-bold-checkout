@@ -11,4 +11,7 @@
             <argument name="requiredProperties" xsi:type="const">\Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface::PROPERTIES_REQUIRED</argument>
         </arguments>
     </type>
+    <type name="Magento\SalesRule\Model\RulesApplier">
+        <plugin name="bold_checkout_add_discount_extension_attributes" type="Bold\Checkout\Plugin\SalesRule\Model\RulesApplier\AddExtensionAttributesPlugin"/>
+    </type>
 </config>
