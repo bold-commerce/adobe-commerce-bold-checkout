@@ -40,6 +40,11 @@ define(
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
                 this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.syncBillingData();
+                this.messageContainer.errorMessages.subscribe(function (errorMessages) {
+                    if (errorMessages.length > 0) {
+                        loader.stopLoader();
+                    }
+                });
                 quote.billingAddress.subscribe(function () {
                     const sendBillingAddress = _.debounce(
                         function () {
@@ -92,7 +97,9 @@ define(
                     return false;
                 }
                 const orderPlacementResult = this._super(data, event);
-                loader.stopLoader();
+                if (!orderPlacementResult) {
+                    loader.stopLoader()
+                }
                 return orderPlacementResult;
             },
 

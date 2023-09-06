@@ -1,17 +1,8 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
-        <plugin name="send_shipping_information_plugin" type="Bold\Checkout\Plugin\Checkout\Api\ShippingInformationManagement\SendShippingInformationPlugin"/>
-    </type>
     <type name="Magento\Customer\Api\CustomerRepositoryInterface">
         <plugin name="bold_checkout_customer_repository_add_website_ids" type="Bold\Checkout\Plugin\Customer\CustomerRepository\AddAllWebsitesPlugin"/>
     </type>
-    <type name="Bold\Checkout\Plugin\Checkout\Api\ShippingInformationManagement\SendShippingInformationPlugin">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
-
     <type name="Magento\Quote\Model\ResourceModel\Quote">
         <plugin name="persist_quote_currency" type="Bold\Checkout\Plugin\Sales\Model\ResourceModel\Quote\PersistQuoteCurrencyPlugin"/>
     </type>
