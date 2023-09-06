@@ -128,11 +128,15 @@ class Builder
             $parentProduct = null;
             if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();
+                $parentDiscounts = $parentItem->getExtensionAttributes()->getDiscounts();
+
                 $item->getExtensionAttributes()->setParentItemId($parentItem->getId());
+                $item->getExtensionAttributes()->setDiscounts($parentDiscounts);
                 $item->setQty($parentItem->getQty());
                 $item->setPrice($parentItem->getPrice());
                 $parentProduct = $parentItem->getProduct();
             }
+
             $product = $item->getProduct();
             $product = $product->load($product->getEntityId());
             $mediaGallery = $this->mediaGalleryManagement->getList($product['sku']);
