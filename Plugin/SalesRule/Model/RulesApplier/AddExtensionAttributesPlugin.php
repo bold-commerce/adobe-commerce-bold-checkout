@@ -211,7 +211,7 @@ class AddExtensionAttributesPlugin
                 'base_original_amount' => $discountData->getBaseOriginalAmount()
             ];
             $itemDiscount = $this->discountDataInterfaceFactory->create(['data' => $data]);
-            $ruleLabel = $rule->getStoreLabel($address->getQuote()->getStore()) ?: __('Discount');
+            $ruleLabel = $rule->getCouponCode() ?: __('Discount');
             $data = [
                 'discount' => $itemDiscount,
                 'rule' => $ruleLabel,
@@ -242,7 +242,7 @@ class AddExtensionAttributesPlugin
         Rule $rule,
         Address $address
     ): void {
-        $ruleLabel = $rule->getStoreLabel($address->getQuote()->getStore()) ?: __('Discount');
+        $ruleLabel = $rule->getCouponCode() ?: __('Discount');
         /** @var RuleDiscountInterface[] $discounts */
         $discounts = [];
         foreach ((array) $item->getExtensionAttributes()->getBoldDiscounts() as $discount) {
