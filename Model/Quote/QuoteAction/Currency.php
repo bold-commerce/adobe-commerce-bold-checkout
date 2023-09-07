@@ -11,6 +11,7 @@ use Magento\Quote\Api\Data\CartInterface;
  */
 class Currency implements QuoteActionInterface
 {
+    private const SET_DISPLAY_CURRENCY = 'set_display_currency';
     private const SET_CURRENCY = 'set_currency';
     private const SET_GATEWAY_CURRENCY = 'set_gateway_currency';
 
@@ -39,19 +40,20 @@ class Currency implements QuoteActionInterface
 
         return [
             [
-                'type' => self::SET_CURRENCY,
+                'type' => self::SET_DISPLAY_CURRENCY,
                 'data' => [
                     'currency' => $cartCurrency->getQuoteCurrencyCode(),
                     'rate' => $cart->getCurrency()->getBaseToQuoteRate(),
                     'format_string' => $format,
                 ],
             ],
-            [
-                'type' => self::SET_GATEWAY_CURRENCY,
-                'data' => [
-                    'currency' => $cartCurrency->getQuoteCurrencyCode(),
-                ],
-            ],
+            // Removing for now. More work is needing to be done to get this to work
+            // [
+            //     'type' => self::SET_GATEWAY_CURRENCY,
+            //     'data' => [
+            //         'currency' => $cartCurrency->getQuoteCurrencyCode(),
+            //     ],
+            // ],
         ];
     }
 
