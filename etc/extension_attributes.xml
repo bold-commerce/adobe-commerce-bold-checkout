@@ -24,7 +24,7 @@
         <attribute code="tax_details" type="Magento\Tax\Api\Data\AppliedTaxInterface[]"/>
         <attribute code="product" type="Magento\Catalog\Api\Data\ProductInterface"/>
         <attribute code="parent_item_id" type="int"/>
-        <attribute code="discounts" type="Magento\SalesRule\Api\Data\RuleDiscountInterface[]" />
+        <attribute code="bold_discounts" type="Bold\Checkout\Api\Data\RuleDiscountInterface[]" />
     </extension_attributes>
     <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
         <attribute code="shipping_tax_amount" type="float"/>

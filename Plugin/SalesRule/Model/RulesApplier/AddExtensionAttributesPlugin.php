@@ -7,7 +7,9 @@ namespace Bold\Checkout\Plugin\SalesRule\Model\RulesApplier;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
-use Magento\SalesRule\Api\Data\RuleDiscountInterface;
+use Bold\Checkout\Api\Data\DiscountDataInterfaceFactory;
+use Bold\Checkout\Api\Data\RuleDiscountInterfaceFactory;
+use Bold\Checkout\Api\Data\RuleDiscountInterface;
 use Magento\SalesRule\Model\Quote\ChildrenValidationLocator;
 use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\Rule\Action\Discount\CalculatorFactory;
@@ -46,21 +48,37 @@ class AddExtensionAttributesPlugin
     private $calculatorFactory;
 
     /**
+     * @var RuleDiscountInterfaceFactory
+     */
+    private $discountInterfaceFactory;
+
+    /**
+     * @var DiscountDataInterfaceFactory
+     */
+    private $discountDataInterfaceFactory;
+
+    /**
      * @param ObjectManagerInterface $objectManager
      * @param Utility $validatorUtility
      * @param ChildrenValidationLocator $childrenValidationLocator
      * @param CalculatorFactory $calculatorFactory
+     * @param RuleDiscountInterfaceFactory $discountInterfaceFactory
+     * @param DiscountDataInterfaceFactory $discountDataInterfaceFactory
      */
     public function __construct(
         ObjectManagerInterface    $objectManager,
         Utility                   $validatorUtility,
         ChildrenValidationLocator $childrenValidationLocator,
-        CalculatorFactory         $calculatorFactory
+        CalculatorFactory         $calculatorFactory,
+        RuleDiscountInterfaceFactory $discountInterfaceFactory,
+        DiscountDataInterfaceFactory $discountDataInterfaceFactory
     ) {
         $this->objectManager = $objectManager;
         $this->validatorUtility = $validatorUtility;
         $this->childrenValidationLocator = $childrenValidationLocator;
         $this->calculatorFactory = $calculatorFactory;
+        $this->discountInterfaceFactory = $discountInterfaceFactory;
+        $this->discountDataInterfaceFactory = $discountDataInterfaceFactory;
     }
 
     /**
@@ -76,9 +94,6 @@ class AddExtensionAttributesPlugin
      */
     public function afterApplyRules(RulesApplier $subject, $result, $item, $rules, $skipValidation, $couponCode)
     {
-        if ($this->attributeExists()) {
-            return $result;
-        }
         $address = $item->getAddress();
         $appliedRuleIds = [];
         /* @var $rule Rule */
@@ -195,14 +210,17 @@ class AddExtensionAttributesPlugin
                 'original_amount' => $discountData->getOriginalAmount(),
                 'base_original_amount' => $discountData->getBaseOriginalAmount()
             ];
+            $itemDiscount = $this->discountDataInterfaceFactory->create(['data' => $data]);
             $ruleLabel = $rule->getStoreLabel($address->getQuote()->getStore()) ?: __('Discount');
             $data = [
-                'discount_data' => $data,
+                'discount' => $itemDiscount,
                 'rule' => $ruleLabel,
                 'rule_id' => $rule->getId(),
             ];
-            $this->discountAggregator[$item->getId()][$rule->getId()] = $data;
-            $item->getExtensionAttributes()->setDiscounts(array_values($this->discountAggregator[$item->getId()]));
+            /** @var RuleDiscountInterface $itemDiscount */
+            $ruleDiscount = $this->discountInterfaceFactory->create(['data' => $data]);
+            $this->discountAggregator[$item->getId()][$rule->getId()] = $ruleDiscount;
+            $item->getExtensionAttributes()->setBoldDiscounts(array_values($this->discountAggregator[$item->getId()]));
             $parentItem = $item->getParentItem();
             if ($parentItem && $parentItem->getExtensionAttributes()) {
                 $this->aggregateDiscountBreakdown($discountData, $parentItem, $rule, $address);
@@ -225,8 +243,9 @@ class AddExtensionAttributesPlugin
         Address $address
     ): void {
         $ruleLabel = $rule->getStoreLabel($address->getQuote()->getStore()) ?: __('Discount');
+        /** @var RuleDiscountInterface[] $discounts */
         $discounts = [];
-        foreach ((array)$item->getExtensionAttributes()->getDiscounts() as $discount) {
+        foreach ((array) $item->getExtensionAttributes()->getBoldDiscounts() as $discount) {
             $discounts[$discount->getRuleID()] = $discount;
         }
         $data = [
@@ -242,11 +261,15 @@ class AddExtensionAttributesPlugin
             $data['original_amount'] += $discount->getDiscountData()->getOriginalAmount();
             $data['base_original_amount'] += $discount->getDiscountData()->getBaseOriginalAmount();
         }
-        $discounts[$rule->getId()] = [
-            'discount_data' => $data,
-            'rule' => $ruleLabel,
-            'rule_id' => $rule->getId(),
-        ];
-        $item->getExtensionAttributes()->setDiscounts(array_values($discounts));
+        $discounts[$rule->getId()] = $this->discountInterfaceFactory->create(
+            [
+                'data' => [
+                    'discount' => $this->discountDataInterfaceFactory->create(['data' => $data]),
+                    'rule' => $ruleLabel,
+                    'rule_id' => $rule->getId(),
+                ]
+            ]
+        );
+        $item->getExtensionAttributes()->setBoldDiscounts(array_values($discounts));
     }
 }
