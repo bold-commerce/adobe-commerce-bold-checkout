@@ -25,6 +25,11 @@ class AddExtensionAttributesPlugin
     /**
      * @var array
      */
+    private $itemData = [];
+
+    /**
+     * @var array
+     */
     private $discountAggregator = [];
 
     /**
@@ -82,6 +87,21 @@ class AddExtensionAttributesPlugin
     }
 
     /**
+     * Store existing discount amounts.
+     *
+     * @param RulesApplier $subject
+     * @param $item
+     * @param $rules
+     * @param $skipValidation
+     * @param $couponCode
+     * @return void
+     */
+    public function beforeApplyRules(RulesApplier $subject, $item, $rules, $skipValidation, $couponCode)
+    {
+        $this->backupBeforeItem($item);
+    }
+
+    /**
      * Add discounts extension attribute if it is absent.
      *
      * @param RulesApplier $subject
@@ -94,6 +114,8 @@ class AddExtensionAttributesPlugin
      */
     public function afterApplyRules(RulesApplier $subject, $result, $item, $rules, $skipValidation, $couponCode)
     {
+        $this->backupAfterItem($item);
+        $this->restoreBeforeItem($item);
         $address = $item->getAddress();
         $appliedRuleIds = [];
         /* @var $rule Rule */
@@ -126,6 +148,7 @@ class AddExtensionAttributesPlugin
                 break;
             }
         }
+        $this->restoreAfterItem($item);
 
         return $result;
     }
@@ -271,5 +294,89 @@ class AddExtensionAttributesPlugin
             ]
         );
         $item->getExtensionAttributes()->setBoldDiscounts(array_values($discounts));
+    }
+
+    /**
+     * Backup order item data.
+     *
+     * @param AbstractItem $item
+     * @param string $key
+     * @return void
+     */
+    private function backupItem(AbstractItem $item, string $key): void {
+        $itemId = $item->getId();
+        $this->itemData[$key][$itemId] = [
+            'discount_amount' => $item->getDiscountAmount(),
+            'base_discount_amount' => $item->getBaseDiscountAmount(),
+            'discount_percent' => $item->getDiscountPercent(),
+        ];
+        if ($item->getChildren() && $item->isChildrenCalculated()) {
+            foreach ($item->getChildren() as $child) {
+                $this->backupItem($child, $key);
+            }
+        }
+    }
+
+    /**
+     * Restore order item data.
+     *
+     * @param AbstractItem $item
+     * @param string $key
+     * @return void
+     */
+    private function restoreItem(AbstractItem $item, string $key): void  {
+        $itemId = $item->getId();
+        $item->setDiscountAmount($this->itemData[$key][$itemId]['discount_amount']);
+        $item->setBaseDiscountAmount($this->itemData[$key][$itemId]['base_discount_amount']);
+        $item->setDiscountPercent($this->itemData[$key][$itemId]['discount_percent']);
+        if ($item->getChildren() && $item->isChildrenCalculated()) {
+            foreach ($item->getChildren() as $child) {
+                $this->restoreItem($child, $key);
+            }
+        }
+    }
+
+    /**
+     * Backup order item data before discounts calculation.
+     *
+     * @param $item
+     * @return void
+     */
+    private function backupBeforeItem($item): void
+    {
+        $this->backupItem($item, 'before');
+    }
+
+    /**
+     * Backup order item data after discounts calculation.
+     *
+     * @param AbstractItem $item
+     * @return void
+     */
+    private function backupAfterItem(AbstractItem $item): void
+    {
+        $this->backupItem($item, 'after');
+    }
+
+    /**
+     * Restore order item data before discounts calculation.
+     *
+     * @param AbstractItem $item
+     * @return void
+     */
+    private function restoreBeforeItem(AbstractItem $item): void
+    {
+        $this->restoreItem($item, 'before');
+    }
+
+    /**
+     * Restore order item data after discounts calculation.
+     *
+     * @param AbstractItem $item
+     * @return void
+     */
+    private function restoreAfterItem(AbstractItem $item): void
+    {
+        $this->restoreItem($item, 'after');
     }
 }
