@@ -5,7 +5,6 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
         'uiRegistry',
-        'checkoutData',
         'underscore',
         'ko'
     ], function (
@@ -14,7 +13,6 @@ define(
         quote,
         loader,
         registry,
-        checkoutData,
         _,
         ko
     ) {
@@ -139,12 +137,15 @@ define(
                     if (responseType) {
                         switch (responseType) {
                             case 'PIGI_UPDATE_HEIGHT':
-                                if (iframeElement.style.height === Math.round(data.payload.height) + 'px') {
+                                if (iframeElement.height === Math.round(data.payload.height) + 'px') {
                                     return;
                                 }
-                                iframeElement.style.height = Math.round(data.payload.height) + 'px';
+                                iframeElement.height = Math.round(data.payload.height) + 'px';
                                 break;
                             case 'PIGI_INITIALIZED':
+                                if (data.payload && data.payload.height && iframeElement) {
+                                    iframeElement.height = Math.round(data.payload.height) + 'px';
+                                }
                                 this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
                                 break;
                             case 'PIGI_REFRESH_ORDER':
