@@ -17,7 +17,6 @@ use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 
 /**
  * Place magento order with bold payment service.
@@ -128,10 +127,24 @@ class PlaceOrder implements PlaceOrderInterface
                 : $this->createOrderFromPayload->createOrder($order, $quote);
         } catch (Exception $e) {
             $this->progress->stop($order);
-            return $this->getErrorResponse($e->getMessage());
+            return $this->responseFactory->create(
+                [
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'message' => $e->getMessage(),
+                            ]
+                        ),
+                    ],
+                ]
+            );
         }
         $this->progress->stop($order);
-        return $this->getSuccessResponse($magentoOrder);
+        return $this->responseFactory->create(
+            [
+                'order' => $magentoOrder,
+            ]
+        );
     }
 
     /**
@@ -157,58 +170,4 @@ class PlaceOrder implements PlaceOrderInterface
         );
     }
 
-    /**
-     * Build error response.
-     *
-     * @param string $message
-     * @return ResultInterface
-     */
-    private function getErrorResponse(string $message): ResultInterface
-    {
-        return $this->responseFactory->create(
-            [
-                'errors' => [
-                    $this->errorFactory->create(
-                        [
-                            'message' => $message,
-                        ]
-                    ),
-                ],
-            ]
-        );
-    }
-
-    /**
-     * Build order response
-     *
-     * @param OrderInterface $order
-     * @return ResultInterface
-     */
-    private function getSuccessResponse(OrderInterface $order): ResultInterface
-    {
-        $this->processOrderItems($order);
-        return $this->responseFactory->create(
-            [
-                'order' => $order,
-            ]
-        );
-    }
-
-    /**
-     * @param OrderInterface $order
-     * @return void
-     */
-    private function processOrderItems(OrderInterface $order)
-    {
-        $items = [];
-        foreach ($order->getAllItems() as $item) {
-            if (!$item->getChildren()) {
-                $items[] = $item;
-            }
-        }
-        foreach ($items as $orderItem) {
-            $orderItem->getExtensionAttributes()->setProduct($orderItem->getProduct());
-        }
-        $order->setItems($items);
-    }
 }

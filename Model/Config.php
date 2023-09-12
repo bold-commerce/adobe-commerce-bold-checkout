@@ -243,8 +243,11 @@ class Config implements ConfigInterface
      */
     public function getApiUrl(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_API_URL, ScopeInterface::SCOPE_WEBSITES,
-            $websiteId);
+        return $this->scopeConfig->getValue(
+            self::PATH_INTEGRATION_API_URL,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
     }
 
     /**
@@ -252,8 +255,11 @@ class Config implements ConfigInterface
      */
     public function getCheckoutUrl(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_CHECKOUT_URL, ScopeInterface::SCOPE_WEBSITES,
-            $websiteId);
+        return $this->scopeConfig->getValue(
+            self::PATH_INTEGRATION_CHECKOUT_URL,
+            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId
+        );
     }
 
     /**

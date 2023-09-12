@@ -14,6 +14,9 @@ define([
          */
         getCustomer: function () {
             const billingAddress = quote.billingAddress();
+            if (!billingAddress) {
+                return null;
+            }
             const firstname = billingAddress.firstname;
             const lastname = billingAddress.lastname;
             const payload = {

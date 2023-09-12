@@ -138,7 +138,7 @@ class GetCartLineItems
             'weight' => $this->getLineItemWeightInGrams($item),
             'taxable' => true, // Doesn't matter since RSA will handle taxes
             'image' => $this->getLineItemImage($item),
-            'requires_shipping' => $this->getRequiresShipping($item),
+            'requires_shipping' => !$item->getProduct()->getIsVirtual(),
             'line_item_key' => (string)$item->getId(),
             'price' => $this->getLineItemPrice($item),
         ];
@@ -299,18 +299,6 @@ class GetCartLineItems
             $lineItem['line_item_properties'][$option['title']] = "$qty x $name";
         }
         return $lineItem;
-    }
-
-    /**
-     * Get requires shipping considering product type
-     *
-     * @param CartItemInterface $item
-     * @return bool
-     */
-    private function getRequiresShipping(CartItemInterface $item): bool
-    {
-        $type = $item->getProductType();
-        return $type !== Virtual::TYPE_VIRTUAL && $type !== Downloadable::TYPE_DOWNLOADABLE;
     }
 
     /**

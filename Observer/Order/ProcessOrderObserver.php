@@ -9,6 +9,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Api\Data\OrderInterface;
 
 /**
  * Place order on Bold side observer.
@@ -63,11 +64,43 @@ class ProcessOrderObserver implements ObserverInterface
             return;
         }
         $websiteId = (int)$order->getStore()->getWebsiteId();
-        $addressPayload = $this->addressConverter->convert($order->getShippingAddress());
-        $this->client->post($websiteId, 'addresses/shipping', $addressPayload);
-        $boldOrder = $this->client->post($websiteId, 'process_order', []);
+        $this->syncAddress($order, $websiteId);
+        $subRequests = [
+            'sub_requests' => [
+                [
+                    'method' => 'POST',
+                    'endpoint' => '/taxes',
+                    'payload' => new \stdClass(),
+                ],
+                [
+                    'method' => 'POST',
+                    'endpoint' => '/process_order',
+                    'payload' => new \stdClass(),
+                ],
+            ],
+        ];
+        $boldOrder = $this->client->post($websiteId, 'batch', $subRequests);
         if ($boldOrder->getErrors()) {
             throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
         }
+    }
+
+    /**
+     * Synchronize shipping address with Bold in case order is not virtual. Update billing address otherwise.
+     *
+     * @param OrderInterface $order
+     * @param int $websiteId
+     * @return void
+     * @throws \Exception
+     */
+    private function syncAddress(OrderInterface $order, int $websiteId): void
+    {
+        if (!$order->getIsVirtual()) {
+            $addressPayload = $this->addressConverter->convert($order->getShippingAddress());
+            $this->client->post($websiteId, 'addresses/shipping', $addressPayload);
+            return;
+        }
+        $addressPayload = $this->addressConverter->convert($order->getBillingAddress());
+        $this->client->post($websiteId, 'addresses/billing', $addressPayload);
     }
 }
