@@ -88,7 +88,7 @@ class PlaceOrder implements PlaceOrderInterface
         ConfigInterface $config,
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
-        Progress $progress
+        Progress $progress,
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
@@ -116,6 +116,8 @@ class PlaceOrder implements PlaceOrderInterface
             $this->orderPayloadValidator->validate($order);
             $quote = $this->cartRepository->get($order->getQuoteId());
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+
+            $quote->setQuoteCurrencyCode($quote->getCurrency()->getStoreCurrencyCode());
         } catch (LocalizedException $e) {
             $this->progress->stop($order);
             return $this->getValidationErrorResponse($e->getMessage());

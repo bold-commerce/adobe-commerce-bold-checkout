@@ -53,33 +53,39 @@ class ProcessOrderPayment
     ): void {
         $orderPayment = $order->getPayment();
         $orderPayment->addData($payment->getData());
-        $baseAmountOrdered = $payment->getBaseAmountOrdered()
-            ?: $order->getOrderCurrency()->convert(
+        $baseAmountOrdered = !is_null($payment->getBaseAmountOrdered())
+            ? $payment->getBaseAmountOrdered()
+            : $order->getOrderCurrency()->convert(
                 $payment->getAmountOrdered(),
                 $order->getBaseCurrency()
             );
-        $amountOrdered = $payment->getAmountOrdered()
-            ?: $order->getBaseCurrency()->convert(
+        $amountOrdered = !is_null($payment->getAmountOrdered())
+            ? $payment->getAmountOrdered()
+            : $order->getBaseCurrency()->convert(
                 $baseAmountOrdered,
                 $order->getOrderCurrency()
             );
-        $baseAmountAuthorized = $payment->getBaseAmountAuthorized()
-            ?: $order->getOrderCurrency()->convert(
+        $baseAmountAuthorized = !is_null($payment->getBaseAmountAuthorized())
+            ? $payment->getBaseAmountAuthorized()
+            : $order->getOrderCurrency()->convert(
                 $payment->getAmountAuthorized(),
                 $order->getBaseCurrency()
             );
-        $amountAuthorized = $payment->getAmountAuthorized()
-            ?: $order->getBaseCurrency()->convert(
+        $amountAuthorized = !is_null($payment->getAmountAuthorized())
+            ? $payment->getAmountAuthorized()
+            : $order->getBaseCurrency()->convert(
                 $baseAmountAuthorized,
                 $order->getOrderCurrency()
             );
-        $baseAmountPaid = $payment->getBaseAmountPaid()
-            ?: $order->getOrderCurrency()->convert(
+        $baseAmountPaid = !is_null($payment->getBaseAmountPaid())
+            ? $payment->getBaseAmountPaid()
+            : $order->getOrderCurrency()->convert(
                 $payment->getAmountPaid(),
                 $order->getBaseCurrency()
             );
-        $amountPaid = $payment->getAmountPaid()
-            ?: $order->getBaseCurrency()->convert(
+        $amountPaid = !is_null($payment->getAmountPaid())
+            ? $payment->getAmountPaid()
+            : $order->getBaseCurrency()->convert(
                 $baseAmountPaid,
                 $order->getOrderCurrency()
             );
