@@ -17,6 +17,7 @@ use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Place magento order with bold payment service.
@@ -69,6 +70,11 @@ class PlaceOrder implements PlaceOrderInterface
     private $progress;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param OrderPayloadValidator $orderPayloadValidator
      * @param CartRepositoryInterface $cartRepository
@@ -78,6 +84,7 @@ class PlaceOrder implements PlaceOrderInterface
      * @param CreateOrderFromPayload $createOrderFromPayload
      * @param ProcessOrder $processOrder
      * @param Progress $progress
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
@@ -88,7 +95,8 @@ class PlaceOrder implements PlaceOrderInterface
         ConfigInterface $config,
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
-        Progress $progress
+        Progress $progress,
+        StoreManagerInterface $storeManager
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
@@ -99,6 +107,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->createOrderFromPayload = $createOrderFromPayload;
         $this->processOrder = $processOrder;
         $this->progress = $progress;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -116,6 +125,8 @@ class PlaceOrder implements PlaceOrderInterface
             $this->orderPayloadValidator->validate($order);
             $quote = $this->cartRepository->get($order->getQuoteId());
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         } catch (LocalizedException $e) {
             $this->progress->stop($order);
             return $this->getValidationErrorResponse($e->getMessage());

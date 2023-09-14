@@ -105,6 +105,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         } catch (LocalizedException $e) {
             return $this->buildErrorResponse($e->getMessage());
         }
