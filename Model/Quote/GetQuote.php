@@ -10,6 +10,7 @@ use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Checkout\Model\Cart;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Set quote addresses service.
@@ -37,21 +38,29 @@ class GetQuote implements GetQuoteInterface
     private $cart;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param Builder $quoteResultBuilder
      * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         Builder $quoteResultBuilder,
-        Cart $cart
+        Cart $cart,
+        StoreManagerInterface $storeManager
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->cart = $cart;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -64,6 +73,8 @@ class GetQuote implements GetQuoteInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

@@ -11,6 +11,7 @@ use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CouponManagementInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Set quote coupon code service.
@@ -43,24 +44,32 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     private $config;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param CouponManagementInterface $couponService
      * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
      * @param ConfigInterface $config
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
         CouponManagementInterface $couponService,
         CartRepositoryInterface $cartRepository,
         Builder $quoteResultBuilder,
-        ConfigInterface $config
+        ConfigInterface $config,
+        StoreManagerInterface $storeManager
     ) {
         $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->config = $config;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -70,6 +79,8 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     {
         try {
             $quote = $this->cartRepository->getActive($cartId);
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
             if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
                 return $this->quoteResultBuilder->createSuccessResult($quote);
             }

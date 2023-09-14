@@ -10,6 +10,7 @@ use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CouponManagementInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Remove quote coupon code service.
@@ -37,21 +38,29 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     private $shopIdValidator;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param CouponManagementInterface $couponService
      * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
         CouponManagementInterface $couponService,
         CartRepositoryInterface $cartRepository,
-        Builder $quoteResultBuilder
+        Builder $quoteResultBuilder,
+        StoreManagerInterface $storeManager
     ) {
         $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -62,6 +71,8 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
             $this->couponService->remove($cartId);
         } catch (Exception $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());

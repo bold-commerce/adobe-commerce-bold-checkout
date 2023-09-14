@@ -13,6 +13,7 @@ use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Checkout\Model\Cart;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Set quote shipping method service.
@@ -60,6 +61,11 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
     private $cart;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param ShippingInformationManagementInterface $shippingInformationManagement
      * @param ShippingInformationInterfaceFactory $shippingInformationFactory
      * @param CartRepositoryInterface $cartRepository
@@ -67,6 +73,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
      * @param Builder $quoteResultBuilder
      * @param ConfigInterface $config
      * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ShippingInformationManagementInterface $shippingInformationManagement,
@@ -75,7 +82,8 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         ShopIdValidator $shopIdValidator,
         Builder $quoteResultBuilder,
         ConfigInterface $config,
-        Cart $cart
+        Cart $cart,
+        StoreManagerInterface $storeManager
     ) {
         $this->shippingInformationManagement = $shippingInformationManagement;
         $this->shippingInformationFactory = $shippingInformationFactory;
@@ -84,6 +92,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         $this->shopIdValidator = $shopIdValidator;
         $this->config = $config;
         $this->cart = $cart;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -98,6 +107,8 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

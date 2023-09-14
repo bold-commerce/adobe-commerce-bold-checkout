@@ -13,6 +13,7 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Set quote addresses service.
@@ -45,24 +46,32 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $cart;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
      * @param Builder $quoteResultBuilder
      * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
         Builder $quoteResultBuilder,
-        Cart $cart
+        Cart $cart,
+        StoreManagerInterface $storeManager
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->cart = $cart;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -77,6 +86,8 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+            $this->storeManager->setCurrentStore($quote->getStoreId());
+            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         } catch (LocalizedException $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

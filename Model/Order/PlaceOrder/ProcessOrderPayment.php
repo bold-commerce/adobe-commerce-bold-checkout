@@ -53,42 +53,6 @@ class ProcessOrderPayment
     ): void {
         $orderPayment = $order->getPayment();
         $orderPayment->addData($payment->getData());
-        $baseAmountOrdered = $payment->getBaseAmountOrdered()
-            ?: $order->getOrderCurrency()->convert(
-                $payment->getAmountOrdered(),
-                $order->getBaseCurrency()
-            );
-        $amountOrdered = $payment->getAmountOrdered()
-            ?: $order->getBaseCurrency()->convert(
-                $baseAmountOrdered,
-                $order->getOrderCurrency()
-            );
-        $baseAmountAuthorized = $payment->getBaseAmountAuthorized()
-            ?: $order->getOrderCurrency()->convert(
-                $payment->getAmountAuthorized(),
-                $order->getBaseCurrency()
-            );
-        $amountAuthorized = $payment->getAmountAuthorized()
-            ?: $order->getBaseCurrency()->convert(
-                $baseAmountAuthorized,
-                $order->getOrderCurrency()
-            );
-        $baseAmountPaid = $payment->getBaseAmountPaid()
-            ?: $order->getOrderCurrency()->convert(
-                $payment->getAmountPaid(),
-                $order->getBaseCurrency()
-            );
-        $amountPaid = $payment->getAmountPaid()
-            ?: $order->getBaseCurrency()->convert(
-                $baseAmountPaid,
-                $order->getOrderCurrency()
-            );
-        $orderPayment->setBaseAmountOrdered($baseAmountOrdered);
-        $orderPayment->setAmountOrdered($amountOrdered);
-        $orderPayment->setBaseAmountAuthorized($baseAmountAuthorized);
-        $orderPayment->setAmountAuthorized($amountAuthorized ?: $amountOrdered);
-        $orderPayment->setBaseAmountPaid($baseAmountPaid);
-        $orderPayment->setAmountPaid($amountPaid);
         $orderPayment->setAdditionalInformation(
             array_merge(
                 $orderPayment->getAdditionalInformation() ?: [],
