@@ -38,9 +38,15 @@ class Result implements ResultInterface
     private $websiteId;
 
     /**
+     * @var string|null
+     */
+    private $moduleVersion;
+
+    /**
      * @param string|null $shopId
      * @param string|null $websiteCode
      * @param int|null $websiteId
+     * @param string|null $moduleVersion
      * @param ErrorInterface[] $errors
      * @param ResultExtensionInterface|null $extensionAttributes
      */
@@ -48,6 +54,7 @@ class Result implements ResultInterface
         string $shopId = null,
         string $websiteCode = null,
         int $websiteId = null,
+        string $moduleVersion = null,
         array $errors = [],
         ResultExtensionInterface $extensionAttributes = null
     ) {
@@ -56,6 +63,7 @@ class Result implements ResultInterface
         $this->extensionAttributes = $extensionAttributes;
         $this->errors = $errors;
         $this->websiteId = $websiteId;
+        $this->moduleVersion = $moduleVersion;
     }
 
     /**
@@ -80,6 +88,14 @@ class Result implements ResultInterface
     public function getWebsiteId(): ?int
     {
         return $this->websiteId;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getModuleVersion(): ?string
+    {
+        return $this->moduleVersion;
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Bold\Checkout\Model;
 use Bold\Checkout\Api\Data\RegisterSharedSecret\ResultInterface;
 use Bold\Checkout\Api\Data\RegisterSharedSecret\ResultInterfaceFactory;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
+use Bold\Checkout\Api\GetVersionInterface;
 use Bold\Checkout\Api\RegisterSharedSecretInterface;
 use Bold\Checkout\Model\ResourceModel\GetWebsiteIdByShopId;
 use Magento\Framework\Exception\LocalizedException;
@@ -42,6 +43,11 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
     private $errorFactory;
 
     /**
+     * @var GetVersionInterface
+     */
+    private $moduleVersion;
+
+    /**
      * @param StoreManagerInterface $storeManager
      * @param GetWebsiteIdByShopId $getWebsiteIdByShopId
      * @param ConfigInterface $config
@@ -53,13 +59,15 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
         GetWebsiteIdByShopId $getWebsiteIdByShopId,
         ConfigInterface $config,
         ResultInterfaceFactory $resultFactory,
-        ErrorInterfaceFactory $errorFactory
+        ErrorInterfaceFactory $errorFactory,
+        GetVersionInterface $moduleVersion
     ) {
         $this->storeManager = $storeManager;
         $this->config = $config;
         $this->getWebsiteIdByShopId = $getWebsiteIdByShopId;
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
+        $this->moduleVersion = $moduleVersion;
     }
 
     /**
@@ -98,12 +106,14 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
                 ]
             );
         }
+
         $this->config->setSharedSecret($websiteId, $sharedSecret);
         return $this->resultFactory->create(
             [
                 'shopId' => $shopId,
                 'websiteCode' => $website->getCode(),
                 'websiteId' => $website->getId(),
+                'moduleVersion' => $this->moduleVersion->getVersion($shopId),
             ]
         );
     }
