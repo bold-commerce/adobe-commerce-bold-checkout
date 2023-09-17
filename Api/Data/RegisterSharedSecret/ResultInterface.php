@@ -32,6 +32,13 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getWebsiteId(): ?int;
 
     /**
+     * Retrieve module version
+     * 
+     * @return string|null
+     */
+    public function getModuleVersion(): ?string;
+
+    /**
      * Retrieve errors.
      *
      * @return \Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface[]
