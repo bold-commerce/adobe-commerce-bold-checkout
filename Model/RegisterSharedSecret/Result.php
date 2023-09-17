@@ -41,6 +41,11 @@ class Result implements ResultInterface
      * @var string|null
      */
     private $moduleVersion;
+    
+    /**
+     * @var string|null
+     */
+    private $websiteBaseUrl;
 
     /**
      * @param string|null $shopId
@@ -55,6 +60,7 @@ class Result implements ResultInterface
         string $websiteCode = null,
         int $websiteId = null,
         string $moduleVersion = null,
+        string $websiteBaseUrl = null,
         array $errors = [],
         ResultExtensionInterface $extensionAttributes = null
     ) {
@@ -64,6 +70,7 @@ class Result implements ResultInterface
         $this->errors = $errors;
         $this->websiteId = $websiteId;
         $this->moduleVersion = $moduleVersion;
+        $this->websiteBaseUrl = $websiteBaseUrl;
     }
 
     /**
@@ -96,6 +103,14 @@ class Result implements ResultInterface
     public function getModuleVersion(): ?string
     {
         return $this->moduleVersion;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWebsiteBaseUrl(): ?string
+    {
+        return $this->websiteBaseUrl;
     }
 
     /**
