@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Quote\GetQuoteInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Checkout\Model\Cart;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -43,24 +44,32 @@ class GetQuote implements GetQuoteInterface
     private $storeManager;
 
     /**
+     * @var Session
+     */
+    private $checkoutSession;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param Builder $quoteResultBuilder
      * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
      * @param StoreManagerInterface $storeManager
+     * @param Session $checkoutSession
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
         ShopIdValidator $shopIdValidator,
         Builder $quoteResultBuilder,
         Cart $cart,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Session $checkoutSession
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->cart = $cart;
         $this->storeManager = $storeManager;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -72,6 +81,7 @@ class GetQuote implements GetQuoteInterface
     ): ResultInterface {
         try {
             $quote = $this->cartRepository->getActive($cartId);
+            $this->checkoutSession->replaceQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());

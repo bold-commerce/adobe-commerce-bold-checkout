@@ -9,6 +9,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
+use Magento\Checkout\Model\Session;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CouponManagementInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -49,12 +50,18 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     private $storeManager;
 
     /**
+     * @var Session
+     */
+    private $checkoutSession;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param CouponManagementInterface $couponService
      * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
      * @param ConfigInterface $config
      * @param StoreManagerInterface $storeManager
+     * @param Session $checkoutSession
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
@@ -62,7 +69,8 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
         CartRepositoryInterface $cartRepository,
         Builder $quoteResultBuilder,
         ConfigInterface $config,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Session $checkoutSession
     ) {
         $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
@@ -70,6 +78,7 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
         $this->shopIdValidator = $shopIdValidator;
         $this->config = $config;
         $this->storeManager = $storeManager;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -79,6 +88,7 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     {
         try {
             $quote = $this->cartRepository->getActive($cartId);
+            $this->checkoutSession->replaceQuote($quote);
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
             if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
