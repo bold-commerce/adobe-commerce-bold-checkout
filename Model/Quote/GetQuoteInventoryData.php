@@ -12,6 +12,7 @@ use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Exception;
 use Magento\Bundle\Model\Product\Type as Bundle;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
@@ -68,6 +69,11 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private $moduleManager;
 
     /**
+     * @var Session
+     */
+    private $checkoutSession;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ObjectManagerInterface $objectManager
@@ -76,6 +82,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      * @param InventoryDataInterfaceFactory $inventoryDataFactory
      * @param StoreManagerInterface $storeManager
      * @param Manager $moduleManager
+     * @param Session $checkoutSession
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
@@ -85,7 +92,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         ErrorInterfaceFactory $errorFactory,
         InventoryDataInterfaceFactory $inventoryDataFactory,
         StoreManagerInterface $storeManager,
-        Manager $moduleManager
+        Manager $moduleManager,
+        Session $checkoutSession
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
@@ -95,6 +103,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $this->objectManager = $objectManager;
         $this->storeManager = $storeManager;
         $this->moduleManager = $moduleManager;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -104,6 +113,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     {
         try {
             $quote = $this->cartRepository->getActive($cartId);
+            $this->checkoutSession->replaceQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());

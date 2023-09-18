@@ -11,6 +11,7 @@ use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Checkout\Api\Data\ShippingInformationInterfaceFactory;
 use Magento\Checkout\Api\ShippingInformationManagementInterface;
 use Magento\Checkout\Model\Cart;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -66,6 +67,11 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
     private $storeManager;
 
     /**
+     * @var Session
+     */
+    private $checkoutSession;
+
+    /**
      * @param ShippingInformationManagementInterface $shippingInformationManagement
      * @param ShippingInformationInterfaceFactory $shippingInformationFactory
      * @param CartRepositoryInterface $cartRepository
@@ -74,6 +80,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
      * @param ConfigInterface $config
      * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
      * @param StoreManagerInterface $storeManager
+     * @param Session $checkoutSession
      */
     public function __construct(
         ShippingInformationManagementInterface $shippingInformationManagement,
@@ -83,7 +90,8 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         Builder $quoteResultBuilder,
         ConfigInterface $config,
         Cart $cart,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Session $checkoutSession
     ) {
         $this->shippingInformationManagement = $shippingInformationManagement;
         $this->shippingInformationFactory = $shippingInformationFactory;
@@ -93,6 +101,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         $this->config = $config;
         $this->cart = $cart;
         $this->storeManager = $storeManager;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -106,6 +115,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
     ): ResultInterface {
         try {
             $quote = $this->cartRepository->getActive($cartId);
+            $this->checkoutSession->replaceQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
