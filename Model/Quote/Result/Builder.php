@@ -9,6 +9,7 @@ use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
@@ -144,6 +145,7 @@ class Builder
                 $mediaGallery = $this->mediaGalleryManagement->getList($parentProduct['sku']);
                 $product->setMediaGalleryEntries($mediaGallery);
             }
+            $product->getExtensionAttributes()->setIsVirtual($product->getIsVirtual());
             $item->getExtensionAttributes()->setProduct($product);
             $items[] = $item;
         }

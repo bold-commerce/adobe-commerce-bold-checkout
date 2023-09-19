@@ -123,6 +123,7 @@ class GetProducts implements GetProductsInterface
             }
             $productSearchResults = $this->productRepository->getList($searchCriteria);
             foreach ($productSearchResults->getItems() as $product) {
+                $product->getExtensionAttributes()->setIsVirtual($product->getIsVirtual());
                 if (!$product->getMediaGalleryEntries()) {
                     $parentIds = $this->configurable->getParentIdsByChild($product->getId());
                     if ($parentIds) {

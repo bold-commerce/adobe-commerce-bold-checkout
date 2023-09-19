@@ -20,6 +20,9 @@
     <extension_attributes for="Magento\Sales\Api\Data\OrderItemInterface">
         <attribute code="product" type="Magento\Catalog\Api\Data\ProductInterface"/>
     </extension_attributes>
+    <extension_attributes for="Magento\Catalog\Api\Data\ProductInterface">
+        <attribute code="is_virtual" type="bool"/>
+    </extension_attributes>
     <extension_attributes for="Magento\Quote\Api\Data\CartItemInterface">
         <attribute code="tax_details" type="Magento\Tax\Api\Data\AppliedTaxInterface[]"/>
         <attribute code="product" type="Magento\Catalog\Api\Data\ProductInterface"/>
