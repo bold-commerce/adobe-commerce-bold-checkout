@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Order;
 
+use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\Order\Address\Converter;
 use Magento\Checkout\Model\Session;
@@ -64,7 +65,10 @@ class ProcessOrderObserver implements ObserverInterface
             return;
         }
         $websiteId = (int)$order->getStore()->getWebsiteId();
-        $this->syncAddress($order, $websiteId);
+        $result = $this->syncAddress($order, $websiteId);
+        if ($result->getErrors()) {
+            throw new LocalizedException(__('Something went wrong. Please try to place the order again.'));
+        }
         $subRequests = [
             'sub_requests' => [
                 [
@@ -90,17 +94,16 @@ class ProcessOrderObserver implements ObserverInterface
      *
      * @param OrderInterface $order
      * @param int $websiteId
-     * @return void
+     * @return ResultInterface
      * @throws \Exception
      */
-    private function syncAddress(OrderInterface $order, int $websiteId): void
+    private function syncAddress(OrderInterface $order, int $websiteId): ResultInterface
     {
         if (!$order->getIsVirtual()) {
             $addressPayload = $this->addressConverter->convert($order->getShippingAddress());
-            $this->client->post($websiteId, 'addresses/shipping', $addressPayload);
-            return;
+            return $this->client->post($websiteId, 'addresses/shipping', $addressPayload);
         }
         $addressPayload = $this->addressConverter->convert($order->getBillingAddress());
-        $this->client->post($websiteId, 'addresses/billing', $addressPayload);
+        return $this->client->post($websiteId, 'addresses/billing', $addressPayload);
     }
 }
