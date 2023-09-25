@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Plugin\SalesRule\Model\RulesApplier;
 
-use Bold\Checkout\Api\Data\DiscountDataInterfaceFactory;
-use Bold\Checkout\Api\Data\RuleDiscountInterface;
-use Bold\Checkout\Api\Data\RuleDiscountInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
-use Magento\SalesRule\Model\DeltaPriceRound;
+use Bold\Checkout\Api\Data\DiscountDataInterfaceFactory;
+use Bold\Checkout\Api\Data\RuleDiscountInterfaceFactory;
+use Bold\Checkout\Api\Data\RuleDiscountInterface;
 use Magento\SalesRule\Model\Quote\ChildrenValidationLocator;
 use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\Rule\Action\Discount\CalculatorFactory;
@@ -27,11 +26,6 @@ class AddExtensionAttributesPlugin
      * @var array
      */
     private $itemData = [];
-
-    /**
-     * @var array
-     */
-    private $rulesData = [];
 
     /**
      * @var array
@@ -69,27 +63,20 @@ class AddExtensionAttributesPlugin
     private $discountDataInterfaceFactory;
 
     /**
-     * @var DeltaPriceRound
-     */
-    private $deltaPriceRound;
-
-    /**
      * @param ObjectManagerInterface $objectManager
      * @param Utility $validatorUtility
      * @param ChildrenValidationLocator $childrenValidationLocator
      * @param CalculatorFactory $calculatorFactory
      * @param RuleDiscountInterfaceFactory $discountInterfaceFactory
      * @param DiscountDataInterfaceFactory $discountDataInterfaceFactory
-     * @param DeltaPriceRound $deltaPriceRound
      */
     public function __construct(
-        ObjectManagerInterface       $objectManager,
-        Utility                      $validatorUtility,
-        ChildrenValidationLocator    $childrenValidationLocator,
-        CalculatorFactory            $calculatorFactory,
+        ObjectManagerInterface    $objectManager,
+        Utility                   $validatorUtility,
+        ChildrenValidationLocator $childrenValidationLocator,
+        CalculatorFactory         $calculatorFactory,
         RuleDiscountInterfaceFactory $discountInterfaceFactory,
-        DiscountDataInterfaceFactory $discountDataInterfaceFactory,
-        DeltaPriceRound              $deltaPriceRound
+        DiscountDataInterfaceFactory $discountDataInterfaceFactory
     ) {
         $this->objectManager = $objectManager;
         $this->validatorUtility = $validatorUtility;
@@ -97,7 +84,6 @@ class AddExtensionAttributesPlugin
         $this->calculatorFactory = $calculatorFactory;
         $this->discountInterfaceFactory = $discountInterfaceFactory;
         $this->discountDataInterfaceFactory = $discountDataInterfaceFactory;
-        $this->deltaPriceRound = $deltaPriceRound;
     }
 
     /**
@@ -113,65 +99,6 @@ class AddExtensionAttributesPlugin
     public function beforeApplyRules(RulesApplier $subject, $item, $rules, $skipValidation, $couponCode)
     {
         $this->backupBeforeItem($item);
-        $this->backupBeforeRules($item);
-    }
-
-    /**
-     * Backup order item data before discounts calculation.
-     *
-     * @param $item
-     * @return void
-     */
-    private function backupBeforeItem($item): void
-    {
-        $this->backupItem($item, 'before');
-    }
-
-    /**
-     * Backup order item data.
-     *
-     * @param AbstractItem $item
-     * @param string $key
-     * @return void
-     */
-    private function backupItem(AbstractItem $item, string $key): void
-    {
-        $itemId = $item->getId();
-        $this->itemData[$key][$itemId] = [
-            'discount_amount' => $item->getDiscountAmount(),
-            'base_discount_amount' => $item->getBaseDiscountAmount(),
-            'discount_percent' => $item->getDiscountPercent(),
-        ];
-        if ($item->getChildren() && $item->isChildrenCalculated()) {
-            foreach ($item->getChildren() as $child) {
-                $this->backupItem($child, $key);
-            }
-        }
-    }
-
-    /**
-     * Backup item discount rules before discounts calculation.
-     *
-     * @param AbstractItem $item
-     * @return void
-     */
-    private function backupBeforeRules(AbstractItem $item): void
-    {
-        $this->backupRules($item, 'before');
-    }
-
-    /**
-     * Backup item discount rules data.
-     *
-     * @param AbstractItem $item
-     * @param string $key
-     * @return void
-     */
-    private function backupRules(AbstractItem $item, string $key): void
-    {
-        $quote = $item->getQuote();
-        $cartRules = $quote->getCartFixedRules();
-        $this->rulesData[$key] = $cartRules;
     }
 
     /**
@@ -188,14 +115,11 @@ class AddExtensionAttributesPlugin
     public function afterApplyRules(RulesApplier $subject, $result, $item, $rules, $skipValidation, $couponCode)
     {
         $this->backupAfterItem($item);
-        $this->backupAfterRules($item);
         $this->restoreBeforeItem($item);
-        $this->restoreBeforeRules($item);
         $address = $item->getAddress();
         $appliedRuleIds = [];
         /* @var $rule Rule */
         foreach ($rules as $rule) {
-            $this->deltaPriceRound->reset('CartFixed' . $rule->getId());
             if (!$this->validatorUtility->canProcessRule($rule, $address)) {
                 continue;
             }
@@ -225,87 +149,25 @@ class AddExtensionAttributesPlugin
             }
         }
         $this->restoreAfterItem($item);
-        $this->restoreAfterRules($item);
 
         return $result;
     }
 
     /**
-     * Backup order item data after discounts calculation.
+     * Check if extension attribute exists.
      *
-     * @param AbstractItem $item
-     * @return void
+     * @return bool
      */
-    private function backupAfterItem(AbstractItem $item): void
+    private function attributeExists(): bool
     {
-        $this->backupItem($item, 'after');
-    }
-
-    /**
-     * Backup item discount rules after discounts calculation.
-     *
-     * @param AbstractItem $item
-     * @return void
-     */
-    private function backupAfterRules(AbstractItem $item): void
-    {
-        $this->backupRules($item, 'after');
-    }
-
-    /**
-     * Restore order item data before discounts calculation.
-     *
-     * @param AbstractItem $item
-     * @return void
-     */
-    private function restoreBeforeItem(AbstractItem $item): void
-    {
-        $this->restoreItem($item, 'before');
-    }
-
-    /**
-     * Restore order item data.
-     *
-     * @param AbstractItem $item
-     * @param string $key
-     * @return void
-     */
-    private function restoreItem(AbstractItem $item, string $key): void
-    {
-        $itemId = $item->getId();
-        $item->setDiscountAmount($this->itemData[$key][$itemId]['discount_amount']);
-        $item->setBaseDiscountAmount($this->itemData[$key][$itemId]['base_discount_amount']);
-        $item->setDiscountPercent($this->itemData[$key][$itemId]['discount_percent']);
-        if ($item->getChildren() && $item->isChildrenCalculated()) {
-            foreach ($item->getChildren() as $child) {
-                $this->restoreItem($child, $key);
-            }
+        try {
+            $result = true;
+            $this->objectManager->get(RuleDiscountInterface::class);
+        } catch (\Exception $e) {
+            $result = false;
         }
-    }
 
-    /**
-     * Restore item discount rules before discounts calculation.
-     *
-     * @param AbstractItem $item
-     * @return void
-     */
-    private function restoreBeforeRules(AbstractItem $item): void
-    {
-        $this->restoreRules($item, 'before');
-    }
-
-    /**
-     * Restore item discount rules data.
-     *
-     * @param AbstractItem $item
-     * @param string $key
-     * @return void
-     */
-    private function restoreRules(AbstractItem $item, string $key): void
-    {
-        $quote = $item->getQuote();
-        $cartRules = $this->rulesData[$key];
-        $quote->setCartFixedRules($cartRules);
+        return $result;
     }
 
     /**
@@ -348,7 +210,6 @@ class AddExtensionAttributesPlugin
         $discountData = $discountCalculator->calculate($rule, $item, $qty);
         $this->validatorUtility->deltaRoundingFix($discountData, $item);
         $this->calculateDiscountBreakdown($discountData, $item, $rule, $address);
-        $this->validatorUtility->minFix($discountData, $item, $qty);
     }
 
     /**
@@ -360,10 +221,10 @@ class AddExtensionAttributesPlugin
      * @param Address $address
      */
     private function calculateDiscountBreakdown(
-        Data         $discountData,
+        Data $discountData,
         AbstractItem $item,
-        Rule         $rule,
-        Address      $address
+        Rule $rule,
+        Address $address
     ): void {
         if ($discountData->getAmount() > 0 && $item->getExtensionAttributes()) {
             $data = [
@@ -399,16 +260,15 @@ class AddExtensionAttributesPlugin
      * @param Address $address
      */
     private function aggregateDiscountBreakdown(
-        Data         $discountData,
+        Data $discountData,
         AbstractItem $item,
-        Rule         $rule,
-        Address      $address
-    ): void
-    {
+        Rule $rule,
+        Address $address
+    ): void {
         $ruleLabel = $rule->getCouponCode() ?: __('Discount');
         /** @var RuleDiscountInterface[] $discounts */
         $discounts = [];
-        foreach ((array)$item->getExtensionAttributes()->getBoldDiscounts() as $discount) {
+        foreach ((array) $item->getExtensionAttributes()->getBoldDiscounts() as $discount) {
             $discounts[$discount->getRuleID()] = $discount;
         }
         $data = [
@@ -437,6 +297,79 @@ class AddExtensionAttributesPlugin
     }
 
     /**
+     * Backup order item data.
+     *
+     * @param AbstractItem $item
+     * @param string $key
+     * @return void
+     */
+    private function backupItem(AbstractItem $item, string $key): void {
+        $itemId = $item->getId();
+        $this->itemData[$key][$itemId] = [
+            'discount_amount' => $item->getDiscountAmount(),
+            'base_discount_amount' => $item->getBaseDiscountAmount(),
+            'discount_percent' => $item->getDiscountPercent(),
+        ];
+        if ($item->getChildren() && $item->isChildrenCalculated()) {
+            foreach ($item->getChildren() as $child) {
+                $this->backupItem($child, $key);
+            }
+        }
+    }
+
+    /**
+     * Restore order item data.
+     *
+     * @param AbstractItem $item
+     * @param string $key
+     * @return void
+     */
+    private function restoreItem(AbstractItem $item, string $key): void  {
+        $itemId = $item->getId();
+        $item->setDiscountAmount($this->itemData[$key][$itemId]['discount_amount']);
+        $item->setBaseDiscountAmount($this->itemData[$key][$itemId]['base_discount_amount']);
+        $item->setDiscountPercent($this->itemData[$key][$itemId]['discount_percent']);
+        if ($item->getChildren() && $item->isChildrenCalculated()) {
+            foreach ($item->getChildren() as $child) {
+                $this->restoreItem($child, $key);
+            }
+        }
+    }
+
+    /**
+     * Backup order item data before discounts calculation.
+     *
+     * @param $item
+     * @return void
+     */
+    private function backupBeforeItem($item): void
+    {
+        $this->backupItem($item, 'before');
+    }
+
+    /**
+     * Backup order item data after discounts calculation.
+     *
+     * @param AbstractItem $item
+     * @return void
+     */
+    private function backupAfterItem(AbstractItem $item): void
+    {
+        $this->backupItem($item, 'after');
+    }
+
+    /**
+     * Restore order item data before discounts calculation.
+     *
+     * @param AbstractItem $item
+     * @return void
+     */
+    private function restoreBeforeItem(AbstractItem $item): void
+    {
+        $this->restoreItem($item, 'before');
+    }
+
+    /**
      * Restore order item data after discounts calculation.
      *
      * @param AbstractItem $item
@@ -445,33 +378,5 @@ class AddExtensionAttributesPlugin
     private function restoreAfterItem(AbstractItem $item): void
     {
         $this->restoreItem($item, 'after');
-    }
-
-    /**
-     * Restore item discount rules after discounts calculation.
-     *
-     * @param AbstractItem $item
-     * @return void
-     */
-    private function restoreAfterRules(AbstractItem $item): void
-    {
-        $this->restoreRules($item, 'after');
-    }
-
-    /**
-     * Check if extension attribute exists.
-     *
-     * @return bool
-     */
-    private function attributeExists(): bool
-    {
-        try {
-            $result = true;
-            $this->objectManager->get(RuleDiscountInterface::class);
-        } catch (\Exception $e) {
-            $result = false;
-        }
-
-        return $result;
     }
 }
