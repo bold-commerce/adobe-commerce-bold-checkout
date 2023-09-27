@@ -37,7 +37,7 @@ class AddCommentsToOrder
     }
 
     /**
-     * Add comment to order.
+     * Add comments to order.
      *
      * @param OrderInterface $order
      * @param OrderDataInterface $orderData
@@ -57,6 +57,10 @@ class AddCommentsToOrder
                 'comments' => $comments,
             ]
         );
+
+        if (empty($comments->getData())) {
+            return;
+        }
 
         foreach ($comments->getData() as $comment) {
             foreach ($order->getStatusHistories() as $history) {
