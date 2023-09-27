@@ -4,26 +4,25 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model;
 
 use Bold\Checkout\Api\GetVersionInterface;
-use Magento\Framework\Module\Dir;
 
 class GetVersion implements GetVersionInterface
 {
+    /**
+     * @var ModuleVersionProvider
+     */
+    private $moduleVersionProvider;
 
-    /** @var Dir */
-    protected $moduleDir;
-
-    public function __construct(Dir $moduleDir) {
-        $this->moduleDir = $moduleDir;
+    /**
+     * @param ModuleVersionProvider $moduleVersionProvider
+     */
+    public function __construct(ModuleVersionProvider $moduleVersionProvider) {
+        $this->moduleVersionProvider = $moduleVersionProvider;
     }
 
     /**
      * @inheritDoc
      */
     public function getVersion(string $shopId): string {
-        $dir = $this->moduleDir->getDir('Bold_Checkout');
-        $contents = file_get_contents("$dir/composer.json");
-        $data = json_decode($contents, true);
-
-        return $data['version'];
+       return $this->moduleVersionProvider->getVersion('Bold_Checkout');
     }
 }
