@@ -70,6 +70,10 @@
                     <comment><![CDATA[In case the status is 'Not Found', please re-save configuration.
                      Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named '{{integrationName}}' and Activate or Reauthorize it.]]></comment>
                 </field>
+                <field id="version" translate="label" type="note" sortOrder="1000" showInDefault="0" showInWebsite="1">
+                    <label>Module Version</label>
+                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Version</frontend_model>
+                </field>
             </group>
             <group id="bold_checkout_life_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Integration (LiFE) Elements</label>
