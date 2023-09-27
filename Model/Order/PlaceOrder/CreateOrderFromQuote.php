@@ -85,20 +85,20 @@ class CreateOrderFromQuote
     /**
      * Create and place bold order from quote.
      *
-     * @param CartInterface $cart
+     * @param CartInterface $quote
      * @param OrderDataInterface $orderPayload
      * @return OrderInterface
      * @throws LocalizedException
      */
-    public function create(CartInterface $cart, OrderDataInterface $orderPayload): OrderInterface
+    public function create(CartInterface $quote, OrderDataInterface $orderPayload): OrderInterface
     {
-        if (!$cart->getIsActive()) {
+        if (!$quote->getIsActive()) {
             throw new LocalizedException(__('Cannot create order from inactive cart.'));
         }
-        $cart->getPayment()->setMethod(Service::CODE);
-        $cart->getPayment()->setStoreId($cart->getStoreId());
-        $cart->getPayment()->setCustomerPaymentId($cart->getCustomerId());
-        $this->prepareCartForCustomer($cart);
+        $quote->getPayment()->setMethod(Service::CODE);
+        $quote->getPayment()->setStoreId($quote->getStoreId());
+        $quote->getPayment()->setCustomerPaymentId($quote->getCustomerId());
+        $this->prepareCartForCustomer($quote);
         $orderData = [
             self::ORDER_NUMBER => $orderPayload->getOrderNumber(),
             self::BROWSER_IP => $orderPayload->getBrowserIp(),
@@ -111,26 +111,26 @@ class CreateOrderFromQuote
             'create_order_from_quote_submit_before',
             ['orderPayload' => $orderPayload, 'orderData' => $orderData]
         );
-        if (!$cart->isVirtual()) {
-            $cart->getShippingAddress()->setCollectShippingRates(true);
+        if (!$quote->isVirtual()) {
+            $quote->getShippingAddress()->setCollectShippingRates(true);
         }
-        $cart->setTotalsCollectedFlag(false);
-        $cart->collectTotals();
-        $this->cart->setQuote($cart);
-        $order = $this->cartManagement->submit($cart, $orderData->getData());
+        $this->cart->setQuote($quote);
+        $quote->setTotalsCollectedFlag(false);
+        $quote->collectTotals();
+        $order = $this->cartManagement->submit($quote, $orderData->getData());
         $this->setOrderTaxDetails($order);
-        if (!$cart->getIsVirtual()) {
+        if (!$quote->getIsVirtual()) {
             $this->setShippingAssignments($order);
         }
         $this->eventManager->dispatch(
             'checkout_type_onepage_save_order_after',
-            ['order' => $order, 'quote' => $cart]
+            ['order' => $order, 'quote' => $quote]
         );
         $this->eventManager->dispatch(
             'checkout_submit_all_after',
             [
                 'order' => $order,
-                'quote' => $cart,
+                'quote' => $quote,
             ]
         );
 
