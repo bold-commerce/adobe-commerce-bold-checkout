@@ -9,7 +9,7 @@ use Magento\Framework\Event\ObserverInterface;
 /**
  * Add comment to order in case it's quote total is different from bold order total.
  */
-class AddCommentQuoteTotalDiffBoldOrderTotalObserver implements ObserverInterface
+class AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver implements ObserverInterface
 {
     /**
      * Add comment to order in case it's quote total is different from bold order total.

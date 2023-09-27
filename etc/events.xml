@@ -46,6 +46,6 @@
         <observer name="bold_checkout_parallel_checkout_button" instance="Bold\Checkout\Observer\Checkout\AddParallelCheckoutButton"/>
     </event>
     <event name="add_comments_to_order_save_before">
-        <observer name="add_comment_to_order_quote_total_different_bold_order_total" instance="Bold\Checkout\Observer\Order\AddCommentQuoteTotalDiffBoldOrderTotalObserver"/>
+        <observer name="add_order_comment_quote_total_diff_bold_order_total" instance="Bold\Checkout\Observer\Order\AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver"/>
     </event>
 </config>
