@@ -5,12 +5,27 @@ namespace Bold\Checkout\Observer\Order;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Math\Random as MathRandom;
 
 /**
  * Add comment to order in case it's quote total is different from bold order total.
  */
 class AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver implements ObserverInterface
 {
+    /**
+     * @var MathRandom
+     */
+    private $mathRandom;
+
+    /**
+     * @param MathRandom $mathRandom
+     */
+    public function __construct(
+        MathRandom $mathRandom
+    ) {
+        $this->mathRandom = $mathRandom;
+    }
+
     /**
      * Add comment to order in case it's quote total is different from bold order total.
      *
@@ -19,9 +34,9 @@ class AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver implements ObserverInt
      */
     public function execute(Observer $observer)
     {
-        $order = $observer->getOrder();
-        $orderData = $observer->getOrderData();
-        $comments = $observer->getComments();
+        $order = $observer->getDataByKey('order');
+        $orderData = $observer->getDataByKey('orderData');
+        $comments = $observer->getDataByKey('comments');
 
         if ($order->getBaseGrandTotal() - $orderData->getTotal() !== 0) {
             return;
@@ -39,6 +54,6 @@ class AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver implements ObserverInt
             $orderData->getTotal()
         );
 
-        $comments->setData($comment);
+        $comments->setData($this->mathRandom->getRandomString(99), $comment);
     }
 }
