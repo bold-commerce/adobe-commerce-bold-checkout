@@ -50,9 +50,9 @@ class CreateOrderFromPayload
     private $orderExtensionDataFactory;
 
     /**
-     * @var AddCommentToOrder
+     * @var AddCommentsToOrder
      */
-    private $addCommentToOrder;
+    private $addCommentsToOrder;
 
     /**
      * @var EventManagerInterface
@@ -64,7 +64,7 @@ class CreateOrderFromPayload
      * @param CreateOrderFromQuote $createOrderFromQuote
      * @param ProcessOrderPayment $processOrderPayment
      * @param OrderInterfaceFactory $orderFactory
-     * @param AddCommentToOrder $addCommentToOrder
+     * @param AddCommentsToOrder $addCommentsToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param EventManagerInterface $eventManager
@@ -74,7 +74,7 @@ class CreateOrderFromPayload
         CreateOrderFromQuote $createOrderFromQuote,
         ProcessOrderPayment $processOrderPayment,
         OrderInterfaceFactory $orderFactory,
-        AddCommentToOrder $addCommentToOrder,
+        AddCommentsToOrder $addCommentsToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
         EventManagerInterface $eventManager
@@ -85,7 +85,7 @@ class CreateOrderFromPayload
         $this->processOrderPayment = $processOrderPayment;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
-        $this->addCommentToOrder = $addCommentToOrder;
+        $this->addCommentsToOrder = $addCommentsToOrder;
         $this->eventManager = $eventManager;
     }
 
@@ -116,7 +116,7 @@ class CreateOrderFromPayload
             $orderPayload->getPayment(),
             $orderPayload->getTransaction()
         );
-        $this->addCommentToOrder->addComment($magentoOrder, $orderPayload);
+        $this->addCommentsToOrder->addComments($magentoOrder, $orderPayload);
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $orderExtensionData->setPublicId($orderPayload->getPublicId());
         $orderExtensionData->setOrderId((int)$magentoOrder->getId());

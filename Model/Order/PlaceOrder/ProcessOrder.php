@@ -44,15 +44,15 @@ class ProcessOrder
     private $orderExtensionDataFactory;
 
     /**
-     * @var AddCommentToOrder
+     * @var AddCommentsToOrder
      */
-    private $addCommentToOrder;
+    private $addCommentsToOrder;
 
     /**
      * @param Order $orderResource
      * @param ProcessOrderPayment $processOrderPayment
      * @param OrderInterfaceFactory $orderFactory
-     * @param AddCommentToOrder $addCommentToOrder
+     * @param AddCommentsToOrder $addCommentsToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      */
@@ -60,7 +60,7 @@ class ProcessOrder
         Order $orderResource,
         ProcessOrderPayment $processOrderPayment,
         OrderInterfaceFactory $orderFactory,
-        AddCommentToOrder $addCommentToOrder,
+        AddCommentsToOrder $addCommentsToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource
     ) {
@@ -69,7 +69,7 @@ class ProcessOrder
         $this->processOrderPayment = $processOrderPayment;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
-        $this->addCommentToOrder = $addCommentToOrder;
+        $this->addCommentsToOrder = $addCommentsToOrder;
     }
 
     /**
@@ -105,7 +105,7 @@ class ProcessOrder
             $orderPayload->getPayment(),
             $orderPayload->getTransaction()
         );
-        $this->addCommentToOrder->addComment($order, $orderPayload);
+        $this->addCommentsToOrder->addComments($order, $orderPayload);
         $orderExtensionData->setFulfillmentStatus($orderPayload->getFulfillmentStatus());
         $orderExtensionData->setFinancialStatus($orderPayload->getFinancialStatus());
         $this->orderExtensionDataResource->save($orderExtensionData);

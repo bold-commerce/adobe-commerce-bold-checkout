@@ -109,7 +109,11 @@ class CreateOrderFromQuote
         $orderData = new DataObject($orderData);
         $this->eventManager->dispatch(
             'create_order_from_quote_submit_before',
-            ['orderPayload' => $orderPayload, 'orderData' => $orderData]
+            [
+                'quote' => $quote,
+                'orderPayload' => $orderPayload,
+                'orderData' => $orderData,
+            ]
         );
         if (!$quote->isVirtual()) {
             $quote->getShippingAddress()->setCollectShippingRates(true);

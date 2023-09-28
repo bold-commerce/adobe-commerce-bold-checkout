@@ -1,48 +1,50 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Order\PlaceOrder;
+namespace Bold\Checkout\Observer\Order;
 
-use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Exception;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\ResourceModel\Order;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Math\Random as MathRandom;
 
 /**
  * Add comment to order in case it's quote total is different from bold order total.
  */
-class AddCommentToOrder
+class AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver implements ObserverInterface
 {
     /**
-     * @var Order
+     * @var MathRandom
      */
-    private $orderResource;
+    private $mathRandom;
 
     /**
-     * @param Order $orderResource
+     * @param MathRandom $mathRandom
      */
-    public function __construct(Order $orderResource)
-    {
-        $this->orderResource = $orderResource;
+    public function __construct(
+        MathRandom $mathRandom
+    ) {
+        $this->mathRandom = $mathRandom;
     }
 
     /**
      * Add comment to order in case it's quote total is different from bold order total.
      *
-     * @param OrderInterface $order
-     * @param OrderDataInterface $orderData
+     * @param Observer $observer
      * @return void
-     * @throws Exception
      */
-    public function addComment(
-        OrderInterface $order,
-        OrderDataInterface $orderData
-    ) {
+    public function execute(Observer $observer)
+    {
+        $order = $observer->getDataByKey('order');
+        $orderData = $observer->getDataByKey('orderData');
+        $comments = $observer->getDataByKey('comments');
+
         if ($order->getBaseGrandTotal() - $orderData->getTotal() !== 0) {
             return;
         }
+
         $operation = $order->hasInvoices() ? 'refund' : 'cancel';
         $transactionType = $order->hasInvoices() ? 'payment' : 'authorization';
+
         $comment = __(
             'Please consider to %1 this order due to it\'s total = %2 mismatch %3 transaction amount = %4. '
             . 'For more details please refer to Bold Help Center at "https://support.boldcommerce.com"',
@@ -51,12 +53,7 @@ class AddCommentToOrder
             $transactionType,
             $orderData->getTotal()
         );
-        foreach ($order->getStatusHistories() as $history) {
-            if ($history->getComment() === $comment->getText()) {
-                return;
-            }
-        }
-        $order->addCommentToStatusHistory($comment);
-        $this->orderResource->save($order);
+
+        $comments->setData($this->mathRandom->getRandomString(99), $comment);
     }
 }
