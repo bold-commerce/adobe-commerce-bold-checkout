@@ -12,7 +12,6 @@ use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 
 /**
  * Init order data from quote on Bold side.
@@ -47,20 +46,17 @@ class InitOrderFromQuote
      * @param CollectionFactory $countryCollectionFactory
      * @param GetCartLineItems $getCartLineItems
      * @param QuoteAction $quoteAction
-     * @param QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId
      */
     public function __construct(
         ClientInterface $client,
         CollectionFactory $countryCollectionFactory,
         GetCartLineItems $getCartLineItems,
-        QuoteAction $quoteAction,
-        QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId
+        QuoteAction $quoteAction
     ) {
         $this->client = $client;
         $this->countryCollectionFactory = $countryCollectionFactory;
         $this->getCartLineItems = $getCartLineItems;
         $this->quoteAction = $quoteAction;
-        $this->quoteIdToMaskedQuoteId = $quoteIdToMaskedQuoteId;
     }
 
     /**
