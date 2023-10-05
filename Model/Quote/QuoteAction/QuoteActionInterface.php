@@ -17,12 +17,4 @@ interface QuoteActionInterface
      * @return array
      */
     public function getActionData(CartInterface $cart): array;
-
-    /**
-     * Check if action is allowed.
-     *
-     * @param int $websiteId
-     * @return bool
-     */
-    public function isAllowed(int $websiteId): bool;
 }

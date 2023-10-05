@@ -10,6 +10,7 @@ use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
+use Bold\Checkout\Model\Quote\Item\Validator;
 use Exception;
 use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Checkout\Model\Session;
@@ -74,6 +75,11 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private $checkoutSession;
 
     /**
+     * @var Validator
+     */
+    private $itemValidator;
+
+    /**
      * @param CartRepositoryInterface $cartRepository
      * @param ShopIdValidator $shopIdValidator
      * @param ObjectManagerInterface $objectManager
@@ -83,6 +89,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      * @param StoreManagerInterface $storeManager
      * @param Manager $moduleManager
      * @param Session $checkoutSession
+     * @param Validator $itemValidator
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
@@ -93,7 +100,8 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         InventoryDataInterfaceFactory $inventoryDataFactory,
         StoreManagerInterface $storeManager,
         Manager $moduleManager,
-        Session $checkoutSession
+        Session $checkoutSession,
+        Validator $itemValidator
     ) {
         $this->cartRepository = $cartRepository;
         $this->shopIdValidator = $shopIdValidator;
@@ -104,6 +112,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         $this->storeManager = $storeManager;
         $this->moduleManager = $moduleManager;
         $this->checkoutSession = $checkoutSession;
+        $this->itemValidator = $itemValidator;
     }
 
     /**
@@ -122,7 +131,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
         }
         $inventoryResult = [];
         foreach ($quote->getAllItems() as $item) {
-            if (!GetCartLineItems::shouldAppearInCart($item)) {
+            if (!$this->itemValidator->shouldAppearInCart($item)) {
                 continue;
             }
             $inventoryResult[] = $this->inventoryDataFactory->create(

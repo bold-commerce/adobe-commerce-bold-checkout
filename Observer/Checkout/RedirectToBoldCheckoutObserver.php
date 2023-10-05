@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Checkout;
 
+use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
@@ -11,7 +12,6 @@ use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Message\ManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -50,20 +50,27 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $logger;
 
     /**
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
      * @param IsBoldCheckoutAllowedForCart $allowedForCart
      * @param IsBoldCheckoutAllowedForRequest $allowedForRequest
      * @param Session $session
      * @param InitOrderFromQuote $initOrderFromQuote
      * @param ConfigInterface $config
      * @param LoggerInterface $logger
+     * @param ClientInterface $client
      */
     public function __construct(
-        IsBoldCheckoutAllowedForCart    $allowedForCart,
+        IsBoldCheckoutAllowedForCart $allowedForCart,
         IsBoldCheckoutAllowedForRequest $allowedForRequest,
-        Session                         $session,
-        InitOrderFromQuote              $initOrderFromQuote,
-        ConfigInterface                 $config,
-        LoggerInterface                 $logger
+        Session $session,
+        InitOrderFromQuote $initOrderFromQuote,
+        ConfigInterface $config,
+        LoggerInterface $logger,
+        ClientInterface $client
     ) {
         $this->allowedForCart = $allowedForCart;
         $this->allowedForRequest = $allowedForRequest;
@@ -71,6 +78,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         $this->initOrderFromQuote = $initOrderFromQuote;
         $this->config = $config;
         $this->logger = $logger;
+        $this->client = $client;
     }
 
     /**
@@ -90,10 +98,11 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         try {
             $checkoutData = $this->initOrderFromQuote->init($quote);
+            $this->session->setBoldCheckoutData($checkoutData);
             if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
-                $this->session->setBoldCheckoutData($checkoutData);
                 return;
             }
+            $this->client->get($websiteId, 'refresh');
             $orderId = $checkoutData['data']['public_order_id'];
             $token = $checkoutData['data']['jwt_token'];
             $shopName = $checkoutData['data']['initial_data']['shop_name'];

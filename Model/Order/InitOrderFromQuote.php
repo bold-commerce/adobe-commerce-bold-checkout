@@ -43,11 +43,6 @@ class InitOrderFromQuote
     private $quoteAction;
 
     /**
-     * @var QuoteIdToMaskedQuoteIdInterface
-     */
-    private $quoteIdToMaskedQuoteId;
-
-    /**
      * @param ClientInterface $client
      * @param CollectionFactory $countryCollectionFactory
      * @param GetCartLineItems $getCartLineItems
@@ -79,21 +74,14 @@ class InitOrderFromQuote
      */
     public function init(CartInterface $quote, string $flowId = self::FLOW_ID): array
     {
-        $maskedQuoteId = $quote->getCustomerIsGuest() ? $this->quoteIdToMaskedQuoteId->execute((int)$quote->getId()) : null;
         $websiteId = (int)$quote->getStore()->getWebsiteId();
-        $actions = $this->quoteAction->getActionsData($quote);
-        $mergedActions = array_reduce($actions, function ($carry, $item) {
-            return array_merge($carry, $item);
-        }, []);
-
         $body = [
             'flow_id' => $flowId,
             'cart_items' => $this->getCartLineItems->getItems($quote),
-            'actions' => $mergedActions,
+            'actions' => $this->quoteAction->getActionsData($quote),
             'order_meta_data' => [
                 'cart_parameters' => [
                     'quote_id' => $quote->getId(),
-                    'masked_quote_id' => $maskedQuoteId,
                     'store_id' => $quote->getStoreId(),
                     'website_id' => $websiteId,
                 ],

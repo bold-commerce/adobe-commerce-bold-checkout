@@ -6,10 +6,9 @@ namespace Bold\Checkout\Model\Quote\Result;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
-use Bold\Checkout\Model\Quote\GetCartLineItems;
+use Bold\Checkout\Model\Quote\Item\Validator;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
@@ -44,6 +43,11 @@ class Builder
     private $mediaGalleryManagement;
 
     /**
+     * @var Validator
+     */
+    private $itemValidator;
+
+    /**
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param ExtractShippingMethods $extractShippingMethods
@@ -55,13 +59,15 @@ class Builder
         ErrorInterfaceFactory $errorFactory,
         ExtractShippingMethods $extractShippingMethods,
         ExtractCartTotals $extractCartTotals,
-        ProductAttributeMediaGalleryManagementInterface $mediaGalleryManagement
+        ProductAttributeMediaGalleryManagementInterface $mediaGalleryManagement,
+        Validator $itemValidator
     ) {
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
         $this->extractShippingMethods = $extractShippingMethods;
         $this->extractCartTotals = $extractCartTotals;
         $this->mediaGalleryManagement = $mediaGalleryManagement;
+        $this->itemValidator = $itemValidator;
     }
 
     /**
@@ -122,22 +128,19 @@ class Builder
     {
         $items = [];
         foreach ($quote->getAllItems() as $item) {
-            if (!GetCartLineItems::shouldAppearInCart($item)) {
+            if (!$this->itemValidator->shouldAppearInCart($item)) {
                 continue;
             }
-            
             $parentProduct = null;
             if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();
                 $parentDiscounts = $parentItem->getExtensionAttributes()->getBoldDiscounts();
-
                 $item->getExtensionAttributes()->setParentItemId($parentItem->getId());
                 $item->getExtensionAttributes()->setBoldDiscounts($parentDiscounts);
                 $item->setQty($parentItem->getQty());
                 $item->setPrice($parentItem->getPrice());
                 $parentProduct = $parentItem->getProduct();
             }
-
             $product = $item->getProduct();
             $product = $product->load($product->getEntityId());
             $mediaGallery = $this->mediaGalleryManagement->getList($product['sku']);
