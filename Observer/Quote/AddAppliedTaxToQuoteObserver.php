@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Quote;
 
 use Bold\Checkout\Model\Quote\GetCartLineItems;
+use Bold\Checkout\Model\Quote\Item\Validator;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SimpleDataObjectConverter;
 use Magento\Framework\Event\Observer;
@@ -29,15 +30,23 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
     private $objectHelper;
 
     /**
+     * @var Validator
+     */
+    private $itemValidator;
+
+    /**
      * @param AppliedTaxInterfaceFactory $appliedTaxFactory
      * @param DataObjectHelper $objectHelper
+     * @param Validator $itemValidator
      */
     public function __construct(
         AppliedTaxInterfaceFactory $appliedTaxFactory,
-        DataObjectHelper $objectHelper
+        DataObjectHelper $objectHelper,
+        Validator $itemValidator
     ) {
         $this->objectHelper = $objectHelper;
         $this->appliedTaxFactory = $appliedTaxFactory;
+        $this->itemValidator = $itemValidator;
     }
 
     /**
@@ -66,7 +75,7 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
      */
     private function addAppliedTaxesToItem(CartItemInterface $item): void
     {
-        if (!GetCartLineItems::shouldAppearInCart($item)) {
+        if (!$this->itemValidator->shouldAppearInCart($item)) {
             return;
         }
 

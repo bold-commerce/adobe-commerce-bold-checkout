@@ -3,21 +3,16 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote;
 
-use Magento\Bundle\Model\Product\Type;
-use Magento\Catalog\Helper\Product\Configuration;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Bundle\Model\Product\Type as Bundle;
+use Bold\Checkout\Model\Quote\Item\Validator;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\UrlInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Catalog\Model\Product\Type as Virtual;
-use Magento\Downloadable\Model\Product\Type as Downloadable;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Cart line items builder.
@@ -25,29 +20,19 @@ use Magento\Downloadable\Model\Product\Type as Downloadable;
 class GetCartLineItems
 {
     /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
-     * @var Configurable
-     */
-    private $configurableType;
-
-    /**
-     * @var Escaper
-     */
-    private $escaper;
-
-    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
 
     /**
-     * @var ProductRepositoryInterface
+     * @var Validator
      */
-    private $productRepository;
+    private $itemValidator;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
 
     /**
      * @var UrlBuilder
@@ -55,35 +40,29 @@ class GetCartLineItems
     private $productUrlBuilder;
 
     /**
-     * @var Bundle
+     * @var ProductRepositoryInterface
      */
-    private $bundleType;
+    private $productRepository;
 
     /**
-     * @param Configuration $configuration
-     * @param Configurable $configurableType
-     * @param Escaper $escaper
      * @param ScopeConfigInterface $scopeConfig
      * @param ProductRepositoryInterface $productRepository
+     * @param Validator $itemValidator
+     * @param StoreManagerInterface $storeManager
      * @param UrlBuilder $productUrlBuilder
-     * @param Bundle $bundleType
      */
     public function __construct(
-        Configuration $configuration,
-        Configurable $configurableType,
-        Escaper $escaper,
         ScopeConfigInterface $scopeConfig,
         ProductRepositoryInterface $productRepository,
-        UrlBuilder $productUrlBuilder,
-        Type $bundleType
+        Validator $itemValidator,
+        StoreManagerInterface $storeManager,
+        UrlBuilder $productUrlBuilder
     ) {
-        $this->configuration = $configuration;
-        $this->configurableType = $configurableType;
-        $this->escaper = $escaper;
         $this->scopeConfig = $scopeConfig;
         $this->productRepository = $productRepository;
+        $this->itemValidator = $itemValidator;
+        $this->storeManager = $storeManager;
         $this->productUrlBuilder = $productUrlBuilder;
-        $this->bundleType = $bundleType;
     }
 
     /**
@@ -98,28 +77,14 @@ class GetCartLineItems
         $lineItems = [];
         /** @var CartItemInterface $cartItem */
         foreach ($quote->getAllItems() as $cartItem) {
-            if (static::shouldAppearInCart($cartItem)) {
+            if ($this->itemValidator->shouldAppearInCart($cartItem)) {
                 $lineItems[] = $this->getLineItem($cartItem);
             }
         }
-
         if (!$lineItems) {
             throw new LocalizedException(__('There are no cart items to checkout.'));
         }
         return $lineItems;
-    }
-
-    /**
-     * Determines if the cart item should appear in the cart sent to Bold
-     *
-     * @param Item $item
-     * @return boolean
-     */
-    public static function shouldAppearInCart(CartItemInterface $item): bool
-    {
-        $parentItem = $item->getParentItem();
-        $parentIsBundle = $parentItem && $parentItem->getProductType() === Bundle::TYPE_CODE;
-        return (!$item->getChildren() && !$parentIsBundle) || $item->getProductType() === Bundle::TYPE_CODE;
     }
 
     /**
@@ -130,7 +95,7 @@ class GetCartLineItems
      */
     private function getLineItem(CartItemInterface $item): array
     {
-        $lineItem = [
+        return [
             'id' => (int)$item->getProduct()->getId(),
             'quantity' => $this->extractLineItemQuantity($item),
             'title' => $this->getLineItemName($item),
@@ -142,18 +107,6 @@ class GetCartLineItems
             'line_item_key' => (string)$item->getId(),
             'price' => $this->getLineItemPrice($item),
         ];
-
-        $item = $item->getParentItem() ?: $item;
-        if ($item->getProductType() === Configurable::TYPE_CODE) {
-            $lineItem = $this->addConfigurableOptions($item, $lineItem);
-        }
-        if ($item->getProductType() === Bundle::TYPE_CODE) {
-            $lineItem = $this->addBundleOptions($item, $lineItem);
-        }
-        foreach ($this->configuration->getCustomOptions($item) as $customOption) {
-            $lineItem = $this->addCustomOptions($customOption, $lineItem);
-        }
-        return $lineItem;
     }
 
     /**
@@ -174,7 +127,7 @@ class GetCartLineItems
      * @param CartItemInterface $item
      * @return int
      */
-    private function getLineItemPrice(CartItemInterface $item)
+    private function getLineItemPrice(CartItemInterface $item): int
     {
         $item = $item->getParentItem() ?: $item;
         return $this->convertToCents((float)$item->getPrice());
@@ -210,16 +163,15 @@ class GetCartLineItems
      */
     private function getLineItemImage(CartItemInterface $item): string
     {
+        $baseUrl = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
         $product = $this->productRepository->getById($item->getProductId());
-        if ($product->getThumbnail() && $product->getThumbnail() !== 'no_selection') {
-            return $this->productUrlBuilder->getUrl($product->getThumbnail(), 'product_thumbnail_image');
+        if ($product->getImage() && $product->getImage() !== 'no_selection') {
+            return $baseUrl . 'catalog/product' . $product->getImage();
         }
         // Attempting to get the parent product if there is one
         if ($item->getParentItem()) {
-            $image = $this->productRepository->getById($item->getParentItem()->getProductId())->getThumbnail();
-            if ($image) {
-                return $this->productUrlBuilder->getUrl($image, 'product_thumbnail_image');
-            }
+            $parentProduct = $this->productRepository->getById($item->getParentItem()->getProductId());
+            return $baseUrl . 'catalog/product' . $parentProduct->getImage();
         }
         return $this->productUrlBuilder->getUrl('no_selection', 'product_thumbnail_image');
     }
@@ -240,74 +192,13 @@ class GetCartLineItems
     }
 
     /**
-     * Add cart item configuration options to line item.
-     *
-     * @param CartItemInterface $item
-     * @param array $lineItem
-     * @return array
-     */
-    private function addConfigurableOptions(CartItemInterface $item, array $lineItem): array
-    {
-        foreach ($this->configurableType->getOrderOptions($item->getProduct())['attributes_info'] as $option) {
-            $label = $this->escaper->escapeHtml($option['label']);
-            $value = $this->escaper->escapeHtml($option['value']);
-            $lineItem['line_item_properties'][$label] = $value;
-        }
-        return $lineItem;
-    }
-
-    /**
-     * Add product custom options to line item.
-     *
-     * @param array $customOption
-     * @param array $lineItem
-     * @return array
-     */
-    private function addCustomOptions(array $customOption, array $lineItem): array
-    {
-        $label = $this->escaper->escapeHtml($customOption['label']);
-        $value = $this->configuration->getFormattedOptionValue(
-            $customOption,
-            [
-                ['max_length' => 55],
-            ]
-        );
-        $lineItem['line_item_properties'][\html_entity_decode($label)] = \html_entity_decode($value['value']) ?? '';
-        return $lineItem;
-    }
-
-    /**
-     * Takes in a bundle product line item and adds the items in the bundle to the line
-     * item as line item properties
-     *
-     * @param CartItemInterface $item
-     * @param array $lineItem
-     * @return array
-     */
-    private function addBundleOptions(CartItemInterface $item, array $lineItem): array
-    {
-        $options = $this->bundleType->getOptionsCollection($item->getProduct());
-        $children = $item->getChildren();
-        $lineItem['line_item_properties'] = [];
-        foreach (array_values($options->getItems()) as $i => $option) {
-            $childItem = $children[$i] ?? null;
-            if (!$childItem) {
-                continue;
-            }
-            $qty = (int)$childItem->getQty();
-            $name = $childItem->getName();
-            $lineItem['line_item_properties'][$option['title']] = "$qty x $name";
-        }
-        return $lineItem;
-    }
-
-    /**
      * Converts a dollar amount to cents
      *
      * @param string|float $dollars
      * @return integer
      */
-    private function convertToCents($dollars): int {
-        return (int) round(floatval($dollars) * 100);
+    private function convertToCents($dollars): int
+    {
+        return (int)round(floatval($dollars) * 100);
     }
 }

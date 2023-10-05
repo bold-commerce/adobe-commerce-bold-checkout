@@ -37,6 +37,11 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Observer\Checkout\RedirectToBoldCheckoutObserver">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Observer\Order\ProcessOrderObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
@@ -99,8 +104,6 @@
     <type name="Bold\Checkout\Model\Quote\QuoteAction">
         <arguments>
             <argument name="quoteActions" xsi:type="array">
-                <item name="quote_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountCart</item>
-                <item name="quote_items_discount" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\DiscountLineItem</item>
                 <item name="quote_currency" xsi:type="object">Bold\Checkout\Model\Quote\QuoteAction\Currency</item>
             </argument>
         </arguments>

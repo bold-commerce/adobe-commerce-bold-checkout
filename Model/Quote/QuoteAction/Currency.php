@@ -37,7 +37,6 @@ class Currency implements QuoteActionInterface
         $currency = $this->currency->getCurrency($cartCurrency->getQuoteCurrencyCode());
         $currencyFormat = $currency->toCurrency("1");
         $format = preg_replace("/\d.*\d|\d/", "{{amount}}", $currencyFormat);
-
         return [
             [
                 'type' => self::SET_DISPLAY_CURRENCY,
@@ -55,13 +54,5 @@ class Currency implements QuoteActionInterface
             //     ],
             // ],
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isAllowed(int $websiteId): bool
-    {
-        return true;
     }
 }
