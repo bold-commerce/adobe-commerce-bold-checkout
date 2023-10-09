@@ -15,7 +15,8 @@ interface RemoveQuoteCouponCodeInterface
      *
      * @param string $shopId
      * @param int $cartId
+     * @param string|null $couponCode
      * @return \Bold\Checkout\Api\Data\Quote\ResultInterface
      */
-    public function removeCoupon(string $shopId, int $cartId): ResultInterface;
+    public function removeCoupon(string $shopId, int $cartId, string $couponCode = null): ResultInterface;
 }
