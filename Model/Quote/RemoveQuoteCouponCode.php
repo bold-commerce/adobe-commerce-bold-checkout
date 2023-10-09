@@ -75,7 +75,7 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     /**
      * @inheritdoc
      */
-    public function removeCoupon(string $shopId, int $cartId): ResultInterface
+    public function removeCoupon(string $shopId, int $cartId, string $couponCode = null): ResultInterface
     {
         try {
             $quote = $this->cartRepository->getActive($cartId);
