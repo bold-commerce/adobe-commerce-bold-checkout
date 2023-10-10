@@ -52,8 +52,6 @@ class LifeElements extends AbstractFieldArray
                 'renderer' => $this->getInputRequiredRenderer(),
             ]
         );
-        $this->addColumn('input_label', ['label' => __('Label')]);
-        $this->addColumn('input_placeholder', ['label' => __('Placeholder')]);
         $this->addColumn(
             'meta_data_field',
             [
@@ -61,7 +59,10 @@ class LifeElements extends AbstractFieldArray
                 'class' => 'required-entry'
             ]
         );
+        $this->addColumn('input_label', ['label' => __('Label')]);
+        $this->addColumn('input_placeholder', ['label' => __('Placeholder')]);
         $this->addColumn('input_default', ['label' => __('Default')]);
+        $this->addColumn('input_regex', ['label' => __('Validation (RegEx)')]);
         $this->addColumn(
             'order_asc',
             [
