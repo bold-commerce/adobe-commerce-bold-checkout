@@ -6,6 +6,7 @@
                 <active>1</active>
                 <model>Bold\Checkout\Model\Method\Adapter</model>
                 <order_status>pending</order_status>
+                <title>Bold Payments</title>
                 <allowspecific>0</allowspecific>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
