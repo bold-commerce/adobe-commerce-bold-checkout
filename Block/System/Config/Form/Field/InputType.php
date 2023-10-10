@@ -45,6 +45,8 @@ class InputType extends Select
             ['label' => 'Textarea', 'value' => 'textarea'],
             ['label' => 'Checkbox', 'value' => 'checkbox'],
             ['label' => 'HTML', 'value' => 'html'],
+            ['label' => 'Dropdown', 'value' => 'dropdown'],
+            ['label' => 'Datepicker', 'value' => 'datepicker'],
         ];
     }
 }
