@@ -106,6 +106,11 @@ class CreateOrderFromQuote
             self::FINANCIAL_STATUS => $orderPayload->getFinancialStatus(),
             self::FULFILLMENT_STATUS => $orderPayload->getFulfillmentStatus(),
         ];
+        $quote->getBillingAddress()->setShouldIgnoreValidation(true);
+        if (!$quote->isVirtual()) {
+            $quote->getShippingAddress()->setShouldIgnoreValidation(true);
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+        }
         $orderData = new DataObject($orderData);
         $this->eventManager->dispatch(
             'create_order_from_quote_submit_before',
@@ -115,9 +120,6 @@ class CreateOrderFromQuote
                 'orderData' => $orderData,
             ]
         );
-        if (!$quote->isVirtual()) {
-            $quote->getShippingAddress()->setCollectShippingRates(true);
-        }
         $this->cart->setQuote($quote);
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
