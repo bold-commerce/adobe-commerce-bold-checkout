@@ -30,7 +30,7 @@
             <resource ref="Magento_Cart::manage"/>
         </resources>
     </route>
-    <route method="DELETE" url="/V1/shops/:shopId/cart/:cartId/coupons/:couponCode">
+    <route method="DELETE" url="/V1/shops/:shopId/cart/:cartId/coupons">
         <service class="Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface" method="removeCoupon"/>
         <resources>
             <resource ref="Magento_Cart::manage"/>
