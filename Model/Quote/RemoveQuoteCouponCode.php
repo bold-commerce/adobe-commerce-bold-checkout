@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
+use Magento\Checkout\Model\Cart;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CouponManagementInterface;
@@ -49,12 +50,18 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     private $checkoutSession;
 
     /**
+     * @var Cart
+     */
+    private $cart;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param CouponManagementInterface $couponService
      * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
      * @param StoreManagerInterface $storeManager
      * @param Session $checkoutSession
+     * @param Cart $cart
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
@@ -62,7 +69,8 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
         CartRepositoryInterface $cartRepository,
         Builder $quoteResultBuilder,
         StoreManagerInterface $storeManager,
-        Session $checkoutSession
+        Session $checkoutSession,
+        Cart $cart
     ) {
         $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
@@ -70,6 +78,7 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
         $this->shopIdValidator = $shopIdValidator;
         $this->storeManager = $storeManager;
         $this->checkoutSession = $checkoutSession;
+        $this->cart = $cart;
     }
 
     /**
@@ -80,6 +89,7 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->checkoutSession->replaceQuote($quote);
+            $this->cart->setQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());

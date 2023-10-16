@@ -82,6 +82,7 @@ class GetQuote implements GetQuoteInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->checkoutSession->replaceQuote($quote);
+            $this->cart->setQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
@@ -89,7 +90,6 @@ class GetQuote implements GetQuoteInterface
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }
         $quote->collectTotals();
-        $this->cart->setQuote($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);
     }
 }

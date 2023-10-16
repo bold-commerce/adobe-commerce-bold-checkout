@@ -95,6 +95,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->checkoutSession->replaceQuote($quote);
+            $this->cart->setQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
@@ -116,7 +117,6 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         if (!$quote->isVirtual()) {
             $this->setShippingAddress($quote, $shippingAddress);
         }
-        $this->cart->setQuote($quote);
         $quote->collectTotals();
         $this->cartRepository->save($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);

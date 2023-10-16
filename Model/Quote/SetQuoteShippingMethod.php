@@ -116,6 +116,7 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         try {
             $quote = $this->cartRepository->getActive($cartId);
             $this->checkoutSession->replaceQuote($quote);
+            $this->cart->setQuote($quote);
             $this->shopIdValidator->validate($shopId, $quote->getStoreId());
             $this->storeManager->setCurrentStore($quote->getStoreId());
             $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
@@ -125,7 +126,6 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
         if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
             $this->quoteResultBuilder->createSuccessResult($quote);
         }
-        $this->cart->setQuote($quote);
         $shippingInformation = $this->shippingInformationFactory->create()
             ->setShippingAddress($quote->getShippingAddress())
             ->setBillingAddress($quote->getBillingAddress())
