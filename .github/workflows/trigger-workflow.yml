@@ -16,4 +16,4 @@ jobs:
                 REMOTE_REPO:  bold-commerce/magento-2.3-sandbox-store
                 WORKFLOW_ID: 72597118
               run: |
-                curl -fL --retry 3 -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ env.CI_TOKEN }}" https://api.github.com/repos//${{ env.REMOTE_REPO }}/actions/workflows/${{ env.WORKFLOW_ID }}/dispatches -d '{"ref":"main"}'
+                curl -fL --retry 3 -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ env.CI_TOKEN }}" https://api.github.com/repos/${{ env.REMOTE_REPO }}/actions/workflows/${{ env.WORKFLOW_ID }}/dispatches -d '{"ref":"main"}'
