@@ -1,0 +1,13 @@
+diff --git a/vendor/magento/module-sales/Model/ResourceModel/EntityAbstract.php b/vendor/magento/module-sales/Model/ResourceModel/EntityAbstract.php
+index 8061227..acb4548 100644
+--- a/vendor/magento/module-sales/Model/ResourceModel/EntityAbstract.php
++++ b/vendor/magento/module-sales/Model/ResourceModel/EntityAbstract.php
+@@ -122,7 +122,7 @@ abstract class EntityAbstract extends AbstractDb
+     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
+     {
+         /** @var \Magento\Sales\Model\AbstractModel $object */
+-        if ($object instanceof EntityInterface && $object->getIncrementId() == null) {
++        if ($object instanceof EntityInterface && $object->getEntityId() == null && $object->getIncrementId() == null) {
+             $store = $object->getStore();
+             $storeId = $store->getId();
+             if ($storeId === null) {
