@@ -6,6 +6,7 @@ namespace Bold\Checkout\Model\Order\PlaceOrder;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Payment\Gateway\Service;
 use Magento\Checkout\Model\Cart;
+use Magento\Checkout\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Framework\DataObject;
@@ -59,12 +60,18 @@ class CreateOrderFromQuote
     private $cart;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * @param CartManagementInterface $cartManagement
      * @param CustomerRepositoryInterface $customerRepository
      * @param OrderTaxManagementInterface $orderTaxManagement
      * @param ShippingAssignmentBuilder $shippingAssignmentBuilder
      * @param ManagerInterface $eventManager
      * @param Cart $cart // used for the backward compatibility with earlier versions of Magento.
+     * @param Session $session
      */
     public function __construct(
         CartManagementInterface $cartManagement,
@@ -72,7 +79,8 @@ class CreateOrderFromQuote
         OrderTaxManagementInterface $orderTaxManagement,
         ShippingAssignmentBuilder $shippingAssignmentBuilder,
         ManagerInterface $eventManager,
-        Cart $cart
+        Cart $cart,
+        Session $session
     ) {
         $this->cartManagement = $cartManagement;
         $this->eventManager = $eventManager;
@@ -80,6 +88,7 @@ class CreateOrderFromQuote
         $this->orderTaxManagement = $orderTaxManagement;
         $this->shippingAssignmentBuilder = $shippingAssignmentBuilder;
         $this->cart = $cart;
+        $this->session = $session;
     }
 
     /**
@@ -121,6 +130,7 @@ class CreateOrderFromQuote
             ]
         );
         $this->cart->setQuote($quote);
+        $this->session->setQuoteId($quote->getId());
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
         $order = $this->cartManagement->submit($quote, $orderData->getData());
