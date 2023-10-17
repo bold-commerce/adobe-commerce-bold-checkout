@@ -10,7 +10,7 @@ patch < vendor/bold-commerce/module-checkout/patches/[file].patch
 
 #### Cloud
 ```
-cp vendor/bold-commerce/module-checkout/patches/[file].patch [webroot]/m2-hotfixes
+cp vendor/bold-commerce/module-checkout/patches/[file].patch m2-hotfixes
 ```
 
 ### List of available patches
