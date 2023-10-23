@@ -65,7 +65,7 @@ class Status extends Field
      */
     protected function _renderValue(AbstractElement $element)
     {
-        $websiteId = (int)$this->config->getWebsite() ?: (int)$this->storeManager->getWebsite()->getId();
+        $websiteId = (int)$this->config->getWebsite() ?: (int)$this->storeManager->getWebsite(true)->getId();
         $integrationName = $this->boldIntegration->getName($websiteId);
         $integrationStatus = $this->boldIntegration->getStatus($websiteId);
         $statusText = __('Not Found');

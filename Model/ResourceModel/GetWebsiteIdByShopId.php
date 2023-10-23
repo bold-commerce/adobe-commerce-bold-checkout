@@ -53,7 +53,7 @@ class GetWebsiteIdByShopId
         if ($websiteId === false) {
             throw new LocalizedException(__('No website found for "%1" shop Id.', $shopId));
         }
-        $websiteId = $websiteId ?: (int)$this->storeManager->getWebsite()->getId();
+        $websiteId = $websiteId ?: (int)$this->storeManager->getWebsite(true)->getId();
 
         return (int)$websiteId;
     }

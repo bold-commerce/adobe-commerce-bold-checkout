@@ -71,7 +71,7 @@ class CheckoutSectionSave implements ObserverInterface
             return;
         }
         $this->config->setShopId(
-            $websiteId ?: (int)$this->storeManager->getWebsite()->getId(),
+            $websiteId ?: (int)$this->storeManager->getWebsite(true)->getId(),
             null
         );
         $shopInfo = $this->client->get($websiteId, self::SHOP_INFO_URL);
@@ -80,13 +80,13 @@ class CheckoutSectionSave implements ObserverInterface
             throw new Exception($error);
         }
         $this->config->setShopId(
-            $websiteId ?: (int)$this->storeManager->getWebsite()->getId(),
+            $websiteId ?: (int)$this->storeManager->getWebsite(true)->getId(),
             $shopInfo->getBody()['shop_identifier']
         );
         $changedPaths = $event->getChangedPaths();
         $this->updateIntegration->update(
             $changedPaths,
-            $websiteId ?: (int)$this->storeManager->getWebsite()->getId()
+            $websiteId ?: (int)$this->storeManager->getWebsite(true)->getId()
         );
     }
 }
