@@ -36,7 +36,7 @@ class CheckoutSectionSave implements ObserverInterface
     /**
      * @var StoreManagerInterface
      */
-    private StoreManagerInterface $storeManager;
+    private $storeManager;
 
     /**
      * @param ConfigInterface $config
