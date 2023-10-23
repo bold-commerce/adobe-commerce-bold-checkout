@@ -35,7 +35,7 @@ class Status extends Field
     /**
      * @var StoreManagerInterface
      */
-    private StoreManagerInterface $storeManager;
+    private $storeManager;
 
     /**
      * @param Context $context
