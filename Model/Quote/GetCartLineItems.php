@@ -6,6 +6,7 @@ namespace Bold\Checkout\Model\Quote;
 use Bold\Checkout\Model\Quote\Item\Validator;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
+use Magento\Directory\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
@@ -142,7 +143,7 @@ class GetCartLineItems
     private function getLineItemWeightInGrams(CartItemInterface $item): float
     {
         $unit = strtolower(
-            $this->scopeConfig->getValue('general/locale/weight_unit', ScopeInterface::SCOPE_STORE)
+            $this->scopeConfig->getValue(Data::XML_PATH_WEIGHT_UNIT, ScopeInterface::SCOPE_STORE)
         );
         $weight = $item->getWeight();
         if ($unit === 'kgs') {

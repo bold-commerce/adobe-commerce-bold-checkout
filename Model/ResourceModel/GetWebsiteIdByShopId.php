@@ -6,7 +6,7 @@ namespace Bold\Checkout\Model\ResourceModel;
 use Bold\Checkout\Model\ConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Retrieve website id for given shop id.
@@ -19,11 +19,20 @@ class GetWebsiteIdByShopId
     private $connection;
 
     /**
-     * @param ResourceConnection $connection
+     * @var StoreManagerInterface
      */
-    public function __construct(ResourceConnection $connection)
-    {
+    private $storeManager;
+
+    /**
+     * @param ResourceConnection $connection
+     * @param StoreManagerInterface $storeManager
+     */
+    public function __construct(
+        ResourceConnection $connection,
+        StoreManagerInterface $storeManager
+    ) {
         $this->connection = $connection;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -44,6 +53,7 @@ class GetWebsiteIdByShopId
         if ($websiteId === false) {
             throw new LocalizedException(__('No website found for "%1" shop Id.', $shopId));
         }
+        $websiteId = $websiteId ?: (int)$this->storeManager->getWebsite(true)->getId();
 
         return (int)$websiteId;
     }

@@ -91,7 +91,11 @@ class Config implements ConfigInterface
      */
     public function isCheckoutEnabled(int $websiteId): bool
     {
-        return $this->scopeConfig->isSetFlag(self::PATH_ENABLED, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->isSetFlag(
+            self::PATH_ENABLED,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
     }
 
     /**
@@ -99,7 +103,11 @@ class Config implements ConfigInterface
      */
     public function getEnabledFor(int $websiteId): int
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_ENABLED_FOR, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return (int)$this->scopeConfig->getValue(
+            self::PATH_ENABLED_FOR,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
     }
 
     /**
@@ -107,7 +115,11 @@ class Config implements ConfigInterface
      */
     public function getIpWhitelist(int $websiteId): array
     {
-        $rawData = $this->scopeConfig->getValue(self::PATH_IP_WHITELIST, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        $rawData = $this->scopeConfig->getValue(
+            self::PATH_IP_WHITELIST,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
 
         return $rawData ? array_filter(array_map('trim', explode(',', $rawData))) : [];
     }
@@ -119,7 +131,7 @@ class Config implements ConfigInterface
     {
         $rawData = $this->scopeConfig->getValue(
             self::PATH_CUSTOMER_WHITELIST,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
 
@@ -133,7 +145,7 @@ class Config implements ConfigInterface
     {
         return (int)$this->scopeConfig->getValue(
             self::PATH_ORDERS_PERCENTAGE,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -143,7 +155,11 @@ class Config implements ConfigInterface
      */
     public function getSharedSecret(int $websiteId): ?string
     {
-        $encryptedSecret = $this->scopeConfig->getValue(self::PATH_SECRET, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        $encryptedSecret = $this->scopeConfig->getValue(
+            self::PATH_SECRET,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
 
         return $this->encryptor->decrypt($encryptedSecret);
     }
@@ -153,7 +169,11 @@ class Config implements ConfigInterface
      */
     public function getApiToken(int $websiteId): ?string
     {
-        $encryptedToken = $this->scopeConfig->getValue(self::PATH_TOKEN, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        $encryptedToken = $this->scopeConfig->getValue(
+            self::PATH_TOKEN,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
 
         return $this->encryptor->decrypt($encryptedToken);
     }
@@ -166,7 +186,7 @@ class Config implements ConfigInterface
         return rtrim(
             $this->scopeConfig->getValue(
                 self::PATH_PLATFORM_CONNECTOR_URL,
-                ScopeInterface::SCOPE_WEBSITES,
+                $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
                 $websiteId),
             '/'
         );
@@ -177,7 +197,11 @@ class Config implements ConfigInterface
      */
     public function getShopId(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_SHOP_ID, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->getValue(
+            self::PATH_SHOP_ID,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
     }
 
     /**
@@ -185,7 +209,11 @@ class Config implements ConfigInterface
      */
     public function getLogIsEnabled(int $websiteId): bool
     {
-        return $this->scopeConfig->isSetFlag(self::PATH_LOG_ENABLED, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->isSetFlag(
+            self::PATH_LOG_ENABLED,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
     }
 
     /**
@@ -196,7 +224,7 @@ class Config implements ConfigInterface
         $this->configWriter->save(
             self::PATH_SHOP_ID,
             $shopId,
-            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );
         $this->cacheTypeList->cleanType('config');
@@ -211,7 +239,7 @@ class Config implements ConfigInterface
         $this->configWriter->save(
             self::PATH_SECRET,
             $this->encryptor->encrypt($sharedSecret),
-            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );
         $this->cacheTypeList->cleanType('config');
@@ -223,7 +251,11 @@ class Config implements ConfigInterface
      */
     public function getIntegrationEmail(int $websiteId): ?string
     {
-        return $this->scopeConfig->getValue(self::PATH_INTEGRATION_EMAIL, ScopeInterface::SCOPE_WEBSITES, $websiteId);
+        return $this->scopeConfig->getValue(
+            self::PATH_INTEGRATION_EMAIL,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            $websiteId
+        );
     }
 
     /**
@@ -233,7 +265,7 @@ class Config implements ConfigInterface
     {
         return $this->scopeConfig->getValue(
             self::PATH_INTEGRATION_CALLBACK_URL,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -245,7 +277,7 @@ class Config implements ConfigInterface
     {
         return $this->scopeConfig->getValue(
             self::PATH_INTEGRATION_API_URL,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -257,7 +289,7 @@ class Config implements ConfigInterface
     {
         return $this->scopeConfig->getValue(
             self::PATH_INTEGRATION_CHECKOUT_URL,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -269,7 +301,7 @@ class Config implements ConfigInterface
     {
         return $this->scopeConfig->getValue(
             self::PATH_INTEGRATION_IDENTITY_URL,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -279,8 +311,11 @@ class Config implements ConfigInterface
      */
     public function isCheckoutTypeStandard(int $websiteId): bool
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
-            === ConfigInterface::VALUE_TYPE_STANDARD;
+        return (int)$this->scopeConfig->getValue(
+                self::PATH_TYPE,
+                $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                $websiteId
+            ) === ConfigInterface::VALUE_TYPE_STANDARD;
     }
 
     /**
@@ -288,8 +323,11 @@ class Config implements ConfigInterface
      */
     public function isCheckoutTypeParallel(int $websiteId): bool
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
-            === ConfigInterface::VALUE_TYPE_PARALLEL;
+        return (int)$this->scopeConfig->getValue(
+                self::PATH_TYPE,
+                $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                $websiteId
+            ) === ConfigInterface::VALUE_TYPE_PARALLEL;
     }
 
     /**
@@ -297,8 +335,11 @@ class Config implements ConfigInterface
      */
     public function isCheckoutTypeSelfHosted(int $websiteId): bool
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
-            === ConfigInterface::VALUE_TYPE_SELF;
+        return (int)$this->scopeConfig->getValue(
+                self::PATH_TYPE,
+                $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                $websiteId
+            ) === ConfigInterface::VALUE_TYPE_SELF;
     }
 
     /**
@@ -306,8 +347,10 @@ class Config implements ConfigInterface
      */
     public function isCheckoutTypeSelfHostedReact(int $websiteId): bool
     {
-        return (int)$this->scopeConfig->getValue(self::PATH_TYPE, ScopeInterface::SCOPE_WEBSITES, $websiteId)
-            === ConfigInterface::VALUE_TYPE_SELF_REACT;
+        return (int)$this->scopeConfig->getValue(
+                self::PATH_TYPE, $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                $websiteId
+            ) === ConfigInterface::VALUE_TYPE_SELF_REACT;
     }
 
     /**
@@ -317,7 +360,7 @@ class Config implements ConfigInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::PATH_PAYMENT_TITLE,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -329,7 +372,7 @@ class Config implements ConfigInterface
     {
         return (string)$this->scopeConfig->getValue(
             self::PATH_PARALLEL_CHECKOUT_BUTTON_TITLE,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
     }
@@ -341,7 +384,7 @@ class Config implements ConfigInterface
     {
         $lifeElements = $this->scopeConfig->getValue(
             self::PATH_LIFE_ELEMENTS,
-            ScopeInterface::SCOPE_WEBSITES,
+            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
             $websiteId
         );
 
