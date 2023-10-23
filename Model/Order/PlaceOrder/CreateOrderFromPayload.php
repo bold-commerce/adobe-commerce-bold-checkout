@@ -110,6 +110,10 @@ class CreateOrderFromPayload
         if ($magentoOrder->getId()) {
             return $magentoOrder;
         }
+        $quotePayment = $quote->getPayment();
+        $quotePayment->setData(
+            array_merge($quotePayment->getData(), $orderPayload->getPayment()->getData())
+        );
         $magentoOrder = $this->createOrderFromQuote->create($quote, $orderPayload);
         $this->processOrderPayment->process(
             $magentoOrder,
