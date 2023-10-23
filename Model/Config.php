@@ -239,7 +239,7 @@ class Config implements ConfigInterface
         $this->configWriter->save(
             self::PATH_SECRET,
             $this->encryptor->encrypt($sharedSecret),
-            $websiteId ? ScopeInterface::SCOPE_WEBSITES : ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            ScopeInterface::SCOPE_WEBSITES,
             $websiteId
         );
         $this->cacheTypeList->cleanType('config');
