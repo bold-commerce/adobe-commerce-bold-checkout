@@ -9,6 +9,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Observe 'admin_system_config_changed_section_checkout' event and re-new shop identifier.
@@ -33,18 +34,26 @@ class CheckoutSectionSave implements ObserverInterface
     private $updateIntegration;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private StoreManagerInterface $storeManager;
+
+    /**
      * @param ConfigInterface $config
      * @param ClientInterface $client
      * @param BoldIntegration $updateIntegration
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ConfigInterface $config,
         ClientInterface $client,
-        BoldIntegration $updateIntegration
+        BoldIntegration $updateIntegration,
+        StoreManagerInterface $storeManager
     ) {
         $this->client = $client;
         $this->config = $config;
         $this->updateIntegration = $updateIntegration;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -61,14 +70,23 @@ class CheckoutSectionSave implements ObserverInterface
         if (!$this->config->isCheckoutEnabled($websiteId)) {
             return;
         }
-        $this->config->setShopId($websiteId, null);
+        $this->config->setShopId(
+            $websiteId ?: (int)$this->storeManager->getWebsite()->getId(),
+            null
+        );
         $shopInfo = $this->client->get($websiteId, self::SHOP_INFO_URL);
         if ($shopInfo->getErrors()) {
             $error = current($shopInfo->getErrors());
             throw new Exception($error);
         }
-        $this->config->setShopId($websiteId, $shopInfo->getBody()['shop_identifier']);
+        $this->config->setShopId(
+            $websiteId ?: (int)$this->storeManager->getWebsite()->getId(),
+            $shopInfo->getBody()['shop_identifier']
+        );
         $changedPaths = $event->getChangedPaths();
-        $this->updateIntegration->update($changedPaths, $websiteId);
+        $this->updateIntegration->update(
+            $changedPaths,
+            $websiteId ?: (int)$this->storeManager->getWebsite()->getId()
+        );
     }
 }

@@ -10,6 +10,7 @@ use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Config\Model\Config;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Integration\Model\Integration\Source\Status as SourceStatus;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Bold Integration status field.
@@ -32,10 +33,16 @@ class Status extends Field
     private $statusData;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private StoreManagerInterface $storeManager;
+
+    /**
      * @param Context $context
      * @param BoldIntegration $boldIntegration
      * @param Config $config
      * @param SourceStatus $statusData
+     * @param StoreManagerInterface $storeManager
      * @param array $data
      */
     public function __construct(
@@ -43,12 +50,14 @@ class Status extends Field
         BoldIntegration $boldIntegration,
         Config $config,
         SourceStatus $statusData,
+        StoreManagerInterface $storeManager,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->boldIntegration = $boldIntegration;
         $this->config = $config;
         $this->statusData = $statusData;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -56,7 +65,7 @@ class Status extends Field
      */
     protected function _renderValue(AbstractElement $element)
     {
-        $websiteId = (int)$this->config->getWebsite();
+        $websiteId = (int)$this->config->getWebsite() ?: (int)$this->storeManager->getWebsite()->getId();
         $integrationName = $this->boldIntegration->getName($websiteId);
         $integrationStatus = $this->boldIntegration->getStatus($websiteId);
         $statusText = __('Not Found');
