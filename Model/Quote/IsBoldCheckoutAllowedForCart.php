@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Model\ConfigInterface;
-use Magento\Catalog\Model\Product\Type;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Tax\Model\Config;
 
 /**
  * Checks if Bold functionality is enabled for specific cart.
@@ -20,18 +17,11 @@ class IsBoldCheckoutAllowedForCart
     private $config;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
      * @param ConfigInterface $config
-     * @param ScopeConfigInterface $scopeConfig
      */
-    public function __construct(ConfigInterface $config, ScopeConfigInterface $scopeConfig)
+    public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
-        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -58,7 +48,7 @@ class IsBoldCheckoutAllowedForCart
                 return false;
             }
         }
-        return $this->scopeConfig->isSetFlag(Config::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT);
+        return true;
     }
 
     /**
