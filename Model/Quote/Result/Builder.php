@@ -146,7 +146,9 @@ class Builder
             $parentProduct = null;
             if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();
+                $parentDiscounts = $parentItem->getExtensionAttributes()->getBoldDiscounts();
                 $item->getExtensionAttributes()->setParentItemId($parentItem->getId());
+                $item->getExtensionAttributes()->setBoldDiscounts($parentDiscounts);
                 $item->setQty($parentItem->getQty());
                 $item->setPrice($parentItem->getPrice());
                 $parentProduct = $parentItem->getProduct();
