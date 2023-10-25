@@ -5,7 +5,6 @@ namespace Bold\Checkout\Plugin\Checkout\Api\TotalsInformationManagement;
 
 use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
 use Magento\Checkout\Api\TotalsInformationManagementInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\TotalsInterface;
 
