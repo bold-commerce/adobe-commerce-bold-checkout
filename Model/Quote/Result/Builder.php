@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote\Result;
@@ -7,6 +8,7 @@ use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
 use Bold\Checkout\Model\Quote\Item\Validator;
+use Bold\Checkout\Model\Quote\Result\Builder\AddBoldDiscountsExtensionAttribute;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
 use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface;
@@ -48,11 +50,18 @@ class Builder
     private $itemValidator;
 
     /**
+     * @var Builder\AddBoldDiscounts
+     */
+    private $addBoldDiscounts;
+
+    /**
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param ExtractShippingMethods $extractShippingMethods
      * @param ExtractCartTotals $extractCartTotals
      * @param ProductAttributeMediaGalleryManagementInterface $mediaGalleryManagement
+     * @param Validator $itemValidator
+     * @param AddBoldDiscountsExtensionAttribute $addBoldDiscounts
      */
     public function __construct(
         ResultInterfaceFactory $resultFactory,
@@ -60,7 +69,8 @@ class Builder
         ExtractShippingMethods $extractShippingMethods,
         ExtractCartTotals $extractCartTotals,
         ProductAttributeMediaGalleryManagementInterface $mediaGalleryManagement,
-        Validator $itemValidator
+        Validator $itemValidator,
+        AddBoldDiscountsExtensionAttribute $addBoldDiscounts
     ) {
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
@@ -68,6 +78,7 @@ class Builder
         $this->extractCartTotals = $extractCartTotals;
         $this->mediaGalleryManagement = $mediaGalleryManagement;
         $this->itemValidator = $itemValidator;
+        $this->addBoldDiscounts = $addBoldDiscounts;
     }
 
     /**
@@ -131,6 +142,7 @@ class Builder
             if (!$this->itemValidator->shouldAppearInCart($item)) {
                 continue;
             }
+            $this->addBoldDiscounts->addExtensionAttribute($item);
             $parentProduct = null;
             if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();
