@@ -34,6 +34,9 @@ class ExtractShippingMethods
     public function extract(CartInterface $quote): array
     {
         $shippingMethods = [];
+        if ($quote->isVirtual()) {
+            return [];
+        }
         $quote->getShippingAddress()->requestShippingRates();
         $shippingRates = $quote->getShippingAddress()->getGroupedAllShippingRates();
         $shippingMethodSet = [];
@@ -51,6 +54,7 @@ class ExtractShippingMethods
                 );
             }
         }
+
         return $shippingMethods;
     }
 }
