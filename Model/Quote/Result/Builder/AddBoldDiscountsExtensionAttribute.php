@@ -44,24 +44,35 @@ class AddBoldDiscountsExtensionAttribute
      */
     public function addExtensionAttribute(Item $item): void
     {
-        $data = [
-            'amount' => $item->getDiscountAmount(),
-            'base_amount' => $item->getBaseDiscountAmount(),
-            'original_amount' => $item->getOriginalDiscountAmount(),
-            'base_original_amount' => $item->getBaseOriginalDiscountAmount()
-        ];
-        $itemDiscount = $this->discountDataInterfaceFactory->create(['data' => $data]);
-        $appliedRuleIds = is_array($item->getAppliedRuleIds())
-            ? $item->getAppliedRuleIds()
-            : explode(',', $item->getAppliedRuleIds());
-        $ruleLabel = $item->getQuote()->getCouponCode() ?: __('Discount');
-        $data = [
-            'discount' => $itemDiscount,
-            'rule' => $ruleLabel,
-            'rule_id' => implode(',', $appliedRuleIds),
-        ];
-        /** @var RuleDiscountInterface $itemDiscount */
-        $ruleDiscount = $this->discountInterfaceFactory->create(['data' => $data]);
-        $item->getExtensionAttributes()->setBoldDiscounts([$ruleDiscount]);
+        $appliedRules = $item->getQuote()->getAppliedRuleIds();
+        $appliedRuleIds =
+            is_array($appliedRules)
+                ? $appliedRules
+                : (
+            is_string($appliedRules) && !empty($appliedRules)
+                ? explode(',', $appliedRules)
+                : []
+            );
+        $result = [];
+        if (!empty($appliedRuleIds)) {
+            $data = [
+                'amount' => $item->getDiscountAmount(),
+                'base_amount' => $item->getBaseDiscountAmount(),
+                'original_amount' => $item->getOriginalDiscountAmount(),
+                'base_original_amount' => $item->getBaseOriginalDiscountAmount()
+            ];
+            $itemDiscount = $this->discountDataInterfaceFactory->create(['data' => $data]);
+            $ruleLabel = $item->getQuote()->getCouponCode() ?: __('Discount');
+            $data = [
+                'discount' => $itemDiscount,
+                'rule' => $ruleLabel,
+                'rule_id' => implode(',', $appliedRuleIds),
+            ];
+            /** @var RuleDiscountInterface $itemDiscount */
+            $ruleDiscount = $this->discountInterfaceFactory->create(['data' => $data]);
+            $result[] = $ruleDiscount;
+        }
+
+        $item->getExtensionAttributes()->setBoldDiscounts($result);
     }
 }
