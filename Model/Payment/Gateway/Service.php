@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Payment\Gateway;
 
 use Bold\Checkout\Api\Http\ClientInterface;
+use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
+use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Math\Random;
@@ -34,13 +36,31 @@ class Service
     private $random;
 
     /**
+     * @var OrderExtensionDataFactory
+     */
+    private $orderExtensionDataFactory;
+
+    /**
+     * @var OrderExtensionData
+     */
+    private $orderExtensionDataResource;
+
+    /**
      * @param ClientInterface $httpClient
      * @param Random $random
+     * @param OrderExtensionDataFactory $orderExtensionDataFactory
+     * @param OrderExtensionData $orderExtensionDataResource
      */
-    public function __construct(ClientInterface $httpClient, Random $random)
-    {
+    public function __construct(
+        ClientInterface $httpClient,
+        Random $random,
+        OrderExtensionDataFactory $orderExtensionDataFactory,
+        OrderExtensionData $orderExtensionDataResource
+    ) {
         $this->httpClient = $httpClient;
         $this->random = $random;
+        $this->orderExtensionDataFactory = $orderExtensionDataFactory;
+        $this->orderExtensionDataResource = $orderExtensionDataResource;
     }
 
     /**
@@ -58,7 +78,7 @@ class Service
             'reauth' => true,
             'idempotent_key' => $this->random->getRandomString(10),
         ];
-        $url = sprintf(self::CAPTURE_FULL_URL, $order->getExtensionAttributes()->getPublicId());
+        $url = sprintf(self::CAPTURE_FULL_URL, $this->getOrderPublicId($order));
         return $this->sendCaptureRequest($websiteId, $url, $body);
     }
 
@@ -74,14 +94,12 @@ class Service
     {
         $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
-        $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $body = [
             'reauth' => true,
             'amount' => $amount * 100,
             'idempotent_key' => $this->random->getRandomString(10),
         ];
-        $url = sprintf(self::CAPTURE_PARTIALLY_URL, $orderPublicId);
-
+        $url = sprintf(self::CAPTURE_PARTIALLY_URL, $this->getOrderPublicId($order));
         return $this->sendCaptureRequest($websiteId, $url, $body);
     }
 
@@ -97,8 +115,7 @@ class Service
     {
         $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
-        $orderPublicId = $order->getExtensionAttributes()->getPublicId();
-        $url = sprintf(self::CANCEL_URL, $orderPublicId);
+        $url = sprintf(self::CANCEL_URL, $this->getOrderPublicId($order));
         $body = [
             'reason' => $operation === self::CANCEL
                 ? __('Order has been canceled.')
@@ -131,12 +148,11 @@ class Service
     {
         $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
-        $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $body = [
             'email_notification' => false,
             'reason' => 'Magento credit memo created.',
         ];
-        $url = sprintf(self::REFUND_FULL_URL, $orderPublicId);
+        $url = sprintf(self::REFUND_FULL_URL, $this->getOrderPublicId($order));
         return $this->sendRefundRequest($websiteId, $url, $body);
     }
 
@@ -152,13 +168,12 @@ class Service
     {
         $websiteId = (int)$order->getStore()->getWebsiteId();
         $this->keepTransactionAdditionalData($order);
-        $orderPublicId = $order->getExtensionAttributes()->getPublicId();
         $body = [
             'email_notification' => false,
             'reason' => 'Magento credit memo created.',
             'amount' => $amount * 100,
         ];
-        $url = sprintf(self::REFUND_PARTIALLY_URL, $orderPublicId);
+        $url = sprintf(self::REFUND_PARTIALLY_URL, $this->getOrderPublicId($order));
         return $this->sendRefundRequest($websiteId, $url, $body);
     }
 
@@ -230,5 +245,22 @@ class Service
         foreach ($transactionAdditionalInfo as $key => $value) {
             $order->getPayment()->setTransactionAdditionalInfo($key, $value);
         }
+    }
+
+    /**
+     * Retrieve order public id.
+     *
+     * @param OrderInterface $order
+     * @return string|null
+     */
+    private function getOrderPublicId(OrderInterface $order): ?string
+    {
+        $publicId = $order->getExtensionAttributes()->getPublicId();
+        if (!$publicId) {
+            $orderExtensionData = $this->orderExtensionDataFactory->create();
+            $this->orderExtensionDataResource->load($orderExtensionData, $order->getId(), OrderExtensionData::ORDER_ID);
+            $publicId = $orderExtensionData->getPublicId();
+        }
+        return $publicId;
     }
 }
