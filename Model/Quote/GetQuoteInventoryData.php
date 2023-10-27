@@ -9,17 +9,14 @@ use Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\Inventory\ResultInterfaceFactory;
 use Bold\Checkout\Api\Quote\GetQuoteInventoryDataInterface;
-use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Item\Validator;
 use Exception;
 use Magento\Bundle\Model\Product\Type as Bundle;
-use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\InventorySalesApi\Api\IsProductSalableForRequestedQtyInterface;
 use Magento\InventorySalesApi\Api\StockResolverInterface;
-use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Throwable;
@@ -29,16 +26,6 @@ use Throwable;
  */
 class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
 {
-    /**
-     * @var CartRepositoryInterface
-     */
-    private $cartRepository;
-
-    /**
-     * @var ShopIdValidator
-     */
-    private $shopIdValidator;
-
     /**
      * @var ResultInterfaceFactory
      */
@@ -70,49 +57,43 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     private $moduleManager;
 
     /**
-     * @var Session
-     */
-    private $checkoutSession;
-
-    /**
      * @var Validator
      */
     private $itemValidator;
 
     /**
-     * @param CartRepositoryInterface $cartRepository
-     * @param ShopIdValidator $shopIdValidator
+     * @var LoadAndValidate
+     */
+    private $loadAndValidate;
+
+    /**
      * @param ObjectManagerInterface $objectManager
      * @param ResultInterfaceFactory $resultFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param InventoryDataInterfaceFactory $inventoryDataFactory
      * @param StoreManagerInterface $storeManager
      * @param Manager $moduleManager
-     * @param Session $checkoutSession
      * @param Validator $itemValidator
+     * @param LoadAndValidate $loadAndValidate
      */
     public function __construct(
-        CartRepositoryInterface $cartRepository,
-        ShopIdValidator $shopIdValidator,
         ObjectManagerInterface $objectManager,
         ResultInterfaceFactory $resultFactory,
         ErrorInterfaceFactory $errorFactory,
         InventoryDataInterfaceFactory $inventoryDataFactory,
         StoreManagerInterface $storeManager,
         Manager $moduleManager,
-        Session $checkoutSession,
-        Validator $itemValidator
+        Validator $itemValidator,
+        LoadAndValidate $loadAndValidate
     ) {
-        $this->cartRepository = $cartRepository;
-        $this->shopIdValidator = $shopIdValidator;
         $this->resultFactory = $resultFactory;
         $this->errorFactory = $errorFactory;
         $this->inventoryDataFactory = $inventoryDataFactory;
         $this->objectManager = $objectManager;
         $this->storeManager = $storeManager;
         $this->moduleManager = $moduleManager;
-        $this->checkoutSession = $checkoutSession;
         $this->itemValidator = $itemValidator;
+        $this->loadAndValidate = $loadAndValidate;
     }
 
     /**
@@ -121,11 +102,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
     public function getInventory(string $shopId, int $cartId): ResultInterface
     {
         try {
-            $quote = $this->cartRepository->getActive($cartId);
-            $this->checkoutSession->replaceQuote($quote);
-            $this->shopIdValidator->validate($shopId, $quote->getStoreId());
-            $this->storeManager->setCurrentStore($quote->getStoreId());
-            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
+            $quote = $this->loadAndValidate->load($shopId, $cartId);
         } catch (LocalizedException $e) {
             return $this->buildErrorResponse($e->getMessage());
         }

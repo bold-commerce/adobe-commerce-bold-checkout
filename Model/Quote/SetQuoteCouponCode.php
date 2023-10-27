@@ -5,15 +5,9 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface;
-use Bold\Checkout\Model\ConfigInterface;
-use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
-use Magento\Checkout\Model\Cart;
-use Magento\Checkout\Model\Session;
-use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CouponManagementInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Set quote coupon code service.
@@ -21,73 +15,33 @@ use Magento\Store\Model\StoreManagerInterface;
 class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
 {
     /**
-     * @var CouponManagementInterface
-     */
-    private $couponService;
-
-    /**
      * @var Builder
      */
     private $quoteResultBuilder;
 
     /**
-     * @var CartRepositoryInterface
+     * @var LoadAndValidate
      */
-    private $cartRepository;
+    private $loadAndValidate;
 
     /**
-     * @var ShopIdValidator
+     * @var CouponManagementInterface
      */
-    private $shopIdValidator;
+    private $couponService;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var Session
-     */
-    private $checkoutSession;
-
-    /**
-     * @var Cart
-     */
-    private $cart;
-
-    /**
-     * @param ShopIdValidator $shopIdValidator
      * @param CouponManagementInterface $couponService
-     * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
-     * @param ConfigInterface $config
-     * @param StoreManagerInterface $storeManager
-     * @param Session $checkoutSession
-     * @param Cart $cart used for the backward compatibility with earlier versions of Magento.
+     * @param LoadAndValidate $loadAndValidate
      */
     public function __construct(
-        ShopIdValidator $shopIdValidator,
         CouponManagementInterface $couponService,
-        CartRepositoryInterface $cartRepository,
         Builder $quoteResultBuilder,
-        ConfigInterface $config,
-        StoreManagerInterface $storeManager,
-        Session $checkoutSession,
-        Cart $cart
+        LoadAndValidate $loadAndValidate
     ) {
-        $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
-        $this->cartRepository = $cartRepository;
-        $this->shopIdValidator = $shopIdValidator;
-        $this->config = $config;
-        $this->storeManager = $storeManager;
-        $this->checkoutSession = $checkoutSession;
-        $this->cart = $cart;
+        $this->loadAndValidate = $loadAndValidate;
+        $this->couponService = $couponService;
     }
 
     /**
@@ -96,16 +50,8 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     public function setCoupon(string $shopId, int $cartId, string $couponCode): ResultInterface
     {
         try {
-            $quote = $this->cartRepository->getActive($cartId);
-            $this->checkoutSession->replaceQuote($quote);
-            $this->cart->setQuote($quote);
-            $this->storeManager->setCurrentStore($quote->getStoreId());
-            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
-            if ($this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
-                return $this->quoteResultBuilder->createSuccessResult($quote);
-            }
-            $this->shopIdValidator->validate($shopId, $quote->getStoreId());
-            $this->couponService->set($cartId, $couponCode);
+            $quote = $this->loadAndValidate->load($shopId, $cartId);
+            $this->couponService->set($quote->getId(), $couponCode);
         } catch (Exception $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

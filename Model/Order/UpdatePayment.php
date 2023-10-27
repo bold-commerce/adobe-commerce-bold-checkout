@@ -9,7 +9,6 @@ use Bold\Checkout\Api\Data\Order\Payment\ResultInterface;
 use Bold\Checkout\Api\Data\Order\Payment\ResultInterfaceFactory;
 use Bold\Checkout\Api\Order\UpdatePaymentInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
-use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateInvoice;
 use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrderPayment;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionResource;
@@ -162,7 +161,6 @@ class UpdatePayment implements UpdatePaymentInterface
      */
     private function isDelayedCapture(OrderInterface $order): int
     {
-        /** @var OrderExtensionData $orderExtData */
         $orderExtData = $this->orderExtensionDataFactory->create();
         $this->orderExtensionDataResource->load(
             $orderExtData,
