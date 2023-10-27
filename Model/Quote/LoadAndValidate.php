@@ -8,7 +8,9 @@ use Magento\Checkout\Model\Cart;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Api\Data\CartExtensionFactory;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\Quote\ShippingAssignment\ShippingAssignmentProcessor;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Magento\Store\Model\StoreManagerInterface;
@@ -49,12 +51,24 @@ class LoadAndValidate
     private $quoteFactory;
 
     /**
+     * @var ShippingAssignmentProcessor
+     */
+    private $shippingAssignmentProcessor;
+
+    /**
+     * @var CartExtensionFactory
+     */
+    private $cartExtensionFactory;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param Cart $cart
      * @param StoreManagerInterface $storeManager
      * @param Session $checkoutSession
      * @param QuoteResource $quoteResource
      * @param QuoteFactory $quoteFactory
+     * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
+     * @param CartExtensionFactory $cartExtensionFactory
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
@@ -62,7 +76,9 @@ class LoadAndValidate
         StoreManagerInterface $storeManager,
         Session $checkoutSession,
         QuoteResource $quoteResource,
-        QuoteFactory $quoteFactory
+        QuoteFactory $quoteFactory,
+        ShippingAssignmentProcessor $shippingAssignmentProcessor,
+        CartExtensionFactory $cartExtensionFactory
     ) {
         $this->shopIdValidator = $shopIdValidator;
         $this->cart = $cart;
@@ -70,6 +86,8 @@ class LoadAndValidate
         $this->checkoutSession = $checkoutSession;
         $this->quoteResource = $quoteResource;
         $this->quoteFactory = $quoteFactory;
+        $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
+        $this->cartExtensionFactory = $cartExtensionFactory;
     }
 
     /**
@@ -81,7 +99,7 @@ class LoadAndValidate
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function load(string $shopId , int $cartId): CartInterface
+    public function load(string $shopId, int $cartId): CartInterface
     {
         $quote = $this->quoteFactory->create();
         $this->quoteResource->load($quote, $cartId);
@@ -90,6 +108,17 @@ class LoadAndValidate
         $this->checkoutSession->replaceQuote($quote);
         $this->cart->setQuote($quote);
         $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+        $quote->setItems($quote->getAllVisibleItems());
+        $shippingAssignments = [];
+        if (!$quote->isVirtual() && $quote->getItemsQty() > 0) {
+            $shippingAssignments[] = $this->shippingAssignmentProcessor->create($quote);
+        }
+        $cartExtension = $quote->getExtensionAttributes();
+        if ($cartExtension === null) {
+            $cartExtension = $this->cartExtensionFactory->create();
+        }
+        $cartExtension->setShippingAssignments($shippingAssignments);
+        $quote->setExtensionAttributes($cartExtension);
         return $quote;
     }
 }

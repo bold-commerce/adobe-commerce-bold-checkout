@@ -7,7 +7,10 @@ use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
-use Magento\Quote\Api\CouponManagementInterface;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Model\ResourceModel\Quote;
 
 /**
  * Set quote coupon code service.
@@ -25,23 +28,23 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     private $loadAndValidate;
 
     /**
-     * @var CouponManagementInterface
+     * @var Quote
      */
-    private $couponService;
+    private $quoteResource;
 
     /**
-     * @param CouponManagementInterface $couponService
      * @param Builder $quoteResultBuilder
      * @param LoadAndValidate $loadAndValidate
+     * @param Quote $quoteResource
      */
     public function __construct(
-        CouponManagementInterface $couponService,
         Builder $quoteResultBuilder,
-        LoadAndValidate $loadAndValidate
+        LoadAndValidate $loadAndValidate,
+        Quote $quoteResource
     ) {
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->loadAndValidate = $loadAndValidate;
-        $this->couponService = $couponService;
+        $this->quoteResource = $quoteResource;
     }
 
     /**
@@ -51,7 +54,28 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
     {
         try {
             $quote = $this->loadAndValidate->load($shopId, $cartId);
-            $this->couponService->set($quote->getId(), $couponCode);
+            if (!$quote->getItemsCount()) {
+                throw new NoSuchEntityException(__('The "%1" Cart doesn\'t contain products.', $cartId));
+            }
+            if (!$quote->getStoreId()) {
+                throw new NoSuchEntityException(__('Cart isn\'t assigned to correct store'));
+            }
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+            try {
+                $quote->setCouponCode($couponCode);
+                $quote->collectTotals();
+                $this->quoteResource->save($quote);
+            } catch (LocalizedException $e) {
+                throw new CouldNotSaveException(__('The coupon code couldn\'t be applied: ' . $e->getMessage()), $e);
+            } catch (\Exception $e) {
+                throw new CouldNotSaveException(
+                    __("The coupon code couldn't be applied. Verify the coupon code and try again."),
+                    $e
+                );
+            }
+            if ($quote->getCouponCode() !== $couponCode) {
+                throw new NoSuchEntityException(__("The coupon code isn't valid. Verify the code and try again."));
+            }
         } catch (Exception $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }
