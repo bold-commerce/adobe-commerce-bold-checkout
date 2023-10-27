@@ -8,7 +8,6 @@ use Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
 use Magento\Framework\Exception\CouldNotDeleteException;
-use Magento\Quote\Api\CouponManagementInterface;
 use Magento\Quote\Model\ResourceModel\Quote;
 
 /**
@@ -27,11 +26,6 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     private $loadAndValidate;
 
     /**
-     * @var CouponManagementInterface
-     */
-    private $couponService;
-
-    /**
      * @var Quote
      */
     private $quoteResource;
@@ -39,16 +33,13 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     /**
      * @param Builder $quoteResultBuilder
      * @param LoadAndValidate $loadAndValidate
-     * @param CouponManagementInterface $couponService
      * @param Quote $quoteResource
      */
     public function __construct(
         Builder $quoteResultBuilder,
         LoadAndValidate $loadAndValidate,
-        CouponManagementInterface $couponService,
         Quote $quoteResource
     ) {
-        $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->loadAndValidate = $loadAndValidate;
         $this->quoteResource = $quoteResource;
@@ -61,7 +52,6 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     {
         try {
             $quote = $this->loadAndValidate->load($shopId, $cartId);
-            $this->couponService->remove($quote->getId());
             $quote->getShippingAddress()->setCollectShippingRates(true);
             try {
                 $quote->setCouponCode('');
