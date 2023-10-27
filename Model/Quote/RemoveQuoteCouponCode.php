@@ -5,14 +5,10 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface;
-use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Exception;
-use Magento\Checkout\Model\Cart;
-use Magento\Checkout\Model\Session;
-use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Quote\Api\CouponManagementInterface;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Exception\CouldNotDeleteException;
+use Magento\Quote\Model\ResourceModel\Quote;
 
 /**
  * Remove quote coupon code service.
@@ -20,65 +16,33 @@ use Magento\Store\Model\StoreManagerInterface;
 class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
 {
     /**
-     * @var CouponManagementInterface
-     */
-    private $couponService;
-
-    /**
      * @var Builder
      */
     private $quoteResultBuilder;
 
     /**
-     * @var CartRepositoryInterface
+     * @var LoadAndValidate
      */
-    private $cartRepository;
+    private $loadAndValidate;
 
     /**
-     * @var ShopIdValidator
+     * @var Quote
      */
-    private $shopIdValidator;
+    private $quoteResource;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var Session
-     */
-    private $checkoutSession;
-
-    /**
-     * @var Cart
-     */
-    private $cart;
-
-    /**
-     * @param ShopIdValidator $shopIdValidator
-     * @param CouponManagementInterface $couponService
-     * @param CartRepositoryInterface $cartRepository
      * @param Builder $quoteResultBuilder
-     * @param StoreManagerInterface $storeManager
-     * @param Session $checkoutSession
-     * @param Cart $cart
+     * @param LoadAndValidate $loadAndValidate
+     * @param Quote $quoteResource
      */
     public function __construct(
-        ShopIdValidator $shopIdValidator,
-        CouponManagementInterface $couponService,
-        CartRepositoryInterface $cartRepository,
         Builder $quoteResultBuilder,
-        StoreManagerInterface $storeManager,
-        Session $checkoutSession,
-        Cart $cart
+        LoadAndValidate $loadAndValidate,
+        Quote $quoteResource
     ) {
-        $this->couponService = $couponService;
         $this->quoteResultBuilder = $quoteResultBuilder;
-        $this->cartRepository = $cartRepository;
-        $this->shopIdValidator = $shopIdValidator;
-        $this->storeManager = $storeManager;
-        $this->checkoutSession = $checkoutSession;
-        $this->cart = $cart;
+        $this->loadAndValidate = $loadAndValidate;
+        $this->quoteResource = $quoteResource;
     }
 
     /**
@@ -87,13 +51,22 @@ class RemoveQuoteCouponCode implements RemoveQuoteCouponCodeInterface
     public function removeCoupon(string $shopId, int $cartId, string $couponCode = null): ResultInterface
     {
         try {
-            $quote = $this->cartRepository->getActive($cartId);
-            $this->checkoutSession->replaceQuote($quote);
-            $this->cart->setQuote($quote);
-            $this->shopIdValidator->validate($shopId, $quote->getStoreId());
-            $this->storeManager->setCurrentStore($quote->getStoreId());
-            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
-            $this->couponService->remove($cartId);
+            $quote = $this->loadAndValidate->load($shopId, $cartId);
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+            try {
+                $quote->setCouponCode('');
+                $quote->collectTotals();
+                $this->quoteResource->save($quote);
+            } catch (\Exception $e) {
+                throw new CouldNotDeleteException(
+                    __("The coupon code couldn't be deleted. Verify the coupon code and try again.")
+                );
+            }
+            if ($quote->getCouponCode() != '') {
+                throw new CouldNotDeleteException(
+                    __("The coupon code couldn't be deleted. Verify the coupon code and try again.")
+                );
+            }
         } catch (Exception $e) {
             return $this->quoteResultBuilder->createErrorResult($e->getMessage());
         }

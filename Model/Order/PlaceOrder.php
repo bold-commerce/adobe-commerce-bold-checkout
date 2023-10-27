@@ -10,14 +10,12 @@ use Bold\Checkout\Api\Data\PlaceOrder\ResultInterfaceFactory;
 use Bold\Checkout\Api\PlaceOrderInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator;
-use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromPayload;
 use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrder;
 use Bold\Checkout\Model\Order\PlaceOrder\Progress;
+use Bold\Checkout\Model\Quote\LoadAndValidate;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Place magento order with bold payment service.
@@ -33,16 +31,6 @@ class PlaceOrder implements PlaceOrderInterface
      * @var ErrorInterfaceFactory
      */
     private $errorFactory;
-
-    /**
-     * @var CartRepositoryInterface
-     */
-    private $cartRepository;
-
-    /**
-     * @var ShopIdValidator
-     */
-    private $shopIdValidator;
 
     /**
      * @var OrderPayloadValidator
@@ -70,44 +58,38 @@ class PlaceOrder implements PlaceOrderInterface
     private $progress;
 
     /**
-     * @var StoreManagerInterface
+     * @var LoadAndValidate
      */
-    private $storeManager;
+    private $loadAndValidate;
 
     /**
-     * @param ShopIdValidator $shopIdValidator
      * @param OrderPayloadValidator $orderPayloadValidator
-     * @param CartRepositoryInterface $cartRepository
      * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
      * @param ConfigInterface $config
      * @param CreateOrderFromPayload $createOrderFromPayload
      * @param ProcessOrder $processOrder
      * @param Progress $progress
-     * @param StoreManagerInterface $storeManager
+     * @param LoadAndValidate $loadAndValidate
      */
     public function __construct(
-        ShopIdValidator $shopIdValidator,
         OrderPayloadValidator $orderPayloadValidator,
-        CartRepositoryInterface $cartRepository,
         ResultInterfaceFactory $responseFactory,
         ErrorInterfaceFactory $errorFactory,
         ConfigInterface $config,
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
         Progress $progress,
-        StoreManagerInterface $storeManager
+        LoadAndValidate $loadAndValidate
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
-        $this->cartRepository = $cartRepository;
-        $this->shopIdValidator = $shopIdValidator;
         $this->orderPayloadValidator = $orderPayloadValidator;
         $this->config = $config;
         $this->createOrderFromPayload = $createOrderFromPayload;
         $this->processOrder = $processOrder;
         $this->progress = $progress;
-        $this->storeManager = $storeManager;
+        $this->loadAndValidate = $loadAndValidate;
     }
 
     /**
@@ -123,10 +105,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->progress->start($order);
         try {
             $this->orderPayloadValidator->validate($order);
-            $quote = $this->cartRepository->get($order->getQuoteId());
-            $this->shopIdValidator->validate($shopId, $quote->getStoreId());
-            $this->storeManager->setCurrentStore($quote->getStoreId());
-            $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
+            $quote = $this->loadAndValidate->load($shopId, $order->getQuoteId());
         } catch (LocalizedException $e) {
             $this->progress->stop($order);
             return $this->getValidationErrorResponse($e->getMessage());
