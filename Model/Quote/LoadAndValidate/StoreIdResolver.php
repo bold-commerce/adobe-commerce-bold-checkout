@@ -24,7 +24,7 @@ class StoreIdResolver
     }
 
     /**
-     * Get store id by cart id and set current store.
+     * Get store id by cart id.
      *
      * @param int $cartId
      * @return int
