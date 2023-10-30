@@ -112,7 +112,10 @@ class LoadAndValidate
     {
         $quote = $this->quoteFactory->create();
         $storeId = $this->cartStoreIdResolver->resolve($cartId);
-        $quote->setStoreId($storeId);
+        if ($storeId) {
+            $this->storeManager->setCurrentStore($storeId);
+            $quote->setStoreId($storeId);
+        }
         $this->quoteResource->load($quote, $cartId);
         $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         $this->checkoutSession->replaceQuote($quote);
