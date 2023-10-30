@@ -91,8 +91,8 @@ class UpdatePayment implements UpdatePaymentInterface
         try {
             $this->validateRequest($payment);
             $order = $payment->getPayment()->getOrder();
-            $websiteId = (int)$order->getStore()->getWebsiteId();
-            $this->shopIdValidator->validate($shopId, $websiteId);
+            $storeId = (int)$order->getStoreId();
+            $this->shopIdValidator->validate($shopId, $storeId);
         } catch (LocalizedException $e) {
             return $this->getValidationErrorResponse($e->getMessage());
         }
