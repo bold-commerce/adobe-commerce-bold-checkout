@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
+use Bold\Checkout\Model\Quote\LoadAndValidate\StoreIdResolver;
 use Magento\Checkout\Model\Cart;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
@@ -61,6 +62,11 @@ class LoadAndValidate
     private $cartExtensionFactory;
 
     /**
+     * @var StoreIdResolver $cartStoreIdResolver
+     */
+    private $cartStoreIdResolver;
+
+    /**
      * @param ShopIdValidator $shopIdValidator
      * @param Cart $cart
      * @param StoreManagerInterface $storeManager
@@ -69,6 +75,7 @@ class LoadAndValidate
      * @param QuoteFactory $quoteFactory
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
      * @param CartExtensionFactory $cartExtensionFactory
+     * @param StoreIdResolver $cartStoreIdResolver
      */
     public function __construct(
         ShopIdValidator $shopIdValidator,
@@ -78,7 +85,8 @@ class LoadAndValidate
         QuoteResource $quoteResource,
         QuoteFactory $quoteFactory,
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
-        CartExtensionFactory $cartExtensionFactory
+        CartExtensionFactory $cartExtensionFactory,
+        StoreIdResolver $cartStoreIdResolver
     ) {
         $this->shopIdValidator = $shopIdValidator;
         $this->cart = $cart;
@@ -88,6 +96,7 @@ class LoadAndValidate
         $this->quoteFactory = $quoteFactory;
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->cartExtensionFactory = $cartExtensionFactory;
+        $this->cartStoreIdResolver = $cartStoreIdResolver;
     }
 
     /**
@@ -102,8 +111,9 @@ class LoadAndValidate
     public function load(string $shopId, int $cartId): CartInterface
     {
         $quote = $this->quoteFactory->create();
+        $storeId = $this->cartStoreIdResolver->resolve($cartId);
+        $quote->setStoreId($storeId);
         $this->quoteResource->load($quote, $cartId);
-        $this->storeManager->setCurrentStore($quote->getStoreId());
         $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         $this->checkoutSession->replaceQuote($quote);
         $this->cart->setQuote($quote);
