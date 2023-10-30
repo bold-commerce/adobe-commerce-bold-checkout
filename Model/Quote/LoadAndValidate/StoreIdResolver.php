@@ -41,7 +41,9 @@ class StoreIdResolver
     public function resolve(int $cartId): int
     {
         $storeId = $this->getStoreIdByCartId->getStoreId($cartId);
-        $this->storeManager->setCurrentStore($storeId);
+        if ($storeId) {
+            $this->storeManager->setCurrentStore($storeId);
+        }
         return $storeId;
     }
 }
