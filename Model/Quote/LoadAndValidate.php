@@ -107,7 +107,7 @@ class LoadAndValidate
         $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         $this->checkoutSession->replaceQuote($quote);
         $this->cart->setQuote($quote);
-        $this->shopIdValidator->validate($shopId, $quote->getStoreId());
+        $this->shopIdValidator->validate($shopId, (int)$quote->getStoreId());
         $quote->setItems($quote->getAllVisibleItems());
         $shippingAssignments = [];
         if (!$quote->isVirtual() && $quote->getItemsQty() > 0) {
