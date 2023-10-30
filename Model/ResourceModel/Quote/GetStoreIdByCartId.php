@@ -5,9 +5,11 @@ namespace Bold\Checkout\Model\ResourceModel\Quote;
 
 use Magento\Framework\App\ResourceConnection;
 
+/**
+ * Get store id by cart id resource model.
+ */
 class GetStoreIdByCartId
 {
-
     /**
      * @var ResourceConnection
      */
@@ -21,6 +23,12 @@ class GetStoreIdByCartId
         $this->resourceConnection = $resourceConnection;
     }
 
+    /**
+     * Retrieve store id by cart id.
+     *
+     * @param int $cartId
+     * @return int
+     */
     public function getStoreId(int $cartId): int
     {
         $select = $this->resourceConnection->getConnection()->select()->from(
