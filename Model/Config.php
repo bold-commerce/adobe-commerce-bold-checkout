@@ -100,7 +100,10 @@ class Config implements ConfigInterface
      */
     public function isCheckoutEnabled(int $websiteId): bool
     {
-        return $this->configManagement->isSetFlag(self::PATH_ENABLED, $websiteId);
+        return $this->configManagement->isSetFlag(
+            self::PATH_ENABLED,
+            $websiteId
+        );
     }
 
     /**
@@ -108,7 +111,10 @@ class Config implements ConfigInterface
      */
     public function getEnabledFor(int $websiteId): int
     {
-        return (int)$this->configManagement->getValue(self::PATH_ENABLED_FOR, $websiteId);
+        return (int)$this->configManagement->getValue(
+            self::PATH_ENABLED_FOR,
+            $websiteId
+        );
     }
 
     /**
@@ -116,7 +122,10 @@ class Config implements ConfigInterface
      */
     public function getIpWhitelist(int $websiteId): array
     {
-        $rawData = $this->configManagement->getValue(self::PATH_IP_WHITELIST, $websiteId);
+        $rawData = $this->configManagement->getValue(
+            self::PATH_IP_WHITELIST,
+            $websiteId
+        );
 
         return $rawData ? array_filter(array_map('trim', explode(',', $rawData))) : [];
     }
@@ -126,7 +135,10 @@ class Config implements ConfigInterface
      */
     public function getCustomerWhitelist(int $websiteId): array
     {
-        $rawData = $this->configManagement->getValue(self::PATH_CUSTOMER_WHITELIST, $websiteId);
+        $rawData = $this->configManagement->getValue(
+            self::PATH_CUSTOMER_WHITELIST,
+            $websiteId
+        );
 
         return $rawData ? array_filter(array_map('trim', explode(',', $rawData))) : [];
     }
@@ -136,7 +148,10 @@ class Config implements ConfigInterface
      */
     public function getOrdersPercentage(int $websiteId): int
     {
-        return (int)$this->configManagement->getValue(self::PATH_ORDERS_PERCENTAGE, $websiteId);
+        return (int)$this->configManagement->getValue(
+            self::PATH_ORDERS_PERCENTAGE,
+            $websiteId
+        );
     }
 
     /**
@@ -144,7 +159,10 @@ class Config implements ConfigInterface
      */
     public function getSharedSecret(int $websiteId): ?string
     {
-        $encryptedSecret = $this->configManagement->getValue(self::PATH_SECRET, $websiteId);
+        $encryptedSecret = $this->configManagement->getValue(
+            self::PATH_SECRET,
+            $websiteId
+        );
 
         return $this->encryptor->decrypt($encryptedSecret);
     }
@@ -154,7 +172,10 @@ class Config implements ConfigInterface
      */
     public function getApiToken(int $websiteId): ?string
     {
-        $encryptedToken = $this->configManagement->getValue(self::PATH_TOKEN, $websiteId);
+        $encryptedToken = $this->configManagement->getValue(
+            self::PATH_TOKEN,
+            $websiteId
+        );
 
         return $this->encryptor->decrypt($encryptedToken);
     }
@@ -165,7 +186,10 @@ class Config implements ConfigInterface
     public function getPlatformConnectorUrl(int $websiteId): string
     {
         return rtrim(
-            $this->configManagement->getValue(self::PATH_PLATFORM_CONNECTOR_URL, $websiteId),
+            $this->configManagement->getValue(
+                self::PATH_PLATFORM_CONNECTOR_URL,
+                $websiteId
+            ),
             '/'
         );
     }
@@ -175,7 +199,10 @@ class Config implements ConfigInterface
      */
     public function getShopId(int $websiteId): ?string
     {
-        return $this->configManagement->getValue(self::PATH_SHOP_ID, $websiteId);
+        return $this->configManagement->getValue(
+            self::PATH_SHOP_ID,
+            $websiteId
+        );
     }
 
     /**
@@ -183,7 +210,10 @@ class Config implements ConfigInterface
      */
     public function getLogIsEnabled(int $websiteId): bool
     {
-        return $this->configManagement->isSetFlag(self::PATH_LOG_ENABLED, $websiteId);
+        return $this->configManagement->isSetFlag(
+            self::PATH_LOG_ENABLED,
+            $websiteId
+        );
     }
 
     /**
@@ -221,7 +251,10 @@ class Config implements ConfigInterface
      */
     public function getIntegrationEmail(int $websiteId): ?string
     {
-        return $this->configManagement->getValue(self::PATH_INTEGRATION_EMAIL, $websiteId);
+        return $this->configManagement->getValue(
+            self::PATH_INTEGRATION_EMAIL,
+            $websiteId
+        );
     }
 
     /**
@@ -229,7 +262,10 @@ class Config implements ConfigInterface
      */
     public function getIntegrationCallbackUrl(int $websiteId): ?string
     {
-        return $this->configManagement->getValue(self::PATH_INTEGRATION_CALLBACK_URL, $websiteId);
+        return $this->configManagement->getValue(
+            self::PATH_INTEGRATION_CALLBACK_URL,
+            $websiteId
+        );
     }
 
     /**
@@ -237,7 +273,10 @@ class Config implements ConfigInterface
      */
     public function getApiUrl(int $websiteId): ?string
     {
-        return $this->configManagement->getValue(self::PATH_INTEGRATION_API_URL, $websiteId);
+        return $this->configManagement->getValue(
+            self::PATH_INTEGRATION_API_URL,
+            $websiteId
+        );
     }
 
     /**
@@ -245,7 +284,10 @@ class Config implements ConfigInterface
      */
     public function getCheckoutUrl(int $websiteId): ?string
     {
-        return $this->configManagement->getValue(self::PATH_INTEGRATION_CHECKOUT_URL, $websiteId);
+        return $this->configManagement->getValue(
+            self::PATH_INTEGRATION_CHECKOUT_URL,
+            $websiteId
+        );
     }
 
     /**
@@ -253,7 +295,10 @@ class Config implements ConfigInterface
      */
     public function getIntegrationIdentityLinkUrl(int $websiteId): ?string
     {
-        return $this->configManagement->getValue(self::PATH_INTEGRATION_IDENTITY_URL, $websiteId);
+        return $this->configManagement->getValue(
+            self::PATH_INTEGRATION_IDENTITY_URL,
+            $websiteId
+        );
     }
 
     /**
