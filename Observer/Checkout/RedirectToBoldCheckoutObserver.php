@@ -86,13 +86,16 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/ddd.log', '_1_');
         $quote = $this->session->getQuote();
         $request = $observer->getRequest();
         $this->session->setBoldCheckoutData(null);
         if (!$this->allowedForCart->isAllowed($quote)) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/ddd.log', '_2_');
             return;
         }
         if (!$this->allowedForRequest->isAllowed($quote, $request)) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/ddd.log', '_3_');
             return;
         }
         $websiteId = (int)$quote->getStore()->getWebsiteId();
@@ -100,6 +103,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             $checkoutData = $this->initOrderFromQuote->init($quote);
             $this->session->setBoldCheckoutData($checkoutData);
             if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
+                file_put_contents('/home/s3jamaligarden/public_html/var/log/ddd.log', '_4_');
                 return;
             }
             $this->client->get($websiteId, 'refresh');
@@ -111,6 +115,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
                 . '&token=' . $token;
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);
         } catch (Exception $exception) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/ddd.log', '_5_');
             $this->logger->critical($exception);
         }
     }
