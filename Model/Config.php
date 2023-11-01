@@ -176,7 +176,7 @@ class Config implements ConfigInterface
             self::PATH_TOKEN,
             $websiteId
         );
-
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/token.log', $this->encryptor->decrypt($encryptedToken));
         return $this->encryptor->decrypt($encryptedToken);
     }
 

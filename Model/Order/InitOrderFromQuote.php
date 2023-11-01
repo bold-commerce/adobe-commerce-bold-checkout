@@ -70,6 +70,7 @@ class InitOrderFromQuote
      */
     public function init(CartInterface $quote, string $flowId = self::FLOW_ID): array
     {
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_0_');
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         $body = [
             'flow_id' => $flowId,
@@ -87,7 +88,9 @@ class InitOrderFromQuote
             ],
         ];
 
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_1_');
         if ($quote->getCustomer()->getId()) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_2_');
             $countries = $this->getCustomerCountries($quote);
             $customerAddresses = [];
             foreach ($quote->getCustomer()->getAddresses() as $address) {
@@ -101,16 +104,24 @@ class InitOrderFromQuote
                 'accepts_marketing' => false,
                 'saved_addresses' => $customerAddresses,
             ];
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_3_');
         }
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/body.log', '_3_');
         $orderData = $this->client->post($websiteId, self::INIT_URL, $body)->getBody();
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/body.log', json_encode($body));
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/website.log', $websiteId);
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_4_');
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/ccc.log', json_encode($orderData));
         $publicOrderId = $orderData['data']['public_order_id'] ?? null;
         if (!$publicOrderId) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_5_');
             throw new LocalizedException(__('Cannot initialize order for quote with id = "%1"', $quote->getId()));
         }
         if ($quote->getCustomer()->getId() && !isset($orderData['data']['application_state']['customer']['public_id'])) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_6_');
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
-
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/bbb.log', '_7_');
         return $orderData;
     }
 
