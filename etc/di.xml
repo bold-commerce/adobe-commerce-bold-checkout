@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Bold\Checkout\Model\ConfigInterface" type="Bold\Checkout\Model\Config"/>
+    <preference for="Bold\Checkout\Api\ConfigManagementInterface" type="Bold\Checkout\Model\ConfigManagement"/>
     <preference for="Bold\Checkout\Api\Data\Http\Client\ResultInterface" type="Bold\Checkout\Model\Http\Client\Result"/>
     <preference for="Bold\Checkout\Model\Queue\RequestInterface" type="Bold\Checkout\Model\Queue\Request"/>
     <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>

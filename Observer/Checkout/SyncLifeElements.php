@@ -8,6 +8,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManager;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Observe 'admin_system_config_changed_section_checkout' event and sync (LiFE) elements.
@@ -30,18 +31,26 @@ class SyncLifeElements implements ObserverInterface
     private $messageManager;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param ConfigInterface $config
      * @param LifeElementManagementInterface $lifeElementManagement
      * @param MessageManager $messageManager
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         ConfigInterface $config,
         LifeElementManagementInterface $lifeElementManagement,
-        MessageManager $messageManager
+        MessageManager $messageManager,
+        StoreManagerInterface $storeManager
     ) {
         $this->config = $config;
         $this->lifeElementManagement = $lifeElementManagement;
         $this->messageManager = $messageManager;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -53,7 +62,7 @@ class SyncLifeElements implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $event = $observer->getEvent();
-        $websiteId = (int)$event->getWebsite();
+        $websiteId = (int)$event->getWebsite() ?: (int)$this->storeManager->getWebsite(true)->getId();
 
         if (!$this->config->isCheckoutEnabled($websiteId)
             && (!$this->config->isCheckoutTypeStandard($websiteId)
