@@ -33,21 +33,26 @@ class IsBoldCheckoutAllowedForCart
     public function isAllowed(CartInterface $quote): bool
     {
         if (!$this->config->isCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_1_');
             return false;
         }
         if (!$this->isEnabledFor($quote)) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_2_');
             return false;
         }
 
         $cartItems = $quote->getAllItems();
         if (!$cartItems) {
+            file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_3_');
             return false;
         }
         foreach ($cartItems as $item) {
             if ($item->getIsQtyDecimal()) {
+                file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_4_');
                 return false;
             }
         }
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_1_');
         return true;
     }
 
