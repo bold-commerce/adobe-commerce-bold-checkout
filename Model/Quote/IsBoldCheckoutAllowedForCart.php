@@ -32,6 +32,7 @@ class IsBoldCheckoutAllowedForCart
      */
     public function isAllowed(CartInterface $quote): bool
     {
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_0_');
         if (!$this->config->isCheckoutEnabled((int)$quote->getStore()->getWebsiteId())) {
             file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_1_');
             return false;
