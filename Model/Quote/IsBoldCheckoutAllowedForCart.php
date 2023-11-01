@@ -52,7 +52,7 @@ class IsBoldCheckoutAllowedForCart
                 return false;
             }
         }
-        file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_1_');
+        file_put_contents('/home/s3jamaligarden/public_html/var/log/eee.log', '_5_');
         return true;
     }
 
