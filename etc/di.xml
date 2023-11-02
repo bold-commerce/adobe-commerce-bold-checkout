@@ -170,6 +170,7 @@
                 <item name="default" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\ConfigValueHandler</item>
                 <item name="can_use_checkout" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\CanUseCheckoutValueHandler</item>
                 <item name="title" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\TitleValueHandler</item>
+                <item name="active" xsi:type="string">Bold\Checkout\Model\Payment\Gateway\Config\IsActiveValueHandler</item>
             </argument>
         </arguments>
     </virtualType>
