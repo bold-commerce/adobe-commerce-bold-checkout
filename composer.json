@@ -5,7 +5,7 @@
   "license": [
     "MIT"
   ],
-  "version": "1.1.21",
+  "version": "1.1.22",
   "require": {
     "ext-curl": "*",
     "magento/framework": ">=102.0.2 <103.0.7",
