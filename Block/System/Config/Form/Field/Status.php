@@ -1,12 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Checkout\Block\System\Config\Form\Field;
 
+use Bold\Checkout\Block\System\Config\Form\Field;
 use Bold\Checkout\Model\BoldIntegration;
 use Magento\Backend\Block\Template\Context;
-use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Config\Model\Config;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Integration\Model\Integration\Source\Status as SourceStatus;
@@ -17,6 +16,8 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class Status extends Field
 {
+    protected $unsetScope = true;
+
     /**
      * @var BoldIntegration
      */
