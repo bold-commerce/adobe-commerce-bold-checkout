@@ -28,8 +28,6 @@
     <preference for="Bold\Checkout\Api\Data\Order\Payment\RequestInterface" type="Bold\Checkout\Model\Order\UpdatePayment\Request"/>
     <preference for="Bold\Checkout\Api\Order\UpdatePaymentInterface" type="Bold\Checkout\Model\Order\UpdatePayment"/>
     <preference for="Bold\Checkout\Api\Data\Order\Payment\ResultInterface" type="Bold\Checkout\Model\Order\UpdatePayment\Result"/>
-    <preference for="Bold\Checkout\Api\Catalog\GetProductsInterface" type="Bold\Checkout\Model\Catalog\GetProducts"/>
-    <preference for="Bold\Checkout\Api\Data\Catalog\GetProductsResultInterface" type="Bold\Checkout\Model\Catalog\GetProducts\Result"/>
     <preference for="Bold\Checkout\Api\GetVersionInterface" type="Bold\Checkout\Model\GetVersion"/>
     <preference for="Bold\Checkout\Api\Data\DiscountDataInterface" type="Bold\Checkout\Model\Data\DiscountData"/>
     <preference for="Bold\Checkout\Api\Data\RuleDiscountInterface" type="Bold\Checkout\Model\Data\RuleDiscount"/>
@@ -51,35 +49,6 @@
     <type name="Bold\Checkout\Observer\Checkout\CheckoutSectionSave">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Sync\GetProducts">
-        <arguments>
-            <argument name="skipProductTypes" xsi:type="array">
-                <item name="configurable" xsi:type="const">Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE</item>
-                <item name="grouped" xsi:type="const">Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE</item>
-                <item name="bundle" xsi:type="const">Magento\Bundle\Model\Product\Type::TYPE_CODE</item>
-            </argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Category\Synchronize">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Category\Delete">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Product\Synchronize">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Product\Delete">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
     <type name="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize">
