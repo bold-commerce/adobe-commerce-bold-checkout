@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Checkout;
 
 use Bold\Checkout\Block\Onepage\Button;
+use Bold\Checkout\Model\GetParallelCheckoutTemplate;
 use Magento\Catalog\Block\ShortcutButtons;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -15,7 +16,18 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class AddParallelCheckoutButton implements ObserverInterface
 {
-    private const PARALLEL_CHECKOUT_TEMPLATE = 'Bold_Checkout::cart/checkout_button.phtml';
+    /**
+     * @var GetParallelCheckoutTemplate
+     */
+    private $getParallelCheckoutTemplate;
+
+    /**
+     * @param GetParallelCheckoutTemplate $getParallelCheckoutTemplate
+     */
+    public function __construct(GetParallelCheckoutTemplate $getParallelCheckoutTemplate)
+    {
+        $this->getParallelCheckoutTemplate = $getParallelCheckoutTemplate;
+    }
 
     /**
      * Add parallel checkout button to shortcut buttons container.
@@ -32,7 +44,7 @@ class AddParallelCheckoutButton implements ObserverInterface
         }
         $params = [
             'data' => [
-                'template' => self::PARALLEL_CHECKOUT_TEMPLATE,
+                'template' => $this->getParallelCheckoutTemplate->getTemplate(),
             ],
         ];
         /** @var ShortcutButtons $shortcutButtons */
