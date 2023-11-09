@@ -37,6 +37,9 @@ class AddParallelCheckoutButton implements ObserverInterface
         ];
         /** @var ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();
+        if ($shortcutButtons->getLayout()->getBlock(Button::ELEMENT_ALIAS)) {
+            return;
+        }
         $shortcut = $shortcutButtons->getLayout()->createBlock(
             Button::class,
             Button::ELEMENT_ALIAS,
