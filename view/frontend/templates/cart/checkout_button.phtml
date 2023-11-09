@@ -7,7 +7,7 @@
         <button type="button"
                 data-role="proceed-to-checkout"
                 title="<?= /* @escapeNotVerified */ $block->getButtonTitle() ?>"
-            data-mage-init='{"Magento_Checkout/js/proceed-to-checkout":{"checkoutUrl":"<?= /* @escapeNotVerified */ $block->getCheckoutUrl() ?>"}}'
+            data-mage-init='{"Magento_Checkout/js/proceed-to-checkout":{"checkoutUrl":"<?= /* @escapeNotVerified */ $block->getCheckoutUrl() ?>", "isParallel": true }}'
             class="action primary checkout<?= ($block->isDisabledByQuote()) ? ' disabled' : '' ?>"
             <?php if ($block->isDisabledByQuote()):?>disabled="disabled"<?php endif; ?>>
         <span><?= /* @escapeNotVerified */ $block->getButtonTitle() ?></span>
