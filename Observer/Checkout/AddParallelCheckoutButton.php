@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Checkout;
 
 use Bold\Checkout\Block\Onepage\Button;
+use Bold\Checkout\Model\Config;
 use Bold\Checkout\Model\GetParallelCheckoutTemplate;
 use Magento\Catalog\Block\ShortcutButtons;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Add parallel checkout button to shortcut buttons container.
@@ -22,11 +24,28 @@ class AddParallelCheckoutButton implements ObserverInterface
     private $getParallelCheckoutTemplate;
 
     /**
-     * @param GetParallelCheckoutTemplate $getParallelCheckoutTemplate
+     * @var Config
      */
-    public function __construct(GetParallelCheckoutTemplate $getParallelCheckoutTemplate)
-    {
+    private $config;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @param GetParallelCheckoutTemplate $getParallelCheckoutTemplate
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     */
+    public function __construct(
+        GetParallelCheckoutTemplate $getParallelCheckoutTemplate,
+        Config                      $config,
+        StoreManagerInterface       $storeManager
+    ) {
         $this->getParallelCheckoutTemplate = $getParallelCheckoutTemplate;
+        $this->config = $config;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -38,6 +57,11 @@ class AddParallelCheckoutButton implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $websiteId = (int)$this->storeManager->getWebsite()->getId();
+        if (!$this->config->isCheckoutEnabled($websiteId)
+            || !$this->config->isCheckoutTypeParallel($websiteId)) {
+            return;
+        }
         // Remove button from catalog pages
         if ($observer->getData('is_catalog_product')) {
             return;
