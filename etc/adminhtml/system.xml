@@ -131,6 +131,11 @@
                     <validate>required-url</validate>
                     <comment><![CDATA[Bold Checkout API URL. Do not change.]]></comment>
                 </field>
+                <field id="validate_coupon_codes" translate="label" type="select" sortOrder="75" showInDefault="1" showInWebsite="1">
+                    <label>Validate Coupon Codes</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Throw validation error for invalid coupon codes.]]></comment>
+                </field>
                 <field id="log_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1">
                     <label>Enable Bold Checkout Requests Log</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
