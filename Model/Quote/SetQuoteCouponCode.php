@@ -65,7 +65,7 @@ class SetQuoteCouponCode implements SetQuoteCouponCodeInterface
             $quote->setCouponCode($couponCode);
             $quote->collectTotals();
             $this->quoteResource->save($quote);
-            $validateCouponCodes = $this->config->getIsValidateCouponCodes((int)$quote->getStore()->getWebsiteId());
+            $validateCouponCodes = $this->config->getValidateCouponCodes((int)$quote->getStore()->getWebsiteId());
             if ($validateCouponCodes && $quote->getCouponCode() !== $couponCode) {
                 throw new NoSuchEntityException(__("The coupon code isn't valid. Verify the code and try again."));
             }

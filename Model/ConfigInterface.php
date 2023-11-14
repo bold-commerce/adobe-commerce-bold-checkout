@@ -216,5 +216,5 @@ interface ConfigInterface
      * @param int $websiteId
      * @return bool
      */
-    public function getIsValidateCouponCodes(int $websiteId): bool;
+    public function getValidateCouponCodes(int $websiteId): bool;
 }

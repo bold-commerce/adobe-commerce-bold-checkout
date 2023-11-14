@@ -389,7 +389,7 @@ class Config implements ConfigInterface
     /**
      * @inheirtDoc
      */
-    public function getIsValidateCouponCodes(int $websiteId): bool
+    public function getValidateCouponCodes(int $websiteId): bool
     {
         return $this->configManagement->isSetFlag(
             self::PATH_VALIDATE_COUPON_CODES,
