@@ -29,6 +29,7 @@
             </bold_checkout_base>
             <bold_checkout_advanced>
                 <enabled_for>0</enabled_for>
+                <validate_coupon_codes>1</validate_coupon_codes>
                 <platform_connector_url>https://adobe-commerce-connector.boldapps.net/platform/shops/</platform_connector_url>
                 <api_url>https://api.boldcommerce.com/</api_url>
                 <checkout_url>https://checkout.boldcommerce.com/</checkout_url>

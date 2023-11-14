@@ -34,6 +34,7 @@ class Config implements ConfigInterface
     private const PATH_INTEGRATION_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
     private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
     private const PATH_LIFE_ELEMENTS = 'checkout/bold_checkout_life_elements/life_elements';
+    private const PATH_VALIDATE_COUPON_CODES = 'checkout/bold_checkout_advanced/validate_coupon_codes';
 
     public const INTEGRATION_PATHS = [
         self::PATH_INTEGRATION_EMAIL,
@@ -383,5 +384,16 @@ class Config implements ConfigInterface
 
         $lifeElements = $this->serializer->unserialize($lifeElements);
         return is_array($lifeElements) ? $lifeElements : [];
+    }
+
+    /**
+     * @inheirtDoc
+     */
+    public function getIsValidateCouponCodes(int $websiteId): bool
+    {
+        return $this->configManagement->isSetFlag(
+            self::PATH_VALIDATE_COUPON_CODES,
+            $websiteId
+        );
     }
 }

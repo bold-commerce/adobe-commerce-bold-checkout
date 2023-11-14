@@ -209,4 +209,12 @@ interface ConfigInterface
      * @return array
      */
     public function getLifeElements(int $websiteId): array;
+
+    /**
+     * Should validate coupon codes.
+     *
+     * @param int $websiteId
+     * @return bool
+     */
+    public function getIsValidateCouponCodes(int $websiteId): bool;
 }
