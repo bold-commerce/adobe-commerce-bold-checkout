@@ -1,6 +1,6 @@
 # Adobe Commerce Bold Checkout Integration
 
-This extension replaces the built-in Adobe Commerce checkout experience with Bold Checkout.
+This extension can replace the built-in Adobe Commerce checkout experience with Bold Checkout, or run in parallel to offer multiple checkout types.
 
 The Bold Checkout extension supports Adobe Commerce (formerly known as Magento 2) and Magento Open Source stores.
 
