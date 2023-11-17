@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Payment\Gateway\Command;
 
+use Bold\Checkout\Model\Order\SetIsDelayedCapture;
 use Bold\Checkout\Model\Payment\Gateway\Service;
 use Exception;
 use Magento\Payment\Gateway\CommandInterface;
@@ -18,11 +19,20 @@ class CancelOrder implements CommandInterface
     private $gatewayService;
 
     /**
-     * @param Service $gatewayService
+     * @var SetIsDelayedCapture
      */
-    public function __construct(Service $gatewayService)
-    {
+    private $setIsDelayedCapture;
+
+    /**
+     * @param Service $gatewayService
+     * @param SetIsDelayedCapture $setIsDelayedCapture
+     */
+    public function __construct(
+        Service $gatewayService,
+        SetIsDelayedCapture $setIsDelayedCapture
+    ) {
         $this->gatewayService = $gatewayService;
+        $this->setIsDelayedCapture = $setIsDelayedCapture;
     }
 
     /**
@@ -34,6 +44,7 @@ class CancelOrder implements CommandInterface
     {
         $paymentDataObject = $commandSubject['payment'];
         $payment = $paymentDataObject->getPayment();
+        $this->setIsDelayedCapture->set($payment->getOrder());
         $this->gatewayService->cancel($payment->getOrder());
     }
 }
