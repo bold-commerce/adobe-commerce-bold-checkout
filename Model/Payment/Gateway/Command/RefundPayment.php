@@ -33,7 +33,7 @@ class RefundPayment implements CommandInterface
      */
     public function execute(array $commandSubject): void
     {
-        /** @var PaymentDataObject */
+        /** @var PaymentDataObject $paymentDataObject */
         $paymentDataObject = $commandSubject['payment'];
         $amount = (float)$commandSubject['amount'];
 
