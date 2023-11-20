@@ -6,9 +6,6 @@
     <type name="Magento\Customer\Api\CustomerRepositoryInterface">
         <plugin name="bold_checkout_customer_repository_add_website_ids" type="Bold\Checkout\Plugin\Customer\CustomerRepository\AddAllWebsitesPlugin"/>
     </type>
-    <type name="Magento\Quote\Model\ResourceModel\Quote">
-        <plugin name="persist_quote_currency" type="Bold\Checkout\Plugin\Sales\Model\ResourceModel\Quote\PersistQuoteCurrencyPlugin"/>
-    </type>
     <type name="Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator">
         <arguments>
             <argument name="requiredProperties" xsi:type="const">\Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface::PROPERTIES_REQUIRED</argument>
