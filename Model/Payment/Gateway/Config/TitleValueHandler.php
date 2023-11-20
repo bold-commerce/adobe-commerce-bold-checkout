@@ -48,7 +48,7 @@ class TitleValueHandler implements ValueHandlerInterface
             return $this->config->getPaymentTitle($websiteId);
         }
         return strlen($ccLast4) === 4
-            ? $ccType . ': end with ' . $ccLast4
+            ? $ccType . ': ending in ' . $ccLast4
             : $ccType . ': ' . $ccLast4;
     }
 }
