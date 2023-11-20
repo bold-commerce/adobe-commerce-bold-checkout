@@ -78,13 +78,6 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Catalog\Model\Product\Action">
-        <plugin name="bold_checkout_product_save_update_attributes" type="Bold\Checkout\Plugin\Product\UpdateAttributesPlugin"/>
-    </type>
-    <type name="Magento\Catalog\Model\Product\Website">
-        <plugin name="bold_checkout_product_add_website" type="Bold\Checkout\Plugin\Product\AddWebsitePlugin"/>
-        <plugin name="bold_checkout_product_remove_website" type="Bold\Checkout\Plugin\Product\RemoveWebsitePlugin"/>
-    </type>
     <type name="Bold\Checkout\Model\Http\Client\RequestsLogger">
         <arguments>
             <argument name="logger" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger</argument>
@@ -102,24 +95,6 @@
             <argument name="fileName" xsi:type="string">/var/log/bold_checkout.log</argument>
         </arguments>
     </virtualType>
-
-    <type name="Magento\Quote\Model\Quote">
-        <plugin name="bold_checkout_remove_item" type="Bold\Checkout\Plugin\Quote\Model\Quote\RemoveCartItemPlugin"/>
-    </type>
-    <type name="Bold\Checkout\Plugin\Quote\Model\Quote\RemoveCartItemPlugin">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
-
-    <type name="Magento\Quote\Api\Data\CartItemInterface">
-        <plugin name="update_cart_item_qty_plugin" type="Bold\Checkout\Plugin\Quote\Api\Data\CartItemInterface\UpdateCartItemQtyPlugin"/>
-    </type>
-    <type name="Bold\Checkout\Plugin\Quote\Api\Data\CartItemInterface\UpdateCartItemQtyPlugin">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
 
     <!-- Bold Payment Method Configuration. -->
     <virtualType name="Bold\Checkout\Model\Method\Adapter" type="Magento\Payment\Model\Method\Adapter">
