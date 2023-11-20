@@ -4,4 +4,6 @@
               handler="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize::handle"/>
     <consumer name="bold.checkout.delete.customers" connection="db" queue="bold.checkout.delete.customers"
               handler="Bold\Checkout\Model\Queue\Handler\Customer\Delete::handle"/>
+    <consumer name="bold.checkout.module.check" connection="db" queue="bold.checkout.module.check"
+              handler="Bold\Checkout\Model\Queue\Handler\Module\Check::handle"/>
 </config>

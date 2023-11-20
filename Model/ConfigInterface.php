@@ -217,4 +217,11 @@ interface ConfigInterface
      * @return bool
      */
     public function getValidateCouponCodes(int $websiteId): bool;
+
+    /**
+     * Check if module update check is available.
+     *
+     * @return bool
+     */
+    public function isUpdatesCheckEnabled(): bool;
 }

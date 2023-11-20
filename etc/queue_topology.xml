@@ -5,5 +5,7 @@
                  destinationType="queue" destination="bold.checkout.sync.customers"/>
         <binding id="BoldCheckoutDeleteCustomers" topic="bold.checkout.delete.customers"
                  destinationType="queue" destination="bold.checkout.delete.customers"/>
+        <binding id="BoldCheckoutModuleCheck" topic="bold.checkout.module.check"
+                 destinationType="queue" destination="bold.checkout.module.check"/>
     </exchange>
 </config>

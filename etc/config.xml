@@ -33,7 +33,11 @@
                 <platform_connector_url>https://adobe-commerce-connector.boldapps.net/platform/shops/</platform_connector_url>
                 <api_url>https://api.boldcommerce.com/</api_url>
                 <checkout_url>https://checkout.boldcommerce.com/</checkout_url>
+                <updates_check>1</updates_check>
             </bold_checkout_advanced>
+            <bold_checkout_latest>
+                <update_schedule>0 0 * * *</update_schedule>
+            </bold_checkout_latest>
         </checkout>
     </default>
 </config>
