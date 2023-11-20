@@ -37,18 +37,18 @@ class TitleValueHandler implements ValueHandlerInterface
      */
     public function handle(array $subject, $storeId = null)
     {
-        $payment = $subject['payment'] ?? null;
+        $paymentObject = $subject['payment'] ?? null;
         $websiteId = (int)$this->storeManager->getWebsite()->getId();
-        if (!$payment) {
+        if (!$paymentObject || !$paymentObject->getPayment()) {
             return $this->config->getPaymentTitle($websiteId);
         }
-        $ccLast4 = $payment->getPayment()->getCcLast4();
-        $ccType = $payment->getPayment()->getCcType();
+        $ccLast4 = $paymentObject->getPayment()->getCcLast4();
+        $ccType = $paymentObject->getPayment()->getCcType();
         if (!$ccLast4 || !$ccType) {
             return $this->config->getPaymentTitle($websiteId);
         }
         return strlen($ccLast4) === 4
-            ? $ccType . ': ••••• •••••• ' . $ccLast4
+            ? $ccType . ': end with ' . $ccLast4
             : $ccType . ': ' . $ccLast4;
     }
 }
