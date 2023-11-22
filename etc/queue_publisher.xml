@@ -6,4 +6,7 @@
     <publisher topic="bold.checkout.delete.customers">
         <connection name="db" exchange="magento-db" />
     </publisher>
+    <publisher topic="bold.checkout.module.check">
+        <connection name="db" exchange="magento-db" />
+    </publisher>
 </config>

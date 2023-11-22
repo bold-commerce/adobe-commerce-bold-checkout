@@ -2,20 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model;
+namespace Bold\Checkout\Model\ModuleInfo;
 
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Module\Dir\Reader;
 use Magento\Framework\Serialize\SerializerInterface;
 
 /**
- * Get composer module version.
- *
- * @deprecated please use \Bold\Checkout\Model\ModuleInfo\ModuleComposerVersionProvider.
+ * Get composer module name.
  */
-class ModuleVersionProvider
+class ModuleComposerNameProvider
 {
-    /** @var Reader */
+    /**
+     * @var array
+     */
+    private $cache = [];
+
+    /**
+     * @var Reader
+     */
     private $reader;
 
     /**
@@ -44,22 +49,37 @@ class ModuleVersionProvider
     }
 
     /**
-     * Get composer module version.
+     * Get composer module name.
      *
      * @param string $module
      * @return string
      */
-    public function getVersion(string $module): string
+    public function getName(string $module): string
+    {
+        if (!isset($this->cache[$module])) {
+            $this->cache[$module] = $this->parseName($module);
+        }
+
+        return $this->cache[$module];
+    }
+
+    /**
+     * Parse composer module name.
+     *
+     * @param string $module
+     * @return string
+     */
+    private function parseName(string $module): string
     {
         try {
             $directoryPath = $this->reader->getModuleDir('', $module);
             $dataPath = $directoryPath . '/composer.json';
             $data = $this->filesystem->fileGetContents($dataPath);
-            $version = $this->serializer->unserialize($data)['version'];
+            $name = $this->serializer->unserialize($data)['name'];
         } catch (\Exception $e) {
-            $version = __('Error reading module version.');
+            $name = (string)__('Error reading module name.');
         }
 
-        return $version;
+        return $name;
     }
 }

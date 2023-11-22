@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="bold_checkout_get_latest_module_versions" instance="Bold\Checkout\Cron\GetLatestModuleVersions"
+             method="execute">
+            <config_path>checkout/bold_checkout_latest/update_schedule</config_path>
+        </job>
+    </group>
+</config>

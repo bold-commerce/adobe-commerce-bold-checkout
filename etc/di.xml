@@ -148,4 +148,11 @@
             </argument>
         </arguments>
     </virtualType>
+    <type name="Bold\Checkout\Model\ModuleInfo\InstalledModulesProvider">
+        <arguments>
+            <argument name="moduleList" xsi:type="array">
+                <item name="bold_checkout" xsi:type="string">Bold_Checkout</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

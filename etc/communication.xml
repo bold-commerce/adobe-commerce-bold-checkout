@@ -6,4 +6,7 @@
     <topic name="bold.checkout.delete.customers" request="Bold\Checkout\Model\Queue\RequestInterface">
         <handler name="bold.checkout.delete.customers" type="Bold\Checkout\Model\Queue\Handler\Customer\Delete" method="handle"/>
     </topic>
+    <topic name="bold.checkout.module.check" request="string[]">
+        <handler name="bold.checkout.module.check" type="Bold\Checkout\Model\Queue\Handler\Module\Check" method="handle"/>
+    </topic>
 </config>

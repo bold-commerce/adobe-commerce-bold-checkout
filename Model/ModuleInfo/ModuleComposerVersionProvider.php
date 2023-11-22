@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model;
+namespace Bold\Checkout\Model\ModuleInfo;
 
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Module\Dir\Reader;
@@ -10,11 +10,14 @@ use Magento\Framework\Serialize\SerializerInterface;
 
 /**
  * Get composer module version.
- *
- * @deprecated please use \Bold\Checkout\Model\ModuleInfo\ModuleComposerVersionProvider.
  */
-class ModuleVersionProvider
+class ModuleComposerVersionProvider
 {
+    /**
+     * @var array
+     */
+    private $cache = [];
+
     /** @var Reader */
     private $reader;
 
@@ -51,13 +54,28 @@ class ModuleVersionProvider
      */
     public function getVersion(string $module): string
     {
+        if (!isset($this->cache[$module])) {
+            $this->cache[$module] = $this->parseVersion($module);
+        }
+
+        return $this->cache[$module];
+    }
+
+    /**
+     * Parse composer module version.
+     *
+     * @param string $module
+     * @return string
+     */
+    public function parseVersion(string $module): string
+    {
         try {
             $directoryPath = $this->reader->getModuleDir('', $module);
             $dataPath = $directoryPath . '/composer.json';
             $data = $this->filesystem->fileGetContents($dataPath);
             $version = $this->serializer->unserialize($data)['version'];
         } catch (\Exception $e) {
-            $version = __('Error reading module version.');
+            $version = (string)__('Error reading module version.');
         }
 
         return $version;
