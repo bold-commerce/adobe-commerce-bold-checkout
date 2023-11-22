@@ -71,7 +71,7 @@
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Version\Checkout</frontend_model>
                 </field>
                 <field id="latest_version" translate="label" type="note" sortOrder="1010" showInDefault="1" showInWebsite="1">
-                    <label>Latest Module Version</label>
+                    <label>Latest Available Module Version</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\LatestVersion\Checkout</frontend_model>
                 </field>
             </group>

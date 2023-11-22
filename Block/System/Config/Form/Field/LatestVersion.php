@@ -28,19 +28,28 @@ class LatestVersion extends Field
     private $latestModuleVersionProvider;
 
     /**
+     * @var ModuleComposerVersionProvider
+     */
+    private $moduleVersionProvider;
+
+    /**
      * @param Context $context
+     * @param LatestModuleVersionProvider $latestModuleVersionProvider
      * @param ModuleComposerVersionProvider $moduleVersionProvider
+     * @param string $moduleName
      * @param array $data
      */
     public function __construct(
         Context $context,
         LatestModuleVersionProvider $latestModuleVersionProvider,
+        ModuleComposerVersionProvider $moduleVersionProvider,
         string  $moduleName = '',
         array   $data = []
     ) {
         parent::__construct($context, $data);
         $this->moduleName = $moduleName;
         $this->latestModuleVersionProvider = $latestModuleVersionProvider;
+        $this->moduleVersionProvider = $moduleVersionProvider;
     }
 
     /**
@@ -52,5 +61,19 @@ class LatestVersion extends Field
         $element->setText($version);
 
         return parent::_renderValue($element);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(AbstractElement $element)
+    {
+        $latestVersion = $this->latestModuleVersionProvider->getVersion($this->moduleName);
+        $currentVersion = $this->moduleVersionProvider->getVersion($this->moduleName);
+        if (version_compare($latestVersion, $currentVersion, '>')) {
+            return parent::render($element);
+        }
+
+        return '';
     }
 }
