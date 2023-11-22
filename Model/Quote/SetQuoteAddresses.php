@@ -37,7 +37,10 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
      */
     private $loadAndValidate;
 
-    private ConfigInterface $config;
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
 
     /**
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
