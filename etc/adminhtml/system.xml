@@ -66,14 +66,6 @@
                     <comment><![CDATA[In case the status is 'Not Found', please re-save configuration.
                      Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named '{{integrationName}}' and Activate or Reauthorize it.]]></comment>
                 </field>
-                <field id="version" translate="label" type="note" sortOrder="1000" showInDefault="1" showInWebsite="1">
-                    <label>Module Version</label>
-                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Version\Checkout</frontend_model>
-                </field>
-                <field id="latest_version" translate="label" type="note" sortOrder="1010" showInDefault="1" showInWebsite="1">
-                    <label>Latest Available Module Version</label>
-                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\LatestVersion\Checkout</frontend_model>
-                </field>
             </group>
             <group id="bold_checkout_life_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Integration (LiFE) Elements</label>
@@ -149,6 +141,13 @@
                     <label>Enable Check For Updates Functionality</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Check for Bold modules new version availability.]]></comment>
+                </field>
+            </group>
+            <group id="bold_module_version" translate="label" sortOrder="1000" showInDefault="1" showInWebsite="1">
+                <label>Bold Commerce Module Versions</label>
+                 <field id="version" translate="label" type="note" sortOrder="1000" showInDefault="1" showInWebsite="1">
+                    <label>Module Version</label>
+                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Versions</frontend_model>
                 </field>
             </group>
         </section>

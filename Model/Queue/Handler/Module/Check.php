@@ -86,7 +86,8 @@ class Check
 
         foreach ($moduleNames as $moduleName) {
             $lastCheckedVersion = $this->config->getLatestModuleVersion($moduleName);
-            $latestVersion = $this->latestModuleVersionUpdater->update($moduleName);
+            $this->latestModuleVersionUpdater->update($moduleName);
+            $latestVersion = $this->config->getLatestModuleVersion($moduleName);
             $currentVersion = $this->moduleVersionProvider->getVersion($moduleName);
             $composerName = $this->moduleComposerNameProvider->getName($moduleName);
             if (
