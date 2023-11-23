@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Order;
 
 use Bold\Checkout\Api\Http\ClientInterface;
+use Bold\Checkout\Model\Payment\Gateway\Service;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -50,7 +51,7 @@ class ProcessOrderObserver implements ObserverInterface
         if (!$boldCheckoutData) {
             return;
         }
-        if ($order->getPayment()->getMethod() !== 'bold') {
+        if ($order->getPayment()->getMethod() !== Service::CODE) {
             return;
         }
         $websiteId = (int)$order->getStore()->getWebsiteId();

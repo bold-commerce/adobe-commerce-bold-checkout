@@ -14,8 +14,6 @@ class OrderExtensionData extends AbstractDb
     public const ID = 'id';
     public const ORDER_ID = 'order_id';
     public const PUBLIC_ID = 'public_id';
-    public const FINANCIAL_STATUS = 'financial_status';
-    public const FULFILLMENT_STATUS = 'fulfillment_status';
     public const IS_DELAYED_CAPTURE = 'is_delayed_capture';
 
     /**

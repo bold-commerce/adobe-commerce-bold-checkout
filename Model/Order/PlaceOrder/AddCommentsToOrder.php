@@ -50,7 +50,7 @@ class AddCommentsToOrder
         $comments = new DataObject([]);
 
         $this->eventManager->dispatch(
-            'add_comments_to_order_save_before',
+            'bold_checkout_add_comments_to_order_before',
             [
                 'order' => $order,
                 'orderData' => $orderData,

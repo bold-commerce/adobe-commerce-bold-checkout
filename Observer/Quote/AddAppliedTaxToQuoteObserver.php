@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Quote;
 
-use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\Item\Validator;
+use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\SimpleDataObjectConverter;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Tax\Api\Data\AppliedTaxInterface;
 use Magento\Tax\Api\Data\AppliedTaxInterfaceFactory;
@@ -84,7 +83,7 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
             $this->getAppliedTaxesForBundle($item);
             return;
         }
-        
+
         $origItem = $item;
         if ($item->getParentItem()) {
             $item = $item->getParentItem();
@@ -116,7 +115,7 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
     {
         /** @var array<string, AppliedTaxInterface> */
         $taxDetails = [];
-        $processTax = function ($tax)  use (&$taxDetails) {
+        $processTax = function ($tax) use (&$taxDetails) {
             $itemAppliedTax = $this->appliedTaxFactory->create();
             $this->objectHelper->populateWithArray(
                 $itemAppliedTax,
@@ -135,7 +134,7 @@ class AddAppliedTaxToQuoteObserver implements ObserverInterface
         foreach ($item->getAppliedTaxes() ?? [] as $tax) {
             $processTax($tax);
         }
-        
+
         foreach ($item->getChildren() ?? [] as $childItem) {
             foreach ($childItem->getAppliedTaxes() ?? [] as $tax) {
                 $processTax($tax);
