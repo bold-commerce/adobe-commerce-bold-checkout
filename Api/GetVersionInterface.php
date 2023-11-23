@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api;
 
+/**
+ * @deprecated
+ */
 interface GetVersionInterface
 {
     /**

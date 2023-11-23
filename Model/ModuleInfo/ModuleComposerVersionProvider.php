@@ -67,7 +67,7 @@ class ModuleComposerVersionProvider
      * @param string $module
      * @return string
      */
-    public function parseVersion(string $module): string
+    private function parseVersion(string $module): string
     {
         try {
             $directoryPath = $this->reader->getModuleDir('', $module);
