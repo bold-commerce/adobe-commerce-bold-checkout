@@ -6,9 +6,6 @@ namespace Bold\Checkout\Model\ModuleInfo;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Module\Dir\Reader;
-use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Shell;
 
 /**
@@ -50,7 +47,8 @@ class LatestModuleVersionUpdater
         Shell                      $shell,
         DirectoryList              $directoryList,
         ModuleComposerNameProvider $composerNameProvider
-    ) {
+    )
+    {
         $this->config = $config;
         $this->shell = $shell;
         $this->directoryList = $directoryList;
@@ -64,14 +62,12 @@ class LatestModuleVersionUpdater
      * @return void
      * @throws LocalizedException
      */
-    public function update(string $moduleName): string
+    public function update(string $moduleName): void
     {
         $latestVersion = $this->getLatestModuleVersion($moduleName);
         if ($latestVersion) {
             $this->config->setLatestModuleVersion($moduleName, $latestVersion);
         }
-
-        return $latestVersion;
     }
 
     /**
@@ -86,7 +82,13 @@ class LatestModuleVersionUpdater
         $moduleName = $this->composerNameProvider->getName($moduleName);
         $rootDirectory = $this->directoryList->getRoot();
         $command = sprintf(self::COMMAND_TEMPLATE, $moduleName, $rootDirectory);
-        $result = $this->shell->execute($command);
+        try {
+            file_put_contents('/var/www/html/var/log/composer.log', $command . PHP_EOL);
+            $result = $this->shell->execute($command);
+        } catch (\Exception $exception) {
+            // Composer or repository are unavailable.
+            return null;
+        }
 
         return preg_match(self::LATEST_PATTERN, $result, $matches)
             ? $matches[1]

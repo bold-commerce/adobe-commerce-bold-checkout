@@ -7,14 +7,4 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
     </type>
-    <virtualType name="Bold\Checkout\Block\System\Config\Form\Field\LatestVersion\Checkout" type="Bold\Checkout\Block\System\Config\Form\Field\LatestVersion">
-        <arguments>
-            <argument name="moduleName" xsi:type="string">Bold_Checkout</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Bold\Checkout\Block\System\Config\Form\Field\Version\Checkout" type="Bold\Checkout\Block\System\Config\Form\Field\Version">
-        <arguments>
-            <argument name="moduleName" xsi:type="string">Bold_Checkout</argument>
-        </arguments>
-    </virtualType>
 </config>

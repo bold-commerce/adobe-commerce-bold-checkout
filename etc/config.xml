@@ -36,7 +36,7 @@
                 <updates_check>1</updates_check>
             </bold_checkout_advanced>
             <bold_checkout_latest>
-                <update_schedule>0 0 * * *</update_schedule>
+                <update_schedule>* * * * *</update_schedule>
             </bold_checkout_latest>
         </checkout>
     </default>
