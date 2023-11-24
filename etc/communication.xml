@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
-    <topic name="bold.checkout.sync.customers" request="Bold\Checkout\Model\Queue\RequestInterface">
-        <handler name="bold.checkout.sync.customers" type="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize" method="handle"/>
-    </topic>
-    <topic name="bold.checkout.delete.customers" request="Bold\Checkout\Model\Queue\RequestInterface">
-        <handler name="bold.checkout.delete.customers" type="Bold\Checkout\Model\Queue\Handler\Customer\Delete" method="handle"/>
-    </topic>
     <topic name="bold.checkout.module.check" request="string[]">
         <handler name="bold.checkout.module.check" type="Bold\Checkout\Model\Queue\Handler\Module\Check" method="handle"/>
     </topic>

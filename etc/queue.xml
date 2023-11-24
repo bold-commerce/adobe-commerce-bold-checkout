@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
-    <broker topic="bold.checkout.sync.customers" exchange="magento-db" type="db">
-        <queue name="bold.checkout.sync.customers" consumer="bold.checkout.sync.customers" consumerInstance="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize" handler="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize::handle"/>
-    </broker>
-    <broker topic="bold.checkout.delete.customers" exchange="magento-db" type="db">
-        <queue name="bold.checkout.delete.customers" consumer="bold.checkout.delete.customers" consumerInstance="Bold\Checkout\Model\Queue\Handler\Customer\Delete" handler="Bold\Checkout\Model\Queue\Handler\Customer\Delete::handle"/>
-    </broker>
     <broker topic="bold.checkout.module.check" exchange="magento-db" type="db">
         <queue name="bold.checkout.module.check" consumer="bold.checkout.module.check" consumerInstance="Bold\Checkout\Model\Queue\Handler\Module\Check" handler="Bold\Checkout\Model\Queue\Handler\Module\Check::handle"/>
     </broker>
