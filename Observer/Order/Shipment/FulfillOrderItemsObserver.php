@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Order\Shipment;
 
 use Bold\Checkout\Api\Http\ClientInterface;
+use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
+use Bold\Checkout\Model\Payment\Gateway\Service;
+use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 
 /**
@@ -19,11 +23,28 @@ class FulfillOrderItemsObserver implements ObserverInterface
     private $client;
 
     /**
-     * @param ClientInterface $client
+     * @var OrderExtensionDataFactory
      */
-    public function __construct(ClientInterface $client)
-    {
+    private $orderExtensionDataFactory;
+
+    /**
+     * @var OrderExtensionData
+     */
+    private $orderExtensionDataResource;
+
+    /**
+     * @param ClientInterface $client
+     * @param OrderExtensionDataFactory $orderExtensionDataFactory
+     * @param OrderExtensionData $orderExtensionDataResource
+     */
+    public function __construct(
+        ClientInterface $client,
+        OrderExtensionDataFactory $orderExtensionDataFactory,
+        OrderExtensionData $orderExtensionDataResource
+    ) {
         $this->client = $client;
+        $this->orderExtensionDataFactory = $orderExtensionDataFactory;
+        $this->orderExtensionDataResource = $orderExtensionDataResource;
     }
 
     /**
@@ -36,8 +57,8 @@ class FulfillOrderItemsObserver implements ObserverInterface
     {
         $shipment = $observer->getEvent()->getShipment();
         $order = $shipment->getOrder();
-        $publicId = $order->getExtensionAttributes()->getPublicId();
-        if (!$publicId) {
+        $publicId = $this->getOrderPublicId($order);
+        if ($order->getPayment()->getCode() !== Service::CODE || !$publicId) {
             return;
         }
         $url = sprintf('/checkout/orders/{{shopId}}/%s/line_items', $publicId);
@@ -77,5 +98,22 @@ class FulfillOrderItemsObserver implements ObserverInterface
     {
         $item = $item->getParentItem() ?: $item;
         return (int)$item->getQtyShipped() - (int)$item->getOrigData('qty_shipped');
+    }
+
+    /**
+     * Retrieve order public id.
+     *
+     * @param OrderInterface $order
+     * @return string|null
+     */
+    private function getOrderPublicId(OrderInterface $order): ?string
+    {
+        $orderExtensionData = $this->orderExtensionDataFactory->create();
+        $this->orderExtensionDataResource->load(
+            $orderExtensionData,
+            $order->getId(),
+            OrderExtensionData::ORDER_ID
+        );
+        return $orderExtensionData->getPublicId();
     }
 }

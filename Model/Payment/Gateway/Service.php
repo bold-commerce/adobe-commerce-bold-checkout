@@ -251,16 +251,20 @@ class Service
      * Retrieve order public id.
      *
      * @param OrderInterface $order
-     * @return string|null
+     * @return string
+     * @throws LocalizedException
      */
-    private function getOrderPublicId(OrderInterface $order): ?string
+    private function getOrderPublicId(OrderInterface $order): string
     {
-        $publicId = $order->getExtensionAttributes()->getPublicId();
-        if (!$publicId) {
-            $orderExtensionData = $this->orderExtensionDataFactory->create();
-            $this->orderExtensionDataResource->load($orderExtensionData, $order->getId(), OrderExtensionData::ORDER_ID);
-            $publicId = $orderExtensionData->getPublicId();
+        $orderExtensionData = $this->orderExtensionDataFactory->create();
+        $this->orderExtensionDataResource->load(
+            $orderExtensionData,
+            $order->getId(),
+            OrderExtensionData::ORDER_ID
+        );
+        if (!$orderExtensionData->getPublicId()) {
+            throw new LocalizedException(__('Order public id is not set.'));
         }
-        return $publicId;
+        return $orderExtensionData->getPublicId();
     }
 }

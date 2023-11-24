@@ -64,48 +64,6 @@ class OrderExtensionData extends AbstractModel
     }
 
     /**
-     * Set order financial status.
-     *
-     * @param string|null $financialStatus
-     * @return void
-     */
-    public function setFinancialStatus(?string $financialStatus): void
-    {
-        $this->setData(OrderExtensionDataResource::FINANCIAL_STATUS, $financialStatus);
-    }
-
-    /**
-     * Retrieve financial order status.
-     *
-     * @return string|null
-     */
-    public function getFinancialStatus(): ?string
-    {
-        return $this->getData(OrderExtensionDataResource::FINANCIAL_STATUS);
-    }
-
-    /**
-     * Set order fulfillment status.
-     *
-     * @param string|null $fulfillmentStatus
-     * @return void
-     */
-    public function setFulfillmentStatus(?string $fulfillmentStatus): void
-    {
-        $this->setData(OrderExtensionDataResource::FULFILLMENT_STATUS, $fulfillmentStatus);
-    }
-
-    /**
-     * Retrieve fulfillment order status.
-     *
-     * @return string|null
-     */
-    public function getFulfillmentStatus(): ?string
-    {
-        return $this->getData(OrderExtensionDataResource::FULFILLMENT_STATUS);
-    }
-
-    /**
      * Set is order using delayed payment capture.
      *
      * @param int $isDelayedCapture

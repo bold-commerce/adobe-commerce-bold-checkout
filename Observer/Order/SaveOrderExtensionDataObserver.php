@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Order;
 
+use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
+use Bold\Checkout\Model\Payment\Gateway\Service;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 
 /**
  * Save order extension data.
@@ -63,7 +64,7 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
-        if ($order->getPayment()->getMethod() !== 'bold') {
+        if ($order->getPayment()->getMethod() !== Service::CODE) {
             return;
         }
         $orderId = (int)$order->getEntityId();
@@ -75,14 +76,10 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $orderExtensionData->setOrderId($orderId);
         $orderExtensionData->setPublicId($publicOrderId);
-        $orderExtensionData->setFulfillmentStatus('pending');
-        $orderExtensionData->setFinancialStatus('pending');
-
         $this->eventManager->dispatch(
             'checkout_save_order_extension_data_before',
             ['order' => $order, 'orderExtensionData' => $orderExtensionData]
         );
-
         try {
             $this->orderExtensionDataResource->save($orderExtensionData);
         } catch (Exception $e) {

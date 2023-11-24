@@ -4,19 +4,10 @@
         <observer name="save_order_extension_data" instance="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver"/>
     </event>
     <event name="sales_order_place_after">
-        <observer name="process_order_on_bold" instance="Bold\Checkout\Observer\Order\ProcessOrderObserver"/>
-    </event>
-    <event name="sales_order_load_after">
-        <observer name="add_bold_data_to_order" instance="Bold\Checkout\Observer\Order\AddOrderExtensionDataObserver"/>
+        <observer name="process_bold_order" instance="Bold\Checkout\Observer\Order\ProcessOrderObserver"/>
     </event>
     <event name="sales_order_shipment_save_after">
         <observer name="fulfill_order_items" instance="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver"/>
-    </event>
-    <event name="catalog_category_save_after">
-        <observer name="bold_checkout_category_save" instance="Bold\Checkout\Observer\Category\CategorySave" />
-    </event>
-    <event name="catalog_product_save_after">
-        <observer name="bold_checkout_product_save" instance="Bold\Checkout\Observer\Product\ProductSave" />
     </event>
     <event name="customer_save_after">
         <observer name="bold_checkout_customer_save" instance="Bold\Checkout\Observer\Customer\CustomerSave" />
@@ -24,25 +15,10 @@
     <event name="customer_address_save_after">
         <observer name="bold_checkout_customer_address_save" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressSave" />
     </event>
-    <event name="catalog_category_delete_after">
-        <observer name="bold_checkout_category_delete" instance="Bold\Checkout\Observer\Category\CategoryDelete" />
-    </event>
-    <event name="catalog_product_delete_after">
-        <observer name="bold_checkout_product_delete" instance="Bold\Checkout\Observer\Product\ProductDelete" />
-    </event>
     <event name="customer_delete_after">
         <observer name="bold_checkout_customer_delete" instance="Bold\Checkout\Observer\Customer\CustomerDelete" />
     </event>
     <event name="customer_address_delete_after">
         <observer name="bold_checkout_customer_address_delete" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressDelete" />
-    </event>
-    <event name="catalog_product_import_bunch_save_after">
-        <observer name="bold_checkout_product_import_update" instance="Bold\Checkout\Observer\Product\Import\ProductImportUpdate"/>
-    </event>
-    <event name="catalog_product_import_bunch_delete_after">
-        <observer name="bold_checkout_product_import_delete" instance="Bold\Checkout\Observer\Product\Import\ProductImportDelete"/>
-    </event>
-    <event name="add_comments_to_order_save_before">
-        <observer name="add_order_comment_quote_total_diff_bold_order_total" instance="Bold\Checkout\Observer\Order\AddOrderCommentQuoteTotalDiffBoldOrderTotalObserver"/>
     </event>
 </config>

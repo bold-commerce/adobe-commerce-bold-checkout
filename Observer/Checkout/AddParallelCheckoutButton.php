@@ -40,8 +40,8 @@ class AddParallelCheckoutButton implements ObserverInterface
      */
     public function __construct(
         GetParallelCheckoutTemplate $getParallelCheckoutTemplate,
-        Config                      $config,
-        StoreManagerInterface       $storeManager
+        Config $config,
+        StoreManagerInterface $storeManager
     ) {
         $this->getParallelCheckoutTemplate = $getParallelCheckoutTemplate;
         $this->config = $config;

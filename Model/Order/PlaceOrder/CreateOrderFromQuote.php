@@ -25,9 +25,6 @@ class CreateOrderFromQuote
 {
     private const BROWSER_IP = 'remote_ip';
     private const ORDER_NUMBER = 'ext_order_id';
-    private const PUBLIC_ID = 'extension_attribute_public_id_public_id';
-    private const FINANCIAL_STATUS = 'extension_attribute_financial_status_financial_status';
-    private const FULFILLMENT_STATUS = 'extension_attribute_fulfillment_status_fulfillment_status';
 
     /**
      * @var CartManagementInterface
@@ -111,9 +108,6 @@ class CreateOrderFromQuote
         $orderData = [
             self::ORDER_NUMBER => $orderPayload->getOrderNumber(),
             self::BROWSER_IP => $orderPayload->getBrowserIp(),
-            self::PUBLIC_ID => $orderPayload->getPublicId(),
-            self::FINANCIAL_STATUS => $orderPayload->getFinancialStatus(),
-            self::FULFILLMENT_STATUS => $orderPayload->getFulfillmentStatus(),
         ];
         $quote->getBillingAddress()->setShouldIgnoreValidation(true);
         if (!$quote->isVirtual()) {
@@ -122,7 +116,7 @@ class CreateOrderFromQuote
         }
         $orderData = new DataObject($orderData);
         $this->eventManager->dispatch(
-            'create_order_from_quote_submit_before',
+            'bold_checkout_create_order_from_quote_submit_before',
             [
                 'quote' => $quote,
                 'orderPayload' => $orderPayload,
