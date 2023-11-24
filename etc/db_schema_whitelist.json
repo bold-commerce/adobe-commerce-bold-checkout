@@ -4,6 +4,8 @@
       "id": true,
       "order_id": true,
       "public_id": true,
+      "fulfillment_status": true,
+      "financial_status": true,
       "is_delayed_capture": true
     },
     "index": {
