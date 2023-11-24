@@ -16,6 +16,7 @@ use Magento\Store\Api\StoreWebsiteRelationInterface;
 class BoldIntegration
 {
     private const API_RESOURCES = [
+        'Bold_Checkout::integration',
         'Bold_Checkout::secret_create',
         'Magento_Backend::store',
         'Magento_Catalog::products',
