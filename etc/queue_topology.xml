@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/topology.xsd">
     <exchange name="magento-db" type="topic"  connection="db">
-        <binding id="BoldCheckoutSyncCustomers" topic="bold.checkout.sync.customers"
-                 destinationType="queue" destination="bold.checkout.sync.customers"/>
-        <binding id="BoldCheckoutDeleteCustomers" topic="bold.checkout.delete.customers"
-                 destinationType="queue" destination="bold.checkout.delete.customers"/>
         <binding id="BoldCheckoutModuleCheck" topic="bold.checkout.module.check"
                  destinationType="queue" destination="bold.checkout.module.check"/>
     </exchange>

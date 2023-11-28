@@ -4,8 +4,6 @@
     <preference for="Bold\Checkout\Api\ConfigManagementInterface" type="Bold\Checkout\Model\ConfigManagement"/>
     <preference for="Bold\Checkout\Api\Data\Http\Client\ResultInterface" type="Bold\Checkout\Model\Http\Client\Result"/>
     <preference for="Bold\Checkout\Model\Queue\RequestInterface" type="Bold\Checkout\Model\Queue\Request"/>
-    <preference for="Magento\CustomerImportExport\Model\Import\Customer" type="Bold\Checkout\Model\Import\Customer"/>
-    <preference for="Magento\CustomerImportExport\Model\Import\Address" type="Bold\Checkout\Model\Import\Address"/>
     <preference for="Bold\Checkout\Api\PlaceOrderInterface" type="Bold\Checkout\Model\Order\PlaceOrder"/>
     <preference for="Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Request\OrderData"/>
     <preference for="Bold\Checkout\Api\Data\PlaceOrder\ResultInterface" type="Bold\Checkout\Model\Order\PlaceOrder\Result"/>
@@ -52,16 +50,6 @@
     <type name="Bold\Checkout\Observer\Checkout\CheckoutSectionSave">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Synchronize">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
-        </arguments>
-    </type>
-    <type name="Bold\Checkout\Model\Queue\Handler\Customer\Delete">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\PlatformClient</argument>
         </arguments>
     </type>
     <type name="Bold\Checkout\Model\Order\InitOrderFromQuote">

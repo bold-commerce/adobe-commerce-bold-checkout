@@ -9,16 +9,4 @@
     <event name="sales_order_shipment_save_after">
         <observer name="fulfill_order_items" instance="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver"/>
     </event>
-    <event name="customer_save_after">
-        <observer name="bold_checkout_customer_save" instance="Bold\Checkout\Observer\Customer\CustomerSave" />
-    </event>
-    <event name="customer_address_save_after">
-        <observer name="bold_checkout_customer_address_save" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressSave" />
-    </event>
-    <event name="customer_delete_after">
-        <observer name="bold_checkout_customer_delete" instance="Bold\Checkout\Observer\Customer\CustomerDelete" />
-    </event>
-    <event name="customer_address_delete_after">
-        <observer name="bold_checkout_customer_address_delete" instance="Bold\Checkout\Observer\Customer\Address\CustomerAddressDelete" />
-    </event>
 </config>
