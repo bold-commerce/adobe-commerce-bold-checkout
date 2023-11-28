@@ -172,13 +172,14 @@ class BoldStorefrontClient implements ClientInterface
      * @return string
      * @throws LocalizedException
      */
-    private function getUrl(int $websiteId, string $path): string
+    public function getUrl(int $websiteId, string $path): string
     {
+        $apiUrl = $this->config->getApiUrl($websiteId) . 'checkout/storefront/';
         $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
         if (!$boldCheckoutData) {
             throw new LocalizedException(__('Bold Checkout data is not set.'));
         }
         $publicOrderId = $boldCheckoutData['data']['public_order_id'];
-        return self::URL . $this->config->getShopId($websiteId) . '/' . $publicOrderId . '/' . $path;
+        return $apiUrl . $this->config->getShopId($websiteId) . '/' . $publicOrderId . '/' . $path;
     }
 }
