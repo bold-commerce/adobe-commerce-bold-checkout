@@ -18,9 +18,9 @@ class CheckoutTypeSource implements OptionSourceInterface
     {
         return [
             ['value' => ConfigInterface::VALUE_TYPE_STANDARD, 'label' => __('Standard')],
-            ['value' => ConfigInterface::VALUE_TYPE_PARALLEL, 'label' => __('Parallel')],
-            ['value' => ConfigInterface::VALUE_TYPE_SELF, 'label' => __('Self-Hosted (Magento storefront)')],
-            ['value' => ConfigInterface::VALUE_TYPE_SELF_REACT, 'label' => __('Self-Hosted (React application)')],
+            ['value' => ConfigInterface::VALUE_TYPE_PARALLEL, 'label' => __('Dual')],
+            ['value' => ConfigInterface::VALUE_TYPE_SELF, 'label' => __('Self-Hosted (Adobe storefront)')],
+            ['value' => ConfigInterface::VALUE_TYPE_SELF_REACT, 'label' => __('Self-Hosted (Bold Templates)')],
         ];
     }
 }
