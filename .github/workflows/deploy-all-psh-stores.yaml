@@ -1,0 +1,14 @@
+name: Update platform.sh stores
+
+on:
+  workflow_dispatch:
+  push:
+    branches: 
+      - main
+
+jobs:
+    update_stores:
+      uses: bold-commerce/github-actions/.github/workflows/deploy-all-platformsh-stores.yaml@main
+      secrets:
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        CLI_TOKEN: ${{ secrets.PLATFORMSH_CLI_TOKEN }}
