@@ -1,0 +1,34 @@
+#checkout_bold_checkout_life_elements colgroup.label,
+#row_checkout_bold_checkout_life_elements_life_elements .label {
+    width: 15%;
+}
+
+#row_checkout_bold_checkout_life_elements_life_elements .value {
+    width: 75%;
+}
+
+#checkout_bold_checkout_base_integration_status {
+    padding-top: 0;
+
+    .active {
+        color: green;
+        display: flex;
+        font-size: 1em;
+
+        &:before {
+            content: url('../images/enabled.svg');
+            margin-right: 0.5em;
+        }
+    }
+
+    .inactive {
+        display: flex;
+        color: red;
+        font-size: 1em;
+
+        &:before {
+            content: url('../images/disabled.svg');
+            margin-right: 0.5em;
+        }
+    }
+}
