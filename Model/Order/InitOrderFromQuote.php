@@ -73,6 +73,7 @@ class InitOrderFromQuote
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         $body = [
             'flow_id' => $flowId,
+            'api_session_id' => (string)$quote->getId(),
             'cart_items' => $this->getCartLineItems->getItems($quote),
             'actions' => $this->quoteAction->getActionsData($quote),
             'order_meta_data' => [
