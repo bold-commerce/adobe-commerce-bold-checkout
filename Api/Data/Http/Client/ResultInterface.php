@@ -7,6 +7,14 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Https client response data model interface.
+ *
+ * Represents the response of a Bold Checkout API call.
+ * @see \Bold\Checkout\Api\Http\ClientInterface::post()
+ * @see \Bold\Checkout\Api\Http\ClientInterface::get()
+ * @see \Bold\Checkout\Api\Http\ClientInterface::put()
+ * @see \Bold\Checkout\Api\Http\ClientInterface::delete()
+ * @see \Bold\Checkout\Api\Http\ClientInterface::patch()
+ * @api
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
@@ -32,7 +40,7 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getBody(): array;
 
     /**
-     * Retrieve response extension attributes.
+     * Retrieve response extension attributes. Used in case additional fields are returned by the Bold API.
      *
      * @return \Bold\Checkout\Api\Data\Http\Client\ResultExtensionInterface|null
      */

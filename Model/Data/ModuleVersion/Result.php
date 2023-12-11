@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Data\ModuleVersion;
 
-use Bold\Checkout\Api\Data\ModuleVersion\ModuleVersionInterface;
+use Bold\Checkout\Api\Data\ModuleVersion\Result\ModuleVersionInterface;
+use Bold\Checkout\Api\Data\ModuleVersion\ResultExtensionInterface;
 use Bold\Checkout\Api\Data\ModuleVersion\ResultInterface;
 
 /**
- * @inheritDoc
+ * Bold Checkout modules and their versions result data model.
+ *
+ * Represents a list of modules and their versions JSON response for the rest/V1/shops/:shopId/modules endpoint.
  */
 class Result implements ResultInterface
 {
@@ -18,11 +21,18 @@ class Result implements ResultInterface
     private $modules;
 
     /**
-     * @param ModuleVersionInterface[] $modules
+     * @var ResultExtensionInterface|null
      */
-    public function __construct(array $modules = [])
+    private $extensionAttributes;
+
+    /**
+     * @param ModuleVersionInterface[] $modules
+     * @param ResultExtensionInterface|null $extensionAttributes
+     */
+    public function __construct(array $modules = [], ResultExtensionInterface $extensionAttributes = null)
     {
         $this->modules = $modules;
+        $this->extensionAttributes = $extensionAttributes;
     }
 
     /**
@@ -31,5 +41,13 @@ class Result implements ResultInterface
     public function getModules(): array
     {
         return $this->modules;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes(): ?ResultExtensionInterface
+    {
+        return $this->extensionAttributes;
     }
 }

@@ -7,12 +7,15 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
 /**
- * Place order response interface.
+ * Place order response interface. Represents a response data from the /V1/shops/:shopId/orders endpoint.
+ * @see Bold/Checkout/etc/webapi.xml
+ * @see \Bold\Checkout\Api\PlaceOrderInterface::place()
+ * @api
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
     /**
-     * Retrieve order from response.
+     * Retrieve Magento order from response.
      *
      * @return \Magento\Sales\Api\Data\OrderInterface|null
      */
@@ -26,7 +29,7 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getErrors(): array;
 
     /**
-     * Retrieve response extension attributes.
+     * Retrieve response extension attributes. Used in case additional fields are returned by the API.
      *
      * @return \Bold\Checkout\Api\Data\PlaceOrder\ResultExtensionInterface|null
      */

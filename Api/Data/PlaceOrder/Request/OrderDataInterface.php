@@ -8,9 +8,18 @@ use Magento\Sales\Api\Data\TransactionInterface;
 
 /**
  * Request order data interface.
+ *
+ * Represents a request data to place order used
+ * in the /V1/shops/:shopId/orders endpoint. @see Bold/Checkout/etc/webapi.xml
+ * @see \Bold\Checkout\Api\PlaceOrderInterface::place()
+ * @api
  */
 interface OrderDataInterface
 {
+    /**
+     * Order data properties used for validation.
+     * @see \Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator::$requiredProperties
+     */
     public const PROPERTY_QUOTE_ID = 'quoteId';
     public const PROPERTY_BROWSER_IP = 'browserIp';
     public const PROPERTY_PUBLIC_ID = 'publicId';
@@ -42,6 +51,11 @@ interface OrderDataInterface
     public function getQuoteId(): ?int;
 
     /**
+     * Set cart id.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param int $quoteId
      * @return void
      */
@@ -55,6 +69,11 @@ interface OrderDataInterface
     public function getBrowserIp(): ?string;
 
     /**
+     * Set customer browser ip.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param string $browserIp
      * @return void
      */
@@ -68,6 +87,11 @@ interface OrderDataInterface
     public function getPublicId(): ?string;
 
     /**
+     * Set order bold public id.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param string $publicId
      * @return void
      */
@@ -77,12 +101,19 @@ interface OrderDataInterface
      * Retrieve order bold financial status.
      *
      * @return string
+     * @deprecated
      */
     public function getFinancialStatus(): ?string;
 
     /**
+     * Set order bold financial status.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param string $financialStatus
      * @return void
+     * @deprecated
      */
     public function setFinancialStatus(string $financialStatus): void;
 
@@ -90,12 +121,19 @@ interface OrderDataInterface
      * Retrieve order bold fulfillment status.
      *
      * @return string
+     * @deprecated
      */
     public function getFulfillmentStatus(): ?string;
 
     /**
+     * Set order bold fulfillment status.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param string $fulfillmentStatus
      * @return void
+     * @deprecated
      */
     public function setFulfillmentStatus(string $fulfillmentStatus): void;
 
@@ -103,12 +141,19 @@ interface OrderDataInterface
      * Retrieve order status.
      *
      * @return string
+     * @deprecated
      */
     public function getOrderStatus(): ?string;
 
     /**
+     * Set order status.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param string $orderStatus
      * @return void
+     * @deprecated
      */
     public function setOrderStatus(string $orderStatus): void;
 
@@ -122,6 +167,9 @@ interface OrderDataInterface
     /**
      * Set order number.
      *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param string $orderNumber
      * @return void
      */
@@ -131,11 +179,15 @@ interface OrderDataInterface
      * Retrieve bold order total.
      *
      * @return float
+     * @deprecated
      */
     public function getTotal(): ?float;
 
     /**
      * Set bold order total.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
      *
      * @param float $total
      * @return void
@@ -152,6 +204,9 @@ interface OrderDataInterface
     /**
      * Set order payment request data.
      *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param \Magento\Sales\Api\Data\OrderPaymentInterface $payment
      * @return void
      */
@@ -167,13 +222,16 @@ interface OrderDataInterface
     /**
      * Set payment transaction request data.
      *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
+     *
      * @param TransactionInterface $transaction
      * @return void
      */
     public function setTransaction(TransactionInterface $transaction): void;
 
     /**
-     * Retrieve order request extension attributes.
+     * Retrieve order request extension attributes. Used in case additional fields are sent in the request.
      *
      * @return \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataExtensionInterface|null
      */
@@ -181,6 +239,9 @@ interface OrderDataInterface
 
     /**
      * Set order request extension attributes.
+     *
+     * Used instead of constructor injection because
+     * of incorrect constructor mapping in earlier versions of Magento 2.3.x.
      *
      * @param \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataExtensionInterface $orderDataExtension
      * @return void

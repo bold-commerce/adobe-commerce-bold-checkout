@@ -10,7 +10,7 @@ use Magento\Framework\HTTP\ClientInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 
 /**
- * Http client response data model.
+ * Bold API client response data model.
  */
 class Result implements ResultInterface
 {

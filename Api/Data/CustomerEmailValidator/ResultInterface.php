@@ -7,6 +7,11 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Customer email validation result interface.
+ *
+ * Represents the result of a customer email address validation JSON result
+ * used in the /V1/shops/:shopId/customer/email/validate endpoint. @see Bold/Checkout/etc/webapi.xml
+ * @see \Bold\Checkout\Api\CustomerEmailValidatorInterface::validate()
+ * @api
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
@@ -25,7 +30,7 @@ interface ResultInterface extends ExtensibleDataInterface
     public function getErrors(): array;
 
     /**
-     * Retrieve validation result extension attributes.
+     * Retrieve validation result extension attributes. Used in case additional fields are returned by the API.
      *
      * @return \Bold\Checkout\Api\Data\CustomerEmailValidator\ResultExtensionInterface|null
      */

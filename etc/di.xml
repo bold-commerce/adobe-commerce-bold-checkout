@@ -31,7 +31,7 @@
     <preference for="Bold\Checkout\Api\Data\RuleDiscountInterface" type="Bold\Checkout\Model\Data\RuleDiscount"/>
     <preference for="Bold\Checkout\Api\ModuleVersionInterface" type="Bold\Checkout\Model\ModuleVersion"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ResultInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result"/>
-    <preference for="Bold\Checkout\Api\Data\ModuleVersion\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\ModuleVersion"/>
+    <preference for="Bold\Checkout\Api\Data\ModuleVersion\Result\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result\ModuleVersion"/>
     <type name="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>

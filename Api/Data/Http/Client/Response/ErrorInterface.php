@@ -7,6 +7,11 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
  * Response error data interface.
+ *
+ * Represents an error returned by the Bold Checkout API.
+ * @see \Bold\Checkout\Api\Data\Http\Client\ResultInterface::getErrors()
+ * @see \Bold\Checkout\Api\Data\PlaceOrder\ResultInterface::getErrors()
+ * @api
  */
 interface ErrorInterface extends ExtensibleDataInterface
 {
@@ -32,7 +37,7 @@ interface ErrorInterface extends ExtensibleDataInterface
     public function getMessage(): string;
 
     /**
-     * Retrieve error extension attributes.
+     * Retrieve error extension attributes. Used in case additional fields are returned by the API.
      *
      * @return \Bold\Checkout\Api\Data\Http\Client\Response\ErrorExtensionInterface|null
      */
