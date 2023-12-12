@@ -7,4 +7,9 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
     </type>
+    <virtualType name="Bold\Checkout\Block\System\Config\Form\Field\Status\Platform" type="Bold\Checkout\Block\System\Config\Form\Field\Status">
+        <arguments>
+            <argument name="boldIntegration" xsi:type="object">Bold\Checkout\Model\BoldIntegration</argument>
+        </arguments>
+    </virtualType>
 </config>

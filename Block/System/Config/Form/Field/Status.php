@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Block\System\Config\Form\Field;
 
+use Bold\Checkout\Api\IntegrationInterface;
 use Bold\Checkout\Block\System\Config\Form\Field;
 use Bold\Checkout\Model\BoldIntegration;
 use Magento\Backend\Block\Template\Context;
@@ -20,7 +21,7 @@ class Status extends Field
     protected $unsetScope = true;
 
     /**
-     * @var BoldIntegration
+     * @var IntegrationInterface
      */
     private $boldIntegration;
 
@@ -49,7 +50,7 @@ class Status extends Field
      */
     public function __construct(
         Context               $context,
-        BoldIntegration       $boldIntegration,
+        IntegrationInterface  $boldIntegration,
         Config                $config,
         SourceStatus          $statusData,
         StoreManagerInterface $storeManager,
@@ -84,6 +85,7 @@ class Status extends Field
         $commentTemplate = $element->getComment();
         $comment = str_replace('{{integrationName}}', $integrationName, (string)$commentTemplate);
         $element->setComment($comment);
+        $element->setBeforeElementHtml('<div class=\'integration-status\'>');
 
         return parent::_renderValue($element);
     }

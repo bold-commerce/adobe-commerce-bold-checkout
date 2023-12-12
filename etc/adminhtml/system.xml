@@ -62,9 +62,9 @@
                 </field>
                 <field id="integration_status" translate="label" type="note" sortOrder="60" showInDefault="1" showInWebsite="1">
                     <label>Bold Extension Status</label>
-                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Status</frontend_model>
+                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\Status\Platform</frontend_model>
                     <comment><![CDATA[In case the status is 'Not Found', please re-save configuration.
-                     Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named '{{integrationName}}' and Activate or Reauthorize it.]]></comment>
+                     Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named <strong>'{{integrationName}}'</strong> and Activate or Reauthorize it.]]></comment>
                 </field>
             </group>
             <group id="bold_checkout_life_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
