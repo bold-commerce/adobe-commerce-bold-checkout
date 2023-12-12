@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model;
 
+use Bold\Checkout\Api\IntegrationInterface;
 use Magento\Framework\Mail\Template\SenderResolverInterface;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use Magento\Integration\Model\Config\Consolidated\Converter;
@@ -13,7 +14,7 @@ use Magento\Store\Api\StoreWebsiteRelationInterface;
 /**
  * Bold Integration model.
  */
-class BoldIntegration
+class BoldIntegration implements IntegrationInterface
 {
     private const API_RESOURCES = [
         'Bold_Checkout::integration',
@@ -75,22 +76,13 @@ class BoldIntegration
     }
 
     /**
-     * Update Bold Integration (if required).
-     *
-     * @param array $changedPaths
-     * @param int $websiteId
-     * @return void
-     * @throws \Magento\Framework\Exception\IntegrationException
-     * @throws \Magento\Framework\Exception\MailException
+     * @inheritDoc
      */
-    public function update(array $changedPaths, int $websiteId)
+    public function update(int $websiteId): void
     {
         $integrationName = $this->getName($websiteId);
         $integration = $this->integrationService->findByName($integrationName);
         $integrationId = $integration->getId();
-        if (!array_intersect($changedPaths, Config::INTEGRATION_PATHS) && $integrationId) {
-            return;
-        }
         $shopId = $this->config->getShopId($websiteId);
         $senderIdentity = $this->config->getIntegrationEmail($websiteId);
         $storeIds = $this->storeWebsiteRelation->getStoreByWebsiteId($websiteId);
@@ -120,7 +112,7 @@ class BoldIntegration
      * @param int $websiteId
      * @return string
      */
-    public function getName(int $websiteId)
+    public function getName(int $websiteId): string
     {
         return str_replace('{{websiteId}}', (string)$websiteId, self::INTEGRATION_NAME_TEMPLATE);
     }
@@ -131,7 +123,7 @@ class BoldIntegration
      * @param int $websiteId
      * @return int|null
      */
-    public function getStatus(int $websiteId)
+    public function getStatus(int $websiteId): ?int
     {
         $integration = $this->integrationService->findByName($this->getName($websiteId));
 

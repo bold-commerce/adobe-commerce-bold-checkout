@@ -5,6 +5,7 @@ namespace Bold\Checkout\Observer\Checkout;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\BoldIntegration;
+use Bold\Checkout\Model\Config;
 use Bold\Checkout\Model\ConfigInterface;
 use Exception;
 use Magento\Framework\Event\Observer;
@@ -76,9 +77,12 @@ class CheckoutSectionSave implements ObserverInterface
             $error = current($shopInfo->getErrors());
             throw new Exception($error);
         }
-        $this->config->setShopId($websiteId, $shopInfo->getBody()['shop_identifier']
-        );
+        $this->config->setShopId($websiteId, $shopInfo->getBody()['shop_identifier']);
         $changedPaths = $event->getChangedPaths();
-        $this->updateIntegration->update($changedPaths, $websiteId);
+        if (!array_intersect($changedPaths, Config::INTEGRATION_PATHS)
+            && $this->updateIntegration->getStatus($websiteId) !== null) {
+            return;
+        }
+        $this->updateIntegration->update($websiteId);
     }
 }
