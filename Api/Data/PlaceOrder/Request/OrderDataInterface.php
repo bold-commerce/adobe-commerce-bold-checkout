@@ -7,17 +7,33 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 
 /**
- * Request order data interface.
+ * Interface for the data model representing the structure of a request to place an order through the Bold Checkout API.
  *
- * Represents a request data to place order used
- * in the /V1/shops/:shopId/orders endpoint. @see Bold/Checkout/etc/webapi.xml
- * @see \Bold\Checkout\Api\PlaceOrderInterface::place()
+ * This interface is essential for constructing the request payload for the '/V1/shops/:shopId/orders' endpoint,
+ * facilitating the mapping of order-related data from Bold Checkout to Magento's order processing system. It
+ * standardizes the format of order data, encompassing various elements like quote ID, customer browser IP,
+ * payment and transaction details, and other relevant order information.
+ *
+ * Key functionalities and data elements encompassed by this interface include:
+ *  - Methods for setting and getting the quote ID, browser IP, public ID, order number, and other order-specific details.
+ *  - `getPayment()` and `setPayment()`: Access and define the OrderPaymentInterface object, which contains payment details for the order.
+ *  - `getTransaction()` and `setTransaction()`: Manage the TransactionInterface object, detailing transaction information.
+ *  - `getExtensionAttributes()` and `setExtensionAttributes()`: Allow the inclusion and retrieval of additional custom fields through extension attributes,
+ *    ensuring the interface's adaptability for future enhancements and custom requirements.
+ *
+ * This interface addresses constructor injection issues found in earlier Magento 2.3.x versions, offering a reliable and consistent approach
+ * to handling order data for processing by Magento via the Bold Checkout system.
+ *
+ * @see \Bold\Checkout\Api\PlaceOrderInterface::place() for the API endpoint handling this order placement request.
+ * @see \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataExtensionInterface for potential additional fields in the order data request.
+ * @see Bold/Checkout/etc/webapi.xml for detailed API endpoint configuration.
  * @api
  */
 interface OrderDataInterface
 {
     /**
      * Order data properties used for validation.
+     *
      * @see \Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator::$requiredProperties
      */
     public const PROPERTY_QUOTE_ID = 'quoteId';
@@ -191,6 +207,7 @@ interface OrderDataInterface
      *
      * @param float $total
      * @return void
+     * @deprecated
      */
     public function setTotal(float $total): void;
 
@@ -231,7 +248,11 @@ interface OrderDataInterface
     public function setTransaction(TransactionInterface $transaction): void;
 
     /**
-     * Retrieve order request extension attributes. Used in case additional fields are sent in the request.
+     * Retrieve order request extension attributes.
+     *
+     * Extension attributes are new, optional fields that can be added to existing
+     * API data structures. This method provides a getter for these
+     * additional fields in place order request object, allowing for future extensions and customizations.
      *
      * @return \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataExtensionInterface|null
      */

@@ -3,13 +3,23 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Data\Quote;
 
-use Bold\Checkout\Api\Data\Quote\ResultExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\TotalsInterface;
 
 /**
- * Quote response interface.
+ * Quote response data interface.
+ *
+ * Represents a response data from the /V1/shops/:shopId/cart/:cartId, /V1/shops/:shopId/cart/:cartId/addresses,
+ * /V1/shops/:shopId/cart/:cartId/shippingMethod and /V1/shops/:shopId/cart/:cartId/coupons endpoints.
+ *
+ * @see Bold/Checkout/etc/webapi.xml
+ * @see \Bold\Checkout\Api\Quote\GetQuoteInterface::getQuote()
+ * @see \Bold\Checkout\Api\Quote\SetQuoteAddressesInterface::setAddresses()
+ * @see \Bold\Checkout\Api\Quote\SetQuoteShippingMethodInterface::setShippingMethod()
+ * @see \Bold\Checkout\Api\Quote\SetQuoteCouponCodeInterface::setCoupon()
+ * @see \Bold\Checkout\Api\Quote\RemoveQuoteCouponCodeInterface::removeCoupon()
+ * @api
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
@@ -43,6 +53,10 @@ interface ResultInterface extends ExtensibleDataInterface
 
     /**
      * Get response extension attributes.
+     *
+     * Extension attributes are new, optional fields that can be added to existing
+     * API data structures in Magento. This method provides a getter for these
+     * additional fields in quote result data, allowing for future extensions and customizations.
      *
      * @return \Bold\Checkout\Api\Data\Quote\ResultExtensionInterface|null
      */

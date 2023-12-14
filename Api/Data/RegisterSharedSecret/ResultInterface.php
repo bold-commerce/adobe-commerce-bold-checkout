@@ -6,7 +6,12 @@ namespace Bold\Checkout\Api\Data\RegisterSharedSecret;
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
- * Add shred secret result data interface.
+ * Shared secret result data interface.
+ *
+ * Represents a response data from the /V1/shops/:shopId/secret/register endpoint. @see Bold/Checkout/etc/webapi.xml
+ *
+ * @see \Bold\Checkout\Api\RegisterSharedSecretInterface::register()
+ * @api
  */
 interface ResultInterface extends ExtensibleDataInterface
 {
@@ -33,7 +38,7 @@ interface ResultInterface extends ExtensibleDataInterface
 
     /**
      * Retrieve module version
-     * 
+     *
      * @return string|null
      */
     public function getModuleVersion(): ?string;
@@ -47,6 +52,10 @@ interface ResultInterface extends ExtensibleDataInterface
 
     /**
      * Retrieve result extension attributes.
+     *
+     * Extension attributes are new, optional fields that can be added to existing
+     * API data structures in Magento. This method provides a getter for these
+     * additional fields in register share secret result data, allowing for future extensions and customizations.
      *
      * @return \Bold\Checkout\Api\Data\RegisterSharedSecret\ResultExtensionInterface|null
      */

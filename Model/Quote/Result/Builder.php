@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote\Result;
@@ -8,7 +7,6 @@ use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Data\Quote\ResultInterfaceFactory;
 use Bold\Checkout\Model\Quote\Item\Validator;
-use Bold\Checkout\Model\Quote\Result\Builder\AddBoldDiscountsExtensionAttribute;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractCartTotals;
 use Bold\Checkout\Model\Quote\Result\Builder\ExtractShippingMethods;
 use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface;

@@ -27,8 +27,8 @@
     <preference for="Bold\Checkout\Api\Order\UpdatePaymentInterface" type="Bold\Checkout\Model\Order\UpdatePayment"/>
     <preference for="Bold\Checkout\Api\Data\Order\Payment\ResultInterface" type="Bold\Checkout\Model\Order\UpdatePayment\Result"/>
     <preference for="Bold\Checkout\Api\GetVersionInterface" type="Bold\Checkout\Model\GetVersion"/>
-    <preference for="Bold\Checkout\Api\Data\DiscountDataInterface" type="Bold\Checkout\Model\Data\DiscountData"/>
-    <preference for="Bold\Checkout\Api\Data\RuleDiscountInterface" type="Bold\Checkout\Model\Data\RuleDiscount"/>
+    <preference for="Bold\Checkout\Api\Data\Quote\Item\DiscountRule\DiscountDataInterface" type="Bold\Checkout\Model\Quote\Result\Builder\AddBoldDiscounts\DiscountRule\DiscountData"/>
+    <preference for="Bold\Checkout\Api\Data\Quote\Item\DiscountRuleInterface" type="Bold\Checkout\Model\Quote\Result\Builder\AddBoldDiscounts\DiscountRule"/>
     <preference for="Bold\Checkout\Api\ModuleVersionInterface" type="Bold\Checkout\Model\ModuleVersion"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ResultInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\Result\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result\ModuleVersion"/>

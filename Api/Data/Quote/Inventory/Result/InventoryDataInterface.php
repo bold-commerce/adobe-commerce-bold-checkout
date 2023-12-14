@@ -1,11 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Bold\Checkout\Api\Data\Quote\Inventory\Result;
 
-use \Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface;
-
 /**
- * Quote item inventory data.
+ * Quote item inventory data. Used in the response
+ * of the /V1/shops/:shopId/cart/:cartId/inventory endpoint. @see Bold/Checkout/etc/webapi.xml
+ *
+ * @see \Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface::getInventoryData()
+ * @api
  */
 interface InventoryDataInterface
 {
@@ -24,15 +27,11 @@ interface InventoryDataInterface
     public function isSalable(): bool;
 
     /**
-     * Set inventory result extension attributes.
-     *
-     * @param \Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface $extensionAttributes
-     * @return void
-     */
-    public function setExtensionAttributes(InventoryDataExtensionInterface $extensionAttributes): void;
-
-    /**
      * Retrieve inventory result extension attributes.
+     *
+     * Extension attributes are new, optional fields that can be added to existing
+     * API data structures. This method provides a getter for these
+     * additional fields in quote item inventory result object, allowing for future extensions and customizations.
      *
      * @return \Bold\Checkout\Api\Data\Quote\Inventory\Result\InventoryDataExtensionInterface|null
      */

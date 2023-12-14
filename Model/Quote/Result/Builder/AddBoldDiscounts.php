@@ -1,18 +1,17 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote\Result\Builder;
 
-use Bold\Checkout\Api\Data\DiscountDataInterfaceFactory;
-use Bold\Checkout\Api\Data\RuleDiscountInterface;
-use Bold\Checkout\Api\Data\RuleDiscountInterfaceFactory;
+use Bold\Checkout\Api\Data\Quote\Item\DiscountRuleInterface;
+use Bold\Checkout\Model\Quote\Result\Builder\AddBoldDiscounts\DiscountRule\DiscountDataInterfaceFactory;
+use Bold\Checkout\Model\Quote\Result\Builder\AddBoldDiscounts\RuleDiscountInterfaceFactory;
 use Magento\Quote\Model\Quote\Item;
 
 /**
  * Add 'bold_discounts' extension attribute to quote item.
  */
-class AddBoldDiscountsExtensionAttribute
+class AddBoldDiscounts
 {
     /**
      * @var DiscountDataInterfaceFactory
@@ -55,21 +54,23 @@ class AddBoldDiscountsExtensionAttribute
             );
         $result = [];
         if (!empty($appliedRuleIds)) {
-            $data = [
-                'amount' => $item->getDiscountAmount(),
-                'base_amount' => $item->getBaseDiscountAmount(),
-                'original_amount' => $item->getOriginalDiscountAmount(),
-                'base_original_amount' => $item->getBaseOriginalDiscountAmount()
-            ];
-            $itemDiscount = $this->discountDataInterfaceFactory->create(['data' => $data]);
+            $itemDiscount = $this->discountDataInterfaceFactory->create(
+                [
+                    'amount' => (float)$item->getDiscountAmount(),
+                    'baseAmount' => (float)$item->getBaseDiscountAmount(),
+                    'originalAmount' => (float)$item->getOriginalDiscountAmount(),
+                    'baseOriginalAmount' => (float)$item->getBaseOriginalDiscountAmount(),
+                ]
+            );
             $ruleLabel = $item->getQuote()->getCouponCode() ?: __('Discount');
-            $data = [
-                'discount' => $itemDiscount,
-                'rule' => $ruleLabel,
-                'rule_id' => implode(',', $appliedRuleIds),
-            ];
-            /** @var RuleDiscountInterface $itemDiscount */
-            $ruleDiscount = $this->discountInterfaceFactory->create(['data' => $data]);
+            /** @var DiscountRuleInterface $itemDiscount */
+            $ruleDiscount = $this->discountInterfaceFactory->create(
+                [
+                    'discount' => $itemDiscount,
+                    'rule' => (string)$ruleLabel,
+                    'ruleId' => implode(',', $appliedRuleIds),
+                ]
+            );
             $result[] = $ruleDiscount;
         }
 
