@@ -32,4 +32,12 @@ interface IntegrationInterface
      * @return void
      */
     public function update(int $websiteId): void;
+
+    /**
+     * Delete Integration (if it already exists).
+     *
+     * @param int $websiteId
+     * @return void
+     */
+    public function delete(int $websiteId): void;
 }

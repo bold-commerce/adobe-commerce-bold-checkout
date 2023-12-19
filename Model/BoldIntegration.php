@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model;
 
 use Bold\Checkout\Api\IntegrationInterface;
+use Magento\Framework\Exception\IntegrationException;
 use Magento\Framework\Mail\Template\SenderResolverInterface;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use Magento\Integration\Model\Config\Consolidated\Converter;
@@ -104,6 +105,23 @@ class BoldIntegration implements IntegrationInterface
         $integration->getId()
             ? $this->integrationService->update($integrationData)
             : $this->integrationService->create($integrationData);
+    }
+
+    /**
+     * Delete Integration (if it already exists).
+     *
+     * @param int $websiteId
+     * @return void
+     * @throws IntegrationException
+     */
+    public function delete(int $websiteId): void
+    {
+        $integrationName = $this->getName($websiteId);
+        $integration = $this->integrationService->findByName($integrationName);
+        $integrationId = $integration->getId();
+        if ($integrationId) {
+            $this->integrationService->delete($integrationId);
+        }
     }
 
     /**
