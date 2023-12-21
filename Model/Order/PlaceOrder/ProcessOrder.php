@@ -8,9 +8,12 @@ use Bold\Checkout\Model\Order\OrderExtensionData;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
+use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\ResourceModel\Order;
 
 /**
@@ -18,16 +21,6 @@ use Magento\Sales\Model\ResourceModel\Order;
  */
 class ProcessOrder
 {
-    /**
-     * @var Order
-     */
-    private $orderResource;
-
-    /**
-     * @var OrderInterfaceFactory
-     */
-    private $orderFactory;
-
     /**
      * @var ProcessOrderPayment
      */
@@ -49,27 +42,29 @@ class ProcessOrder
     private $addCommentsToOrder;
 
     /**
-     * @param Order $orderResource
+     * @var OrderRepository
+     */
+    private $orderRepository;
+
+    /**
      * @param ProcessOrderPayment $processOrderPayment
-     * @param OrderInterfaceFactory $orderFactory
      * @param AddCommentsToOrder $addCommentsToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
+     * @param OrderRepository $orderRepo
      */
     public function __construct(
-        Order $orderResource,
         ProcessOrderPayment $processOrderPayment,
-        OrderInterfaceFactory $orderFactory,
         AddCommentsToOrder $addCommentsToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
-        OrderExtensionDataResource $orderExtensionDataResource
+        OrderExtensionDataResource $orderExtensionDataResource,
+        OrderRepository $orderRepo,
     ) {
-        $this->orderResource = $orderResource;
-        $this->orderFactory = $orderFactory;
         $this->processOrderPayment = $processOrderPayment;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->addCommentsToOrder = $addCommentsToOrder;
+        $this->orderRepository = $orderRepo;
     }
 
     /**
@@ -95,11 +90,13 @@ class ProcessOrder
                 sleep(1);
             }
         } while (!$orderId && $attempt < 3);
-        $order = $this->orderFactory->create();
-        $this->orderResource->load($order, $orderId);
-        if (!$order->getId()) {
-            throw new LocalizedException(__('Order not found'));
+
+        try {
+            $order = $this->orderRepository->get($orderId);
+        } catch (NoSuchEntityException|InputException $e) {
+            throw new LocalizedException(__('Order not found'), $e);
         }
+
         $this->processOrderPayment->process(
             $order,
             $orderPayload->getPayment(),
