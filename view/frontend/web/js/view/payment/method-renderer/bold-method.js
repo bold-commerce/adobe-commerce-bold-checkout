@@ -1,4 +1,4 @@
-define(
+  define(
     [
         'Magento_Checkout/js/view/payment/default',
         'Bold_Checkout/js/model/client',
@@ -36,6 +36,7 @@ define(
                 this._super();
                 this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
+                this.awaitingRefreshBeforePlacingOrder = false;
                 this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.syncBillingData();
                 this.messageContainer.errorMessages.subscribe(function (errorMessages) {
@@ -82,21 +83,31 @@ define(
             /**
              * @inheritDoc
              */
+            refreshAndAddPayment: function() {
+              if (this.iframeWindow) {
+                const refreshAction = {actionType: 'PIGI_REFRESH_ORDER'};
+                this.awaitingRefreshBeforePlacingOrder = true;
+                this.iframeWindow.postMessage(refreshAction, '*');        
+              }
+            },
+
+            /**
+             * @inheritDoc
+             */
             placeOrder: function (data, event) {
                 loader.startLoader();
                 if (!this.iframeWindow) {
                     return false;
                 }
                 if (!this.paymentType) {
-                    const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
-                    const addPaymentAction = {actionType: 'PIGI_ADD_PAYMENT'};
-                    this.iframeWindow.postMessage(clearAction, '*');
-                    this.iframeWindow.postMessage(addPaymentAction, '*');
-                    return false;
+                  const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
+                  this.iframeWindow.postMessage(clearAction, '*');
+                  this.refreshAndAddPayment();
+                  return false;
                 }
                 const orderPlacementResult = this._super(data, event);
                 if (!orderPlacementResult) {
-                    loader.stopLoader()
+                  loader.stopLoader()
                 }
                 return orderPlacementResult;
             },
@@ -134,6 +145,7 @@ define(
                 window.addEventListener('message', ({data}) => {
                     const responseType = data.responseType;
                     const iframeElement = document.getElementById('PIGI');
+                    const addPaymentAction = {actionType: 'PIGI_ADD_PAYMENT'};
                     if (responseType) {
                         switch (responseType) {
                             case 'PIGI_UPDATE_HEIGHT':
@@ -149,6 +161,10 @@ define(
                                 this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
                                 break;
                             case 'PIGI_REFRESH_ORDER':
+                                if(this.awaitingRefreshBeforePlacingOrder){
+                                  this.iframeWindow.postMessage(addPaymentAction, '*');
+                                  this.awaitingRefreshBeforePlacingOrder = false;
+                                }
                                 break;
                             case 'PIGI_ADD_PAYMENT':
                                 this.messageContainer.errorMessages([]);
