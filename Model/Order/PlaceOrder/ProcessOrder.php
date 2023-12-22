@@ -58,7 +58,7 @@ class ProcessOrder
         AddCommentsToOrder $addCommentsToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
-        OrderRepository $orderRepo,
+        OrderRepository $orderRepo
     ) {
         $this->processOrderPayment = $processOrderPayment;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
