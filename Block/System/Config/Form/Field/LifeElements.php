@@ -56,7 +56,7 @@ class LifeElements extends AbstractFieldArray
             'meta_data_field',
             [
                 'label' => __('Field key'),
-                'class' => 'required-entry'
+                'class' => 'required-entry field-key-unique'
             ]
         );
         $this->addColumn('input_label', ['label' => __('Label')]);
@@ -67,7 +67,7 @@ class LifeElements extends AbstractFieldArray
             'order_asc',
             [
                 'label' => __('Index'),
-                'class' => 'required-entry'
+                'class' => 'required-entry location-index-unique'
             ]
         );
         $this->_addAfter = false;
