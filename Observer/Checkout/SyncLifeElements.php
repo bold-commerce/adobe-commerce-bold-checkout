@@ -105,27 +105,28 @@ class SyncLifeElements implements ObserverInterface
         $metaFieldsToUpdate = array_diff($magentoLifeMetaFields, $metaFieldsToAdd);
         $metaFieldsToDelete = array_diff($boldLifeMetaFields, $magentoLifeMetaFields);
 
-        // Create (LiFE) Elements on Bold Platform
-        if (!empty($metaFieldsToAdd)) {
-            $lifeElementsToAdd = [];
-            foreach ($magentoLifeElements as $magentoLifeElement) {
-                if (in_array($magentoLifeElement["meta_data_field"], $metaFieldsToAdd)) {
-                    $magentoLifeElement['input_required'] = (bool)$magentoLifeElement['input_required'];
-                    $lifeElementsToAdd[] = $magentoLifeElement;
-                }
-            }
-            $this->createBoldLifeElements($websiteId, $lifeElementsToAdd);
-        }
-
         // Update (LiFE) Elements on Bold Platform
         if (!empty($metaFieldsToUpdate)) {
             $lifeElementsToUpdate = [];
             foreach ($magentoLifeElements as $magentoLifeElement) {
-                if (in_array($magentoLifeElement["meta_data_field"], $metaFieldsToUpdate)) {
+                if (in_array($magentoLifeElement['meta_data_field'], $metaFieldsToUpdate)) {
                     foreach ($boldLifeElements as $boldLifeElement) {
                         if ($boldLifeElement['meta_data_field'] === $magentoLifeElement['meta_data_field']) {
                             $magentoLifeElement['input_required'] = (bool)$magentoLifeElement['input_required'];
-                            $lifeElementsToUpdate[$boldLifeElement['public_id']] = $magentoLifeElement;
+                            $boldLifeElement['input_required'] = (bool)$boldLifeElement['input_required'];
+                            if ($magentoLifeElement['location'] !== $boldLifeElement['location']
+                                || (int)$magentoLifeElement['order_asc'] !== $boldLifeElement['order_asc']
+                            ) {
+                                $metaFieldsToDelete[] = $magentoLifeElement['meta_data_field'];
+                                $metaFieldsToAdd[] = $magentoLifeElement['meta_data_field'];
+                            } else {
+                                foreach (array_keys($magentoLifeElement) as $key) {
+                                    if ((string)$magentoLifeElement[$key] !== (string)$boldLifeElement[$key]) {
+                                        $lifeElementsToUpdate[$boldLifeElement['public_id']] = $magentoLifeElement;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -142,6 +143,18 @@ class SyncLifeElements implements ObserverInterface
                 }
             }
             $this->deleteBoldLifeElements($websiteId, $lifeElementsToDelete);
+        }
+
+        // Create (LiFE) Elements on Bold Platform
+        if (!empty($metaFieldsToAdd)) {
+            $lifeElementsToAdd = [];
+            foreach ($magentoLifeElements as $magentoLifeElement) {
+                if (in_array($magentoLifeElement["meta_data_field"], $metaFieldsToAdd)) {
+                    $magentoLifeElement['input_required'] = (bool)$magentoLifeElement['input_required'];
+                    $lifeElementsToAdd[] = $magentoLifeElement;
+                }
+            }
+            $this->createBoldLifeElements($websiteId, $lifeElementsToAdd);
         }
     }
 
