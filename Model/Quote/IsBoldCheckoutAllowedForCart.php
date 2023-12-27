@@ -66,7 +66,8 @@ class IsBoldCheckoutAllowedForCart
             case ConfigInterface::VALUE_ENABLED_FOR_IP:
                 return in_array($quote->getRemoteIp(), $this->config->getIpWhitelist($websiteId));
             case ConfigInterface::VALUE_ENABLED_FOR_CUSTOMER:
-                return in_array($quote->getCustomerEmail(), $this->config->getCustomerWhitelist($websiteId));
+                return !$quote->getCustomerIsGuest()
+                    && in_array($quote->getCustomerEmail(), $this->config->getCustomerWhitelist($websiteId));
             case ConfigInterface::VALUE_ENABLED_FOR_PERCENTAGE:
                 return $this->resolveByPercentage($quote);
             default:
