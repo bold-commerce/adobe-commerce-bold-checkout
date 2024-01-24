@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var \Bold\Checkout\Block\System\Config\Form\Field\ClearState $block
+ */
+?>
+
+<?= $block->getButtonHtml() ?>
+
+<script type="text/x-magento-init">
+    {
+        "#clear-state": {
+            "Bold_Checkout/js/clear-state": {
+                "url": "<?= $block->getClearUrl(); ?>",
+                "title": "<?= /* @escapeNotVerified */ __('TODO Enabling the PayPal Checkout Flow will deactivate all active Bold-hosted flows') ?>",
+                "content": "<?= /* @escapeNotVerified */ __('TODO The PayPal Checkout Flow replaces any active Bold-hosted Checkout flows. You may deactivate the Paypal Checkout Flow at any time to reactive your Bold-hosted flows.') ?>",
+                "successMessage": "<?= /* @escapeNotVerified */ __('You have cleared the Bold Integration state.') ?>",
+                "failedMessage": "<?= /* @escapeNotVerified */ __('You don\'t have required permissions to clear the Bold Integration state.') ?>"
+            }
+        }
+    }
+</script>

@@ -140,6 +140,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Check for Bold modules new version availability.]]></comment>
                 </field>
+                <field id="clear_state" translate="label" type="button" sortOrder="1000" showInDefault="1" showInWebsite="1">
+                    <label>Clear Bold Integration</label>
+                    <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\ClearState</frontend_model>
+                    <comment><![CDATA[Delete Bold Integration core config and Magento integrations for selected scope to start with a clean state.]]></comment>
+                </field>
             </group>
             <group id="bold_module_version" translate="label" sortOrder="1000" showInDefault="1" showInWebsite="1">
                 <label>Bold Commerce Module Versions</label>
