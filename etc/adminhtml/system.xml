@@ -141,9 +141,9 @@
                     <comment><![CDATA[Check for Bold modules new version availability.]]></comment>
                 </field>
                 <field id="clear_state" translate="label" type="button" sortOrder="1000" showInDefault="1" showInWebsite="1">
-                    <label>Clear Bold Integration</label>
+                    <label>Clear Bold Extension</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\ClearState</frontend_model>
-                    <comment><![CDATA[Delete Bold Integration core config and Magento integrations for selected scope to start with a clean state.]]></comment>
+                    <comment><![CDATA[Clear all previously configured settings for the Bold Checkout Extension.]]></comment>
                 </field>
             </group>
             <group id="bold_module_version" translate="label" sortOrder="1000" showInDefault="1" showInWebsite="1">
