@@ -11,24 +11,13 @@ use Exception;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\Data\OrderInterfaceFactory;
-use Magento\Sales\Model\ResourceModel\Order;
+use Magento\Sales\Api\OrderRepositoryInterface;
 
 /**
  * Create order from payload in case Bold-hosted checkout.
  */
 class CreateOrderFromPayload
 {
-    /**
-     * @var Order
-     */
-    private $orderResource;
-
-    /**
-     * @var OrderInterfaceFactory
-     */
-    private $orderFactory;
-
     /**
      * @var CreateOrderFromQuote
      */
@@ -60,33 +49,35 @@ class CreateOrderFromPayload
     private $eventManager;
 
     /**
-     * @param Order $orderResource
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
+    /**
      * @param CreateOrderFromQuote $createOrderFromQuote
      * @param ProcessOrderPayment $processOrderPayment
-     * @param OrderInterfaceFactory $orderFactory
      * @param AddCommentsToOrder $addCommentsToOrder
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param EventManagerInterface $eventManager
+     * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
-        Order $orderResource,
         CreateOrderFromQuote $createOrderFromQuote,
         ProcessOrderPayment $processOrderPayment,
-        OrderInterfaceFactory $orderFactory,
         AddCommentsToOrder $addCommentsToOrder,
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
-        EventManagerInterface $eventManager
+        EventManagerInterface $eventManager,
+        OrderRepositoryInterface $orderRepository
     ) {
-        $this->orderResource = $orderResource;
-        $this->orderFactory = $orderFactory;
         $this->createOrderFromQuote = $createOrderFromQuote;
         $this->processOrderPayment = $processOrderPayment;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->addCommentsToOrder = $addCommentsToOrder;
         $this->eventManager = $eventManager;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -105,10 +96,13 @@ class CreateOrderFromPayload
             $orderPayload->getPublicId(),
             'public_id'
         );
-        $magentoOrder = $this->orderFactory->create();
-        $this->orderResource->load($magentoOrder, $orderExtensionData->getOrderId());
-        if ($magentoOrder->getId()) {
-            return $magentoOrder;
+        try {
+            $magentoOrder = $this->orderRepository->get($orderExtensionData->getOrderId());
+            if ($magentoOrder->getId()) {
+                return $magentoOrder;
+            }
+        } catch (Exception $e) {
+            $magentoOrder = null;
         }
         $quotePayment = $quote->getPayment();
         $quotePayment->setData(

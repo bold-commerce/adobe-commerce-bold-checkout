@@ -1,85 +1,14 @@
 define([
     'jquery',
     'underscore',
-    'Bold_Checkout/js/model/address',
-    'Bold_Checkout/js/model/customer'
-], function ($, _, boldAddress, boldCustomer) {
+    'mage/url',
+    'mage/storage',
+], function ($, _, urlBuilder, storage) {
     'use strict';
-
-    let requestInProgress = false;
-    let requestQueue = [];
-
-    /**
-     * Compare two addresses to reduce api calls.
-     *
-     * @return {boolean}
-     * @private
-     * @param newPayload {object}
-     * @param dataType {string}
-     */
-    function payloadCompare(newPayload, dataType) {
-        const savedPayload = window.checkoutConfig.bold[dataType] || {};
-        let result = true;
-        _.each(newPayload, function (value, key) {
-            if (savedPayload[key] !== value && key !== 'id') {
-                result = false;
-                return false;
-            }
-        });
-        return result;
-    }
-
-    /**
-     * Process next request in queue.
-     *
-     * @return void
-     * @private
-     */
-    function processNextRequest() {
-        if (requestInProgress || requestQueue.length === 0) {
-            return;
-        }
-        requestInProgress = true;
-        const nextRequest = requestQueue.shift();
-        let newPayload;
-        let path;
-        switch (nextRequest.dataType) {
-            case 'address' :
-                path = 'addresses/billing';
-                newPayload = boldAddress.getBillingAddress();
-                break;
-            case 'customer' :
-                path = window.checkoutConfig.bold[nextRequest.dataType] ? 'customer' : 'customer/guest';
-                newPayload = boldCustomer.getCustomer();
-                break;
-        }
-        if (!newPayload || payloadCompare(newPayload, nextRequest.dataType)) {
-            requestInProgress = false;
-            processNextRequest();
-            return;
-        }
-        $.ajax({
-            url: client.url + path,
-            type: window.checkoutConfig.bold[nextRequest.dataType] ? 'PUT' : 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + client.jwtToken,
-                'Content-Type': 'application/json',
-            },
-            data: JSON.stringify(newPayload)
-        }).done(function (result) {
-            window.checkoutConfig.bold[nextRequest.dataType] = result.data[nextRequest.dataType];
-            nextRequest.resolve(result);
-            requestInProgress = false;
-            processNextRequest();
-        }).fail(function (error) {
-            nextRequest.reject(error);
-            requestInProgress = false;
-            processNextRequest();
-        });
-    }
 
     /**
      * Bold http client.
+     *
      * @type {object}
      */
     const client = {
@@ -89,47 +18,32 @@ define([
          * @return void
          */
         initialize: function () {
-            if (window.checkoutConfig.bold === undefined) {
-                return;
-            }
-            this.jwtToken = window.checkoutConfig.bold.jwtToken;
-            this.url = window.checkoutConfig.bold.url;
-        },
-
-        /**
-         * Post data to Bold API.
-         *
-         * @param dataType string
-         * @return {Promise}
-         */
-        post: function (dataType) {
-            return new Promise((resolve, reject) => {
-                requestQueue.push({
-                    resolve: resolve,
-                    reject: reject,
-                    dataType: dataType
-                });
-
-                processNextRequest();
-            });
+            this.shopId = window.boldFlowConfig ? window.boldFlowConfig.shopId : null;
         },
 
         /**
          * Get data from Bold API.
          *
-         * @param path
-         * @return {*}
+         * @return {Promise}
+         * @param url {string}
+         * @param data {object}
          */
-        get: function (path) {
-            return $.ajax({
-                url: this.url + path,
-                type: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + this.jwtToken,
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
+        get: function (url, data) {
+            url = url.replace('{{shopId}}', this.shopId);
+            return storage.get(urlBuilder.build(url), JSON.stringify(data));
+        },
+
+        /**
+         * Post data to Bold API.
+         *
+         * @return {Promise}
+         * @param url {string}
+         * @param data {object}
+         */
+        post: function (url, data) {
+            url = url.replace('{{shopId}}', this.shopId);
+            return storage.post(urlBuilder.build(url), JSON.stringify(data));
+        },
     };
 
     client.initialize();
