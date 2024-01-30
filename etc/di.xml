@@ -42,11 +42,6 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
         </arguments>
     </type>
-    <type name="Bold\Checkout\Observer\Order\ProcessOrderObserver">
-        <arguments>
-            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldStorefrontClient</argument>
-        </arguments>
-    </type>
     <type name="Bold\Checkout\Observer\Checkout\CheckoutSectionSave">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>

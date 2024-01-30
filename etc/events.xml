@@ -3,9 +3,6 @@
     <event name="checkout_submit_all_after">
         <observer name="save_order_extension_data" instance="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver"/>
     </event>
-    <event name="sales_order_place_after">
-        <observer name="process_bold_order" instance="Bold\Checkout\Observer\Order\ProcessOrderObserver"/>
-    </event>
     <event name="sales_order_shipment_save_after">
         <observer name="fulfill_order_items" instance="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver"/>
     </event>

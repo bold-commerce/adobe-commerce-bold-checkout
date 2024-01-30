@@ -1,7 +1,7 @@
   define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'Bold_Checkout/js/model/client',
+        'Bold_Checkout/js/model/bold_frontend_client',
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
         'uiRegistry',
@@ -33,7 +33,7 @@
                     this.isVisible(false);
                     return;
                 }
-                this._super();
+                this._super(); //call Magento_Checkout/js/view/payment/default::initialize()
                 this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
                 this.awaitingRefreshBeforePlacingOrder = false;
@@ -105,13 +105,52 @@
                   this.refreshAndAddPayment();
                   return false;
                 }
-                const orderPlacementResult = this._super(data, event);
-                if (!orderPlacementResult) {
-                  loader.stopLoader()
-                }
-                return orderPlacementResult;
+                const originalPlaceOrder = this._super;
+                this.processBoldOrder().then(() => {
+                    const orderPlacementResult = originalPlaceOrder.call(this, data, event);//call Magento_Checkout/js/view/payment/default::placeOrder()
+                    if (!orderPlacementResult) {
+                        loader.stopLoader()
+                    }
+                    return orderPlacementResult;
+                }).catch((error) => {
+                    this.displayErrorMessage(error);
+                    loader.stopLoader();
+                    return false;
+                });
             },
-
+            /**
+             * Refresh the order to get the recent cart updates, calculate taxes and authorize|capture payment on Bold side.
+             *
+             * @return {Promise<void>}
+             */
+            processBoldOrder: async function () {
+                const refreshResult = await boldClient.get('refresh');
+                const taxesResult = await boldClient.post('taxes');
+                const processOrderResult = await boldClient.post('process_order');
+                if (refreshResult.errors || taxesResult.errors || processOrderResult.errors) {
+                    throw new Error('An error occurred while processing your payment. Please try again.');
+                }
+            },
+            /**
+             * Display error message in PIGI iframe.
+             *
+             * @private
+             * @param {string} message
+             */
+            displayErrorMessage: function (message) {
+                const iframeElement = document.getElementById('PIGI');
+                const iframeWindow = iframeElement.contentWindow;
+                const action = {
+                    actionType: 'PIGI_DISPLAY_ERROR_MESSAGE',
+                    payload: {
+                        error: {
+                            message: message,
+                            sub_type: 'string_to_categorize_error',
+                        }
+                    }
+                };
+                iframeWindow.postMessage(action, '*');
+            },
             /**
              * Send guest customer info to Bold.
              *
@@ -122,7 +161,7 @@
                 if (!this.customerIsGuest) {
                     return;
                 }
-                boldClient.post('customer').then(
+                boldClient.post('customer/guest').then(
                     function () {
                         this.messageContainer.errorMessages([]);
                         if (!this.isRadioButtonVisible() && quote.shippingMethod()) {
@@ -188,7 +227,7 @@
              */
             syncBillingData() {
                 this.sendGuestCustomerInfo();
-                boldClient.post('address').then(
+                boldClient.post('addresses/billing').then(
                     function () {
                         this.messageContainer.errorMessages([]);
                         if (!this.isRadioButtonVisible() && !quote.shippingMethod()) {
