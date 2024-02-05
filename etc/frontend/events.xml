@@ -7,6 +7,9 @@
     <event name="controller_action_predispatch_onestepcheckout_index_index">
         <observer name="redirect_to_bold_checkout" instance="Bold\Checkout\Observer\Checkout\RedirectToBoldCheckoutObserver"/>
     </event>
+    <event name="controller_action_predispatch_firecheckout_index_index">
+        <observer name="redirect_to_bold_checkout" instance="Bold\Checkout\Observer\Checkout\RedirectToBoldCheckoutObserver"/>
+    </event>
     <event name="shortcut_buttons_container">
         <observer name="bold_checkout_parallel_checkout_button" instance="Bold\Checkout\Observer\Checkout\AddParallelCheckoutButton"/>
     </event>
