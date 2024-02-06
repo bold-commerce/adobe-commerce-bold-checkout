@@ -9,6 +9,8 @@ namespace Bold\Checkout\Model\ModuleInfo;
  */
 class InstalledModulesProvider
 {
+    private const PAYPAL_FLOW_MODULE = 'Bold_CheckoutFlowPaypal';
+    
     /**
      * @var array
      */
@@ -31,5 +33,15 @@ class InstalledModulesProvider
     public function getModuleList(): array
     {
         return $this->moduleList;
+    }
+
+    /**
+     * Get if Paypal Flow module is installed
+     * 
+     * @return bool
+     */
+    public function isPayPalFlowInstalled(): bool
+    {
+        return array_contains($this->moduleList, self::PAYPAL_FLOW_MODULE);
     }
 }
