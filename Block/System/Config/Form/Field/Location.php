@@ -3,13 +3,32 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Block\System\Config\Form\Field;
 
+use Bold\Checkout\Model\ModuleInfo\InstalledModulesProvider;
 use Magento\Framework\View\Element\Html\Select;
+use Magento\Backend\Block\Template\Context;
 
 /**
  * HTML select element block with location options.
  */
 class Location extends Select
 {
+    /**
+     * @var InstalledModulesProvider
+     */
+    
+    /**
+     * @param Context $context
+     * @param InstalledModulesProvider $installedModuleProvider
+     */
+    public function __construct(
+        Context                  $context,
+        InstalledModulesProvider $installedModulesProvider,
+    )
+    {
+        parent::__construct($context);
+        $this->installedModulesProvider = $installedModulesProvider;
+    }
+
     /**
      * Set "name" for <select> element
      *
@@ -40,7 +59,7 @@ class Location extends Select
      */
     private function getSourceOptions(): array
     {
-        return [
+        $options = [
             ['label' => 'At the top of the page', 'value' => 'main_content_beginning'],
             ['label' => 'Above the customer info section', 'value' => 'customer_info'],
             ['label' => 'Below the shipping address section', 'value' => 'shipping'],
@@ -55,5 +74,10 @@ class Location extends Select
             ['label' => 'On the thank you page, below the order details', 'value' => 'order_details'],
             ['label' => 'At the bottom of the page', 'value' => 'main_content_end'],
         ];
+        if ($this->installedModulesProvider->isPayPalFlowInstalled()) {
+            $options[] = ['label' => '(PayPal Checkout Flow only) On the additional information page', 'value' => 'paypal_additional_information'];
+        }
+        
+        return $options;
     }
 }
