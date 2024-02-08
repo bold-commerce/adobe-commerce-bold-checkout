@@ -144,6 +144,9 @@ class Builder
             }
             $this->addBoldDiscounts->addExtensionAttribute($item);
             $parentProduct = null;
+            $product = $item->getProduct();
+            $product = $product->load($product->getEntityId());
+
             if ($item->getParentItem()) {
                 $parentItem = $item->getParentItem();
                 $parentDiscounts = $parentItem->getExtensionAttributes()->getBoldDiscounts();
@@ -152,14 +155,10 @@ class Builder
                 $item->setQty($parentItem->getQty());
                 $item->setPrice($parentItem->getPrice());
                 $parentProduct = $parentItem->getProduct();
+                $parentMediaGallery = $this->mediaGalleryManagement->getList($parentProduct['sku']);
+                $product->setMediaGalleryEntries($parentMediaGallery);
             }
-            $product = $item->getProduct();
-            $product = $product->load($product->getEntityId());
-            $mediaGallery = $this->mediaGalleryManagement->getList($product['sku']);
-            if (!$mediaGallery && $parentProduct) {
-                $mediaGallery = $this->mediaGalleryManagement->getList($parentProduct['sku']);
-                $product->setMediaGalleryEntries($mediaGallery);
-            }
+
             $product->getExtensionAttributes()->setIsVirtual($product->getIsVirtual());
             $item->getExtensionAttributes()->setProduct($product);
             $items[] = $item;
