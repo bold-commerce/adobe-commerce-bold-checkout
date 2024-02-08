@@ -15,6 +15,7 @@ class Location extends Select
     /**
      * @var InstalledModulesProvider
      */
+    protected $installedModulesProvider;
     
     /**
      * @param Context $context
@@ -22,7 +23,7 @@ class Location extends Select
      */
     public function __construct(
         Context                  $context,
-        InstalledModulesProvider $installedModulesProvider,
+        InstalledModulesProvider $installedModulesProvider
     )
     {
         parent::__construct($context);

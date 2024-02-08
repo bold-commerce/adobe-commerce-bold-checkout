@@ -42,6 +42,6 @@ class InstalledModulesProvider
      */
     public function isPayPalFlowInstalled(): bool
     {
-        return array_contains($this->moduleList, self::PAYPAL_FLOW_MODULE);
+        return in_array(self::PAYPAL_FLOW_MODULE, $this->moduleList);
     }
 }
