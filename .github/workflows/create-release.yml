@@ -15,17 +15,18 @@ on:
 
 permissions:
     contents: write
+    pull-requests: write
 
 jobs:
     create_release:
         runs-on: ubuntu-latest
         timeout-minutes: 15
         env:
-            GH_TOKEN: ${{ github.token }}
+            GH_TOKEN: ${{ secrets.token_github }}
         outputs:
             new_version: ${{ steps.determine_new_version.outputs.new_version }}
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: determine new version
               id: determine_new_version
               run: |
@@ -62,12 +63,27 @@ jobs:
                 mv composer.new.json composer.json
                 git config --global user.email 'github-ci@boldcommerce.com'
                 git config --global user.name 'bold-github-ci'
+                branch_exists=`git ls-remote --heads origin refs/heads/release-$new_version | wc -l`
+                if [[ $branch_exist -eq 0 ]];
+                then
+                  git checkout -b release-$new_version
+                else
+                  git fetch origin
+                  git checkout release-$new_version
+                fi
                 git add composer.json
                 git commit -m 'Bump version number for release'
-                git push origin
+                git push --set-upstream origin release-$new_version
+                pr_exists=`gh pr list -H release-$new_version | wc -l`
+                if [[ $pr_exists -eq 0 ]];
+                then
+                  gh pr create --title "Create release $new_version" --body "Create new release from workflow"
+                fi
+                gh pr merge --admin --squash
 
             - name: Create github release
               env:
                 new_version: v${{ steps.determine_new_version.outputs.new_version }}
               run: |
                 gh release create --generate-notes --latest $new_version
+
