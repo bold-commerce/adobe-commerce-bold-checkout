@@ -1,0 +1,44 @@
+#bold-checkout-onboard {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 1.5em 0;
+
+    & > div {
+        margin-right: 1.5em;
+        flex: 1 1 auto;
+    }
+
+    h2 {
+        font-weight: 600;
+        color: #303030;
+        margin-bottom: 1em;
+    }
+
+    button {
+        flex: 0 0 auto;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        background: #5A0FB9;
+        color: #fff;
+        font-size: 1.25em;
+        border: 0;
+        font-weight: normal;
+
+        &:before {
+            content: "";
+            width: 1.75em;
+            height: 1.75em;
+            background-image: url('../images/bold-icon.svg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin-right: .75em;
+        }
+    }
+}
+

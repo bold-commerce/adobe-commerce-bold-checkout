@@ -3,5 +3,6 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <css src="Bold_Checkout::css/system-styles.css"/>
+        <css src="Bold_Checkout::css/onboard-styles.css"/>
     </head>
 </page>
