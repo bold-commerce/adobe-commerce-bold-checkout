@@ -52,6 +52,11 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Model\Order\ResumeOrder">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Model\Payment\Gateway\Service">
         <arguments>
             <argument name="httpClient" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
