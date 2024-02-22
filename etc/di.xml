@@ -30,6 +30,7 @@
     <preference for="Bold\Checkout\Api\Data\DiscountDataInterface" type="Bold\Checkout\Model\Data\DiscountData"/>
     <preference for="Bold\Checkout\Api\Data\RuleDiscountInterface" type="Bold\Checkout\Model\Data\RuleDiscount"/>
     <preference for="Bold\Checkout\Api\ModuleVersionInterface" type="Bold\Checkout\Model\ModuleVersion"/>
+    <preference for="Bold\Checkout\Api\ClearCartInterface" type="Bold\Checkout\Model\ClearCart"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ResultInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\ModuleVersion"/>
     <type name="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver">
