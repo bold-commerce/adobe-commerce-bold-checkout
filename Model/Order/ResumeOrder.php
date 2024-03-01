@@ -23,9 +23,7 @@ class ResumeOrder
     /**
      * @param ClientInterface $client
      */
-    public function __construct(
-        ClientInterface $client,
-    ) {
+    public function __construct(ClientInterface $client) {
         $this->client = $client;
     }
 
