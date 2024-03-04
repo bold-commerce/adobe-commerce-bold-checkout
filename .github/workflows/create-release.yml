@@ -22,7 +22,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 15
         env:
-            GH_TOKEN: ${{ secrets.token_github }}
+            GH_TOKEN: ${{ github.token }}
         outputs:
             new_version: ${{ steps.determine_new_version.outputs.new_version }}
         steps:
