@@ -21,14 +21,14 @@ jobs:
     create_release:
         runs-on: ubuntu-latest
         timeout-minutes: 15
+        env:
+            GH_TOKEN: ${{ github.token }}
         outputs:
             new_version: ${{ steps.determine_new_version.outputs.new_version }}
         steps:
             - uses: actions/checkout@v4
             - name: determine new version
               id: determine_new_version
-              env:
-                GH_TOKEN: ${{ github.token }}
               run: |
                 last_release=`gh release list | head -n 1 | awk '{print $3}'`
                 release_type=${{ inputs.releaseType }} 
@@ -57,7 +57,6 @@ jobs:
             - name: Bump composer.json version
               env:
                 new_version: ${{ steps.determine_new_version.outputs.new_version }}
-                GH_TOKEN: ${{ secrets.token_github }}
               run: |
                 echo "New version: $new_version"
                 jq '.version = $version' --arg version $new_version composer.json > composer.new.json
@@ -85,7 +84,6 @@ jobs:
             - name: Create github release
               env:
                 new_version: v${{ steps.determine_new_version.outputs.new_version }}
-                GH_TOKEN: ${{ secrets.token_github }}
               run: |
                 gh release create --generate-notes --latest $new_version
 
