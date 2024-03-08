@@ -6,19 +6,36 @@ $bannerData = $block->getBannerData();
 
 <?php if ($bannerData): ?>
     <div id="bold-checkout-onboard">
-        <div>
+        <div class="banner-body <?php if ($block->isOnboardComplete()): ?>onboard-complete<?php endif ?>">
             <h2><?= $escaper->escapeHtml($bannerData->header) ?></h2>
-            <p><?= $escaper->escapeHtml($bannerData->text) ?></p>
+            <p><?= $escaper->escapeHtml($bannerData->body_text) ?></p>
+            <?php if (property_exists($bannerData, 'body_link_text')): ?>
+                <p><a href="<?= $escaper->escapeUrl($bannerData->body_link_url) ?>" target="_blank"><?= $escaper->escapeHtml($bannerData->body_link_text) ?></a></p>
+            <?php endif ?>
         </div>
 
-        <button
-            type="button"
-            onclick="window.open (
-                '<?= $escaper->escapeUrl($bannerData->link) ?>',
-                'Bold Account Center',
-                'width=1400,height=950')
-            ">
-            <?= $escaper->escapeHtml($bannerData->button_text) ?>
-        </button>
+        <div class="banner-sidebar">
+            <div class="banner-sidebar-button">
+                <?php if ($block->isOnboardComplete()): ?>
+                    <a href="<?= $escaper->escapeUrl($bannerData->button_link) ?>" target="_blank">
+                        <?= $escaper->escapeHtml($bannerData->button_text) ?>
+                    </a>
+                <?php else: ?>
+                    <button
+                        type="button"
+                        onclick="window.open (
+                            '<?= $escaper->escapeUrl($bannerData->button_link) ?>',
+                            'Bold Account Center',
+                            'width=1400,height=950')
+                        ">
+                        <?= $escaper->escapeHtml($bannerData->button_text) ?>
+                    </button>
+                <?php endif ?>
+            </div>
+
+            <?php if (property_exists($bannerData, 'sidebar_link_text')): ?>
+                <p><a href="<?= $escaper->escapeUrl($bannerData->sidebar_link_url) ?>" target="_blank"><?= $escaper->escapeHtml($bannerData->sidebar_link_text) ?></a></p>
+            <?php endif ?>
+        </div>
     </div>
 <?php endif ?>

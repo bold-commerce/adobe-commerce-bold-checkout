@@ -12,7 +12,8 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class OnboardBanner extends Field
 {
-    const ONBOARD_DATA_PATH = '/onboard_banner_data';
+    const ONBOARD_IN_PROGRESS_DATA_PATH = '/onboard_banner_data/in_progress';
+    const ONBOARD_COMPLETED_DATA_PATH = '/onboard_banner_data/complete';
 
     /** @var StoreManagerInterface */
     private $storeManager;
@@ -62,7 +63,13 @@ class OnboardBanner extends Field
     {
         $websiteId = $this->storeManager->getWebsite()->getId();
         $platformConnectorUrl = $this->config->getPlatformConnectorUrl($websiteId);
-        $bannerDataUrl = parse_url($platformConnectorUrl, PHP_URL_SCHEME) . '://' . parse_url($platformConnectorUrl, PHP_URL_HOST) . self::ONBOARD_DATA_PATH;
+        $bannerDataUrl = parse_url($platformConnectorUrl, PHP_URL_SCHEME) . '://' . parse_url($platformConnectorUrl, PHP_URL_HOST);
+
+        if ($this->isOnboardComplete()) {
+            $bannerDataUrl .= self::ONBOARD_COMPLETED_DATA_PATH;
+        } else {
+            $bannerDataUrl .= self::ONBOARD_IN_PROGRESS_DATA_PATH;
+        }
 
         $this->client->get($bannerDataUrl);
 
@@ -72,5 +79,11 @@ class OnboardBanner extends Field
         }
 
         return json_decode($this->client->getBody());
+    }
+
+    public function isOnboardComplete()
+    {
+        $websiteId = $this->storeManager->getWebsite()->getId();
+        return $this->config->isCheckoutEnabled($websiteId);
     }
 }
