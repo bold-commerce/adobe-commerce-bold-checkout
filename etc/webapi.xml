@@ -6,6 +6,12 @@
             <resource ref="Magento_Cart::manage"/>
         </resources>
     </route>
+    <route method="POST" url="/V1/shops/:shopId/cart/:cartId/shippingAddress">
+        <service class="Bold\Checkout\Api\Quote\SetQuoteAddressesInterface" method="setShippingAddress"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
     <route method="POST" url="/V1/shops/:shopId/cart/:cartId/shippingMethod">
         <service class="Bold\Checkout\Api\Quote\SetQuoteShippingMethodInterface" method="setShippingMethod"/>
         <resources>

@@ -92,6 +92,26 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
             ? $billingAddress
             : $shippingAddress;
         $quote->getBillingAddress()->addData($billingAddress->getData());
+
+        return $this->setShippingAddressOnQuote($quote, $shippingAddress);
+    }
+
+    public function setShippingAddress(
+        string $shopId,
+        int $cartId,
+        AddressInterface $shippingAddress = null
+    ): ResultInterface {
+        try {
+            $quote = $this->loadAndValidate->load($shopId, $cartId);
+        } catch (LocalizedException $e) {
+            return $this->quoteResultBuilder->createErrorResult($e->getMessage());
+        }
+
+        return $this->setShippingAddressOnQuote($quote, $shippingAddress);
+    }
+
+    private function setShippingAddressOnQuote($quote, $shippingAddress): ResultInterface
+    {
         if (!$quote->isVirtual()) {
             $quote->getShippingAddress()->addData($shippingAddress->getData());
             $shippingAssignment = $this->shippingAssignmentProcessor->create($quote);
