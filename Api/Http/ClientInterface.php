@@ -15,7 +15,7 @@ interface ClientInterface
      *
      * @param int $websiteId
      * @param string $url
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
      * @throws \Exception
      */
     public function get(int $websiteId, string $url): ResultInterface;
@@ -26,7 +26,7 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array|null $data
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
      * @throws \Exception
      */
     public function post(int $websiteId, string $url, array $data): ResultInterface;
@@ -37,7 +37,7 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array|null $data
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
      * @throws \Exception
      */
     public function put(int $websiteId, string $url, array $data): ResultInterface;
@@ -48,7 +48,7 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array|null $data
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
      * @throws \Exception
      */
     public function patch(int $websiteId, string $url, array $data): ResultInterface;
@@ -59,7 +59,7 @@ interface ClientInterface
      * @param int $websiteId
      * @param string $url
      * @param array $data
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
      * @throws \Exception
      */
     public function delete(int $websiteId, string $url, array $data): ResultInterface;

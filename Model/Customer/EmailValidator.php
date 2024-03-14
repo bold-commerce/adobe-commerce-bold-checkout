@@ -100,7 +100,7 @@ class EmailValidator implements CustomerEmailValidatorInterface
      * Build error result data model.
      *
      * @param Phrase $message
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\CustomerEmailValidator\ResultInterface
      */
     public function getErrorResult(Phrase $message): ResultInterface
     {

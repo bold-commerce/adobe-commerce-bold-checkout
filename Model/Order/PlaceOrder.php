@@ -141,7 +141,7 @@ class PlaceOrder implements PlaceOrderInterface
      * Build validation error response.
      *
      * @param string $message
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\PlaceOrder\ResultInterface
      */
     private function getValidationErrorResponse(string $message): ResultInterface
     {

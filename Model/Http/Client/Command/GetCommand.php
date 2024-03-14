@@ -49,7 +49,7 @@ class GetCommand
      * @param int $websiteId
      * @param string $url
      * @param array $headers
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
      */
     public function execute(int $websiteId, string $url, array $headers): ResultInterface
     {
