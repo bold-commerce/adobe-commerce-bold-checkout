@@ -85,7 +85,7 @@ class Builder
      * Build quote result.
      *
      * @param CartInterface $quote
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Quote\ResultInterface
      */
     public function createSuccessResult(CartInterface $quote): ResultInterface
     {
@@ -105,7 +105,7 @@ class Builder
      * @param string $error
      * @param int $code
      * @param string $type
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Quote\ResultInterface
      */
     public function createErrorResult(
         string $error,

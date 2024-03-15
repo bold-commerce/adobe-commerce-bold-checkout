@@ -134,7 +134,7 @@ class UpdatePayment implements UpdatePaymentInterface
      * Build validation error response.
      *
      * @param string $message
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Order\Payment\ResultInterface
      */
     private function getValidationErrorResponse(string $message): ResultInterface
     {

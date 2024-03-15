@@ -129,7 +129,7 @@ class GetQuoteInventoryData implements GetQuoteInventoryDataInterface
      * Build validation error response.
      *
      * @param string $error
-     * @return ResultInterface
+     * @return Bold\Checkout\Api\Data\Quote\Inventory\ResultInterface
      */
     private function buildErrorResponse(string $error): ResultInterface
     {
