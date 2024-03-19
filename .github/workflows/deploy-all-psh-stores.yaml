@@ -2,6 +2,8 @@ name: Update platform.sh stores
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron:  '30 5 * * 1'
   push:
     branches: 
       - main
