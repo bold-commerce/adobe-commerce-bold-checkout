@@ -21,7 +21,7 @@
                 <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <div class="pigi-wrapper">
+        <div data-bind="blockLoader: isPigiLoading">
             <iframe id="PIGI" data-bind="attr: {src: iframeSrc()}" scrolling="no" frameborder="0" width="100%"></iframe>
         </div>
         <div class="actions-toolbar">

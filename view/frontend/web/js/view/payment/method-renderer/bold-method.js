@@ -23,6 +23,7 @@
                 paymentType: null,
                 isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
+                isPigiLoading: ko.observable(true),
             },
 
             /**
@@ -34,7 +35,6 @@
                     return;
                 }
                 this._super(); //call Magento_Checkout/js/view/payment/default::initialize()
-                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
                 this.awaitingRefreshBeforePlacingOrder = false;
@@ -69,7 +69,7 @@
             initializePaymentGateway: function () {
                 console.log('initializing pigi...');
                 // TODO: Set frame src once /refresh is done
-                // this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
+                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
             },
 
             /**
@@ -179,6 +179,7 @@
                                     iframeElement.height = Math.round(data.payload.height) + 'px';
                                 }
                                 this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
+                                this.isPigiLoading(false);
                                 break;
                             case 'PIGI_REFRESH_ORDER':
                                 if(this.awaitingRefreshBeforePlacingOrder){
@@ -209,7 +210,6 @@
             refreshOrder() {
                 boldClient.get('refresh').then(
                     function (response) {
-                        this.initializePaymentGateway();
                         this.messageContainer.errorMessages([]);
                         if (!this.isRadioButtonVisible() && !quote.shippingMethod()) {
                             return this.selectPaymentMethod(); // some one-step checkout updates shipping lines only after payment method is selected.
@@ -222,6 +222,9 @@
                             response.data.application_state.customer &&
                             response.data.application_state.customer.email_address
                         ) {
+                            if (this.isPigiLoading()){
+                                this.initializePaymentGateway(); // don't initialize pigi until there's a customer on the order
+                            }
                             if (this.iframeWindow) {
                                 this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
                             }
