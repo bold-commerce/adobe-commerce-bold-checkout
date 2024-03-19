@@ -34,10 +34,10 @@
                     return;
                 }
                 this._super(); //call Magento_Checkout/js/view/payment/default::initialize()
+                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
                 this.awaitingRefreshBeforePlacingOrder = false;
-                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
                 this.messageContainer.errorMessages.subscribe(function (errorMessages) {
                     if (errorMessages.length > 0) {
                         loader.stopLoader();
@@ -64,6 +64,12 @@
                         }
                     }.bind(this));
                 }
+            },
+
+            initializePaymentGateway: function () {
+                console.log('initializing pigi...');
+                // TODO: Set frame src once /refresh is done
+                // this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
             },
 
             /**
@@ -203,6 +209,7 @@
             refreshOrder() {
                 boldClient.get('refresh').then(
                     function (response) {
+                        this.initializePaymentGateway();
                         this.messageContainer.errorMessages([]);
                         if (!this.isRadioButtonVisible() && !quote.shippingMethod()) {
                             return this.selectPaymentMethod(); // some one-step checkout updates shipping lines only after payment method is selected.
