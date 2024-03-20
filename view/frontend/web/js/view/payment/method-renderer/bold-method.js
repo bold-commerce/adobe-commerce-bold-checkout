@@ -102,9 +102,11 @@
                 if (!this.iframeWindow) {
                     return false;
                 }
+
+                const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
+                this.iframeWindow.postMessage(clearAction, '*');
+
                 if (!this.paymentType) {
-                  const clearAction = {actionType: 'PIGI_CLEAR_ERROR_MESSAGES'};
-                  this.iframeWindow.postMessage(clearAction, '*');
                   this.refreshAndAddPayment();
                   return false;
                 }
@@ -189,7 +191,7 @@
                                 break;
                             case 'PIGI_ADD_PAYMENT':
                                 this.messageContainer.errorMessages([]);
-                                loader.stopLoader();
+                                loader.stopLoader(true);
                                 if (!data.payload.success) {
                                     this.paymentType = null;
                                     return;
