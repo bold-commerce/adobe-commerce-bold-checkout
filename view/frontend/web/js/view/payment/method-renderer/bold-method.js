@@ -68,7 +68,7 @@
 
             initializePaymentGateway: function () {
                 console.log('initializing pigi...');
-                // TODO: Set frame src once /refresh is done
+                // Set frame src once /refresh is done
                 this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
             },
 
@@ -220,7 +220,9 @@
                             response.data &&
                             response.data.application_state &&
                             response.data.application_state.customer &&
-                            response.data.application_state.customer.email_address
+                            response.data.application_state.customer.email_address &&
+                            response.data.application_state.addresses.billing &&
+                            response.data.application_state.addresses.billing.address_line_1
                         ) {
                             if (this.isPigiLoading()){
                                 this.initializePaymentGateway(); // don't initialize pigi until there's a customer on the order
