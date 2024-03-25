@@ -82,9 +82,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
             $quote->removeAddress($quote->getShippingAddress()->getId());
             $quote->setDataChanges(true);
             $quote->collectTotals();
-            if (!$this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
-                $this->quoteResource->save($quote);
-            }
+            $this->quoteResource->save($quote);
             $quote->getExtensionAttributes()->setShippingAssignments([]);
             return $this->quoteResultBuilder->createSuccessResult($quote);
         }
@@ -101,9 +99,7 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         }
         $quote->setDataChanges(true);
         $quote->collectTotals();
-        if (!$this->config->isCheckoutTypeSelfHosted((int)$quote->getStore()->getWebsiteId())) {
-            $this->quoteResource->save($quote);
-        }
+        $this->quoteResource->save($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);
     }
 }
