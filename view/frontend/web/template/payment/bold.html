@@ -21,7 +21,9 @@
                 <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <iframe id="PIGI" data-bind="attr: {src: iframeSrc()}" scrolling="no" frameborder="0" width="100%"></iframe>
+        <div data-bind="blockLoader: isPigiLoading">
+            <iframe id="PIGI" data-bind="attr: {src: iframeSrc()}" scrolling="no" frameborder="0" width="100%"></iframe>
+        </div>
         <div class="actions-toolbar">
             <div class="primary">
                 <button class="action primary checkout"

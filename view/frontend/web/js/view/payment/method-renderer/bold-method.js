@@ -23,6 +23,7 @@
                 paymentType: null,
                 isVisible: ko.observable(true),
                 iframeSrc: ko.observable(null),
+                isPigiLoading: ko.observable(true),
             },
 
             /**
@@ -37,36 +38,38 @@
                 this.subscribeToPIGI();
                 this.customerIsGuest = !!Number(window.checkoutConfig.bold.customerIsGuest);
                 this.awaitingRefreshBeforePlacingOrder = false;
-                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
-                this.syncBillingData();
                 this.messageContainer.errorMessages.subscribe(function (errorMessages) {
                     if (errorMessages.length > 0) {
                         loader.stopLoader();
                     }
                 });
+
+                const sendRefreshOrder = _.debounce(
+                    function () {
+                        this.refreshOrder();
+                    }.bind(this),
+                    500
+                );
+
+                sendRefreshOrder();
+
                 quote.billingAddress.subscribe(function () {
-                    const sendBillingAddress = _.debounce(
-                        function () {
-                            this.syncBillingData();
-                        }.bind(this),
-                        1000
-                    );
-                    sendBillingAddress();
+                    sendRefreshOrder();
                 }, this);
                 const email = registry.get('index = customer-email');
                 if (email) {
                     email.email.subscribe(function () {
                         if (email.validateEmail()) {
-                            const sendGuestCustomerInfo = _.debounce(
-                                function () {
-                                    this.sendGuestCustomerInfo();
-                                }.bind(this),
-                                1000
-                            );
-                            sendGuestCustomerInfo();
+                            sendRefreshOrder();
                         }
                     }.bind(this));
                 }
+            },
+
+            initializePaymentGateway: function () {
+                console.log('initializing pigi...');
+                // Set frame src once /refresh is done
+                this.iframeSrc(window.checkoutConfig.bold.payment.iframeSrc);
             },
 
             /**
@@ -151,28 +154,6 @@
                 };
                 iframeWindow.postMessage(action, '*');
             },
-            /**
-             * Send guest customer info to Bold.
-             *
-             * @private
-             * @returns void
-             */
-            sendGuestCustomerInfo: function () {
-                if (!this.customerIsGuest) {
-                    return;
-                }
-                boldClient.post('customer/guest').then(
-                    function () {
-                        this.messageContainer.errorMessages([]);
-                        if (!this.isRadioButtonVisible() && quote.shippingMethod()) {
-                            return this.selectPaymentMethod(); // some one-step checkout updates shipping lines only after payment method is selected.
-                        }
-                        if (this.iframeWindow) {
-                            this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
-                        }
-                    }.bind(this)
-                );
-            },
 
             /**
              * Subscribe to PIGI events.
@@ -198,6 +179,7 @@
                                     iframeElement.height = Math.round(data.payload.height) + 'px';
                                 }
                                 this.iframeWindow = iframeElement ? iframeElement.contentWindow : null;
+                                this.isPigiLoading(false);
                                 break;
                             case 'PIGI_REFRESH_ORDER':
                                 if(this.awaitingRefreshBeforePlacingOrder){
@@ -220,21 +202,34 @@
             },
 
             /**
-             * Send billing address to Bold.
+             * Sync Magento order with Bold.
              *
              * @private
              * @returns {void}
              */
-            syncBillingData() {
-                this.sendGuestCustomerInfo();
-                boldClient.post('addresses/billing').then(
-                    function () {
+            refreshOrder() {
+                boldClient.get('refresh').then(
+                    function (response) {
                         this.messageContainer.errorMessages([]);
                         if (!this.isRadioButtonVisible() && !quote.shippingMethod()) {
                             return this.selectPaymentMethod(); // some one-step checkout updates shipping lines only after payment method is selected.
                         }
-                        if (this.iframeWindow) {
-                            this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+
+                        if (
+                            response &&
+                            response.data &&
+                            response.data.application_state &&
+                            response.data.application_state.customer &&
+                            response.data.application_state.customer.email_address &&
+                            response.data.application_state.addresses.billing &&
+                            response.data.application_state.addresses.billing.address_line_1
+                        ) {
+                            if (this.isPigiLoading()){
+                                this.initializePaymentGateway(); // don't initialize pigi until there's a customer on the order
+                            }
+                            if (this.iframeWindow) {
+                                this.iframeWindow.postMessage({actionType: 'PIGI_REFRESH_ORDER'}, '*');
+                            }
                         }
                     }.bind(this)
                 );
