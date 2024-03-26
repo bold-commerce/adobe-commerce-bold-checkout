@@ -1,40 +1,39 @@
 <?php
 /** @var \Bold\Checkout\Block\System\Config\Form\Field\OnboardBanner $block */
-/** @var Magento\Framework\Escaper $escaper */
 $bannerData = $block->getBannerData();
 ?>
 
 <?php if ($bannerData): ?>
     <div id="bold-checkout-onboard">
         <div class="banner-body <?php if ($block->isOnboardComplete()): ?>onboard-complete<?php endif ?>">
-            <h2><?= $escaper->escapeHtml($bannerData->header) ?></h2>
-            <p><?= $escaper->escapeHtml($bannerData->body_text) ?></p>
+            <h2><?= $block->escapeHtml($bannerData->header) ?></h2>
+            <p><?= $block->escapeHtml($bannerData->body_text) ?></p>
             <?php if (property_exists($bannerData, 'body_link_text')): ?>
-                <p><a href="<?= $escaper->escapeUrl($bannerData->body_link_url) ?>" target="_blank"><?= $escaper->escapeHtml($bannerData->body_link_text) ?></a></p>
+                <p><a href="<?= $block->escapeUrl($bannerData->body_link_url) ?>" target="_blank"><?= $block->escapeHtml($bannerData->body_link_text) ?></a></p>
             <?php endif ?>
         </div>
 
         <div class="banner-sidebar">
             <div class="banner-sidebar-button">
                 <?php if ($block->isOnboardComplete()): ?>
-                    <a href="<?= $escaper->escapeUrl($bannerData->button_link) ?>" target="_blank">
-                        <?= $escaper->escapeHtml($bannerData->button_text) ?>
+                    <a href="<?= $block->escapeUrl($bannerData->button_link) ?>" target="_blank">
+                        <?= $block->escapeHtml($bannerData->button_text) ?>
                     </a>
                 <?php else: ?>
                     <button
                         type="button"
                         onclick="window.open (
-                            '<?= $escaper->escapeUrl($bannerData->button_link) ?>',
+                            '<?= $block->escapeUrl($bannerData->button_link) ?>',
                             'Bold Account Center',
                             'width=1400,height=950')
                         ">
-                        <?= $escaper->escapeHtml($bannerData->button_text) ?>
+                        <?= $block->escapeHtml($bannerData->button_text) ?>
                     </button>
                 <?php endif ?>
             </div>
 
             <?php if (property_exists($bannerData, 'sidebar_link_text')): ?>
-                <p><a href="<?= $escaper->escapeUrl($bannerData->sidebar_link_url) ?>" target="_blank"><?= $escaper->escapeHtml($bannerData->sidebar_link_text) ?></a></p>
+                <p><a href="<?= $block->escapeUrl($bannerData->sidebar_link_url) ?>" target="_blank"><?= $block->escapeHtml($bannerData->sidebar_link_text) ?></a></p>
             <?php endif ?>
         </div>
     </div>
