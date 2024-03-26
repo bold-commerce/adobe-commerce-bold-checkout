@@ -15,14 +15,13 @@ on:
 
 permissions:
     contents: write
-    pull-requests: write
 
 jobs:
     create_release:
         runs-on: ubuntu-latest
         timeout-minutes: 15
         env:
-            GH_TOKEN: ${{ github.token }}
+            GH_TOKEN: ${{ secrets.CI_BOT_RELEASE_PAT }}
         outputs:
             new_version: ${{ steps.determine_new_version.outputs.new_version }}
         steps:
@@ -59,26 +58,30 @@ jobs:
                 new_version: ${{ steps.determine_new_version.outputs.new_version }}
               run: |
                 echo "New version: $new_version"
-                jq '.version = $version' --arg version $new_version composer.json > composer.new.json
-                mv composer.new.json composer.json
                 git config --global user.email 'github-ci@boldcommerce.com'
                 git config --global user.name 'bold-github-ci'
                 branch_exists=`git ls-remote --heads origin refs/heads/release-$new_version | wc -l`
-                if [[ $branch_exist -eq 0 ]];
+                if [[ $branch_exists -eq 0 ]];
                 then
+                  echo "Branch does not exist, pushing new release branch"
+                  jq '.version = $version' --arg version $new_version composer.json > composer.new.json
+                  mv composer.new.json composer.json
                   git checkout -b release-$new_version
+                  git add composer.json
+                  git commit -m 'Bump version number for release'
+                  git push --set-upstream origin release-$new_version
                 else
+                  echo "Branch exists, using existing branch"
                   git fetch origin
                   git checkout release-$new_version
                 fi
-                git add composer.json
-                git commit -m 'Bump version number for release'
-                git push --set-upstream origin release-$new_version
                 pr_exists=`gh pr list -H release-$new_version | wc -l`
                 if [[ $pr_exists -eq 0 ]];
                 then
+                  echo "Creating new Pull request for release"
                   gh pr create --title "Create release $new_version" --body "Create new release from workflow"
                 fi
+                echo "Meging release pull request"
                 gh pr merge --admin --squash
 
             - name: Create github release
@@ -86,4 +89,3 @@ jobs:
                 new_version: v${{ steps.determine_new_version.outputs.new_version }}
               run: |
                 gh release create --generate-notes --latest $new_version
-
