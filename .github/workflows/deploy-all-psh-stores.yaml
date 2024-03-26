@@ -22,8 +22,8 @@ jobs:
           mkdir -p ~/.ssh
           echo -n '${{ secrets.SSH_KEY }}' > ~/.ssh/id_rsa
           chmod 0600 ~/.ssh/id_rsa
-          ssh-keyscan -H git.ca-1.platform.sh >> $HOME/.ssh/known_hosts
-          ssh-keyscan -H git.us.platform.sh >> $HOME/.ssh/known_hosts
+          ssh-keyscan -T 180 -H git.us.platform.sh >> $HOME/.ssh/known_hosts
+          ssh-keyscan -T 180 -H git.ca-1.platform.sh >> $HOME/.ssh/known_hosts
 
       - name: Update projects
         env:
