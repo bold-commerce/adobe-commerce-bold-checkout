@@ -17,10 +17,10 @@ class CheckoutTypeSource implements OptionSourceInterface
     public function toOptionArray(): array
     {
         return [
-            ['value' => ConfigInterface::VALUE_TYPE_STANDARD, 'label' => __('Standard')],
+            ['value' => ConfigInterface::VALUE_TYPE_STANDARD, 'label' => __('Bold-Hosted (Standard)')],
             ['value' => ConfigInterface::VALUE_TYPE_PARALLEL, 'label' => __('Dual')],
-            ['value' => ConfigInterface::VALUE_TYPE_SELF, 'label' => __('Self-Hosted (Adobe storefront)')],
-            ['value' => ConfigInterface::VALUE_TYPE_SELF_REACT, 'label' => __('Self-Hosted (Bold Templates)')],
+            ['value' => ConfigInterface::VALUE_TYPE_SELF, 'label' => __('Payment Booster')],
+            ['value' => ConfigInterface::VALUE_TYPE_SELF_REACT, 'label' => __('Self-Hosted')],
         ];
     }
 }
