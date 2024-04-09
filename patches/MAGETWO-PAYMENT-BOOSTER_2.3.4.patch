@@ -1,0 +1,59 @@
+diff --git a/src/vendor/magento/module-sales-rule/view/frontend/web/js/action/select-payment-method-mixin.js b/src/vendor/magento/module-sales-rule/view/frontend/web/js/action/select-payment-method-mixin.js
+new file mode 100644
+--- /dev/null
++++ b/src/vendor/magento/module-sales-rule/view/frontend/web/js/action/select-payment-method-mixin.js
+@@ -0,0 +1,32 @@
++/**
++ * Copyright © Magento, Inc. All rights reserved.
++ * See COPYING.txt for license details.
++ */
++define([
++    'jquery',
++    'mage/utils/wrapper',
++    'Magento_Checkout/js/model/quote',
++    'Magento_SalesRule/js/model/payment/discount-messages',
++    'Magento_Checkout/js/action/set-payment-information',
++    'Magento_Checkout/js/action/get-totals'
++], function ($, wrapper, quote, messageContainer, setPaymentInformationAction, getTotalsAction) {
++    'use strict';
++
++    return function (selectPaymentMethodAction) {
++
++        return wrapper.wrap(selectPaymentMethodAction, function (originalSelectPaymentMethodAction, paymentMethod) {
++
++            originalSelectPaymentMethodAction(paymentMethod);
++
++            $.when(
++                setPaymentInformationAction(
++                    messageContainer,
++                    {
++                        method: paymentMethod.method
++                    }
++                )
++            );
++        });
++    };
++
++});
+
+===================================================================
+
+diff --git a/src/vendor/magento/module-sales-rule/view/frontend/requirejs-config.js b/src/vendor/magento/module-sales-rule/view/frontend/requirejs-config.js
+new file mode 100644
+--- /dev/null
++++ b/src/vendor/magento/module-sales-rule/view/frontend/requirejs-config.js
+@@ -0,0 +1,14 @@
++/**
++ * Copyright © Magento, Inc. All rights reserved.
++ * See COPYING.txt for license details.
++ */
++
++var config = {
++  config: {
++    mixins: {
++      'Magento_Checkout/js/action/select-payment-method': {
++        'Magento_SalesRule/js/action/select-payment-method-mixin': true
++      }
++    }
++  }
++};
