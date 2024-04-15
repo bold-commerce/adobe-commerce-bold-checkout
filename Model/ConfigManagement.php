@@ -5,7 +5,6 @@ namespace Bold\Checkout\Model;
 
 use Bold\Checkout\Api\ConfigManagementInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
 
 /**
@@ -32,10 +31,6 @@ class ConfigManagement implements ConfigManagementInterface
      */
     public function getValue(string $path, int $websiteId)
     {
-        if (!$websiteId) {
-            throw new LocalizedException(__('Website cannot be equal to "%1".', $websiteId));
-        }
-
         return $this->scopeConfig->getValue(
             $path,
             ScopeInterface::SCOPE_WEBSITES,
@@ -48,10 +43,6 @@ class ConfigManagement implements ConfigManagementInterface
      */
     public function isSetFlag(string $path, int $websiteId): bool
     {
-        if (!$websiteId) {
-            throw new LocalizedException(__('Website cannot be equal to "%1".', $websiteId));
-        }
-
         return $this->scopeConfig->isSetFlag(
             $path,
             ScopeInterface::SCOPE_WEBSITES,
