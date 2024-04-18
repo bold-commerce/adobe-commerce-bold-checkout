@@ -14,7 +14,15 @@ interface ConfigInterface
     public const VALUE_ENABLED_FOR_PERCENTAGE = 3;
     public const VALUE_TYPE_STANDARD = 0;
     public const VALUE_TYPE_PARALLEL = 1;
+
+    /**
+     * @deprecated
+     */
     public const VALUE_TYPE_SELF = 2;
+
+    /**
+     * @deprecated
+     */
     public const VALUE_TYPE_SELF_REACT = 3;
     public const PATH_SHOP_ID = 'checkout/bold_checkout_base/shop_id';
 
@@ -175,6 +183,7 @@ interface ConfigInterface
      *
      * @param int $websiteId
      * @return bool
+     * @deprecated
      */
     public function isCheckoutTypeSelfHosted(int $websiteId): bool;
 

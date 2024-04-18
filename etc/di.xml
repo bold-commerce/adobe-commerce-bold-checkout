@@ -32,6 +32,16 @@
     <preference for="Bold\Checkout\Api\ModuleVersionInterface" type="Bold\Checkout\Model\ModuleVersion"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ResultInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\ModuleVersion"/>
+    <preference for="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedInterface" type="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedPool"/>
+    <preference for="Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedInterface" type="Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedPool"/>
+    <type name="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedPool">
+        <arguments>
+            <argument name="elementList" xsi:type="array">
+                <item name="isAllowedForRequest" xsi:type="object">Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest</item>
+                <item name="isAllowedForCart" xsi:type="object">Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
