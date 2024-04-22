@@ -11,7 +11,10 @@ use Magento\Quote\Api\Data\CartInterface;
  */
 class IsOrderInitializationAllowedForRequest implements IsOrderInitializationAllowedInterface
 {
-    private IsBoldCheckoutAllowedForRequest $allowedForRequest;
+    /**
+     * @var IsBoldCheckoutAllowedForRequest
+     */
+    private $allowedForRequest;
 
     /**
      * @param IsBoldCheckoutAllowedForRequest $allowedForRequest

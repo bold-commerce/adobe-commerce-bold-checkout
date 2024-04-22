@@ -10,15 +10,18 @@ use Magento\Quote\Api\Data\CartInterface;
  */
 class IsOrderInitializationAllowedPool implements IsOrderInitializationAllowedInterface
 {
-    private array $elements;
+    /**
+     * @var array
+     */
+    private $elementList;
 
     /**
-     * @param array $elements
+     * @param array $elementList
      */
     public function __construct(
-        array $elements = []
+        array $elementList = []
     ) {
-        $this->elements = $elements;
+        $this->elementList = $elementList;
     }
 
     /**
@@ -31,7 +34,7 @@ class IsOrderInitializationAllowedPool implements IsOrderInitializationAllowedIn
     public function isAllowed(CartInterface $quote, RequestInterface $request): bool
     {
         return array_reduce(
-            $this->elements,
+            $this->elementList,
             function (bool $allowed, IsOrderInitializationAllowedInterface $item) use ($quote, $request) {
                 return $allowed && $item->isAllowed($quote, $request);
             },

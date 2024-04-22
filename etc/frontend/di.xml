@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedInterface"
+                type="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedPool"/>
+    <preference for="Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedInterface"
+                type="Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedPool"/>
+    <type name="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedPool">
+        <arguments>
+            <argument name="elementList" xsi:type="array">
+                <item name="isAllowedForRequest" xsi:type="object">
+                    Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedForRequest
+                </item>
+                <item name="isAllowedForCart" xsi:type="object">
+                    Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedForCart
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>
