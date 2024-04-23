@@ -22,4 +22,15 @@
             <column name="quote_id"/>
         </index>
     </table>
+    <table name="bold_checkout_quote" resource="default" engine="innodb" comment="Is Bold Checkout Order In Progress">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="int" name="quote_id" unsigned="true" nullable="false" identity="false" comment="Magento Quote ID"/>
+        <column xsi:type="smallint" name="order_created" default="0" comment="Magento Order Should Be Created On Magento Side"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="BOLD_CHECKOUT_QUOTE_QUOTE_ID" indexType="btree">
+            <column name="quote_id"/>
+        </index>
+    </table>
 </schema>

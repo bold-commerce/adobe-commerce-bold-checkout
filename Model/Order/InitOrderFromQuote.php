@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Order;
 
 use Bold\Checkout\Api\Http\ClientInterface;
+use Bold\Checkout\Model\Order\InitOrderFromQuote\OrderDataProcessorInterface;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\QuoteAction;
 use Magento\Customer\Api\Data\AddressInterface;
@@ -42,21 +43,29 @@ class InitOrderFromQuote
     private $quoteAction;
 
     /**
+     * @var array
+     */
+    private $orderDataProcessors;
+
+    /**
      * @param ClientInterface $client
      * @param CollectionFactory $countryCollectionFactory
      * @param GetCartLineItems $getCartLineItems
      * @param QuoteAction $quoteAction
+     * @param OrderDataProcessorInterface[] $orderDataProcessors
      */
     public function __construct(
         ClientInterface $client,
         CollectionFactory $countryCollectionFactory,
         GetCartLineItems $getCartLineItems,
-        QuoteAction $quoteAction
+        QuoteAction $quoteAction,
+        array $orderDataProcessors = []
     ) {
         $this->client = $client;
         $this->countryCollectionFactory = $countryCollectionFactory;
         $this->getCartLineItems = $getCartLineItems;
         $this->quoteAction = $quoteAction;
+        $this->orderDataProcessors = $orderDataProcessors;
     }
 
     /**
@@ -111,7 +120,9 @@ class InitOrderFromQuote
         if ($quote->getCustomer()->getId() && !isset($orderData['data']['application_state']['customer']['public_id'])) {
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
-
+        foreach ($this->orderDataProcessors as $processor) {
+            $orderData = $processor->process($orderData, $quote);
+        }
         return $orderData;
     }
 

@@ -13,7 +13,7 @@ class IsRedirectToBoldCheckoutAllowedPool implements IsRedirectToBoldCheckoutAll
     private $elementList;
 
     /**
-     * @param array $elementList
+     * @param IsRedirectToBoldCheckoutAllowedInterface[] $elementList
      */
     public function __construct(
         array $elementList = []

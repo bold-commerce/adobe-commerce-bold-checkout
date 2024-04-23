@@ -4,11 +4,9 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Order;
 
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
-use Bold\Checkout\Model\Payment\Gateway\Service;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
 use Magento\Checkout\Model\Session;
-use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -33,26 +31,26 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     private $checkoutSession;
 
     /**
-     * @var EventManagerInterface
+     * @var array
      */
-    private $eventManager;
+    private $boldPaymentMethods;
 
     /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param Session $checkoutSession
-     * @param EventManagerInterface $eventManager
+     * @param array $boldPaymentMethods
      */
     public function __construct(
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
         Session $checkoutSession,
-        EventManagerInterface $eventManager
+        array $boldPaymentMethods = []
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->checkoutSession = $checkoutSession;
-        $this->eventManager = $eventManager;
+        $this->boldPaymentMethods = $boldPaymentMethods;
     }
 
     /**
@@ -64,7 +62,7 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
-        if ($order->getPayment()->getMethod() !== Service::CODE) {
+        if (!\in_array($order->getPayment()->getMethod(), \array_values($this->boldPaymentMethods), true)) {
             return;
         }
         $orderId = (int)$order->getEntityId();
@@ -76,10 +74,6 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $orderExtensionData->setOrderId($orderId);
         $orderExtensionData->setPublicId($publicOrderId);
-        $this->eventManager->dispatch(
-            'checkout_save_order_extension_data_before',
-            ['order' => $order, 'orderExtensionData' => $orderExtensionData]
-        );
         try {
             $this->orderExtensionDataResource->save($orderExtensionData);
         } catch (Exception $e) {

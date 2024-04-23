@@ -26,5 +26,18 @@
     "constraint": {
       "PRIMARY": true
     }
+  },
+  "bold_checkout_quote": {
+    "column": {
+      "id": true,
+      "quote_id": true,
+      "order_created": true
+    },
+    "index": {
+      "BOLD_CHECKOUT_QUOTE_QUOTE_ID": true
+    },
+    "constraint": {
+      "PRIMARY": true
+    }
   }
 }

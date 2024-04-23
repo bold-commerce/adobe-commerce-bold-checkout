@@ -9,12 +9,8 @@
     <type name="Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedPool">
         <arguments>
             <argument name="elementList" xsi:type="array">
-                <item name="isAllowedForRequest" xsi:type="object">
-                    Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedForRequest
-                </item>
-                <item name="isAllowedForCart" xsi:type="object">
-                    Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedForCart
-                </item>
+                <item name="isAllowedForRequest" xsi:type="object">Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedForRequest</item>
+                <item name="isAllowedForCart" xsi:type="object">Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedForCart</item>
             </argument>
         </arguments>
     </type>

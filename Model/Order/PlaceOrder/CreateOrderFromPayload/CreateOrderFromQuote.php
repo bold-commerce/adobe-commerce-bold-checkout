@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bold\Checkout\Model\Order\PlaceOrder;
+namespace Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromPayload;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Payment\Gateway\Service;

@@ -136,4 +136,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver">
+        <arguments>
+            <argument name="boldPaymentMethods" xsi:type="array">
+                <item name="bold_checkout" xsi:type="string">bold</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
