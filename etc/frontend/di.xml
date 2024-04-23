@@ -14,4 +14,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedPool">
+        <arguments>
+            <argument name="elementList" xsi:type="array">
+                <item name="isAllowedByParallelCheckout" xsi:type="object">Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedByParallel</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

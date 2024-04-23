@@ -100,6 +100,7 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         try {
             $checkoutData = $this->initOrderFromQuote->init($quote);
+            $this->session->setBoldCheckoutData($checkoutData);
             if (!$this->isRedirectToBoldCheckoutAllowed->isAllowed($quote, $request)) {
                 return;
             }
