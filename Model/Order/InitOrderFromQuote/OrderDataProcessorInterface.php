@@ -4,10 +4,13 @@ namespace Bold\Checkout\Model\Order\InitOrderFromQuote;
 
 use Magento\Quote\Api\Data\CartInterface;
 
+/**
+ * Process bold order data service interface.
+ */
 interface OrderDataProcessorInterface
 {
     /**
-     * Process order data.
+     * Process bold order data.
      *
      * @param array $data
      * @param CartInterface $quote
