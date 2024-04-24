@@ -21,4 +21,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Model\Order\InitOrderFromQuote">
+        <arguments>
+            <argument name="orderDataProcessors" xsi:type="array">
+                <item name="bold" xsi:type="object">Bold\Checkout\Model\Order\InitOrderFromQuote\ProcessBoldOrderData</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

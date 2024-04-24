@@ -29,8 +29,8 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="id"/>
         </constraint>
-        <index referenceId="BOLD_CHECKOUT_QUOTE_QUOTE_ID" indexType="btree">
+        <constraint xsi:type="unique" referenceId="BOLD_CHECKOUT_QUOTE_QUOTE_ID">
             <column name="quote_id"/>
-        </index>
+        </constraint>
     </table>
 </schema>
