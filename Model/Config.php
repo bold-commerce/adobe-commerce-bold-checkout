@@ -328,28 +328,6 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
-    public function isCheckoutTypeSelfHosted(int $websiteId): bool
-    {
-        return (int)$this->configManagement->getValue(
-                self::PATH_TYPE,
-                $websiteId
-            ) === ConfigInterface::VALUE_TYPE_SELF;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isCheckoutTypeSelfHostedReact(int $websiteId): bool
-    {
-        return (int)$this->configManagement->getValue(
-                self::PATH_TYPE,
-                $websiteId
-            ) === ConfigInterface::VALUE_TYPE_SELF_REACT;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getPaymentTitle(int $websiteId): string
     {
         return (string)$this->configManagement->getValue(
