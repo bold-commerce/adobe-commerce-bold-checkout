@@ -7,6 +7,7 @@ use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\Order\InitOrderFromQuote\OrderDataProcessorInterface;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\QuoteAction;
+use Bold\Checkout\Model\Quote\SetQuoteExtensionData;
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
@@ -43,6 +44,11 @@ class InitOrderFromQuote
     private $quoteAction;
 
     /**
+     * @var SetQuoteExtensionData
+     */
+    private $setQuoteExtensionData;
+
+    /**
      * @var array
      */
     private $orderDataProcessors;
@@ -52,6 +58,7 @@ class InitOrderFromQuote
      * @param CollectionFactory $countryCollectionFactory
      * @param GetCartLineItems $getCartLineItems
      * @param QuoteAction $quoteAction
+     * @param SetQuoteExtensionData $setQuoteExtensionData
      * @param OrderDataProcessorInterface[] $orderDataProcessors
      */
     public function __construct(
@@ -59,17 +66,19 @@ class InitOrderFromQuote
         CollectionFactory $countryCollectionFactory,
         GetCartLineItems $getCartLineItems,
         QuoteAction $quoteAction,
+        SetQuoteExtensionData $setQuoteExtensionData,
         array $orderDataProcessors = []
     ) {
         $this->client = $client;
         $this->countryCollectionFactory = $countryCollectionFactory;
         $this->getCartLineItems = $getCartLineItems;
         $this->quoteAction = $quoteAction;
+        $this->setQuoteExtensionData = $setQuoteExtensionData;
         $this->orderDataProcessors = $orderDataProcessors;
     }
 
     /**
-     * Initialize order on bold side.
+     * Initialize order on Bold side.
      *
      * @param CartInterface $quote
      * @param string $flowId
@@ -120,9 +129,13 @@ class InitOrderFromQuote
         if ($quote->getCustomer()->getId() && !isset($orderData['data']['application_state']['customer']['public_id'])) {
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
+
+        $this->setQuoteExtensionData->execute((int)$quote->getId());
+
         foreach ($this->orderDataProcessors as $processor) {
             $orderData = $processor->process($orderData, $quote);
         }
+
         return $orderData;
     }
 
