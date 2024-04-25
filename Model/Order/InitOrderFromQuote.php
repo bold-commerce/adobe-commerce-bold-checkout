@@ -49,7 +49,7 @@ class InitOrderFromQuote
     private $setQuoteExtensionData;
 
     /**
-     * @var array
+     * @var OrderDataProcessorInterface[]
      */
     private $orderDataProcessors;
 
@@ -130,7 +130,7 @@ class InitOrderFromQuote
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
 
-        $this->setQuoteExtensionData->execute((int)$quote->getId());
+        $this->setQuoteExtensionData->execute((int)$quote->getId(), false);
 
         foreach ($this->orderDataProcessors as $processor) {
             $orderData = $processor->process($orderData, $quote);

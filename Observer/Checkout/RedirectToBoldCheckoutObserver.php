@@ -15,7 +15,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Redirect to bold checkout if allowed.
+ * Redirect to Bold checkout if allowed.
  */
 class RedirectToBoldCheckoutObserver implements ObserverInterface
 {
@@ -47,17 +47,12 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     /**
      * @var IsOrderInitializationAllowedInterface
      */
-    private  $isOrderInitializationAllowed;
+    private $isOrderInitializationAllowed;
 
     /**
      * @var IsRedirectToBoldCheckoutAllowedInterface
      */
     private $isRedirectToBoldCheckoutAllowed;
-
-    /**
-     * @var array
-     */
-    private $test;
 
     /**
      * @param Session $session

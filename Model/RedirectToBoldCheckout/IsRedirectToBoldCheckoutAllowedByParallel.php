@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bold\Checkout\Model\RedirectToBoldCheckout;
 
@@ -37,8 +38,7 @@ class IsRedirectToBoldCheckoutAllowedByParallel implements IsRedirectToBoldCheck
     {
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         if ($this->config->isCheckoutTypeParallel($websiteId)) {
-
-          return (bool)$request->getParam(Button::KEY_PARALLEL);
+            return (bool)$request->getParam(Button::KEY_PARALLEL);
         }
 
         return true;

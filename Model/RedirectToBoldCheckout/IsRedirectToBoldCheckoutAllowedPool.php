@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bold\Checkout\Model\RedirectToBoldCheckout;
 
@@ -10,6 +11,9 @@ use Magento\Quote\Api\Data\CartInterface;
  */
 class IsRedirectToBoldCheckoutAllowedPool implements IsRedirectToBoldCheckoutAllowedInterface
 {
+    /**
+     * @var IsRedirectToBoldCheckoutAllowedInterface[]
+     */
     private $elementList;
 
     /**

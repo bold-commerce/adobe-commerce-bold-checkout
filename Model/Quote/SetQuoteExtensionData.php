@@ -49,7 +49,7 @@ class SetQuoteExtensionData
      * @param bool $orderCreated
      * @return void
      */
-    public function execute(int $quoteId, bool $orderCreated = false): void
+    public function execute(int $quoteId, bool $orderCreated): void
     {
         try {
             $quoteExtensionData = $this->quoteExtensionDataFactory->create();

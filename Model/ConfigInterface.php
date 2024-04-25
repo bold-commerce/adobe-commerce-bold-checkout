@@ -14,16 +14,6 @@ interface ConfigInterface
     public const VALUE_ENABLED_FOR_PERCENTAGE = 3;
     public const VALUE_TYPE_STANDARD = 0;
     public const VALUE_TYPE_PARALLEL = 1;
-
-    /**
-     * @deprecated
-     */
-    public const VALUE_TYPE_SELF = 2;
-
-    /**
-     * @deprecated
-     */
-    public const VALUE_TYPE_SELF_REACT = 3;
     public const PATH_SHOP_ID = 'checkout/bold_checkout_base/shop_id';
 
     /**
@@ -177,23 +167,6 @@ interface ConfigInterface
      * @return bool
      */
     public function isCheckoutTypeParallel(int $websiteId): bool;
-
-    /**
-     * Check if Bold Checkout type is self-hosted (Magento storefront).
-     *
-     * @param int $websiteId
-     * @return bool
-     * @deprecated
-     */
-    public function isCheckoutTypeSelfHosted(int $websiteId): bool;
-
-    /**
-     * Check if Bold Checkout type is self-hosted (React application).
-     *
-     * @param int $websiteId
-     * @return bool
-     */
-    public function isCheckoutTypeSelfHostedReact(int $websiteId): bool;
 
     /**
      * Get Bold Payment storefront title.

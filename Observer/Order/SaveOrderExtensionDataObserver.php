@@ -7,6 +7,7 @@ use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -31,6 +32,11 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     private $checkoutSession;
 
     /**
+     * @var EventManagerInterface
+     */
+    private $eventManager;
+
+    /**
      * @var array
      */
     private $boldPaymentMethods;
@@ -39,17 +45,20 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param Session $checkoutSession
+     * @param EventManagerInterface $eventManager
      * @param array $boldPaymentMethods
      */
     public function __construct(
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
         Session $checkoutSession,
+        EventManagerInterface $eventManager,
         array $boldPaymentMethods = []
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->checkoutSession = $checkoutSession;
+        $this->eventManager = $eventManager;
         $this->boldPaymentMethods = $boldPaymentMethods;
     }
 
@@ -74,6 +83,10 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $orderExtensionData = $this->orderExtensionDataFactory->create();
         $orderExtensionData->setOrderId($orderId);
         $orderExtensionData->setPublicId($publicOrderId);
+        $this->eventManager->dispatch(
+            'checkout_save_order_extension_data_before',
+            ['order' => $order, 'orderExtensionData' => $orderExtensionData]
+        );
         try {
             $this->orderExtensionDataResource->save($orderExtensionData);
         } catch (Exception $e) {

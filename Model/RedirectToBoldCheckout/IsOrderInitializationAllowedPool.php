@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Bold\Checkout\Model\RedirectToBoldCheckout;
 
@@ -11,12 +12,12 @@ use Magento\Quote\Api\Data\CartInterface;
 class IsOrderInitializationAllowedPool implements IsOrderInitializationAllowedInterface
 {
     /**
-     * @var array
+     * @var IsOrderInitializationAllowedInterface[]
      */
     private $elementList;
 
     /**
-     * @param array $elementList
+     * @param IsOrderInitializationAllowedInterface[] $elementList
      */
     public function __construct(
         array $elementList = []
