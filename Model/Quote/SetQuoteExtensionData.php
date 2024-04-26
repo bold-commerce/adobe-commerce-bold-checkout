@@ -53,7 +53,14 @@ class SetQuoteExtensionData
     {
         try {
             $quoteExtensionData = $this->quoteExtensionDataFactory->create();
-            $quoteExtensionData->setQuoteId($quoteId);
+            $this->quoteExtensionDataResource->load(
+                $quoteExtensionData,
+                $quoteId,
+                QuoteExtensionDataResource::QUOTE_ID
+            );
+            if (!$quoteExtensionData->getId()) {
+                $quoteExtensionData->setQuoteId($quoteId);
+            }
             $quoteExtensionData->setOrderCreated($orderCreated);
             $this->quoteExtensionDataResource->save($quoteExtensionData);
         } catch (\Exception $e) {
