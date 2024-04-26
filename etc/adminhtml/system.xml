@@ -26,9 +26,6 @@
                 <field id="payment_title" translate="label" type="text" sortOrder="16" showInDefault="1" showInWebsite="1">
                     <label>Payment Title</label>
                     <comment>Payment title that will be displayed on the checkout page.</comment>
-                    <depends>
-                        <field id="type">2</field>
-                    </depends>
                 </field>
                 <field id="parallel_checkout_button_title" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1">
                     <label>Bold Checkout Button Title</label>

@@ -71,6 +71,9 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
+        if (!$order) {
+            return;
+        }
         if (!\in_array($order->getPayment()->getMethod(), \array_values($this->boldPaymentMethods), true)) {
             return;
         }

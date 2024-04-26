@@ -12,9 +12,7 @@ use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\Data\OrderInterfaceFactory;
 use Magento\Sales\Model\OrderRepository;
-use Magento\Sales\Model\ResourceModel\Order;
 
 /**
  * Process order in case of self-hosted checkout.

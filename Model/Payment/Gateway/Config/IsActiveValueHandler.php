@@ -41,7 +41,8 @@ class IsActiveValueHandler implements ValueHandlerInterface
     {
         try {
             if ($this->state->getAreaCode() === Area::AREA_FRONTEND) {
-                return $this->checkoutSession->getBoldCheckoutData() !== null;
+                return $this->checkoutSession->getBoldCheckoutData() !== null
+                    && !$this->checkoutSession->getQuote()->getIsMultiShipping();
             }
         } catch (LocalizedException $e) {
             return false;
