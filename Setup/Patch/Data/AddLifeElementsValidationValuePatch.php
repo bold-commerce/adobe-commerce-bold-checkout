@@ -54,9 +54,9 @@ class AddLifeElementsValidationValuePatch implements DataPatchInterface
     {
         $this->moduleDataSetup->startSetup();
 
-        $allLifeElements = $this->getLifeElements();
-        $result = $this->updateLifeElements($allLifeElements);
-        $this->setLifeElements($result);
+        $existingLifeElements = $this->getLifeElements();
+        $updatedLifeElements = $this->updateLifeElements($existingLifeElements);
+        $this->saveLifeElements($updatedLifeElements);
 
         $this->moduleDataSetup->endSetup();
     }
