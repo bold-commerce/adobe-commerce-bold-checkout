@@ -89,16 +89,16 @@ class AddLifeElementsValidationValuePatch implements DataPatchInterface
     /**
      * Save updated Life elements to database.
      *
-     * @param array $result
+     * @param array $lifeElements
      * @return void
      */
-    private function setLifeElements(array $result): void
+    private function saveLifeElements(array $lifeElements): void
     {
         $connection = $this->moduleDataSetup->getConnection();
         $table = $connection->getTableName('core_config_data');
         $connection->insertOnDuplicate(
             $table,
-            $result
+            $lifeElements
         );
     }
 
