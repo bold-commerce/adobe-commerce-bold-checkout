@@ -8,12 +8,13 @@ use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResultInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\ResultInterfaceFactory;
 use Bold\Checkout\Api\PlaceOrderInterface;
-use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Request\Validator\OrderPayloadValidator;
 use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromPayload;
 use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrder;
 use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Bold\Checkout\Model\Quote\LoadAndValidate;
+use Bold\Checkout\Model\Quote\QuoteExtensionDataFactory;
+use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -38,11 +39,6 @@ class PlaceOrder implements PlaceOrderInterface
     private $orderPayloadValidator;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
      * @var CreateOrderFromPayload
      */
     private $createOrderFromPayload;
@@ -63,33 +59,46 @@ class PlaceOrder implements PlaceOrderInterface
     private $loadAndValidate;
 
     /**
+     * @var QuoteExtensionDataFactory
+     */
+    private $quoteExtensionDataFactory;
+
+    /**
+     * @var QuoteExtensionData
+     */
+    private $quoteExtensionDataResource;
+
+    /**
      * @param OrderPayloadValidator $orderPayloadValidator
      * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
-     * @param ConfigInterface $config
      * @param CreateOrderFromPayload $createOrderFromPayload
      * @param ProcessOrder $processOrder
      * @param Progress $progress
      * @param LoadAndValidate $loadAndValidate
+     * @param QuoteExtensionDataFactory $quoteExtensionDataFactory
+     * @param QuoteExtensionData $quoteExtensionDataResource
      */
     public function __construct(
         OrderPayloadValidator $orderPayloadValidator,
         ResultInterfaceFactory $responseFactory,
         ErrorInterfaceFactory $errorFactory,
-        ConfigInterface $config,
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
         Progress $progress,
-        LoadAndValidate $loadAndValidate
+        LoadAndValidate $loadAndValidate,
+        QuoteExtensionDataFactory $quoteExtensionDataFactory,
+        QuoteExtensionData $quoteExtensionDataResource
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
         $this->orderPayloadValidator = $orderPayloadValidator;
-        $this->config = $config;
         $this->createOrderFromPayload = $createOrderFromPayload;
         $this->processOrder = $processOrder;
         $this->progress = $progress;
         $this->loadAndValidate = $loadAndValidate;
+        $this->quoteExtensionDataFactory = $quoteExtensionDataFactory;
+        $this->quoteExtensionDataResource = $quoteExtensionDataResource;
     }
 
     /**
@@ -111,8 +120,12 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse($e->getMessage());
         }
         try {
-            $websiteId = (int)$quote->getStore()->getWebsiteId();
-            $magentoOrder = $this->config->isCheckoutTypeSelfHosted($websiteId)
+            $quoteExtensionData = $this->quoteExtensionDataFactory->create();
+            $this->quoteExtensionDataResource->load(
+                $quoteExtensionData,
+                $quote->getId(), QuoteExtensionData::QUOTE_ID
+            );
+            $magentoOrder = $quoteExtensionData->getOrderCreated()
                 ? $this->processOrder->process($order)
                 : $this->createOrderFromPayload->createOrder($order, $quote);
         } catch (Exception $e) {
@@ -141,7 +154,7 @@ class PlaceOrder implements PlaceOrderInterface
      * Build validation error response.
      *
      * @param string $message
-     * @return Bold\Checkout\Api\Data\PlaceOrder\ResultInterface
+     * @return ResultInterface
      */
     private function getValidationErrorResponse(string $message): ResultInterface
     {
@@ -159,5 +172,4 @@ class PlaceOrder implements PlaceOrderInterface
             ]
         );
     }
-
 }

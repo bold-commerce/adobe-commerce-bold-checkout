@@ -98,6 +98,11 @@
         </arguments>
     </virtualType>
     <!--Value Handler Pool-->
+    <type name="Bold\Checkout\Model\Payment\Gateway\Config\TitleValueHandler">
+        <arguments>
+            <argument name="path" xsi:type="const">Bold\Checkout\Model\Config::PATH_PAYMENT_TITLE</argument>
+        </arguments>
+    </type>
     <virtualType name="Bold\Checkout\Gateway\Config\ValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -133,6 +138,13 @@
         <arguments>
             <argument name="moduleList" xsi:type="array">
                 <item name="bold_checkout" xsi:type="string">Bold_Checkout</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver">
+        <arguments>
+            <argument name="boldPaymentMethods" xsi:type="array">
+                <item name="bold_checkout" xsi:type="string">bold</item>
             </argument>
         </arguments>
     </type>
