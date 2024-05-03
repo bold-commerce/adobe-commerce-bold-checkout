@@ -51,7 +51,6 @@ class PaymentStyleBuilder
         foreach ($this->cssRules as $rule) {
             $data['css_rules'][]['cssText'] = $rule;
         }
-        /** @var array $mediaRule */
         foreach ($this->mediaRules as $condition => $rules) {
             $cssRules = [];
             foreach ($rules as $rule) {

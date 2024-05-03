@@ -36,7 +36,7 @@ class PaymentStyleManagement implements PaymentStyleManagementInterface
     }
 
     /**
-     * @ingeritDoc
+     * @inheritDoc
      */
     public function update(int $websiteId, array $data): void
     {
@@ -51,7 +51,7 @@ class PaymentStyleManagement implements PaymentStyleManagementInterface
     }
 
     /**
-     * @ingeritDoc
+     * @inheritDoc
      */
     public function delete(int $websiteId): void
     {
