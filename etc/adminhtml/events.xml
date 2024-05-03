@@ -4,5 +4,6 @@
     <event name="admin_system_config_changed_section_checkout">
         <observer name="bold_checkout_checkout_section_save" instance="Bold\Checkout\Observer\Checkout\CheckoutSectionSave"/>
         <observer name="bold_checkout_sync_life_elements" instance="Bold\Checkout\Observer\Checkout\SyncLifeElements"/>
+        <observer name="bold_checkout_sync_pigi_css" instance="Bold\Checkout\Observer\Checkout\SyncPaymentStyle"/>
     </event>
 </config>

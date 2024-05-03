@@ -70,17 +70,18 @@
                      Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named <strong>'{{integrationName}}'</strong> and Activate or Reauthorize it.]]></comment>
                 </field>
             </group>
-            <group id="bold_checkout_life_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
-                <label>Bold Checkout Extension (LiFE) Elements</label>
+            <group id="bold_checkout_custom_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
+                <label>Bold Checkout Customization Settings</label>
                 <field id="life_elements" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1">
-                    <label>Custom elements</label>
+                    <label>Custom Elements</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\LifeElements</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                     <comment><![CDATA[For more information about the locations and where they are, refer to the <a href="https://developer.boldcommerce.com/guides/checkout/life">Checkout LiFE guide</a>.]]></comment>
                 </field>
-                <depends>
-                    <field id="checkout/bold_checkout_base/type" separator=",">0,1</field>
-                </depends>
+                <field id="payment_css" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>CSS</label>
+                    <comment><![CDATA[Add custom styling to the payment section of your checkout.]]></comment>
+                </field>
             </group>
             <group id="bold_checkout_advanced" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Extension Advanced Settings</label>

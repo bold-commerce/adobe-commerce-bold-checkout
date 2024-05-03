@@ -2,7 +2,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Bold\Checkout\Api\LifeElementManagementInterface" type="Bold\Checkout\Model\LifeElementManagement"/>
+    <preference for="Bold\Checkout\Api\PaymentStyleManagementInterface" type="Bold\Checkout\Model\PaymentStyleManagement"/>
     <type name="Bold\Checkout\Api\LifeElementManagementInterface">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Api\PaymentStyleManagementInterface">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
@@ -12,7 +18,7 @@
             <argument name="paths" xsi:type="array">
                 <item name="bold_checkout_base" xsi:type="string">checkout/bold_checkout_base/%</item>
                 <item name="bold_checkout_advanced" xsi:type="string">checkout/bold_checkout_advanced/%</item>
-                <item name="bold_checkout_life_elements" xsi:type="string">checkout/bold_checkout_life_elements/%</item>
+                <item name="bold_checkout_custom_elements" xsi:type="string">checkout/bold_checkout_custom_elements/%</item>
                 <item name="latest_version" xsi:type="string">checkout/bold_checkout/latest_version_%</item>
             </argument>
         </arguments>
