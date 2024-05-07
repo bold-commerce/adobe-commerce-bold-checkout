@@ -35,4 +35,5 @@ jobs:
             platform project:get --no-interaction $PROJECT $PROJECT
             cd $PROJECT
             platform redeploy --no-wait
+            cd ..
           done
