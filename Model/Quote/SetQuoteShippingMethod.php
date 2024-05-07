@@ -73,6 +73,9 @@ class SetQuoteShippingMethod implements SetQuoteShippingMethodInterface
             ->setShippingCarrierCode($shippingCarrierCode)
             ->setShippingMethodCode($shippingMethodCode);
         $this->shippingInformationManagement->saveAddressInformation($cartId, $shippingInformation);
+        // Load the quote again to get changes to shipping
+        $quote = $this->loadAndValidate->load($shopId, $cartId);
+        $quote->collectTotals();
         return $this->quoteResultBuilder->createSuccessResult($quote);
     }
 }
