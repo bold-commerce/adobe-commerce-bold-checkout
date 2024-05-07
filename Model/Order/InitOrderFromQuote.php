@@ -8,6 +8,7 @@ use Bold\Checkout\Model\Order\InitOrderFromQuote\OrderDataProcessorInterface;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Bold\Checkout\Model\Quote\QuoteAction;
 use Bold\Checkout\Model\Quote\SetQuoteExtensionData;
+use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData;
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\ResourceModel\Country\CollectionFactory;
@@ -130,7 +131,7 @@ class InitOrderFromQuote
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
 
-        $this->setQuoteExtensionData->execute((int)$quote->getId(), false);
+        $this->setQuoteExtensionData->execute((int)$quote->getId(), [QuoteExtensionData::ORDER_CREATED => false]);
 
         foreach ($this->orderDataProcessors as $processor) {
             $orderData = $processor->process($orderData, $quote);
