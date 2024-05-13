@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote;
 
-use Bold\Checkout\Model\Quote\QuoteExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData as QuoteExtensionDataResource;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -46,10 +46,10 @@ class SetQuoteExtensionData
      * Set quote extension data.
      *
      * @param int $quoteId
-     * @param bool $orderCreated
+     * @param array $data
      * @return void
      */
-    public function execute(int $quoteId, bool $orderCreated): void
+    public function execute(int $quoteId, array $data): void
     {
         try {
             $quoteExtensionData = $this->quoteExtensionDataFactory->create();
@@ -61,9 +61,11 @@ class SetQuoteExtensionData
             if (!$quoteExtensionData->getId()) {
                 $quoteExtensionData->setQuoteId($quoteId);
             }
-            $quoteExtensionData->setOrderCreated($orderCreated);
+            foreach ($data as $key => $value) {
+                $quoteExtensionData->setData($key, $value);
+            }
             $this->quoteExtensionDataResource->save($quoteExtensionData);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error($e->getMessage());
         }
     }
