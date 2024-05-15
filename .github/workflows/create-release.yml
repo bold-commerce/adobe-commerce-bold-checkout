@@ -81,7 +81,7 @@ jobs:
                   echo "Creating new Pull request for release"
                   gh pr create --title "Create release $new_version" --body "Create new release from workflow"
                 fi
-                echo "Meging release pull request"
+                echo "Merging release pull request"
                 gh pr merge --admin --squash
 
             - name: Create github release

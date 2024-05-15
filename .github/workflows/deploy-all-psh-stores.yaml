@@ -34,6 +34,8 @@ jobs:
             echo "Updating project $PROJECT"
             platform project:get --no-interaction $PROJECT $PROJECT
             cd $PROJECT
-            platform redeploy --no-wait
+            date > timestamp
+            git add timestamp
+            platform push --no-wait
             cd ..
           done
