@@ -19,6 +19,7 @@ use Magento\Quote\Api\Data\CartInterface;
 class InitOrderFromQuote
 {
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
+    private const INIT_SIMPLE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order';
     private const FLOW_ID = 'Bold-Magento2';
 
     /**
@@ -112,6 +113,30 @@ class InitOrderFromQuote
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
 
+        return $orderData;
+    }
+
+    /**
+     * Initialize a simple order on Bold side.
+     * @param CartInterface $quote
+     * @param string $flowId
+     * @return array
+     * @throws LocalizedException
+     */
+    public function initSimpleOrder(CartInterface $quote, string $flowId = self::FLOW_ID): array
+    {
+        $websiteId = (int)$quote->getStore()->getWebsiteId();
+        $body = [
+            'flow_id' => $flowId,
+            'order_type' => 'simple_order',
+            'cart_id' => $quote->getId(),
+        ];
+
+        $orderData = $this->client->post($websiteId, self::INIT_SIMPLE_ORDER_URL, $body)->getBody();
+        $publicOrderId = $orderData['data']['public_order_id'] ?? null;
+        if (!$publicOrderId) {
+            throw new LocalizedException(__('Cannot initialize order for quote with id = "%1"', $quote->getId()));
+        }
         return $orderData;
     }
 
