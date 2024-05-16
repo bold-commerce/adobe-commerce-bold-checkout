@@ -127,7 +127,6 @@ class ConfigProvider implements ConfigProviderInterface
                     'method' => Service::CODE,
                 ],
                 'shopId' => $shopId,
-                'customerIsGuest' => $this->checkoutSession->getQuote()->getCustomerIsGuest(),
                 'publicOrderId' => $orderId,
                 'jwtToken' => $jwtToken,
                 'countries' => $this->getAllowedCountries(),
