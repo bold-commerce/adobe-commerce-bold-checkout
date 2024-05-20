@@ -75,6 +75,7 @@
                 </field>
                 <field id="payment_css" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1">
                     <label>CSS</label>
+                    <backend_model>Bold\Checkout\Model\Config\Backend\PaymentCssBackend</backend_model>
                     <comment><![CDATA[Add custom styling to the payment section of your checkout.]]></comment>
                 </field>
             </group>
