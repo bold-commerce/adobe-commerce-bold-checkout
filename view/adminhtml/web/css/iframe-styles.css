@@ -1,0 +1,723 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 100%;
+    color: rgb(26, 26, 26);
+    padding: 0px;
+    margin: 0px;
+}
+
+.LoadingSpinner {
+    display: block;
+    width: 20px;
+    height: 20px;
+    position: relative;
+}
+
+.LoadingSpinner::before {
+    content: "";
+    border-width: 2px;
+    border-style: solid;
+    border-color: currentcolor rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15);
+    border-image: initial;
+    border-radius: 50%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 50%;
+    top: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    animation: 0.5s linear 0s infinite normal none running spin;
+    display: block;
+}
+
+.Button {
+    appearance: none;
+    box-sizing: border-box;
+    display: inline-block;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 1rem 1.25rem;
+    background: rgb(252, 252, 252);
+    border: none;
+    box-shadow: rgb(230, 230, 230) 0px 0px 0px 1px inset;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-out 0s, color 0.2s ease-out 0s, box-shadow 0.2s ease-out 0s;
+    position: relative;
+}
+
+.Button:focus {
+    outline: none;
+}
+
+.Button:hover {
+    background-color: rgb(255, 255, 255);
+}
+
+.Button:active {
+    background-color: rgb(229, 229, 229);
+}
+
+.Button--Primary {
+    background-color: rgb(10, 117, 194);
+    color: rgb(255, 255, 255);
+    box-shadow: none;
+}
+
+.Button--Primary:hover {
+    background-color: rgb(0, 191, 255);
+}
+
+.Button--Primary:active {
+    background-color: rgb(0, 115, 153);
+}
+
+.Button__LoadingSpinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+
+.Button:disabled, .Button:disabled:hover, .Button:disabled:focus, .Button:disabled:active {
+    background-color: rgb(204, 204, 204);
+    color: rgb(255, 255, 255);
+    cursor: not-allowed;
+}
+
+.InputField, .CreditCardInputField {
+    appearance: none;
+    font-size: inherit;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgb(148, 148, 148) 0px 0px 0px 1px inset;
+    padding: 1rem 0.5rem;
+    border-radius: 5px;
+}
+
+.InputField:focus, .CreditCardInputField:focus {
+    outline: none;
+    box-shadow: rgb(10, 117, 194) 0px 0px 0px 2px inset;
+}
+
+.ToggleField__Input {
+    font-size: inherit;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    box-shadow: rgb(148, 148, 148) 0px 0px 0px 1px inset;
+    transition: all 0.2s ease-in-out 0s;
+    border: none;
+    border-radius: 4px;
+    appearance: none;
+    background: transparent;
+    box-sizing: border-box;
+    vertical-align: middle;
+    position: relative;
+    top: -0.1rem;
+}
+
+.ToggleField__Input--Checkbox, .ToggleField__Input--Radio {
+    margin: 0px 0.5rem 0px 0px;
+}
+
+.ToggleField__Input--Checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out 0s;
+    border: none;
+    border-radius: 4px;
+    background: 0px 0px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    padding: initial;
+    margin: 0px 15px 0px 0px;
+}
+
+.ToggleField__Input--Checkbox::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 0px;
+    left: 0px;
+    background-image: url("https://static.boldcommerce.com/images/checkout/experience/checkbox_white.svg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: all 0.2s ease-in-out 0.1s;
+    transform: scale(0);
+}
+
+.ToggleField__Input:focus {
+    box-shadow: rgb(10, 117, 194) 0px 0px 0px 2px inset;
+}
+
+.ToggleField__Input--Radio {
+    border-radius: 9px;
+}
+
+.ToggleField__Input:checked {
+    box-shadow: rgb(10, 117, 194) 0px 0px 0px 10px inset;
+    border-color: transparent;
+}
+
+.ToggleField__Input--Checkbox:checked::after {
+    transform: scale(1);
+}
+
+.ToggleField__Input--Radio:checked {
+    box-shadow: rgb(10, 117, 194) 0px 0px 0px 6px inset;
+}
+
+.Field {
+    width: 100%;
+    position: relative;
+}
+
+.Field--WithInputField .Field__Label, .Field--WithCreditCardField .Field__Label {
+    position: absolute;
+    font-size: 80%;
+    padding-left: 0.5em;
+    padding-top: 0.5em;
+    color: rgb(136, 136, 136);
+    transform: translateY(0.5em);
+    opacity: 0;
+    transition: all 0.2s ease 0s;
+}
+
+.Field .InputField, .Field .CreditCardInputField {
+    display: block;
+    width: 100%;
+    transition: all 0.2s ease-out 0s;
+}
+
+.Field .CreditCardInputField {
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.Field--WithCreditCardField .Field__Label {
+    transform: translateY(0px);
+    opacity: 1;
+}
+
+.TogglePanel {
+    border-bottom: 1px solid rgb(217, 217, 217);
+}
+
+.TogglePanel:last-of-type {
+    border-bottom: none;
+}
+
+.TogglePanel:last-of-type .TogglePanel__Content {
+    border-radius: 0px 0px 4px 4px;
+}
+
+.TogglePanel__Header {
+    padding: 10px;
+}
+
+.TogglePanel__Content {
+    display: none;
+    padding: 10px;
+    border-top: 1px solid rgb(230, 230, 230);
+    background-color: rgb(250, 250, 250);
+}
+
+.TogglePanel__Content::after {
+    display: table;
+    content: "";
+    clear: both;
+}
+
+.TogglePanel--alt > .TogglePanel__Content {
+    display: block;
+}
+
+.TogglePanel__Header {
+    display: flex;
+    align-items: baseline;
+}
+
+.TogglePanelGroup {
+    border: 1px solid rgb(148, 148, 148);
+    border-radius: 5px;
+    flex: 0 0 auto;
+    width: 100%;
+}
+
+.FieldSet {
+    margin: 2rem 0px;
+    padding: 0px;
+}
+
+.FieldSet::after {
+    display: table;
+    content: "";
+    clear: both;
+}
+
+.Main {
+    padding: 2rem 4%;
+}
+
+.Field--SaveShippingAddressToggle {
+    margin-top: 1.5rem;
+}
+
+.TogglePanel--alt.PaymentMethod--CreditCard > .TogglePanel__Content, .TogglePanel--alt.PaymentMethod--CreditCard__StoredOption > .TogglePanel__Content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Field--GiftCardNumber {
+    flex: 1 1 0%;
+}
+
+#gift_card_number:not(:placeholder-shown) {
+    text-transform: uppercase;
+}
+
+#gift_card_cvv {
+}
+
+.Field--WithInputField .Field__Label {
+    position: absolute;
+    font-size: 80%;
+    padding-left: 0.5em;
+    padding-top: 0.5em;
+    color: rgb(136, 136, 136);
+    transform: translateY(0.5em);
+    opacity: 0;
+    transition: all 0.2s ease 0s;
+}
+
+.Field .InputField {
+    display: block;
+    width: 100%;
+    transition: all 0.2s ease-out 0s;
+}
+
+.TogglePanel--alt.PaymentMethod--GiftCard > .TogglePanel__Content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Field--GiftCardCVV {
+    flex: 0 0 auto;
+    width: 25%;
+}
+
+.Field--GiftCardCVV {
+    padding: 0px 10px;
+}
+
+.Action--GiftCardValidate {
+    flex: 0 0 auto;
+}
+
+.Message {
+    width: 100%;
+    flex: 0 0 auto;
+    display: block;
+    margin: 1rem 0px;
+    padding: 1rem 0.5rem 1rem 3rem;
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid rgb(217, 217, 217);
+    color: rgb(136, 136, 136);
+    background-color: rgb(250, 250, 250);
+    min-height: 3.25rem;
+}
+
+.Message__Content :first-child {
+    margin-top: 0px;
+}
+
+.Message__Content :last-child {
+    margin-bottom: 0px;
+}
+
+.Message::before {
+    width: 1.25rem;
+    height: 1.25rem;
+    content: "";
+    display: block;
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    background-image: url("https://static.boldcommerce.com/images/checkout/experience/message_info_grey.svg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.Message--HasError {
+    background-color: white;
+    border-color: red;
+    color: red;
+}
+
+.Message--HasError::before {
+    background-image: url("https://static.boldcommerce.com/images/checkout/experience/message_alert_red.svg");
+}
+
+.Message--HasWarning {
+    background-color: white;
+    border-color: orange;
+    color: darkorange;
+}
+
+.Message--HasWarning::before {
+    background-image: url("https://static.boldcommerce.com/images/checkout/experience/message_alert_orange.svg");
+}
+
+.Message--HasSuccess {
+    background-color: white;
+    border-color: limegreen;
+    color: green;
+}
+
+.Message--HasSuccess::before {
+    background-image: url("https://static.boldcommerce.com/images/checkout/experience/message_success_green.svg");
+}
+
+.Message--HasInfo {
+    background-color: white;
+    border: 0px none;
+}
+
+.Message--HasInfo::before {
+    background-image: url("https://static.boldcommerce.com/images/checkout/experience/message_info_current_color.svg");
+}
+
+.TogglePanel--alt.PaymentMethod--BrandedCard > .TogglePanel__Content > .Flexiti--BrandedCardInfoGroup, .TogglePanel--alt.PaymentMethod--GiftCard > .TogglePanel__Content, .TogglePanel--alt.PaymentMethod--CreditCard > .TogglePanel__Content, .TogglePanel--alt.PaymentMethod--CreditCard__StoredOption > .TogglePanel__Content, .TogglePanel--alt.BillingAddressOption--DifferentAddress > .TogglePanel__Content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Field .InputField, .Field .SelectField, .Field .CreditCardInputField {
+    display: block;
+    width: 100%;
+    transition: all 0.2s ease-out 0s;
+}
+
+.Field--HasValue .InputField, .Field .SelectField, .Field .CreditCardInputField {
+    padding-top: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.Field--HasValue .Field__Label, .Field--WithSelectField .Field__Label, .Field--WithCreditCardField:not(.Field--PIGI) .Field__Label, .Field--HasValue .Field--WithCreditCardField .Field--PIGI .Field__Label {
+    transform: translateY(0px);
+    opacity: 1;
+}
+
+.Field--WithCreditCardField.Field--WithPlaceHolder .Field__Label {
+    opacity: 0;
+}
+
+.Field--GiftCardNumber, .Field--CreditCardNumber {
+    flex: 1 1 0%;
+}
+
+.PaymentMethod--GiftCard {
+    display: none
+}
+
+.Field--GiftCardCVV, .Field--CreditCardCVV, .Field--CreditCardExpiration {
+    flex: 0 0 auto;
+    width: 25%;
+}
+
+.CreditCardInfoGroup {
+    display: inherit;
+}
+
+.Field--CreditCardNumber iframe, .Field--CreditCardCVV iframe {
+    height: 1.2em;
+}
+
+.Expiry-Date-And-Removal {
+    display: inline-block;
+}
+
+.Field--PaysafeCreditCardNumber iframe, .Field--PaysafeCreditCardExpiration iframe, .Field--PaysafeCreditCardCVV iframe {
+    height: 1.2em !important;
+}
+
+.Field--AdyenCreditCardNumber iframe, .Field--AdyenCreditCardExpiration iframe, .Field--AdyenCreditCardCVV iframe {
+    height: 2em !important;
+}
+
+.Field--SpreedlyCreditCardNumber iframe, .Field--SpreedlyCreditCardCVV iframe {
+    height: 100%;
+}
+
+.Field--SpreedlyCreditCardExpiration input {
+    height: 50px;
+}
+
+.PaymentMethod--CreditCard .InputField {
+    line-height: 20px;
+}
+
+.Field--GiftCardCVV, .Field--CreditCardExpiration {
+    padding: 0px 10px;
+}
+
+.Action--GiftCardValidate {
+    flex: 0 0 auto;
+}
+
+.Moneris--CreditCardInfoGroup {
+    width: 100%;
+    position: relative;
+    display: block;
+}
+
+.Moneris--CreditCardInfoGroup #monerisFrame {
+    height: 50px;
+    overflow: hidden;
+    border: 0px;
+}
+
+.Flexiti--BrandedCardInfoGroup .Field--FlexitiBrandedCardNumber {
+    flex: inherit;
+    width: 67%;
+    padding-right: 10px;
+    border-radius: 6px;
+}
+
+.PaymentMethod--BrandedCard .FlexitiFinancingOptionsGroup {
+    padding: 10px 0px 0px;
+}
+
+#flexiti-widget {
+    transition: all 0.1s ease-out 0s;
+    position: fixed;
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    height: 100%;
+    z-index: 9999999;
+    text-align: center;
+    display: table;
+    opacity: 1;
+    inset: 0px;
+}
+
+#flexiti-widget.hidden {
+    opacity: 0.01;
+    z-index: -1000;
+}
+
+.FinancialOption__amount {
+    font-weight: 700;
+}
+
+.FlexitiFinancingOptions__fee-rate {
+    margin-bottom: 1rem;
+}
+
+#cyberSourceIframe {
+    display: none;
+}
+
+.Field--WithCreditCardField.Field--WithPlaceHolder .CreditCardInputField.inputField {
+    padding: 1.5rem 0.5rem 0.5rem;
+}
+
+.Field--WithCreditCardField.Field--WithPlaceHolder .CreditCardInputField.inputField input {
+    padding: 1.5rem 0.5rem 0.5rem;
+}
+
+.Field--WithCreditCardField.Field--WithPlaceHolder .CreditCardInputField.spreedlyInputField {
+    padding: 0.5rem 0px 0.5rem 0.5rem;
+}
+
+.Adyen--CreditCardInfoGroup {
+    display: flex;
+    margin-bottom: -0.5rem;
+}
+
+.Adyen--CreditCardInfoGroup .Field--AdyenCreditCardNumber {
+    width: 67%;
+}
+
+.Adyen--CreditCardInfoGroup .Field--AdyenCreditCardExpiration {
+    width: 18%;
+}
+
+.Adyen--CreditCardInfoGroup .Field--AdyenCreditCardCVV {
+    width: 15%;
+}
+
+.Adyen--CreditCardInfoGroup .CreditCardInputField {
+    padding-left: 1rem;
+    padding-top: 1.2rem;
+    border-radius: 6px;
+}
+
+.Action--Dismiss {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+    border-radius: 8px;
+    background-color: rgb(217, 217, 217);
+    color: rgba(0, 0, 0, 0.6);
+    position: relative;
+    cursor: pointer;
+    flex: 0 0 auto;
+    margin-right: 4px;
+}
+
+.Action--Dismiss:hover {
+    background-color: rgb(204, 204, 204);
+}
+
+.Action--Dismiss:active {
+    background-color: rgb(170, 170, 170);
+}
+
+.Action--Dismiss::before {
+    content: "×";
+    height: 1rem;
+    width: 1rem;
+    text-align: center;
+    position: absolute;
+    justify-content: center;
+    padding: 0px;
+    line-height: inherit;
+}
+
+.PaymentMethod .StoredCard__RemoveAction.Action--Dismiss {
+    margin-left: 5px;
+    font-size: 13px;
+    position: relative;
+    top: 2px;
+}
+
+.PaymentMethod .StoredCard__RemoveAction.Action--Dismiss::before {
+    content: "✕";
+    background: rgb(116, 118, 121);
+    color: white;
+    width: 18px;
+    display: inline-block;
+    line-height: 1.5em;
+    height: 18px;
+    border-radius: 50%;
+    text-align: center;
+    position: absolute;
+    font-size: 12px;
+    top: -2px;
+    cursor: pointer;
+}
+
+.TogglePanel--alt.PaymentMethod--CreditCard > .TogglePanel__Content > .PaypalButton, .TogglePanel--alt.PaymentMethod--CreditCard__StoredOption > .TogglePanel__Content > .PaypalButton {
+    width: 100%;
+}
+
+#PaymentMethodPPCP .TogglePanel__Content #paypal-button-container, #PaymentMethodPPCP .TogglePanel__Content #venmo-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0px 2px;
+    width: 100%;
+    padding: 15px 0px;
+}
+
+#ppcp-acdc-form {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#ppcp-acdc-form .InputField {
+    height: 50px;
+}
+
+#overlay {
+    transition: all 0.5s ease-out 0s;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: rgb(255, 255, 255);
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    text-align: center;
+    display: table;
+    opacity: 1;
+    inset: 0px;
+}
+
+.message {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+#overlay i {
+    color: rgb(255, 255, 255);
+    font-size: 60px;
+    margin-top: 10px;
+}
+
+#overlay h1 {
+    color: rgb(255, 255, 255);
+    margin-top: 10px;
+}
+
+#overlay h3 {
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    max-width: 800px;
+    margin: 0px auto;
+}
+
+#overlay div {
+    max-width: 600px;
+    margin: 0px auto;
+    line-height: 24px;
+}
+
+#overlay.inverted {
+    background-color: rgb(255, 255, 255);
+}
+
+#overlay.inverted i, #overlay.inverted h1, #overlay.inverted h3 {
+    color: rgb(197, 197, 197);
+}
+
+#overlay.hidden {
+    opacity: 0.01;
+    z-index: -1000;
+}
+
+.CreditCardInfoGroup {
+    flex-wrap: wrap;
+}
+
+.Field--CreditCardNumber {
+    flex: auto;
+}
+
+.Field--CreditCardCVV, .Field--CreditCardExpiration {
+    width: 50%;
+    padding-left: 0;
+    padding-top: 10px;
+}

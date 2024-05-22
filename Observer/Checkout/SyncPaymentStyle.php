@@ -11,6 +11,7 @@ use Bold\Checkout\Model\PaymentStyleManagement\PaymentStyleBuilderFactory;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -39,21 +40,29 @@ class SyncPaymentStyle implements ObserverInterface
     private $paymentStyleBuilderFactory;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * @param ConfigInterface $config
      * @param PaymentStyleManagementInterface $paymentStyleManagement
      * @param StoreManagerInterface $storeManager
      * @param PaymentStyleBuilderFactory $paymentStyleBuilderFactory
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         ConfigInterface                 $config,
         PaymentStyleManagementInterface $paymentStyleManagement,
         StoreManagerInterface           $storeManager,
-        PaymentStyleBuilderFactory $paymentStyleBuilderFactory
+        PaymentStyleBuilderFactory      $paymentStyleBuilderFactory,
+        SerializerInterface             $serializer
     ) {
         $this->config = $config;
         $this->paymentStyleManagement = $paymentStyleManagement;
         $this->storeManager = $storeManager;
         $this->paymentStyleBuilderFactory = $paymentStyleBuilderFactory;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -74,7 +83,7 @@ class SyncPaymentStyle implements ObserverInterface
             return;
         }
 
-        $style = trim($this->config->getPaymentCss($websiteId));
+        $style = preg_replace('/\s+/', ' ', $this->serializer->unserialize($this->config->getPaymentCss($websiteId)));
         if (!empty($style)) {
             $styleBuilder = $this->paymentStyleBuilderFactory->create();
             $styleBuilder->addCssRule($style);
