@@ -22,4 +22,11 @@ interface PlaceOrderInterface
      * @return \Bold\Checkout\Api\Data\PlaceOrder\ResultInterface
      */
     public function place(string $shopId, OrderDataInterface $order): ResultInterface;
+
+    /**
+     * @param string $shopId
+     * @param string $quoteId
+     * @return ResultInterface
+     */
+    public function authorizeAndPlace(string $publicOrderId, string $quoteId): ResultInterface;
 }

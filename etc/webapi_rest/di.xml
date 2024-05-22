@@ -11,4 +11,9 @@
             <argument name="requiredProperties" xsi:type="const">\Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface::PROPERTIES_REQUIRED</argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Model\Order\PlaceOrder">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
 </config>

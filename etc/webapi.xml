@@ -42,6 +42,12 @@
             <resource ref="Magento_Sales::create"/>
         </resources>
     </route>
+    <route method="GET" url="/V1/orders/:publicOrderId/quote/:quoteId/authorizeAndPlace">
+        <service class="Bold\Checkout\Api\PlaceOrderInterface" method="authorizeAndPlace"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
     <route method="PUT" url="/V1/shops/:shopId/payments">
         <service class="Bold\Checkout\Api\Order\UpdatePaymentInterface" method="update"/>
         <resources>
