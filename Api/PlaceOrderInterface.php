@@ -25,8 +25,8 @@ interface PlaceOrderInterface
 
     /**
      * @param string $shopId
-     * @param string $quoteId
+     * @param string $quoteMaskId
      * @return ResultInterface
      */
-    public function authorizeAndPlace(string $publicOrderId, string $quoteId): ResultInterface;
+    public function authorizeAndPlace(string $publicOrderId, string $quoteMaskId): ResultInterface;
 }

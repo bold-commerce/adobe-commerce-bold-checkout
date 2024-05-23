@@ -11,6 +11,7 @@ use Magento\Framework\Flag\FlagResource;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 
@@ -31,7 +32,7 @@ final class PlaceOrderTest extends WebapiAbstract
         $publicOrderId = 'd407dc80-3470-49a4-9969-7a12cf17fd4a';
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => "/V1/orders/$publicOrderId/quote/1/authorizeAndPlace",
+                'resourcePath' => "/V1/orders/$publicOrderId/quote/{$this->getQuoteMaskId()}/authorizeAndPlace",
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
         ];
@@ -252,20 +253,21 @@ final class PlaceOrderTest extends WebapiAbstract
     /**
      * @magentoConfigFixture checkout/bold_checkout_base/shop_id 74e51be84d1643e8a89df356b80bf2b5
      */
-    public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteIdIsInvalid(): void
+    public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteMaskIdIsInvalid(): void
     {
         $this->_markTestAsRestOnly();
 
         $publicOrderId = 'fe90e903-e327-4ff4-ad31-c22529e33e50';
+        $quoteMaskId = '22b2a1667c47450ea14d7d435fc2b087';
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => "/V1/orders/$publicOrderId/quote/42/authorizeAndPlace",
+                'resourcePath' => "/V1/orders/$publicOrderId/quote/$quoteMaskId/authorizeAndPlace",
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
         ];
         $expectedErrorData = [
             [
-                'message' => 'Could not find quote with ID "42"',
+                'message' => "Invalid quote mask ID \"$quoteMaskId\"",
                 'code' => 422,
                 'type' => 'server.validation_error'
             ]
@@ -287,22 +289,14 @@ final class PlaceOrderTest extends WebapiAbstract
     ): void {
         $this->_markTestAsRestOnly();
 
-        $objectManager = Bootstrap::getObjectManager();
-        $searchCriteria = $objectManager->create(SearchCriteriaBuilder::class)
-            ->addFilter('reserved_order_id', 'test_order_1')
-            ->create();
-        $quotes = $objectManager->create(CartRepositoryInterface::class)
-            ->getList($searchCriteria)
-            ->getItems();
-        /** @var CartInterface $quote */
-        $quote = reset($quotes);
         $publicOrderId = 'fe90e903-e327-4ff4-ad31-c22529e33e50';
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => "/V1/orders/$publicOrderId/quote/{$quote->getId()}/authorizeAndPlace",
+                'resourcePath' => "/V1/orders/$publicOrderId/quote/{$this->getQuoteMaskId()}/authorizeAndPlace",
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
         ];
+        $objectManager = Bootstrap::getObjectManager();
         $flag = $objectManager->create(
             Flag::class,
             [
@@ -395,5 +389,21 @@ final class PlaceOrderTest extends WebapiAbstract
                 ]
             ],
         ];
+    }
+
+    private function getQuoteMaskId(): string
+    {
+        $objectManager = Bootstrap::getObjectManager();
+        $searchCriteria = $objectManager->create(SearchCriteriaBuilder::class)
+            ->addFilter('reserved_order_id', 'test_order_1')
+            ->create();
+        $quotes = $objectManager->create(CartRepositoryInterface::class)
+            ->getList($searchCriteria)
+            ->getItems();
+        /** @var CartInterface $quote */
+        $quote = reset($quotes);
+
+        return $objectManager->create(QuoteIdToMaskedQuoteIdInterface::class)
+            ->execute((int)$quote->getId());
     }
 }

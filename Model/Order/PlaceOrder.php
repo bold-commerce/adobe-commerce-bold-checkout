@@ -20,9 +20,11 @@ use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Bold\Checkout\Model\Quote\LoadAndValidate;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Flag;
 use Magento\Framework\Flag\FlagResource;
 use Magento\Framework\FlagFactory;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterfaceFactory;
 use Magento\Sales\Api\Data\TransactionInterface;
@@ -80,6 +82,7 @@ class PlaceOrder implements PlaceOrderInterface
      * @var LoadAndValidate
      */
     private $loadAndValidate;
+    private MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId;
     private StoreManagerInterface $storeManager;
     private ClientInterface $client;
     private OrderDataInterfaceFactory $orderDataFactory;
@@ -106,6 +109,7 @@ class PlaceOrder implements PlaceOrderInterface
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
         Progress $progress,
+        MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId,
         LoadAndValidate $loadAndValidate,
         StoreManagerInterface $storeManager,
         ClientInterface $client,
@@ -123,6 +127,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->processOrder = $processOrder;
         $this->progress = $progress;
         $this->loadAndValidate = $loadAndValidate;
+        $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->storeManager = $storeManager;
         $this->client = $client;
         $this->orderDataFactory = $orderDataFactory;
@@ -180,10 +185,16 @@ class PlaceOrder implements PlaceOrderInterface
     /**
      * @inheritDoc
      */
-    public function authorizeAndPlace(string $publicOrderId, string $quoteId): ResultInterface
+    public function authorizeAndPlace(string $publicOrderId, string $quoteMaskId): ResultInterface
     {
         $websiteId = (int)$this->storeManager->getStore()->getWebsiteId();
         $shopId = $this->config->getShopId($websiteId) ?? '';
+
+        try {
+            $quoteId = $this->maskedQuoteIdToQuoteId->execute($quoteMaskId);
+        } catch (NoSuchEntityException) {
+            return $this->getValidationErrorResponse((string)__('Invalid quote mask ID "%1"', $quoteMaskId));
+        }
 
         try {
             $quote = $this->loadAndValidate->load($shopId, (int)$quoteId);
