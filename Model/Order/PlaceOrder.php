@@ -229,7 +229,7 @@ class PlaceOrder implements PlaceOrderInterface
                          *     transactions: array{
                          *         gateway: string,
                          *         gateway_id: string,
-                         *         amount: float,
+                         *         amount: int,
                          *         transaction_id: string,
                          *         reference_transaction_id: string|null,
                          *         response_code: string,
@@ -277,7 +277,7 @@ class PlaceOrder implements PlaceOrderInterface
              * @param array{
              *     gateway: string,
              *     gateway_id: string,
-             *     amount: float,
+             *     amount: int,
              *     transaction_id: string,
              *     reference_transaction_id: string|null,
              *     response_code: string,
@@ -310,7 +310,7 @@ class PlaceOrder implements PlaceOrderInterface
          * @var array{
          *     gateway: string,
          *     gateway_id: string,
-         *     amount: float,
+         *     amount: int,
          *     transaction_id: string,
          *     reference_transaction_id: string|null,
          *     response_code: string,
@@ -325,7 +325,7 @@ class PlaceOrder implements PlaceOrderInterface
         /** @var OrderDataInterface $orderData */
         $orderData = $this->orderDataFactory->create();
 
-        $orderPayment->setAmountPaid($firstTransaction['amount']);
+        $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
 
         $transaction->setTxnId($firstTransaction['transaction_id']);
         $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
@@ -397,11 +397,11 @@ class PlaceOrder implements PlaceOrderInterface
      *
      * @return null|array{
      *      data?: array{
-     *          total: float,
+     *          total: int,
      *          transactions: array{
      *              gateway: string,
      *              gateway_id: string,
-     *              amount: float,
+     *              amount: int,
      *              transaction_id: string,
      *              reference_transaction_id: string|null,
      *              response_code: string,
@@ -415,7 +415,7 @@ class PlaceOrder implements PlaceOrderInterface
      *          transactions: array{
      *              gateway: string,
      *              gateway_id: string,
-     *              amount: float,
+     *              amount: int,
      *              transaction_id: string,
      *              reference_transaction_id: string|null,
      *              response_code: string,
@@ -434,11 +434,11 @@ class PlaceOrder implements PlaceOrderInterface
         /**
          * @var null|array{
          *       data?: array{
-         *           total: float,
+         *           total: int,
          *           transactions: array{
          *               gateway: string,
          *               gateway_id: string,
-         *               amount: float,
+         *               amount: int,
          *               transaction_id: string,
          *               reference_transaction_id: string|null,
          *               response_code: string,
@@ -452,7 +452,7 @@ class PlaceOrder implements PlaceOrderInterface
          *           transactions: array{
          *               gateway: string,
          *               gateway_id: string,
-         *               amount: float,
+         *               amount: int,
          *               transaction_id: string,
          *               reference_transaction_id: string|null,
          *               response_code: string,
@@ -469,11 +469,11 @@ class PlaceOrder implements PlaceOrderInterface
     /**
      * @return null|array{
      *      data?: array{
-     *          total: float,
+     *          total: int,
      *          transactions: array{
      *              gateway: string,
      *              gateway_id: string,
-     *              amount: float,
+     *              amount: int,
      *              transaction_id: string,
      *              reference_transaction_id: string|null,
      *              response_code: string,
@@ -487,7 +487,7 @@ class PlaceOrder implements PlaceOrderInterface
      *          transactions: array{
      *              gateway: string,
      *              gateway_id: string,
-     *              amount: float,
+     *              amount: int,
      *              transaction_id: string,
      *              reference_transaction_id: string|null,
      *              response_code: string,
