@@ -284,7 +284,7 @@ class PlaceOrder implements PlaceOrderInterface
              *     status: 'success'|'failure'
              * } $transaction
              */
-            static fn (array $transaction) => $transaction['status'] === 'success'
+            static fn (array $transaction): bool => $transaction['status'] === 'success'
         );
 
         if (count($transactions) === 0) {
