@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace Bold\Checkout\Test\Api;
 
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Flag;
 use Magento\Framework\Flag\FlagResource;
 use Magento\Framework\Webapi\Rest\Request;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\Data\CartInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
+
+use function reset;
 
 final class PlaceOrderTest extends WebapiAbstract
 {
@@ -272,7 +277,6 @@ final class PlaceOrderTest extends WebapiAbstract
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture checkout/bold_checkout_base/shop_id 74e51be84d1643e8a89df356b80bf2b5
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
      * @dataProvider boldAuthorizedPaymentsApiResultDataProvider
@@ -281,18 +285,24 @@ final class PlaceOrderTest extends WebapiAbstract
         array $authorizedPayments,
         array $expectedErrorResponse
     ): void {
-        self::markTestIncomplete('We need to figure out why the quote is not loading correctly for this test');
-
         $this->_markTestAsRestOnly();
 
+        $objectManager = Bootstrap::getObjectManager();
+        $searchCriteria = $objectManager->create(SearchCriteriaBuilder::class)
+            ->addFilter('reserved_order_id', 'test_order_1')
+            ->create();
+        $quotes = $objectManager->create(CartRepositoryInterface::class)
+            ->getList($searchCriteria)
+            ->getItems();
+        /** @var CartInterface $quote */
+        $quote = reset($quotes);
         $publicOrderId = 'fe90e903-e327-4ff4-ad31-c22529e33e50';
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => "/V1/orders/$publicOrderId/quote/1/authorizeAndPlace",
+                'resourcePath' => "/V1/orders/$publicOrderId/quote/{$quote->getId()}/authorizeAndPlace",
                 'httpMethod' => Request::HTTP_METHOD_GET,
             ],
         ];
-        $objectManager = Bootstrap::getObjectManager();
         $flag = $objectManager->create(
             Flag::class,
             [
