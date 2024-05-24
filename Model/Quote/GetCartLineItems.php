@@ -98,6 +98,7 @@ class GetCartLineItems
     {
         return [
             'id' => (int)$item->getProduct()->getId(),
+            'sku' => $item->getSku(),
             'quantity' => $this->extractLineItemQuantity($item),
             'title' => $this->getLineItemName($item),
             'product_title' => $this->getLineItemName($item),
