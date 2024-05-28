@@ -17,6 +17,13 @@ use Magento\Quote\Model\Quote\Address\ToOrderAddress;
 class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
 {
     private const HYDRATE_ORDER_URL = 'checkout_sidekick/{{shopId}}/order/%s';
+    private const EXPECTED_SEGMENTS = [
+        'subtotal',
+        'shipping',
+        'discount',
+        'tax',
+        'grand_total',
+    ];
 
     /**
      * @var ClientInterface
@@ -37,7 +44,6 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
      * @var ToOrderAddress
      */
     private $quoteToOrderAddressConverter;
-
 
     /**
      * @param ClientInterface $client
@@ -74,22 +80,17 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
             $shippingDescription = $quote->getShippingAddress()->getShippingDescription();
         }
 
-        $discountLine = [];
-        $discountTotal = 0;
-
-        if (isset($totals['discount'])) {
-            $discountLine[] = [
-                'line_text' => $totals['discount']['code'],
-                'value' => abs($this->convertToCents($totals['discount']['value']))
-            ];
-            $discountTotal = abs($this->convertToCents($totals['discount']['value']));
-        }
+        list($fees, $discounts) = $this->getFeesAndDiscounts($totals);
+        $discountTotal = array_reduce($discounts, function($sum, $discountLine) {
+            return $sum + $discountLine['value'];
+        });
 
         $body = [
             'billing_address' => $this->addressConverter->convert($billingAddress),
             'cart_items' => $this->getCartLineItems->getItems($quote),
             'taxes' => $this->getTaxLines($totals['tax']['full_info']),
-            'discounts' => $discountLine,
+            'discounts' => $discounts,
+            'fees' => $fees,
             'shipping_line' => [
                 'rate_name' => $shippingDescription ?? '',
                 'cost' => $this->convertToCents($totals['shipping']['value'])
@@ -101,7 +102,6 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
                 'shipping_total' => $this->convertToCents($totals['shipping']['value']),
                 'order_total' => $this->convertToCents($totals['grand_total']['value'])
             ],
-            'fees' => [],
         ];
 
         if ($quote->getCustomer()->getId()) {
@@ -153,5 +153,46 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
         }
 
         return $taxLines;
+    }
+
+    /**
+     * Looks at total segments and makes unrecognized segments into fees and discounts
+     *
+     * @param array $totals
+     * @return array
+     */
+    private function getFeesAndDiscounts(array $totals): array
+    {
+        $fees = [];
+        $discounts = [];
+
+        if (isset($totals['discount'])) {
+            $discounts[] = [
+                'line_text' => $totals['discount']['code'],
+                'value' => abs($this->convertToCents($totals['discount']['value']))
+            ];
+        }
+
+        foreach ($totals as $segment) {
+            if (in_array($segment['code'], self::EXPECTED_SEGMENTS) || !$segment['value']) {
+                continue;
+            }
+
+            $description = $totalSegment['title'] ?? ucfirst(str_replace('_', ' ', $segment['code']));
+
+            if ($segment['value'] > 0) {
+                $fees[] = [
+                    'description' => $description,
+                    'value' => $this->convertToCents($segment['value'])
+                ];
+            } else {
+                $discounts[] = [
+                    'line_text' => $description,
+                    'value' => abs($this->convertToCents($segment['value']))
+                ];
+            }
+        }
+
+        return [$fees, $discounts];
     }
 }
