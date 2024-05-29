@@ -365,8 +365,6 @@ class PlaceOrder implements PlaceOrderInterface
         $transaction->setAdditionalInformation('gateway', $firstTransaction['gateway']);
         /** @noinspection PhpUnhandledExceptionInspection */
         $transaction->setAdditionalInformation('payment_id', $firstTransaction['payment_id']);
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $transaction->setAdditionalInformation('response_code', $firstTransaction['response_code']);
 
         $orderData->setQuoteId((int)$quoteId);
         $orderData->setPublicId($publicOrderId);

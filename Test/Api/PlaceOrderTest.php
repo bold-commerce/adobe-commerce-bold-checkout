@@ -232,7 +232,6 @@ final class PlaceOrderTest extends WebapiAbstract
                             'amount' => 3000,
                             'transaction_id' => 'b9f35c91-1c16-4a3e-a985-a6a1af44c0ac',
                             'reference_transaction_id' => null,
-                            'response_code' => '42',
                             'status' => 'success'
                         ]
                     ]
@@ -334,7 +333,6 @@ final class PlaceOrderTest extends WebapiAbstract
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
                                 'reference_transaction_id' => null,
-                                'response_code' => '123',
                                 'status' => 'failure'
                             ]
                         ]
@@ -359,7 +357,6 @@ final class PlaceOrderTest extends WebapiAbstract
                                 'amount' => 3000,
                                 'transaction_id' => 'b9f35c91-1c16-4a3e-a985-a6a1af44c0ac',
                                 'reference_transaction_id' => null,
-                                'response_code' => '42',
                                 'status' => 'success'
                             ]
                         ]
@@ -374,7 +371,6 @@ final class PlaceOrderTest extends WebapiAbstract
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
                                 'reference_transaction_id' => null,
-                                'response_code' => '123',
                                 'status' => 'failure'
                             ]
                         ]
