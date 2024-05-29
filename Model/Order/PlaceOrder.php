@@ -290,12 +290,20 @@ class PlaceOrder implements PlaceOrderInterface
             /**
              * @param array{
              *     gateway: string,
-             *     gateway_id: string,
+             *     payment_id: string,
              *     amount: int,
              *     transaction_id: string,
-             *     reference_transaction_id: string|null,
-             *     response_code: string,
-             *     status: 'success'|'failure'
+             *     currency: string,
+             *     step: string,
+             *     status: 'success'|'failure'|'',
+             *     tender_type: string,
+             *     tender_details: array{
+             *         brand: string,
+             *         last_four: string,
+             *         bin: string,
+             *         expiration: string
+             *     },
+             *     gateway_response_data: string[]
              * } $transaction
              */
             static fn (array $transaction): bool => $transaction['status'] === 'success'
@@ -323,12 +331,20 @@ class PlaceOrder implements PlaceOrderInterface
         /**
          * @var array{
          *     gateway: string,
-         *     gateway_id: string,
+         *     payment_id: string,
          *     amount: int,
          *     transaction_id: string,
-         *     reference_transaction_id: string|null,
-         *     response_code: string,
-         *     status: 'success'
+         *     currency: string,
+         *     step: string,
+         *     status: 'success'|'',
+         *     tender_type: string,
+         *     tender_details: array{
+         *         brand: string,
+         *         last_four: string,
+         *         bin: string,
+         *         expiration: string
+         *     },
+         *     gateway_response_data: string[]
          * } $firstTransaction
          */
         $firstTransaction = array_shift($transactions);
@@ -414,12 +430,20 @@ class PlaceOrder implements PlaceOrderInterface
      *          total: int,
      *          transactions: array{
      *              gateway: string,
-     *              gateway_id: string,
+     *              payment_id: string,
      *              amount: int,
      *              transaction_id: string,
-     *              reference_transaction_id: string|null,
-     *              response_code: string,
-     *              status: 'success'|'failure'
+     *              currency: string,
+     *              step: string,
+     *              status: 'success'|'failure'|'',
+     *              tender_type: string,
+     *              tender_details: array{
+     *                  brand: string,
+     *                  last_four: string,
+     *                  bin: string,
+     *                  expiration: string
+     *              },
+     *              gateway_response_data: string[]
      *          }[]
      *      },
      *      errors?: array{
@@ -431,12 +455,20 @@ class PlaceOrder implements PlaceOrderInterface
      *          code?: string,
      *          transactions?: array{
      *              gateway: string,
-     *              gateway_id: string,
+     *              payment_id: string,
      *              amount: int,
      *              transaction_id: string,
-     *              reference_transaction_id: string|null,
-     *              response_code: string,
-     *              status: 'success'|'failure'
+     *              currency: string,
+     *              step: string,
+     *              status: 'success'|'failure'|'',
+     *              tender_type: string,
+     *              tender_details: array{
+     *                  brand: string,
+     *                  last_four: string,
+     *                  bin: string,
+     *                  expiration: string
+     *              },
+     *              gateway_response_data: string[]
      *          }[]
      *      }
      *  }
@@ -453,13 +485,21 @@ class PlaceOrder implements PlaceOrderInterface
          *       data?: array{
          *           total: int,
          *           transactions: array{
-         *               gateway: string,
-         *               gateway_id: string,
-         *               amount: int,
-         *               transaction_id: string,
-         *               reference_transaction_id: string|null,
-         *               response_code: string,
-         *               status: 'success'|'failure'
+         *              gateway: string,
+         *              payment_id: string,
+         *              amount: int,
+         *              transaction_id: string,
+         *              currency: string,
+         *              step: string,
+         *              status: 'success'|'failure'|'',
+         *              tender_type: string,
+         *              tender_details: array{
+         *                  brand: string,
+         *                  last_four: string,
+         *                  bin: string,
+         *                  expiration: string
+         *              },
+         *              gateway_response_data: string[]
          *           }[]
          *       },
          *       errors?: array{
@@ -471,12 +511,20 @@ class PlaceOrder implements PlaceOrderInterface
          *           code?: string,
          *           transactions: array{
          *               gateway: string,
-         *               gateway_id: string,
+         *               payment_id: string,
          *               amount: int,
          *               transaction_id: string,
-         *               reference_transaction_id: string|null,
-         *               response_code: string,
-         *               status: 'success'|'failure'
+         *               currency: string,
+         *               step: string,
+         *               status: 'success'|'failure'|'',
+         *               tender_type: string,
+         *               tender_details: array{
+         *                   brand: string,
+         *                   last_four: string,
+         *                   bin: string,
+         *                   expiration: string
+         *               },
+         *               gateway_response_data: string[]
          *           }[]
          *       }
          * } $testAuthorizedPayments
@@ -492,12 +540,20 @@ class PlaceOrder implements PlaceOrderInterface
      *          total: int,
      *          transactions: array{
      *              gateway: string,
-     *              gateway_id: string,
+     *              payment_id: string,
      *              amount: int,
      *              transaction_id: string,
-     *              reference_transaction_id: string|null,
-     *              response_code: string,
-     *              status: 'success'|'failure'
+     *              currency: string,
+     *              step: string,
+     *              status: 'success'|'failure'|'',
+     *              tender_type: string,
+     *              tender_details: array{
+     *                  brand: string,
+     *                  last_four: string,
+     *                  bin: string,
+     *                  expiration: string
+     *              },
+     *              gateway_response_data: string[]
      *          }[]
      *      },
      *      errors?: array{
@@ -509,12 +565,20 @@ class PlaceOrder implements PlaceOrderInterface
      *          code?: string,
      *          transactions?: array{
      *              gateway: string,
-     *              gateway_id: string,
+     *              payment_id: string,
      *              amount: int,
      *              transaction_id: string,
-     *              reference_transaction_id: string|null,
-     *              response_code: string,
-     *              status: 'success'|'failure'
+     *              currency: string,
+     *              step: string,
+     *              status: 'success'|'failure'|'',
+     *              tender_type: string,
+     *              tender_details: array{
+     *                  brand: string,
+     *                  last_four: string,
+     *                  bin: string,
+     *                  expiration: string
+     *              },
+     *              gateway_response_data: string[]
      *          }[]
      *      }
      *  }
