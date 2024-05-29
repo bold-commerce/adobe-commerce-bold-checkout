@@ -234,10 +234,13 @@ class PlaceOrder implements PlaceOrderInterface
                     'errors' => array_map(
                         /**
                          * @param array{
-                         *     code: string,
-                         *     type: string,
                          *     message: string,
-                         *     transactions: array{
+                         *     type: string,
+                         *     field: string,
+                         *     severity: string,
+                         *     sub_type: string,
+                         *     code?: string,
+                         *     transactions?: array{
                          *         gateway: string,
                          *         gateway_id: string,
                          *         amount: int,
@@ -420,10 +423,13 @@ class PlaceOrder implements PlaceOrderInterface
      *          }[]
      *      },
      *      errors?: array{
-     *          code: string,
-     *          type: string,
      *          message: string,
-     *          transactions: array{
+     *          type: string,
+     *          field: string,
+     *          severity: string,
+     *          sub_type: string,
+     *          code?: string,
+     *          transactions?: array{
      *              gateway: string,
      *              gateway_id: string,
      *              amount: int,
@@ -457,9 +463,12 @@ class PlaceOrder implements PlaceOrderInterface
          *           }[]
          *       },
          *       errors?: array{
-         *           code: string,
-         *           type: string,
          *           message: string,
+         *           type: string,
+         *           field: string,
+         *           severity: string,
+         *           sub_type: string,
+         *           code?: string,
          *           transactions: array{
          *               gateway: string,
          *               gateway_id: string,
@@ -492,10 +501,13 @@ class PlaceOrder implements PlaceOrderInterface
      *          }[]
      *      },
      *      errors?: array{
-     *          code: string,
-     *          type: string,
      *          message: string,
-     *          transactions: array{
+     *          type: string,
+     *          field: string,
+     *          severity: string,
+     *          sub_type: string,
+     *          code?: string,
+     *          transactions?: array{
      *              gateway: string,
      *              gateway_id: string,
      *              amount: int,
