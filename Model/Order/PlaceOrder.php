@@ -254,7 +254,7 @@ class PlaceOrder implements PlaceOrderInterface
                         function (array $error): ErrorInterface {
                             return $this->errorFactory->create(
                                 [
-                                    'code' => (int)$error['code'],
+                                    'code' => (int)($error['code'] ?? 0),
                                     'type' => $error['type'],
                                     'message' => $error['message']
                                 ]
