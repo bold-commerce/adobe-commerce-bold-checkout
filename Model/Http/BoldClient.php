@@ -11,6 +11,7 @@ use Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PatchCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
+use Bold\Checkout\Model\Http\Client\Command\PutCommand;
 use Bold\Checkout\Model\Http\Client\UserAgent;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -52,12 +53,18 @@ class BoldClient implements ClientInterface
     private $deleteCommand;
 
     /**
+     * @var PutCommand
+     */
+    private $putCommand;
+
+    /**
      * @param ConfigInterface $config
      * @param UserAgent $userAgent
      * @param GetCommand $getCommand
      * @param PostCommand $postCommand
      * @param PatchCommand $patchCommand
      * @param DeleteCommand $deleteCommand
+     * @param PutCommand $putCommand
      */
     public function __construct(
         ConfigInterface $config,
@@ -65,7 +72,8 @@ class BoldClient implements ClientInterface
         GetCommand $getCommand,
         PostCommand $postCommand,
         PatchCommand $patchCommand,
-        DeleteCommand $deleteCommand
+        DeleteCommand $deleteCommand,
+        PutCommand $putCommand
     ) {
         $this->config = $config;
         $this->userAgent = $userAgent;
@@ -73,6 +81,7 @@ class BoldClient implements ClientInterface
         $this->postCommand = $postCommand;
         $this->patchCommand = $patchCommand;
         $this->deleteCommand = $deleteCommand;
+        $this->putCommand = $putCommand;
     }
 
     /**
@@ -100,7 +109,9 @@ class BoldClient implements ClientInterface
      */
     public function put(int $websiteId, string $url, array $data): ResultInterface
     {
-        throw new LocalizedException(__('Put method is not implemented.'));
+        $url = $this->getUrl($websiteId, $url);
+        $headers = $this->getHeaders($websiteId);
+        return $this->putCommand->execute($websiteId, $url, $headers, $data);
     }
 
     /**

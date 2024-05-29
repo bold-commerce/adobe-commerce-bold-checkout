@@ -98,6 +98,7 @@ class GetCartLineItems
     {
         return [
             'id' => (int)$item->getProduct()->getId(),
+            'sku' => $item->getSku(),
             'quantity' => $this->extractLineItemQuantity($item),
             'title' => $this->getLineItemName($item),
             'product_title' => $this->getLineItemName($item),
@@ -107,6 +108,7 @@ class GetCartLineItems
             'requires_shipping' => !$item->getProduct()->getIsVirtual(),
             'line_item_key' => (string)$item->getId(),
             'price' => $this->getLineItemPrice($item),
+            'vendor' => '',
         ];
     }
 
