@@ -98,7 +98,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
             'totals' => [
                 'sub_total' => $this->convertToCents($totals['subtotal']['value']),
                 'tax_total' => $this->convertToCents($totals['tax']['value']),
-                'discount_total' => $discountTotal,
+                'discount_total' => $discountTotal ?? 0,
                 'shipping_total' => $this->convertToCents($totals['shipping']['value']),
                 'order_total' => $this->convertToCents($totals['grand_total']['value'])
             ],
