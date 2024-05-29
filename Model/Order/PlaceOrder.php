@@ -514,7 +514,7 @@ class PlaceOrder implements PlaceOrderInterface
         $result = $this->client->post($websiteId, $url, []);
         $errors = $result->getErrors();
 
-        if (!array_key_exists('errors', $errors)) {
+        if (array_key_exists('errors', $errors) && count($errors) > 0) {
             $errors = [
                 [
                     'code' => $result->getStatus(),
