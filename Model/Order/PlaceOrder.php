@@ -32,6 +32,7 @@ use function __;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
+use function array_merge;
 use function count;
 use function sprintf;
 
@@ -473,9 +474,6 @@ class PlaceOrder implements PlaceOrderInterface
             ];
         }
 
-        return [
-            'errors' => $errors,
-            'data' => $result->getBody()
-        ];
+        return array_merge($result->getBody(), ['errors' => $errors]);
     }
 }
