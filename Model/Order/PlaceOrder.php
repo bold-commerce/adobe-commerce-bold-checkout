@@ -345,6 +345,7 @@ class PlaceOrder implements PlaceOrderInterface
         /** @var OrderDataInterface $orderData */
         $orderData = $this->orderDataFactory->create();
 
+        $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
         $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
 
         $transaction->setTxnId($firstTransaction['transaction_id']);
