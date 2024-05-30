@@ -21,9 +21,6 @@ use Bold\Checkout\Model\Quote\LoadAndValidate;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Flag;
-use Magento\Framework\Flag\FlagResource;
-use Magento\Framework\FlagFactory;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterfaceFactory;
@@ -88,8 +85,6 @@ class PlaceOrder implements PlaceOrderInterface
     private OrderDataInterfaceFactory $orderDataFactory;
     private OrderPaymentInterfaceFactory $paymentFactory;
     private TransactionInterfaceFactory $transactionFactory;
-    private FlagFactory $flagFactory;
-    private FlagResource $flagResource;
 
     /**
      * @param OrderPayloadValidator $orderPayloadValidator
@@ -113,8 +108,6 @@ class PlaceOrder implements PlaceOrderInterface
         LoadAndValidate $loadAndValidate,
         StoreManagerInterface $storeManager,
         ClientInterface $client,
-        FlagFactory $flagFactory,
-        FlagResource $flagResource,
         OrderDataInterfaceFactory $orderDataFactory,
         OrderPaymentInterfaceFactory $paymentFactory,
         TransactionInterfaceFactory $transactionFactory
@@ -133,8 +126,6 @@ class PlaceOrder implements PlaceOrderInterface
         $this->orderDataFactory = $orderDataFactory;
         $this->paymentFactory = $paymentFactory;
         $this->transactionFactory = $transactionFactory;
-        $this->flagFactory = $flagFactory;
-        $this->flagResource = $flagResource;
     }
 
     /**
@@ -206,26 +197,22 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse((string)__('Could not find quote with ID "%1"', $quoteId));
         }
 
-        $authorizedPayments = $this->getTestAuthorizedPayments();
-
-        if ($authorizedPayments === null) {
-            try {
-                $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
-            } catch (Exception $e) {
-                return $this->responseFactory->create(
-                    [
-                        'errors' => [
-                            $this->errorFactory->create(
-                                [
-                                    'message' => $e->getMessage(),
-                                    'code' => 500,
-                                    'type' => 'server.bold_checkout_api_error'
-                                ]
-                            )
-                        ]
+        try {
+            $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
+        } catch (Exception $e) {
+            return $this->responseFactory->create(
+                [
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'message' => $e->getMessage(),
+                                'code' => 500,
+                                'type' => 'server.bold_checkout_api_error'
+                            ]
+                        )
                     ]
-                );
-            }
+                ]
+            );
         }
 
         if (array_key_exists('errors', $authorizedPayments) && count($authorizedPayments['errors']) > 0) {
@@ -417,121 +404,6 @@ class PlaceOrder implements PlaceOrderInterface
                 ],
             ]
         );
-    }
-
-    /**
-     * Get data set while running functional tests on this API endpoint.
-     *
-     * Note: this is a dirty hack. We wish it hadn't come to this, because of the way functional tests work in Magento,
-     * we have no other choice.
-     *
-     * @return null|array{
-     *      data?: array{
-     *          total: int,
-     *          transactions: array{
-     *              gateway: string,
-     *              payment_id: string,
-     *              amount: int,
-     *              transaction_id: string,
-     *              currency: string,
-     *              step: string,
-     *              status: 'success'|'failure'|'',
-     *              tender_type: string,
-     *              tender_details: array{
-     *                  brand: string,
-     *                  last_four: string,
-     *                  bin: string,
-     *                  expiration: string
-     *              },
-     *              gateway_response_data: string[]
-     *          }[]
-     *      },
-     *      errors?: array{
-     *          message: string,
-     *          type: string,
-     *          field: string,
-     *          severity: string,
-     *          sub_type: string,
-     *          code?: string,
-     *          transactions?: array{
-     *              gateway: string,
-     *              payment_id: string,
-     *              amount: int,
-     *              transaction_id: string,
-     *              currency: string,
-     *              step: string,
-     *              status: 'success'|'failure'|'',
-     *              tender_type: string,
-     *              tender_details: array{
-     *                  brand: string,
-     *                  last_four: string,
-     *                  bin: string,
-     *                  expiration: string
-     *              },
-     *              gateway_response_data: string[]
-     *          }[]
-     *      }
-     *  }
-     */
-    private function getTestAuthorizedPayments(): ?array
-    {
-        /** @var Flag $testDataFlag */
-        $testDataFlag = $this->flagFactory->create();
-
-        $this->flagResource->load($testDataFlag, 'bold_api_test_data_payment_auth', 'flag_code');
-
-        /**
-         * @var null|array{
-         *       data?: array{
-         *           total: int,
-         *           transactions: array{
-         *              gateway: string,
-         *              payment_id: string,
-         *              amount: int,
-         *              transaction_id: string,
-         *              currency: string,
-         *              step: string,
-         *              status: 'success'|'failure'|'',
-         *              tender_type: string,
-         *              tender_details: array{
-         *                  brand: string,
-         *                  last_four: string,
-         *                  bin: string,
-         *                  expiration: string
-         *              },
-         *              gateway_response_data: string[]
-         *           }[]
-         *       },
-         *       errors?: array{
-         *           message: string,
-         *           type: string,
-         *           field: string,
-         *           severity: string,
-         *           sub_type: string,
-         *           code?: string,
-         *           transactions: array{
-         *               gateway: string,
-         *               payment_id: string,
-         *               amount: int,
-         *               transaction_id: string,
-         *               currency: string,
-         *               step: string,
-         *               status: 'success'|'failure'|'',
-         *               tender_type: string,
-         *               tender_details: array{
-         *                   brand: string,
-         *                   last_four: string,
-         *                   bin: string,
-         *                   expiration: string
-         *               },
-         *               gateway_response_data: string[]
-         *           }[]
-         *       }
-         * } $testAuthorizedPayments
-         */
-        $testAuthorizedPayments = $testDataFlag->getFlagData();
-
-        return $testAuthorizedPayments;
     }
 
     /**
