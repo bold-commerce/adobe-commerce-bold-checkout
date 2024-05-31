@@ -107,7 +107,6 @@ class GetCartLineItems
             'requires_shipping' => !$item->getProduct()->getIsVirtual(),
             'line_item_key' => (string)$item->getId(),
             'price' => $this->getLineItemPrice($item),
-            'vendor' => '',
         ];
     }
 
