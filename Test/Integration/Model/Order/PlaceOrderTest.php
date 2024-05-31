@@ -192,6 +192,7 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'gateway' => 'Test Payment Gateway',
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
+                                'transaction_id' => 'd8efbfac-e718-4f73-823a-6c9f4e44c4f0',
                                 'status' => 'failure',
                                 'tender_type' => 'credit_card',
                                 'tender_details' => [
@@ -242,6 +243,7 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'gateway' => 'Test Payment Gateway',
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
+                                'transaction_id' => '3407d7b0-0029-43d5-bfa9-b3c8bb1267b8',
                                 'status' => 'failure',
                                 'tender_type' => 'credit_card',
                                 'tender_details' => [
