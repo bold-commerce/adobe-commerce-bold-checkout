@@ -65,7 +65,6 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'payment_id' => 'ff2e05a2-04c7-4db3-9a3d-c15f5dcca7fe',
                                 'amount' => 3000,
                                 'transaction_id' => 'b9f35c91-1c16-4a3e-a985-a6a1af44c0ac',
-                                'reference_transaction_id' => null,
                                 'status' => 'success',
                                 'tender_type' => 'credit_card',
                                 'tender_details' => [
@@ -193,7 +192,6 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'gateway' => 'Test Payment Gateway',
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
-                                'reference_transaction_id' => null,
                                 'status' => 'failure',
                                 'tender_type' => 'credit_card',
                                 'tender_details' => [
@@ -223,7 +221,6 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'payment_id' => 'ff2e05a2-04c7-4db3-9a3d-c15f5dcca7fe',
                                 'amount' => 3000,
                                 'transaction_id' => 'b9f35c91-1c16-4a3e-a985-a6a1af44c0ac',
-                                'reference_transaction_id' => null,
                                 'status' => 'success',
                                 'tender_type' => 'credit_card',
                                 'tender_details' => [
@@ -245,7 +242,6 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'gateway' => 'Test Payment Gateway',
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
-                                'reference_transaction_id' => null,
                                 'status' => 'failure',
                                 'tender_type' => 'credit_card',
                                 'tender_details' => [
