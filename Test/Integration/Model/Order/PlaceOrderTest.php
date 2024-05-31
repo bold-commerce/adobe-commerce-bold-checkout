@@ -66,7 +66,15 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'amount' => 3000,
                                 'transaction_id' => 'b9f35c91-1c16-4a3e-a985-a6a1af44c0ac',
                                 'reference_transaction_id' => null,
-                                'status' => 'success'
+                                'status' => 'success',
+                                'tender_type' => 'credit_card',
+                                'tender_details' => [
+                                    'brand' => 'Discover',
+                                    'last_four' => '0009',
+                                    'bin' => '601100',
+                                    'expiration' => '04/2030'
+                                ],
+                                'gateway_response_data' => []
                             ]
                         ]
                     ]
@@ -186,7 +194,15 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
                                 'reference_transaction_id' => null,
-                                'status' => 'failure'
+                                'status' => 'failure',
+                                'tender_type' => 'credit_card',
+                                'tender_details' => [
+                                    'brand' => 'MasterCard',
+                                    'last_four' => '5100',
+                                    'bin' => '510510',
+                                    'expiration' => '01/2029'
+                                ],
+                                'gateway_response_data' => []
                             ]
                         ]
                     ]
@@ -208,7 +224,15 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'amount' => 3000,
                                 'transaction_id' => 'b9f35c91-1c16-4a3e-a985-a6a1af44c0ac',
                                 'reference_transaction_id' => null,
-                                'status' => 'success'
+                                'status' => 'success',
+                                'tender_type' => 'credit_card',
+                                'tender_details' => [
+                                    'brand' => 'MasterCard',
+                                    'last_four' => '0011',
+                                    'bin' => '222300',
+                                    'expiration' => '07/2027'
+                                ],
+                                'gateway_response_data' => []
                             ]
                         ]
                     ],
@@ -222,7 +246,15 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
                                 'payment_id' => 'd7fc6a17-04de-489c-a1ce-1d3571275791',
                                 'amount' => 3000,
                                 'reference_transaction_id' => null,
-                                'status' => 'failure'
+                                'status' => 'failure',
+                                'tender_type' => 'credit_card',
+                                'tender_details' => [
+                                    'brand' => 'Visa',
+                                    'last_four' => '1115',
+                                    'bin' => '400011',
+                                    'expiration' => '12/2025'
+                                ],
+                                'gateway_response_data' => []
                             ]
                         ]
                     ]
