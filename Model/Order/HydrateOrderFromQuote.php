@@ -85,9 +85,12 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
             return $sum + $discountLine['value'];
         });
 
+        $cartItems = $this->getCartLineItems->getItems($quote);
+        $formattedCartItems = $this->formatCartLineItems($cartItems);
+
         $body = [
             'billing_address' => $this->addressConverter->convert($billingAddress),
-            'cart_items' => $this->getCartLineItems->getItems($quote),
+            'cart_items' => $formattedCartItems,
             'taxes' => $this->getTaxLines($totals['tax']['full_info']),
             'discounts' => $discounts,
             'fees' => $fees,
@@ -194,5 +197,19 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
         }
 
         return [$fees, $discounts];
+    }
+
+    /**
+     * @param array $cartItems
+     * @return array
+     */
+    private function formatCartLineItems(array $cartItems): array
+    {
+        foreach ($cartItems as &$item) {
+            $item['sku'] = '';
+            $item['vendor'] = '';
+        }
+
+        return $cartItems;
     }
 }
