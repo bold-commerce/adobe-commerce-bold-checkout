@@ -19,9 +19,12 @@ use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrder;
 use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Bold\Checkout\Model\Quote\LoadAndValidate;
 use Exception;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterfaceFactory;
 use Magento\Sales\Api\Data\TransactionInterface;
@@ -87,6 +90,7 @@ class PlaceOrder implements PlaceOrderInterface
     private OrderDataInterfaceFactory $orderDataFactory;
     private OrderPaymentInterfaceFactory $paymentFactory;
     private TransactionInterfaceFactory $transactionFactory;
+    private CheckoutSession $checkoutSession;
 
     /**
      * @param OrderPayloadValidator $orderPayloadValidator
@@ -112,7 +116,8 @@ class PlaceOrder implements PlaceOrderInterface
         ClientInterface $client,
         OrderDataInterfaceFactory $orderDataFactory,
         OrderPaymentInterfaceFactory $paymentFactory,
-        TransactionInterfaceFactory $transactionFactory
+        TransactionInterfaceFactory $transactionFactory,
+        CheckoutSession $checkoutSession
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
@@ -128,6 +133,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->orderDataFactory = $orderDataFactory;
         $this->paymentFactory = $paymentFactory;
         $this->transactionFactory = $transactionFactory;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -389,6 +395,8 @@ class PlaceOrder implements PlaceOrderInterface
             );
         }
 
+        $this->updateCheckoutSession($quote, $order);
+
         return $this->responseFactory->create(
             [
                 'order' => $order
@@ -487,5 +495,14 @@ class PlaceOrder implements PlaceOrderInterface
         }
 
         return array_merge($result->getBody(), ['errors' => $errors]);
+    }
+
+    private function updateCheckoutSession(CartInterface $quote, OrderInterface $order): void
+    {
+        $this->checkoutSession->setLastQuoteId($quote->getId());
+        $this->checkoutSession->setLastSuccessQuoteId($quote->getId());
+        $this->checkoutSession->setLastOrderId($order->getId());
+        $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
+        $this->checkoutSession->setLastOrderStatus($order->getStatus());
     }
 }
