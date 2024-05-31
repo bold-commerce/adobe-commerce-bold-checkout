@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Api\Order\HydrateOrderFromQuoteInterface;
 use Bold\Checkout\Model\Order\Address\Converter;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
 
@@ -46,21 +47,29 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
     private $quoteToOrderAddressConverter;
 
     /**
+     * @var ProductFactory
+     */
+    private $productFactory;
+
+    /**
      * @param ClientInterface $client
      * @param GetCartLineItems $getCartLineItems
      * @param Converter $addressConverter
      * @param ToOrderAddress $quoteToOrderAddressConverter
+     * @param ProductFactory $productFactory
      */
     public function __construct(
         ClientInterface $client,
         GetCartLineItems $getCartLineItems,
         Converter $addressConverter,
         ToOrderAddress $quoteToOrderAddressConverter,
+        ProductFactory $productFactory,
     ) {
         $this->client = $client;
         $this->getCartLineItems = $getCartLineItems;
         $this->addressConverter = $addressConverter;
         $this->quoteToOrderAddressConverter = $quoteToOrderAddressConverter;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -86,7 +95,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
         });
 
         $cartItems = $this->getCartLineItems->getItems($quote);
-        $formattedCartItems = $this->formatCartLineItems($cartItems);
+        $formattedCartItems = $this->formatCartItems($cartItems);
 
         $body = [
             'billing_address' => $this->addressConverter->convert($billingAddress),
@@ -203,10 +212,11 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
      * @param array $cartItems
      * @return array
      */
-    private function formatCartLineItems(array $cartItems): array
+    private function formatCartItems(array $cartItems): array
     {
         foreach ($cartItems as &$item) {
-            $item['sku'] = '';
+            $cartItem = $this->productFactory->create()->load($item['id']);
+            $item['sku'] = $cartItem->getSku();
             $item['vendor'] = '';
         }
 
