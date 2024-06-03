@@ -300,10 +300,8 @@ class PlaceOrder implements PlaceOrderInterface
              *     },
              *     gateway_response_data: string[]
              * } $transaction
-             *
-             * TODO: verify that the status used for filtering is correct
              */
-            static fn (array $transaction): bool => $transaction['status'] !== 'failure'
+            static fn (array $transaction): bool => $transaction['status'] !== 'failed'
         );
 
         if (count($transactions) === 0) {
