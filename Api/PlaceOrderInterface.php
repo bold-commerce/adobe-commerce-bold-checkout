@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bold\Checkout\Api;
@@ -21,4 +22,11 @@ interface PlaceOrderInterface
      * @return \Bold\Checkout\Api\Data\PlaceOrder\ResultInterface
      */
     public function place(string $shopId, OrderDataInterface $order): ResultInterface;
+
+    /**
+     * @param string $shopId
+     * @param string $quoteMaskId
+     * @return ResultInterface
+     */
+    public function authorizeAndPlace(string $publicOrderId, string $quoteMaskId): ResultInterface;
 }
