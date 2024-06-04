@@ -15,6 +15,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
+use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
@@ -87,9 +88,17 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
             'd407dc80-3470-49a4-9969-7a12cf17fd4a',
             $this->getQuoteMaskId()
         );
+        /** @var OrderPaymentInterface $payment */
+        $payment = $response->getOrder()?->getPayment() ?? $objectManager->create(OrderPaymentInterface::class);
 
         self::assertEmpty($response->getErrors());
         self::assertNotNull($response->getOrder());
+        self::assertSame(30, $payment->getBaseAmountPaid());
+        self::assertSame(30, $payment->getAmountPaid());
+        self::assertSame('0009', $payment->getCcLast4());
+        self::assertSame('Discover', $payment->getCcType());
+        self::assertSame('04', $payment->getCcExpMonth());
+        self::assertSame('2030', $payment->getCcExpYear());
     }
 
     public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteMaskIdIsInvalid(): void
