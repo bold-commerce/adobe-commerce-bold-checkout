@@ -396,7 +396,7 @@ class PlaceOrder implements PlaceOrderInterface
     }
 
     /**
-     * @return null|array{
+     * @return array{
      *      data?: array{
      *          total: int,
      *          transactions: array{
