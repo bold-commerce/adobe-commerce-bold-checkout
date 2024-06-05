@@ -15,6 +15,7 @@ use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
@@ -145,6 +146,50 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
 
         $configMock->method('getShopId')
             ->willReturn('74e51be84d1643e8a89df356b80bf2b5');
+
+        $response = $placeOrderService->authorizeAndPlace($publicOrderId, $quoteMaskId);
+        $actualErrorData = [
+            'code' => $response->getErrors()[0]->getCode(),
+            'message' => $response->getErrors()[0]->getMessage(),
+            'type' => $response->getErrors()[0]->getType()
+        ];
+
+        self::assertEquals($expectedErrorData, $actualErrorData);
+        self::assertNull($response->getOrder());
+    }
+
+    public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuotDoesNotExist(): void
+    {
+        $configMock = $this->createMock(ConfigInterface::class);
+        $maskedQuoteIdToQuoteIdMock = $this->createMock(MaskedQuoteIdToQuoteIdInterface::class);
+        $loadAndValidateMock = $this->createMock(LoadAndValidate::class);
+        $boldCheckoutApiClientMock = $this->createMock(ClientInterface::class);
+        $objectManager = Bootstrap::getObjectManager();
+        $placeOrderService = $objectManager->create(
+            PlaceOrder::class,
+            [
+                'config' => $configMock,
+                'maskedQuoteIdToQuoteId' => $maskedQuoteIdToQuoteIdMock,
+                'loadAndValidate' => $loadAndValidateMock,
+                'client' => $boldCheckoutApiClientMock,
+            ]
+        );
+        $publicOrderId = 'fe90e903-e327-4ff4-ad31-c22529e33e50';
+        $quoteMaskId = '22b2a1667c47450ea14d7d435fc2b087';
+        $expectedErrorData = [
+            'message' => 'Could not find quote with ID "42"',
+            'code' => 422,
+            'type' => 'server.validation_error'
+        ];
+
+        $configMock->method('getShopId')
+            ->willReturn('74e51be84d1643e8a89df356b80bf2b5');
+
+        $maskedQuoteIdToQuoteIdMock->method('execute')
+            ->willReturn(42);
+
+        $loadAndValidateMock->method('load')
+            ->willReturn($objectManager->create(CartInterface::class));
 
         $response = $placeOrderService->authorizeAndPlace($publicOrderId, $quoteMaskId);
         $actualErrorData = [
