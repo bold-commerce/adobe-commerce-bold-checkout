@@ -477,7 +477,7 @@ class PlaceOrder implements PlaceOrderInterface
     {
         $this->checkoutSession->setLastQuoteId($quote->getId());
         $this->checkoutSession->setLastSuccessQuoteId($quote->getId());
-        $this->checkoutSession->setLastOrderId($order->getId());
+        $this->checkoutSession->setLastOrderId($order->getEntityId());
         $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
         $this->checkoutSession->setLastOrderStatus($order->getStatus());
     }
