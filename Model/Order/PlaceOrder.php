@@ -361,13 +361,15 @@ class PlaceOrder implements PlaceOrderInterface
         $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
         $orderPayment->setCcExpMonth($cardExpirationMonth);
         $orderPayment->setCcExpYear($cardExpirationYear);
+        $orderPayment->setAdditionalInformation(
+            [
+                'transaction_gateway' => $firstTransaction['gateway'],
+                'transaction_payment_id' => $firstTransaction['payment_id']
+            ]
+        );
 
         $transaction->setTxnId($firstTransaction['transaction_id']);
         $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $transaction->setAdditionalInformation('gateway', $firstTransaction['gateway']);
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $transaction->setAdditionalInformation('payment_id', $firstTransaction['payment_id']);
         $transaction->setIsClosed(1);
 
         $orderData->setQuoteId((int)$quoteId);
