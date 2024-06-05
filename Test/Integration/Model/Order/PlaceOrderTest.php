@@ -11,6 +11,7 @@ use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Order\PlaceOrder;
 use Bold\Checkout\Model\Quote\LoadAndValidate;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
@@ -95,6 +96,8 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
         $order = $response->getOrder();
         /** @var OrderPaymentInterface|Payment $payment */
         $payment = $order?->getPayment() ?? $objectManager->create(OrderPaymentInterface::class);
+        /** @var CheckoutSession $checkoutSession */
+        $checkoutSession = $objectManager->get(CheckoutSession::class);
 
         self::assertEmpty($response->getErrors());
         self::assertNotNull($order);
@@ -113,6 +116,11 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
         );
         self::assertSame('b9f35c91-1c16-4a3e-a985-a6a1af44c0ac', $payment->getLastTransId());
         self::assertTrue($payment->getIsTransactionClosed()); // @phpstan-ignore method.notFound
+        self::assertSame($order->getQuoteId(), $checkoutSession->getLastQuoteId());
+        self::assertSame($order->getQuoteId(), $checkoutSession->getLastSuccessQuoteId());
+        self::assertSame($order->getEntityId(), $checkoutSession->getLastOrderId());
+        self::assertSame($order->getIncrementId(), $checkoutSession->getLastRealOrderId());
+        self::assertSame($order->getStatus(), $checkoutSession->getLastOrderStatus());
     }
 
     public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteMaskIdIsInvalid(): void
