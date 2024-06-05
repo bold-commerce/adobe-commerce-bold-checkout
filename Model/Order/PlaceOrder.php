@@ -475,11 +475,11 @@ class PlaceOrder implements PlaceOrderInterface
 
     private function updateCheckoutSession(CartInterface $quote, OrderInterface $order): void
     {
-        $this->checkoutSession->setLastQuoteId($quote->getId());
-        $this->checkoutSession->setLastSuccessQuoteId($quote->getId());
-        $this->checkoutSession->setLastOrderId($order->getEntityId());
-        $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
-        $this->checkoutSession->setLastOrderStatus($order->getStatus());
+        $this->checkoutSession->setLastQuoteId($quote->getId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastSuccessQuoteId($quote->getId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastOrderId($order->getEntityId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastRealOrderId($order->getIncrementId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastOrderStatus($order->getStatus()); // @phpstan-ignore method.notFound
     }
 
     /**
