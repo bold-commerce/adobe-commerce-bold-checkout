@@ -473,6 +473,7 @@ class PlaceOrder implements PlaceOrderInterface
         return array_merge($result->getBody(), ['errors' => $errors]);
     }
 
+    // phpcs:ignore Magento2.Annotation.MethodAnnotationStructure.NoCommentBlock
     private function updateCheckoutSession(CartInterface $quote, OrderInterface $order): void
     {
         $this->checkoutSession->setLastQuoteId($quote->getId()); // @phpstan-ignore method.notFound
