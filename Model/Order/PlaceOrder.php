@@ -23,7 +23,7 @@ use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterfaceFactory;
@@ -84,7 +84,7 @@ class PlaceOrder implements PlaceOrderInterface
      * @var LoadAndValidate
      */
     private $loadAndValidate;
-    private MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId;
+    private MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId;
     private StoreManagerInterface $storeManager;
     private ClientInterface $client;
     private OrderDataInterfaceFactory $orderDataFactory;
@@ -110,7 +110,7 @@ class PlaceOrder implements PlaceOrderInterface
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
         Progress $progress,
-        MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId,
+        MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         LoadAndValidate $loadAndValidate,
         StoreManagerInterface $storeManager,
         ClientInterface $client,
