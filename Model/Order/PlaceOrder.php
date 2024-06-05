@@ -367,10 +367,10 @@ class PlaceOrder implements PlaceOrderInterface
                 'transaction_payment_id' => $firstTransaction['payment_id']
             ]
         );
+        $orderPayment->setIsTransactionClosed(true); // @phpstan-ignore method.notFound
 
         $transaction->setTxnId($firstTransaction['transaction_id']);
         $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
-        $transaction->setIsClosed(1);
 
         $orderData->setQuoteId((int)$quoteId);
         $orderData->setPublicId($publicOrderId);

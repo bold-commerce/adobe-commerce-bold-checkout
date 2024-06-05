@@ -17,6 +17,7 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Model\Order\Payment;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
@@ -92,7 +93,7 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
 
         /** @var OrderInterface|null $order */
         $order = $response->getOrder();
-        /** @var OrderPaymentInterface $payment */
+        /** @var OrderPaymentInterface|Payment $payment */
         $payment = $order?->getPayment() ?? $objectManager->create(OrderPaymentInterface::class);
 
         self::assertEmpty($response->getErrors());
@@ -111,6 +112,7 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
             $payment->getAdditionalInformation()
         );
         self::assertSame('b9f35c91-1c16-4a3e-a985-a6a1af44c0ac', $payment->getLastTransId());
+        self::assertTrue($payment->getIsTransactionClosed()); // @phpstan-ignore method.notFound
     }
 
     public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteMaskIdIsInvalid(): void
