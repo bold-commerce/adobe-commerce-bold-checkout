@@ -103,6 +103,14 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
         self::assertSame('Discover', $payment->getCcType());
         self::assertSame('04', $payment->getCcExpMonth());
         self::assertSame('2030', $payment->getCcExpYear());
+        self::assertArraySubset(
+            [
+                'transaction_gateway' => 'Test Payment Gateway',
+                'transaction_payment_id' => 'ff2e05a2-04c7-4db3-9a3d-c15f5dcca7fe'
+            ],
+            $payment->getAdditionalInformation()
+        );
+        self::assertSame('b9f35c91-1c16-4a3e-a985-a6a1af44c0ac', $payment->getLastTransId());
     }
 
     public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteMaskIdIsInvalid(): void
