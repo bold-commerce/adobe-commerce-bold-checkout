@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 use function reset;
 
-final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalImplementation.FoundFinal
+final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalImplementation.FoundFinal
 {
     use ArraySubsetAsserts;
 
