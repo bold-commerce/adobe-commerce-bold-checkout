@@ -343,39 +343,7 @@ class PlaceOrder implements PlaceOrderInterface
          * } $firstTransaction
          */
         $firstTransaction = array_shift($transactions);
-        /** @var OrderPaymentInterface $orderPayment */
-        $orderPayment = $this->paymentFactory->create();
-        /** @var TransactionInterface $transaction */
-        $transaction = $this->transactionFactory->create();
-        /** @var OrderDataInterface $orderData */
-        $orderData = $this->orderDataFactory->create();
-        [$cardExpirationMonth, $cardExpirationYear] = explode(
-            '/',
-            $firstTransaction['tender_details']['expiration'],
-            2
-        );
-
-        $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
-        $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
-        $orderPayment->setCcLast4($firstTransaction['tender_details']['last_four']);
-        $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
-        $orderPayment->setCcExpMonth($cardExpirationMonth);
-        $orderPayment->setCcExpYear($cardExpirationYear);
-        $orderPayment->setAdditionalInformation(
-            [
-                'transaction_gateway' => $firstTransaction['gateway'],
-                'transaction_payment_id' => $firstTransaction['payment_id']
-            ]
-        );
-        $orderPayment->setIsTransactionClosed(true); // @phpstan-ignore method.notFound
-
-        $transaction->setTxnId($firstTransaction['transaction_id']);
-        $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
-
-        $orderData->setQuoteId((int)$quoteId);
-        $orderData->setPublicId($publicOrderId);
-        $orderData->setPayment($orderPayment);
-        $orderData->setTransaction($transaction);
+        $orderData = $this->buildOrderData($firstTransaction, (int)$quoteId, $publicOrderId);
 
         try {
             $order = $this->createOrderFromPayload->createOrder($orderData, $quote);
@@ -504,5 +472,63 @@ class PlaceOrder implements PlaceOrderInterface
         $this->checkoutSession->setLastOrderId($order->getId());
         $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
         $this->checkoutSession->setLastOrderStatus($order->getStatus());
+    }
+
+    /**
+     * @param array{
+     *      gateway: string,
+     *      payment_id: string,
+     *      amount: int,
+     *      transaction_id: string,
+     *      currency: string,
+     *      step: string,
+     *      status: 'success'|'',
+     *      tender_type: string,
+     *      tender_details: array{
+     *          brand: string,
+     *          last_four: string,
+     *          bin: string,
+     *          expiration: string
+     *      },
+     *      gateway_response_data: string[]
+     *  } $firstTransaction
+     */
+    private function buildOrderData(array $firstTransaction, int $quoteId, string $publicOrderId): OrderDataInterface
+    {
+        /** @var OrderPaymentInterface $orderPayment */
+        $orderPayment = $this->paymentFactory->create();
+        /** @var TransactionInterface $transaction */
+        $transaction = $this->transactionFactory->create();
+        /** @var OrderDataInterface $orderData */
+        $orderData = $this->orderDataFactory->create();
+        [$cardExpirationMonth, $cardExpirationYear] = explode(
+            '/',
+            $firstTransaction['tender_details']['expiration'],
+            2
+        );
+
+        $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
+        $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
+        $orderPayment->setCcLast4($firstTransaction['tender_details']['last_four']);
+        $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
+        $orderPayment->setCcExpMonth($cardExpirationMonth);
+        $orderPayment->setCcExpYear($cardExpirationYear);
+        $orderPayment->setAdditionalInformation(
+            [
+                'transaction_gateway' => $firstTransaction['gateway'],
+                'transaction_payment_id' => $firstTransaction['payment_id']
+            ]
+        );
+        $orderPayment->setIsTransactionClosed(true); // @phpstan-ignore method.notFound
+
+        $transaction->setTxnId($firstTransaction['transaction_id']);
+        $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
+
+        $orderData->setQuoteId($quoteId);
+        $orderData->setPublicId($publicOrderId);
+        $orderData->setPayment($orderPayment);
+        $orderData->setTransaction($transaction);
+
+        return $orderData;
     }
 }
