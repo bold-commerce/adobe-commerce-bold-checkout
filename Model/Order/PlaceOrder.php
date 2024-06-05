@@ -237,12 +237,20 @@ class PlaceOrder implements PlaceOrderInterface
                          *     code?: string,
                          *     transactions?: array{
                          *         gateway: string,
-                         *         gateway_id: string,
+                         *         payment_id: string,
                          *         amount: int,
                          *         transaction_id: string,
-                         *         reference_transaction_id: string|null,
-                         *         response_code: string,
-                         *         status: 'success'|'failure'
+                         *         currency: string,
+                         *         step: string,
+                         *         status: 'success'|'failed'|'',
+                         *         tender_type: string,
+                         *         tender_details: array{
+                         *             brand: string,
+                         *             last_four: string,
+                         *             bin: string,
+                         *             expiration: string
+                         *         },
+                         *         gateway_response_data: string[]
                          *     }[]
                          * } $error
                          */
@@ -290,7 +298,7 @@ class PlaceOrder implements PlaceOrderInterface
              *     transaction_id: string,
              *     currency: string,
              *     step: string,
-             *     status: 'success'|'failure'|'',
+             *     status: 'success'|'failed'|'',
              *     tender_type: string,
              *     tender_details: array{
              *         brand: string,
@@ -406,7 +414,7 @@ class PlaceOrder implements PlaceOrderInterface
      *              transaction_id: string,
      *              currency: string,
      *              step: string,
-     *              status: 'success'|'failure'|'',
+     *              status: 'success'|'failed'|'',
      *              tender_type: string,
      *              tender_details: array{
      *                  brand: string,
@@ -431,7 +439,7 @@ class PlaceOrder implements PlaceOrderInterface
      *              transaction_id: string,
      *              currency: string,
      *              step: string,
-     *              status: 'success'|'failure'|'',
+     *              status: 'success'|'failed'|'',
      *              tender_type: string,
      *              tender_details: array{
      *                  brand: string,
@@ -441,7 +449,7 @@ class PlaceOrder implements PlaceOrderInterface
      *              },
      *              gateway_response_data: string[]
      *          }[]
-     *      }
+     *      }[]
      *  }
      * @throws Exception
      */
