@@ -29,7 +29,7 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
 {
     use ArraySubsetAsserts;
 
-    private CartInterface|null $quote;
+    private CartInterface $quote;
 
     /**
      * @magentoDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
@@ -362,7 +362,7 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
         $quotes = $objectManager->create(CartRepositoryInterface::class)
             ->getList($searchCriteria)
             ->getItems();
-        $this->quote = reset($quotes);
+        $this->quote = reset($quotes) ?: $objectManager->create(CartInterface::class);
 
         return $this->quote;
     }
