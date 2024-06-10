@@ -11,20 +11,25 @@ use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Order\PlaceOrder;
 use Bold\Checkout\Model\Quote\LoadAndValidate;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Model\Order\Payment;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
 use function reset;
 
-final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalImplementation.FoundFinal
+final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalImplementation.FoundFinal
 {
     use ArraySubsetAsserts;
 
-    private CartInterface|null $quote;
+    private CartInterface $quote;
 
     /**
      * @magentoDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
@@ -88,8 +93,35 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
             $this->getQuoteMaskId()
         );
 
+        /** @var OrderInterface|null $order */
+        $order = $response->getOrder();
+        /** @var OrderPaymentInterface|Payment $payment */
+        $payment = $order?->getPayment() ?? $objectManager->create(OrderPaymentInterface::class);
+        /** @var CheckoutSession $checkoutSession */
+        $checkoutSession = $objectManager->get(CheckoutSession::class);
+
         self::assertEmpty($response->getErrors());
-        self::assertNotNull($response->getOrder());
+        self::assertNotNull($order);
+        self::assertSame(30, $payment->getBaseAmountPaid());
+        self::assertSame(30, $payment->getAmountPaid());
+        self::assertSame('0009', $payment->getCcLast4());
+        self::assertSame('Discover', $payment->getCcType());
+        self::assertSame('04', $payment->getCcExpMonth());
+        self::assertSame('2030', $payment->getCcExpYear());
+        self::assertArraySubset(
+            [
+                'transaction_gateway' => 'Test Payment Gateway',
+                'transaction_payment_id' => 'ff2e05a2-04c7-4db3-9a3d-c15f5dcca7fe'
+            ],
+            $payment->getAdditionalInformation()
+        );
+        self::assertSame('b9f35c91-1c16-4a3e-a985-a6a1af44c0ac', $payment->getLastTransId());
+        self::assertTrue($payment->getIsTransactionClosed()); // @phpstan-ignore method.notFound
+        self::assertSame($order->getQuoteId(), $checkoutSession->getLastQuoteId());
+        self::assertSame($order->getQuoteId(), $checkoutSession->getLastSuccessQuoteId());
+        self::assertSame($order->getEntityId(), $checkoutSession->getLastOrderId());
+        self::assertSame($order->getIncrementId(), $checkoutSession->getLastRealOrderId());
+        self::assertSame($order->getStatus(), $checkoutSession->getLastOrderStatus());
     }
 
     public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuoteMaskIdIsInvalid(): void
@@ -114,6 +146,50 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
 
         $configMock->method('getShopId')
             ->willReturn('74e51be84d1643e8a89df356b80bf2b5');
+
+        $response = $placeOrderService->authorizeAndPlace($publicOrderId, $quoteMaskId);
+        $actualErrorData = [
+            'code' => $response->getErrors()[0]->getCode(),
+            'message' => $response->getErrors()[0]->getMessage(),
+            'type' => $response->getErrors()[0]->getType()
+        ];
+
+        self::assertEquals($expectedErrorData, $actualErrorData);
+        self::assertNull($response->getOrder());
+    }
+
+    public function testDoesNotAuthorizeAndPlaceSuccessfullyIfQuotDoesNotExist(): void
+    {
+        $configMock = $this->createMock(ConfigInterface::class);
+        $maskedQuoteIdToQuoteIdMock = $this->createMock(MaskedQuoteIdToQuoteIdInterface::class);
+        $loadAndValidateMock = $this->createMock(LoadAndValidate::class);
+        $boldCheckoutApiClientMock = $this->createMock(ClientInterface::class);
+        $objectManager = Bootstrap::getObjectManager();
+        $placeOrderService = $objectManager->create(
+            PlaceOrder::class,
+            [
+                'config' => $configMock,
+                'maskedQuoteIdToQuoteId' => $maskedQuoteIdToQuoteIdMock,
+                'loadAndValidate' => $loadAndValidateMock,
+                'client' => $boldCheckoutApiClientMock,
+            ]
+        );
+        $publicOrderId = 'fe90e903-e327-4ff4-ad31-c22529e33e50';
+        $quoteMaskId = '22b2a1667c47450ea14d7d435fc2b087';
+        $expectedErrorData = [
+            'message' => 'Could not find quote with ID "42"',
+            'code' => 422,
+            'type' => 'server.validation_error'
+        ];
+
+        $configMock->method('getShopId')
+            ->willReturn('74e51be84d1643e8a89df356b80bf2b5');
+
+        $maskedQuoteIdToQuoteIdMock->method('execute')
+            ->willReturn(42);
+
+        $loadAndValidateMock->method('load')
+            ->willReturn($objectManager->create(CartInterface::class));
 
         $response = $placeOrderService->authorizeAndPlace($publicOrderId, $quoteMaskId);
         $actualErrorData = [
@@ -286,7 +362,7 @@ final class PlaceOrderTest extends TestCase // phpcs-ignore: Magento2.PHP.FinalI
         $quotes = $objectManager->create(CartRepositoryInterface::class)
             ->getList($searchCriteria)
             ->getItems();
-        $this->quote = reset($quotes);
+        $this->quote = reset($quotes) ?: $objectManager->create(CartInterface::class);
 
         return $this->quote;
     }

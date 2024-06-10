@@ -23,7 +23,7 @@ use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
+use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterfaceFactory;
@@ -84,7 +84,7 @@ class PlaceOrder implements PlaceOrderInterface
      * @var LoadAndValidate
      */
     private $loadAndValidate;
-    private MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId;
+    private MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId;
     private StoreManagerInterface $storeManager;
     private ClientInterface $client;
     private OrderDataInterfaceFactory $orderDataFactory;
@@ -110,7 +110,7 @@ class PlaceOrder implements PlaceOrderInterface
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
         Progress $progress,
-        MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId,
+        MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         LoadAndValidate $loadAndValidate,
         StoreManagerInterface $storeManager,
         ClientInterface $client,
@@ -237,12 +237,20 @@ class PlaceOrder implements PlaceOrderInterface
                          *     code?: string,
                          *     transactions?: array{
                          *         gateway: string,
-                         *         gateway_id: string,
+                         *         payment_id: string,
                          *         amount: int,
                          *         transaction_id: string,
-                         *         reference_transaction_id: string|null,
-                         *         response_code: string,
-                         *         status: 'success'|'failure'
+                         *         currency: string,
+                         *         step: string,
+                         *         status: 'success'|'failed'|'',
+                         *         tender_type: string,
+                         *         tender_details: array{
+                         *             brand: string,
+                         *             last_four: string,
+                         *             bin: string,
+                         *             expiration: string
+                         *         },
+                         *         gateway_response_data: string[]
                          *     }[]
                          * } $error
                          */
@@ -290,7 +298,7 @@ class PlaceOrder implements PlaceOrderInterface
              *     transaction_id: string,
              *     currency: string,
              *     step: string,
-             *     status: 'success'|'failure'|'',
+             *     status: 'success'|'failed'|'',
              *     tender_type: string,
              *     tender_details: array{
              *         brand: string,
@@ -343,37 +351,7 @@ class PlaceOrder implements PlaceOrderInterface
          * } $firstTransaction
          */
         $firstTransaction = array_shift($transactions);
-        /** @var OrderPaymentInterface $orderPayment */
-        $orderPayment = $this->paymentFactory->create();
-        /** @var TransactionInterface $transaction */
-        $transaction = $this->transactionFactory->create();
-        /** @var OrderDataInterface $orderData */
-        $orderData = $this->orderDataFactory->create();
-        [$cardExpirationMonth, $cardExpirationYear] = explode(
-            '/',
-            $firstTransaction['tender_details']['expiration'],
-            2
-        );
-
-        $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
-        $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
-        $orderPayment->setCcLast4($firstTransaction['tender_details']['last_four']);
-        $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
-        $orderPayment->setCcExpMonth($cardExpirationMonth);
-        $orderPayment->setCcExpYear($cardExpirationYear);
-
-        $transaction->setTxnId($firstTransaction['transaction_id']);
-        $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $transaction->setAdditionalInformation('gateway', $firstTransaction['gateway']);
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $transaction->setAdditionalInformation('payment_id', $firstTransaction['payment_id']);
-        $transaction->setIsClosed(1);
-
-        $orderData->setQuoteId((int)$quoteId);
-        $orderData->setPublicId($publicOrderId);
-        $orderData->setPayment($orderPayment);
-        $orderData->setTransaction($transaction);
+        $orderData = $this->buildOrderData($firstTransaction, (int)$quoteId, $publicOrderId);
 
         try {
             $order = $this->createOrderFromPayload->createOrder($orderData, $quote);
@@ -426,7 +404,7 @@ class PlaceOrder implements PlaceOrderInterface
     }
 
     /**
-     * @return null|array{
+     * @return array{
      *      data?: array{
      *          total: int,
      *          transactions: array{
@@ -436,7 +414,7 @@ class PlaceOrder implements PlaceOrderInterface
      *              transaction_id: string,
      *              currency: string,
      *              step: string,
-     *              status: 'success'|'failure'|'',
+     *              status: 'success'|'failed'|'',
      *              tender_type: string,
      *              tender_details: array{
      *                  brand: string,
@@ -461,7 +439,7 @@ class PlaceOrder implements PlaceOrderInterface
      *              transaction_id: string,
      *              currency: string,
      *              step: string,
-     *              status: 'success'|'failure'|'',
+     *              status: 'success'|'failed'|'',
      *              tender_type: string,
      *              tender_details: array{
      *                  brand: string,
@@ -471,7 +449,7 @@ class PlaceOrder implements PlaceOrderInterface
      *              },
      *              gateway_response_data: string[]
      *          }[]
-     *      }
+     *      }[]
      *  }
      * @throws Exception
      */
@@ -495,12 +473,71 @@ class PlaceOrder implements PlaceOrderInterface
         return array_merge($result->getBody(), ['errors' => $errors]);
     }
 
+    // phpcs:ignore Magento2.Annotation.MethodAnnotationStructure.NoCommentBlock
     private function updateCheckoutSession(CartInterface $quote, OrderInterface $order): void
     {
-        $this->checkoutSession->setLastQuoteId($quote->getId());
-        $this->checkoutSession->setLastSuccessQuoteId($quote->getId());
-        $this->checkoutSession->setLastOrderId($order->getId());
-        $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
-        $this->checkoutSession->setLastOrderStatus($order->getStatus());
+        $this->checkoutSession->setLastQuoteId($quote->getId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastSuccessQuoteId($quote->getId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastOrderId($order->getEntityId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastRealOrderId($order->getIncrementId()); // @phpstan-ignore method.notFound
+        $this->checkoutSession->setLastOrderStatus($order->getStatus()); // @phpstan-ignore method.notFound
+    }
+
+    /**
+     * @param array{
+     *      gateway: string,
+     *      payment_id: string,
+     *      amount: int,
+     *      transaction_id: string,
+     *      currency: string,
+     *      step: string,
+     *      status: 'success'|'',
+     *      tender_type: string,
+     *      tender_details: array{
+     *          brand: string,
+     *          last_four: string,
+     *          bin: string,
+     *          expiration: string
+     *      },
+     *      gateway_response_data: string[]
+     *  } $firstTransaction
+     */
+    private function buildOrderData(array $firstTransaction, int $quoteId, string $publicOrderId): OrderDataInterface
+    {
+        /** @var OrderPaymentInterface $orderPayment */
+        $orderPayment = $this->paymentFactory->create();
+        /** @var TransactionInterface $transaction */
+        $transaction = $this->transactionFactory->create();
+        /** @var OrderDataInterface $orderData */
+        $orderData = $this->orderDataFactory->create();
+        [$cardExpirationMonth, $cardExpirationYear] = explode(
+            '/',
+            $firstTransaction['tender_details']['expiration'],
+            2
+        );
+
+        $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
+        $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
+        $orderPayment->setCcLast4($firstTransaction['tender_details']['last_four']);
+        $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
+        $orderPayment->setCcExpMonth($cardExpirationMonth);
+        $orderPayment->setCcExpYear($cardExpirationYear);
+        $orderPayment->setAdditionalInformation(
+            [
+                'transaction_gateway' => $firstTransaction['gateway'],
+                'transaction_payment_id' => $firstTransaction['payment_id']
+            ]
+        );
+        $orderPayment->setIsTransactionClosed(true); // @phpstan-ignore method.notFound
+
+        $transaction->setTxnId($firstTransaction['transaction_id']);
+        $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
+
+        $orderData->setQuoteId($quoteId);
+        $orderData->setPublicId($publicOrderId);
+        $orderData->setPayment($orderPayment);
+        $orderData->setTransaction($transaction);
+
+        return $orderData;
     }
 }
