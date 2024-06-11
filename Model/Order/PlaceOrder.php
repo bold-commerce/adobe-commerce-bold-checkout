@@ -372,7 +372,25 @@ class PlaceOrder implements PlaceOrderInterface
         }
 
         $this->updateCheckoutSession($quote, $order);
-        $this->postCompleteOrder($publicOrderId, $websiteId, $order);
+
+        try {
+            $this->postCompleteOrder($publicOrderId, $websiteId, $order);
+        } catch (Exception $e) {
+            return $this->responseFactory->create(
+                [
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'message' => $e->getMessage(),
+                                'code' => 500,
+                                'type' => 'server.create_order_error'
+                            ]
+                        )
+                    ]
+                ]
+            );
+        }
+
         return $this->responseFactory->create(
             [
                 'order' => $order
@@ -541,10 +559,27 @@ class PlaceOrder implements PlaceOrderInterface
         return $orderData;
     }
 
-    private function postCompleteOrder(string $publicOrderId, int $websiteId, OrderInterface $order): void
+    /**
+     * Posts the order completion state to checkout sidekick
+     *
+     * @param string $publicOrderId
+     * @param int $shopId
+     * @param OrderInterface $order
+     * @return void
+     * @throws LocalizedException If the request fails
+     */
+    private function postCompleteOrder(string $publicOrderId, int $shopId, OrderInterface $order): void
     {
-        $url = sprintf('https://api.boldcommerce.com/checkout_sidekick/%s/order/%s/state', $websiteId, $publicOrderId);
-        $params = ['state' => 'order_complete', 'platform_order_id' => $order->getIncrementId(), 'platform_friendly_id' => $order->getEntityId()];
-        $this->client->post($websiteId, $url, $params);
+        $url = sprintf('/checkout_sidekick/%s/order/%s/state', $shopId, $publicOrderId);
+        $params = [
+            'state' => 'order_complete',
+            'platform_order_id' => $order->getIncrementId(),
+            'platform_friendly_id' => $order->getEntityId()
+        ];
+        try {
+            $this->client->post($shopId, $url, $params);
+        } catch (\Exception $e) {
+            throw new LocalizedException(__('Failed to post order completion'));
+        }
     }
 }
