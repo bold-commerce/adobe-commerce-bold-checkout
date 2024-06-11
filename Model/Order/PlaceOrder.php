@@ -372,7 +372,7 @@ class PlaceOrder implements PlaceOrderInterface
         }
 
         $this->updateCheckoutSession($quote, $order);
-
+        $this->postCompleteOrder($publicOrderId, $websiteId, $order);
         return $this->responseFactory->create(
             [
                 'order' => $order
@@ -539,5 +539,12 @@ class PlaceOrder implements PlaceOrderInterface
         $orderData->setTransaction($transaction);
 
         return $orderData;
+    }
+
+    private function postCompleteOrder(string $publicOrderId, int $websiteId, OrderInterface $order): void
+    {
+        $url = sprintf('https://api.boldcommerce.com/checkout_sidekick/%s/order/%s/state', $websiteId, $publicOrderId);
+        $params = ['state' => 'order_complete', 'platform_order_id' => $order->getIncrementId(), 'platform_friendly_id' => $order->getEntityId()];
+        $this->client->post($websiteId, $url, $params);
     }
 }
