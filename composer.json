@@ -31,7 +31,8 @@
     "psr/log": "*"
   },
   "require-dev": {
-    "dms/phpunit-arraysubset-asserts": "^0.5.0"
+    "dms/phpunit-arraysubset-asserts": "^0.5.0",
+    "rector/rector": "^1.1"
   },
   "suggest": {
     "magento/module-inventory-sales-api": "type: magento2-module, name: Magento_InventorySalesApi, version: *"
