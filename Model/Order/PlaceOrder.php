@@ -136,6 +136,8 @@ class PlaceOrder implements PlaceOrderInterface
         $this->checkoutSession = $checkoutSession;
     }
 
+    private const COMPLETE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order/%s/state';
+    
     /**
      * @inheritDoc
      */
@@ -383,7 +385,7 @@ class PlaceOrder implements PlaceOrderInterface
                             [
                                 'message' => $e->getMessage(),
                                 'code' => 500,
-                                'type' => 'server.create_order_error'
+                                'type' => 'server.bold_checkout_api_error'
                             ]
                         )
                     ]
@@ -559,27 +561,16 @@ class PlaceOrder implements PlaceOrderInterface
         return $orderData;
     }
 
-    /**
-     * Posts the order completion state to checkout sidekick
-     *
-     * @param string $publicOrderId
-     * @param int $shopId
-     * @param OrderInterface $order
-     * @return void
-     * @throws LocalizedException If the request fails
-     */
-    private function postCompleteOrder(string $publicOrderId, int $shopId, OrderInterface $order): void
+ 
+    private function postCompleteOrder(string $publicOrderId, int $websiteId, OrderInterface $order): void
     {
-        $url = sprintf('/checkout_sidekick/%s/order/%s/state', $shopId, $publicOrderId);
+        $url = sprintf(self::COMPLETE_ORDER_URL, $publicOrderId);
+
         $params = [
             'state' => 'order_complete',
             'platform_order_id' => $order->getIncrementId(),
             'platform_friendly_id' => $order->getEntityId()
         ];
-        try {
-            $this->client->post($shopId, $url, $params);
-        } catch (\Exception $e) {
-            throw new LocalizedException(__('Failed to post order completion'));
-        }
+        $this->client->post($websiteId, $url, $params);
     }
 }
