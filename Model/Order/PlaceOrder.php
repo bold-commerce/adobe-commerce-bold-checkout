@@ -137,7 +137,7 @@ class PlaceOrder implements PlaceOrderInterface
     }
 
     private const COMPLETE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order/%s/state';
-    
+
     /**
      * @inheritDoc
      */
@@ -561,7 +561,7 @@ class PlaceOrder implements PlaceOrderInterface
         return $orderData;
     }
 
- 
+
     private function postCompleteOrder(string $publicOrderId, int $websiteId, OrderInterface $order): void
     {
         $url = sprintf(self::COMPLETE_ORDER_URL, $publicOrderId);
@@ -571,6 +571,9 @@ class PlaceOrder implements PlaceOrderInterface
             'platform_order_id' => $order->getIncrementId(),
             'platform_friendly_id' => $order->getEntityId()
         ];
-        $this->client->post($websiteId, $url, $params);
+        $response = $this->client->put($websiteId, $url, $params);
+        if ($response->getStatus() !== 201) {
+            throw new LocalizedException(__('Failed to post order completion'));
+        }
     }
 }
