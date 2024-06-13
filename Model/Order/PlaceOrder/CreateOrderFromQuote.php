@@ -156,6 +156,11 @@ class CreateOrderFromQuote
     private function prepareCartForCustomer(CartInterface $cart): void
     {
         if (!$cart->getCustomerId()) {
+            $cart->setCustomerPrefix($cart->getBillingAddress()->getPrefix());
+            $cart->setCustomerFirstname($cart->getBillingAddress()->getFirstname());
+            $cart->setCustomerMiddlename($cart->getBillingAddress()->getMiddlename());
+            $cart->setCustomerLastname($cart->getBillingAddress()->getLastname());
+            $cart->setCustomerSuffix($cart->getBillingAddress()->getSuffix());
             $cart->setCustomerEmail($cart->getBillingAddress()->getEmail());
             $cart->setCustomerIsGuest(true);
             $cart->setCustomerGroupId(GroupManagement::NOT_LOGGED_IN_ID);
