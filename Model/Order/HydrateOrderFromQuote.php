@@ -63,7 +63,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
         GetCartLineItems $getCartLineItems,
         Converter $addressConverter,
         ToOrderAddress $quoteToOrderAddressConverter,
-        ProductFactory $productFactory,
+        ProductFactory $productFactory
     ) {
         $this->client = $client;
         $this->getCartLineItems = $getCartLineItems;
@@ -142,7 +142,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
      * @param float|string $dollars
      * @return integer
      */
-    private function convertToCents(float|string $dollars): int
+    private function convertToCents($dollars): int
     {
         return (int)round(floatval($dollars) * 100);
     }

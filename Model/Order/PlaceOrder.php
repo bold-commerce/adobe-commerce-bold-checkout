@@ -84,13 +84,41 @@ class PlaceOrder implements PlaceOrderInterface
      * @var LoadAndValidate
      */
     private $loadAndValidate;
-    private MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId;
-    private StoreManagerInterface $storeManager;
-    private ClientInterface $client;
-    private OrderDataInterfaceFactory $orderDataFactory;
-    private OrderPaymentInterfaceFactory $paymentFactory;
-    private TransactionInterfaceFactory $transactionFactory;
-    private CheckoutSession $checkoutSession;
+
+    /**
+     * @var \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface
+     */
+    private $maskedQuoteIdToQuoteId;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var \Bold\Checkout\Api\Http\ClientInterface
+     */
+    private $client;
+
+    /**
+     * @var \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterfaceFactory
+     */
+    private $orderDataFactory;
+
+    /**
+     * @var \Magento\Sales\Api\Data\OrderPaymentInterfaceFactory
+     */
+    private $paymentFactory;
+
+    /**
+     * @var \Magento\Sales\Api\Data\TransactionInterfaceFactory
+     */
+    private $transactionFactory;
+
+    /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
 
     /**
      * @param OrderPayloadValidator $orderPayloadValidator
@@ -191,7 +219,7 @@ class PlaceOrder implements PlaceOrderInterface
 
         try {
             $quoteId = $this->maskedQuoteIdToQuoteId->execute($quoteMaskId);
-        } catch (NoSuchEntityException) {
+        } catch (NoSuchEntityException $exception) {
             return $this->getValidationErrorResponse((string)__('Invalid quote mask ID "%1"', $quoteMaskId));
         }
 
@@ -309,7 +337,9 @@ class PlaceOrder implements PlaceOrderInterface
              *     gateway_response_data: string[]
              * } $transaction
              */
-            static fn (array $transaction): bool => $transaction['status'] !== 'failed'
+            static function (array $transaction): bool {
+                return $transaction['status'] !== 'failed';
+            }
         );
 
         if (count($transactions) === 0) {
