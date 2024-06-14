@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Model\Http\Client\Request\Validator\ShopIdValidator;
 use Bold\Checkout\Model\Quote\LoadAndValidate\StoreIdResolver;
+use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData;
 use Magento\Checkout\Model\Cart;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
@@ -117,6 +118,9 @@ class LoadAndValidate
             $quote->setStoreId($storeId);
         }
         $this->quoteResource->load($quote, $cartId);
+        if (!$quote->getId()) {
+            throw NoSuchEntityException::singleField(QuoteExtensionData::QUOTE_ID, $cartId);
+        }
         $this->storeManager->getStore()->setCurrentCurrencyCode($quote->getQuoteCurrencyCode());
         $this->checkoutSession->replaceQuote($quote);
         $this->cart->setQuote($quote);
