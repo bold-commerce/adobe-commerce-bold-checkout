@@ -6,7 +6,6 @@ namespace Bold\Checkout\Controller\Adminhtml\Clear;
 
 use Bold\Checkout\Model\ClearModuleConfiguration;
 use Bold\Checkout\Model\ClearModuleIntegration;
-use Bold\CheckoutFlowPaypal\Model\PaypalFlow;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;

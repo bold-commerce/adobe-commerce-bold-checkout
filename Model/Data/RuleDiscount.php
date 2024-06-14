@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Data;
 
+use Bold\Checkout\Api\Data\DiscountDataInterface;
 use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 use Bold\Checkout\Api\Data\RuleDiscountInterface;
@@ -20,7 +21,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
     /**
      * @inheritDoc
      */
-    public function getDiscountData()
+    public function getDiscountData(): DiscountDataInterface
     {
         return $this->getData(self::KEY_DISCOUNT_DATA);
     }
@@ -28,7 +29,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
     /**
      * @inheritDoc
      */
-    public function getRuleLabel()
+    public function getRuleLabel(): string
     {
         return $this->getData(self::KEY_RULE_LABEL);
     }
@@ -36,7 +37,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
     /**
      * @inheritDoc
      */
-    public function getRuleID()
+    public function getRuleID(): int
     {
         return $this->getData(self::KEY_RULE_ID);
     }
@@ -46,7 +47,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
      *
      * @return ExtensionAttributesInterface|null
      */
-    public function getExtensionAttributes()
+    public function getExtensionAttributes(): ?ExtensionAttributesInterface
     {
         return $this->_getExtensionAttributes();
     }
@@ -59,7 +60,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
      */
     public function setExtensionAttributes(
         ExtensionAttributesInterface $extensionAttributes
-    ) {
+    ): RuleDiscount {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
 }

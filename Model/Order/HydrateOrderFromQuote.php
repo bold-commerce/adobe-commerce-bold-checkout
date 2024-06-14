@@ -73,9 +73,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
     }
 
     /**
-     * @param CartInterface $quote
-     * @param string $publicOrderId
-     * @return ResultInterface
+     * @inheritDoc
      */
     public function hydrate(CartInterface $quote, string $publicOrderId): ResultInterface
     {

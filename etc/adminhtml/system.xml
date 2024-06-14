@@ -20,17 +20,12 @@
                     <source_model>Bold\Checkout\Model\Config\Source\CheckoutTypeSource</source_model>
                     <comment><![CDATA[
                         Bold-Hosted (Standard) — replace the native checkout with Bold Checkout's three-page checkout.<br>
-                        Dual —  allow customers to choose between the native checkout or Bold Checkout.<br>
-                        Payment Booster — use the native checkout with Bold Checkout's payment options.<br>
-                        Self-Hosted — replace the native checkout with Bold Checkout's <a target='_blank' href="https://github.com/bold-commerce/checkout-experience-templates">Open Source Checkout Templates</a>.
+                        Dual —  allow customers to choose between the native checkout or Bold Checkout.
                     ]]></comment>
                 </field>
                 <field id="payment_title" translate="label" type="text" sortOrder="16" showInDefault="1" showInWebsite="1">
                     <label>Payment Title</label>
                     <comment>Payment title that will be displayed on the checkout page.</comment>
-                    <depends>
-                        <field id="type">2</field>
-                    </depends>
                 </field>
                 <field id="parallel_checkout_button_title" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1">
                     <label>Bold Checkout Button Title</label>
@@ -70,17 +65,19 @@
                      Otherwise, if the status is not 'Active', open the 'System' -> 'Integrations' grid, find the Integration named <strong>'{{integrationName}}'</strong> and Activate or Reauthorize it.]]></comment>
                 </field>
             </group>
-            <group id="bold_checkout_life_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
-                <label>Bold Checkout Extension (LiFE) Elements</label>
+            <group id="bold_checkout_custom_elements" translate="label" sortOrder="105" showInDefault="1" showInWebsite="1">
+                <label>Bold Checkout Customization Settings</label>
                 <field id="life_elements" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1">
-                    <label>Custom elements</label>
+                    <label>Custom Elements</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\LifeElements</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                     <comment><![CDATA[For more information about the locations and where they are, refer to the <a href="https://developer.boldcommerce.com/guides/checkout/life">Checkout LiFE guide</a>.]]></comment>
                 </field>
-                <depends>
-                    <field id="checkout/bold_checkout_base/type" separator=",">0,1</field>
-                </depends>
+                <field id="payment_css" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>CSS</label>
+                    <backend_model>Bold\Checkout\Model\Config\Backend\PaymentCssBackend</backend_model>
+                    <comment><![CDATA[Add custom styling to the payment section of your checkout.]]></comment>
+                </field>
             </group>
             <group id="bold_checkout_advanced" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Extension Advanced Settings</label>

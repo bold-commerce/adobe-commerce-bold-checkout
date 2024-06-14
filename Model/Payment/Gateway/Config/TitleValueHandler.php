@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Payment\Gateway\Config;
 
-use Bold\Checkout\Model\ConfigInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Payment\Gateway\Config\ValueHandlerInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -14,7 +15,7 @@ use Magento\Store\Model\StoreManagerInterface;
 class TitleValueHandler implements ValueHandlerInterface
 {
     /**
-     * @var ConfigInterface
+     * @var ScopeConfigInterface
      */
     private $config;
 
@@ -24,13 +25,23 @@ class TitleValueHandler implements ValueHandlerInterface
     private $storeManager;
 
     /**
-     * @param ConfigInterface $config
-     * @param StoreManagerInterface $storeManager
+     * @var string
      */
-    public function __construct(ConfigInterface $config, StoreManagerInterface $storeManager)
-    {
+    private $path;
+
+    /**
+     * @param ScopeConfigInterface $config
+     * @param StoreManagerInterface $storeManager
+     * @param string $path
+     */
+    public function __construct(
+        ScopeConfigInterface $config,
+        StoreManagerInterface $storeManager,
+        string $path
+    ) {
         $this->config = $config;
         $this->storeManager = $storeManager;
+        $this->path = $path;
     }
 
     /**
@@ -46,8 +57,7 @@ class TitleValueHandler implements ValueHandlerInterface
                 $store = $this->storeManager->getDefaultStoreView();
                 $websiteId = (int)$store->getWebsiteId();
             }
-
-            return $this->config->getPaymentTitle($websiteId);
+            return $this->config->getValue($this->path, ScopeInterface::SCOPE_WEBSITE, $websiteId);
         }
         $ccLast4 = $paymentObject->getPayment()->getCcLast4();
         $ccType = $paymentObject->getPayment()->getCcType();
@@ -58,8 +68,7 @@ class TitleValueHandler implements ValueHandlerInterface
                 $store = $this->storeManager->getStore($storeId);
                 $websiteId = (int)$store->getWebsiteId();
             }
-
-            return $this->config->getPaymentTitle($websiteId);
+            return $this->config->getValue($this->path, ScopeInterface::SCOPE_WEBSITE, $websiteId);
         }
 
         return strlen($ccLast4) === 4

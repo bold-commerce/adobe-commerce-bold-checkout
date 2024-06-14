@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\ModuleInfo;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Shell;
 
 /**
@@ -43,12 +42,11 @@ class LatestModuleVersionUpdater
      * @param ModuleComposerNameProvider $composerNameProvider
      */
     public function __construct(
-        Config                     $config,
-        Shell                      $shell,
-        DirectoryList              $directoryList,
+        Config $config,
+        Shell $shell,
+        DirectoryList $directoryList,
         ModuleComposerNameProvider $composerNameProvider
-    )
-    {
+    ) {
         $this->config = $config;
         $this->shell = $shell;
         $this->directoryList = $directoryList;
@@ -60,7 +58,6 @@ class LatestModuleVersionUpdater
      *
      * @param string $moduleName
      * @return void
-     * @throws LocalizedException
      */
     public function update(string $moduleName): void
     {
@@ -75,7 +72,6 @@ class LatestModuleVersionUpdater
      *
      * @param string $moduleName
      * @return string|null
-     * @throws LocalizedException
      */
     private function getLatestModuleVersion(string $moduleName): ?string
     {

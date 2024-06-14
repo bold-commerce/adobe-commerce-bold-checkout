@@ -59,7 +59,7 @@ class PatchCommand
      * @param string $url
      * @param array $headers
      * @param array $data
-     * @return Bold\Checkout\Api\Data\Http\Client\ResultInterface
+     * @return ResultInterface
      */
     public function execute(int $websiteId, string $url, array $headers, array $data): ResultInterface
     {
