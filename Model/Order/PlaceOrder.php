@@ -45,6 +45,8 @@ use function sprintf;
  */
 class PlaceOrder implements PlaceOrderInterface
 {
+    private const COMPLETE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order/%s/state';
+    
     /**
      * @var ResultInterfaceFactory
      */
@@ -135,8 +137,6 @@ class PlaceOrder implements PlaceOrderInterface
         $this->transactionFactory = $transactionFactory;
         $this->checkoutSession = $checkoutSession;
     }
-
-    private const COMPLETE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order/%s/state';
 
     /**
      * @inheritDoc
@@ -560,7 +560,6 @@ class PlaceOrder implements PlaceOrderInterface
 
         return $orderData;
     }
-
 
     private function postCompleteOrder(string $publicOrderId, int $websiteId, OrderInterface $order): void
     {
