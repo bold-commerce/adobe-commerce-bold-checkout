@@ -160,9 +160,28 @@ class BoldClient implements ClientInterface
     private function getUrl(int $websiteId, string $url): string
     {
         $apiUrl = $this->config->getApiUrl($websiteId);
-        if (!$this->config->getShopId($websiteId)) {
-            return $apiUrl . $url;
+
+        if (str_contains($apiUrl, 'bold.ninja')) {
+            $parseApiUrl = parse_url($apiUrl);
+            $scheme = $parseApiUrl['scheme'];
+            $host = $parseApiUrl['host'];
+            $path = $parseApiUrl['path'];
+            $tunnelDomain = ltrim($path, '/');
+            $baseApiUrl = $scheme.'://'.$host;
+
+            if ($url === 'shops/v1/info') {
+                $apiUrl = $baseApiUrl;
+            }
+
+            if (str_contains($url, 'checkout_sidekick')) {
+                $apiUrl = $baseApiUrl.'/sidekick-'.$tunnelDomain;
+            }
         }
-        return $apiUrl . str_replace('{{shopId}}', $this->config->getShopId($websiteId), $url);
+
+        if (!$this->config->getShopId($websiteId)) {
+            return $apiUrl.$url;
+        }
+
+        return $apiUrl.str_replace('{{shopId}}', $this->config->getShopId($websiteId), $url);
     }
 }
