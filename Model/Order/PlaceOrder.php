@@ -46,6 +46,8 @@ use function sprintf;
  */
 class PlaceOrder implements PlaceOrderInterface
 {
+    private const COMPLETE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order/%s/state';
+    
     /**
      * @var ResultInterfaceFactory
      */
@@ -431,6 +433,24 @@ class PlaceOrder implements PlaceOrderInterface
 
         $this->updateCheckoutSession($quote, $order);
 
+        try {
+            $this->postCompleteOrder($publicOrderId, $websiteId, $order);
+        } catch (Exception $e) {
+            return $this->responseFactory->create(
+                [
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'message' => $e->getMessage(),
+                                'code' => 500,
+                                'type' => 'server.bold_checkout_api_error'
+                            ]
+                        )
+                    ]
+                ]
+            );
+        }
+
         return $this->responseFactory->create(
             [
                 'order' => $order
@@ -597,5 +617,20 @@ class PlaceOrder implements PlaceOrderInterface
         $orderData->setTransaction($transaction);
 
         return $orderData;
+    }
+
+    private function postCompleteOrder(string $publicOrderId, int $websiteId, OrderInterface $order): void
+    {
+        $url = sprintf(self::COMPLETE_ORDER_URL, $publicOrderId);
+
+        $params = [
+            'state' => 'order_complete',
+            'platform_order_id' => $order->getIncrementId(),
+            'platform_friendly_id' => $order->getEntityId()
+        ];
+        $response = $this->client->put($websiteId, $url, $params);
+        if ($response->getStatus() !== 201) {
+            throw new LocalizedException(__('Failed to post order completion'));
+        }
     }
 }
