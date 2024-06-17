@@ -97,6 +97,11 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
             $quote->setExtensionAttributes($quote->getExtensionAttributes());
             $quote->getShippingAddress()->setCollectShippingRates(true);
         }
+
+        if (!$quote->getCustomerEmail()) {
+            $quote->setCustomerEmail($billingAddress->getEmail());
+        }
+
         $quote->setDataChanges(true);
         $quote->collectTotals();
         $this->quoteResource->save($quote);
