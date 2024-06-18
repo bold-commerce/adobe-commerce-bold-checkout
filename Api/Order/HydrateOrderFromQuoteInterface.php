@@ -15,7 +15,7 @@ interface HydrateOrderFromQuoteInterface
      *
      * @param CartInterface $quote
      * @param string $publicOrderId
-     * @return ResultInterface
+     * @return \Bold\Checkout\Api\Data\Http\Client\ResultInterface
      */
     public function hydrate(CartInterface $quote, string $publicOrderId): ResultInterface;
 }

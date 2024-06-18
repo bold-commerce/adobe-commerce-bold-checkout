@@ -31,7 +31,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
      */
     public function getRuleLabel(): string
     {
-        return $this->getData(self::KEY_RULE_LABEL);
+        return (string)$this->getData(self::KEY_RULE_LABEL);
     }
 
     /**
@@ -39,7 +39,7 @@ class RuleDiscount extends AbstractExtensibleModel implements RuleDiscountInterf
      */
     public function getRuleID(): int
     {
-        return $this->getData(self::KEY_RULE_ID);
+        return (int)$this->getData(self::KEY_RULE_ID);
     }
 
     /**
