@@ -10,6 +10,7 @@ use Bold\Checkout\Model\Order\HydrateOrderFromQuote;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\HTTP\ClientInterface as HttpClientInterface;
+use Magento\Quote\Api\CartItemRepositoryInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
@@ -24,9 +25,10 @@ final class HydrateOrderFromQuoteTest extends TestCase
     private ?CartInterface $quote = null;
 
     /**
+     * @dataProvider hydratesOrderFromQuoteSuccessfullyDataProvider
      * @magentoDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
      */
-    public function testHydratesOrderFromQuoteSuccessfully(): void
+    public function testHydratesOrderFromQuoteSuccessfully(bool $quoteItemHasWeight): void
     {
         $objectManager = Bootstrap::getObjectManager();
         $httpClientMock = $this->createMock(HttpClientInterface::class);
@@ -76,7 +78,7 @@ final class HydrateOrderFromQuoteTest extends TestCase
                             'quantity' => 2,
                             'title' => 'Simple Product',
                             'product_title' => 'Simple Product',
-                            'weight' => 0.0,
+                            'weight' => $quoteItemHasWeight ? 2494.76 : 0.0,
                             'taxable' => true,
                             'image' => $productImageUrlBuilder->getUrl('no_selection', 'product_thumbnail_image'),
                             'requires_shipping' => true,
@@ -126,6 +128,10 @@ final class HydrateOrderFromQuoteTest extends TestCase
                 JSON
             );
 
+        if ($quoteItemHasWeight) {
+            $this->addWeightToFirstQuoteItem($quote);
+        }
+
         $result = $hydratedOrderFromQuote->hydrate($quote, $publicOrderId);
         $expectedResultBody = [
             'status' => 201,
@@ -135,6 +141,23 @@ final class HydrateOrderFromQuoteTest extends TestCase
 
         self::assertSame(201, $result->getStatus());
         self::assertEquals($expectedResultBody, $result->getBody());
+    }
+
+    /**
+     * @return array<string, array{
+     *     quoteItemHasWeight: boolean
+     * }>
+     */
+    public function hydratesOrderFromQuoteSuccessfullyDataProvider(): array
+    {
+        return [
+            'quote item has weight' => [
+                'quoteItemHasWeight' => true,
+            ],
+            'quote item does not have weight' => [
+                'quoteItemHasWeight' => false,
+            ]
+        ];
     }
 
     protected function tearDown(): void
@@ -158,5 +181,19 @@ final class HydrateOrderFromQuoteTest extends TestCase
         $this->quote = reset($quotes) ?: $objectManager->create(CartInterface::class);
 
         return $this->quote;
+    }
+
+    private function addWeightToFirstQuoteItem(CartInterface $quote): void
+    {
+        $objectManager = Bootstrap::getObjectManager();
+        $quoteItemRepository = $objectManager->create(CartItemRepositoryInterface::class);
+        /** @var CartItemInterface[] $quoteItems */
+        $quoteItems = $quote->getItems();
+        /** @var CartItemInterface $firstQuoteItem */
+        $firstQuoteItem = reset($quoteItems);
+
+        $firstQuoteItem->setWeight(5.5);
+
+        $quoteItemRepository->save($firstQuoteItem);
     }
 }
