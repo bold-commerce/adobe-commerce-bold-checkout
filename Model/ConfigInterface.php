@@ -193,14 +193,6 @@ interface ConfigInterface
     public function getLifeElements(int $websiteId): array;
 
     /**
-     * Get payment iframe additional css.
-     *
-     * @param int $websiteId
-     * @return string
-     */
-    public function getPaymentCss(int $websiteId): string;
-
-    /**
      * Should validate coupon codes.
      *
      * @param int $websiteId

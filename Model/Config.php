@@ -34,7 +34,6 @@ class Config implements ConfigInterface
     private const PATH_INTEGRATION_CHECKOUT_URL = 'checkout/bold_checkout_advanced/checkout_url';
     private const PATH_INTEGRATION_IDENTITY_URL = 'checkout/bold_checkout_base/integration_identity_url';
     private const PATH_LIFE_ELEMENTS = 'checkout/bold_checkout_custom_elements/life_elements';
-    public const PATH_PAYMENT_CSS = 'checkout/bold_checkout_custom_elements/payment_css';
     private const PATH_VALIDATE_COUPON_CODES = 'checkout/bold_checkout_advanced/validate_coupon_codes';
     private const PATH_UPDATE_CHECK = 'checkout/bold_checkout_advanced/updates_check';
 
@@ -364,17 +363,6 @@ class Config implements ConfigInterface
 
         $lifeElements = $this->serializer->unserialize($lifeElements);
         return is_array($lifeElements) ? $lifeElements : [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getPaymentCss(int $websiteId): string
-    {
-        return (string)$this->configManagement->getValue(
-            self::PATH_PAYMENT_CSS,
-            $websiteId
-        );
     }
 
     /**

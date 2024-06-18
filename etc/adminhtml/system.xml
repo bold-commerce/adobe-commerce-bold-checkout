@@ -73,11 +73,6 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                     <comment><![CDATA[For more information about the locations and where they are, refer to the <a href="https://developer.boldcommerce.com/guides/checkout/life">Checkout LiFE guide</a>.]]></comment>
                 </field>
-                <field id="payment_css" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1">
-                    <label>CSS</label>
-                    <backend_model>Bold\Checkout\Model\Config\Backend\PaymentCssBackend</backend_model>
-                    <comment><![CDATA[Add custom styling to the payment section of your checkout.]]></comment>
-                </field>
             </group>
             <group id="bold_checkout_advanced" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1">
                 <label>Bold Checkout Extension Advanced Settings</label>
