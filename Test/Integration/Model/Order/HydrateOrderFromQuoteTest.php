@@ -78,7 +78,7 @@ final class HydrateOrderFromQuoteTest extends TestCase
                             'quantity' => 2,
                             'title' => 'Simple Product',
                             'product_title' => 'Simple Product',
-                            'weight' => $quoteItemHasWeight ? 2494.76 : 0.0,
+                            'weight' => $quoteItemHasWeight ? 2495 : 0,
                             'taxable' => true,
                             'image' => $productImageUrlBuilder->getUrl('no_selection', 'product_thumbnail_image'),
                             'requires_shipping' => true,
