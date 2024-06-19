@@ -77,7 +77,7 @@
     <virtualType name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver\Logger" type="Magento\Framework\Logger\Monolog">
         <arguments>
             <argument name="handlers" xsi:type="array">
-                <item name="debug" xsi:type="object">Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver\Logger\Handler"</item>
+                <item name="debug" xsi:type="object">Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver\Logger\Handler</item>
             </argument>
         </arguments>
     </virtualType>
