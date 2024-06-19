@@ -69,6 +69,23 @@
             </argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver">
+        <arguments>
+            <argument name="logger" xsi:type="object">Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver\Logger</argument>
+        </arguments>
+    </type>
+    <virtualType name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/bold_checkout_exception.log</argument>
+        </arguments>
+    </virtualType>
     <type name="Bold\Checkout\Model\Http\Client\RequestsLogger">
         <arguments>
             <argument name="logger" xsi:type="object">Bold\Checkout\Model\Http\Client\RequestsLogger\Logger</argument>

@@ -11,6 +11,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Save order extension data.
@@ -38,21 +39,29 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     private $eventManager;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param Session $checkoutSession
      * @param EventManagerInterface $eventManager
+     * @param LoggerInterface $logger
      */
     public function __construct(
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
         Session $checkoutSession,
-        EventManagerInterface $eventManager
+        EventManagerInterface $eventManager,
+        LoggerInterface $logger
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->checkoutSession = $checkoutSession;
         $this->eventManager = $eventManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -71,6 +80,7 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
         $this->checkoutSession->setBoldCheckoutData(null);
         if (!$publicOrderId) {
+            $this->logger->error('Public order id for order ID = ' . $order->getId() . 'is missing.');
             return;
         }
         $orderExtensionData = $this->orderExtensionDataFactory->create();
@@ -83,6 +93,7 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         try {
             $this->orderExtensionDataResource->save($orderExtensionData);
         } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
             return;
         }
     }
