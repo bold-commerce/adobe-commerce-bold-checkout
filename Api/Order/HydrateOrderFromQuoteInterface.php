@@ -2,7 +2,6 @@
 
 namespace Bold\Checkout\Api\Order;
 
-use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
 /**
@@ -13,9 +12,9 @@ interface HydrateOrderFromQuoteInterface
     /**
      * Hydrate Bold simple order with Magento quote data
      *
-     * @param CartInterface $quote
+     * @param \Magento\Quote\Api\Data\CartInterface $quote
      * @param string $publicOrderId
-     * @return \Bold\Checkout\Api\Data\Http\Client\ResultInterface
+     * @return void
      */
-    public function hydrate(CartInterface $quote, string $publicOrderId): ResultInterface;
+    public function hydrate(CartInterface $quote, string $publicOrderId): void;
 }
