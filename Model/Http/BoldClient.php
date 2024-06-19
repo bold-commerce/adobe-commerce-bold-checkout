@@ -167,14 +167,14 @@ class BoldClient implements ClientInterface
             $host = $parseApiUrl['host'];
             $path = $parseApiUrl['path'];
             $tunnelDomain = ltrim($path, '/');
-            $baseApiUrl = $scheme.'://'.$host;
+            $baseApiUrl = $scheme.'://'.$host.'/';
 
             if ($url === 'shops/v1/info') {
                 $apiUrl = $baseApiUrl;
             }
 
             if (str_contains($url, 'checkout_sidekick')) {
-                $apiUrl = $baseApiUrl.'/sidekick-'.$tunnelDomain;
+                $apiUrl = $baseApiUrl.'sidekick-'.$tunnelDomain;
             }
         }
 
