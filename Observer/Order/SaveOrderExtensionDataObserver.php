@@ -72,18 +72,18 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $order = $observer->getEvent()->getOrder();
-        if ($order->getPayment()->getMethod() !== Service::CODE) {
-            return;
-        }
-        $orderId = (int)$order->getEntityId();
-        $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
-        $this->checkoutSession->setBoldCheckoutData(null);
-        if (!$publicOrderId) {
-            $this->logger->error('Public order id for order ID = ' . $order->getId() . 'is missing.');
-            return;
-        }
         try {
+            $order = $observer->getEvent()->getOrder();
+            if ($order->getPayment()->getMethod() !== Service::CODE) {
+                return;
+            }
+            $orderId = (int)$order->getEntityId();
+            $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
+            $this->checkoutSession->setBoldCheckoutData(null);
+            if (!$publicOrderId) {
+                $this->logger->error('Public order id for order ID = ' . $order->getId() . 'is missing.');
+                return;
+            }
             $orderExtensionData = $this->orderExtensionDataFactory->create();
             $orderExtensionData->setOrderId($orderId);
             $orderExtensionData->setPublicId($publicOrderId);
