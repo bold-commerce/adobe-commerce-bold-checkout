@@ -13,7 +13,7 @@ interface RequestInterface
     /**
      * Add payment object to the request.
      *
-     * @param \Magento\Sales\Api\Data\OrderPaymentInterface$payment
+     * @param \Magento\Sales\Api\Data\OrderPaymentInterface $payment
      * @return void
      */
     public function setPayment(OrderPaymentInterface $payment): void;

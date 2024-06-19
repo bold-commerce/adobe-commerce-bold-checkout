@@ -39,8 +39,8 @@ class ModuleComposerNameProvider
      * @param SerializerInterface $serializer
      */
     public function __construct(
-        Reader              $reader,
-        File                $filesystem,
+        Reader $reader,
+        File $filesystem,
         SerializerInterface $serializer
     ) {
         $this->reader = $reader;

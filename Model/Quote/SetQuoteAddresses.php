@@ -5,7 +5,6 @@ namespace Bold\Checkout\Model\Quote;
 
 use Bold\Checkout\Api\Data\Quote\ResultInterface;
 use Bold\Checkout\Api\Quote\SetQuoteAddressesInterface;
-use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Quote\Result\Builder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -38,29 +37,21 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
     private $loadAndValidate;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
      * @param ShippingAssignmentProcessor $shippingAssignmentProcessor
      * @param Builder $quoteResultBuilder
      * @param QuoteResource $quoteResource
      * @param LoadAndValidate $loadAndValidate
-     * @param ConfigInterface $config
      */
     public function __construct(
         ShippingAssignmentProcessor $shippingAssignmentProcessor,
         Builder $quoteResultBuilder,
         QuoteResource $quoteResource,
-        LoadAndValidate $loadAndValidate,
-        ConfigInterface $config
+        LoadAndValidate $loadAndValidate
     ) {
         $this->shippingAssignmentProcessor = $shippingAssignmentProcessor;
         $this->quoteResultBuilder = $quoteResultBuilder;
         $this->quoteResource = $quoteResource;
         $this->loadAndValidate = $loadAndValidate;
-        $this->config = $config;
     }
 
     /**
@@ -89,9 +80,15 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $shippingAddress = $shippingAddress === null || $shippingAddress->getSameAsBilling()
             ? $billingAddress
             : $shippingAddress;
-        $quote->getBillingAddress()->addData($billingAddress->getData());
+        if ($this->addressDataChanged($quote->getBillingAddress(), $billingAddress)) {
+            $quote->removeAddress($quote->getBillingAddress()->getId());
+            $quote->setBillingAddress($billingAddress);
+        }
         if (!$quote->isVirtual()) {
-            $quote->getShippingAddress()->addData($shippingAddress->getData());
+            if ($this->addressDataChanged($quote->getShippingAddress(), $shippingAddress)) {
+                $quote->removeAddress($quote->getShippingAddress()->getId());
+                $quote->setShippingAddress($shippingAddress);
+            }
             $shippingAssignment = $this->shippingAssignmentProcessor->create($quote);
             $quote->getExtensionAttributes()->setShippingAssignments([$shippingAssignment]);
             $quote->setExtensionAttributes($quote->getExtensionAttributes());
@@ -106,5 +103,27 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
         $quote->collectTotals();
         $this->quoteResource->save($quote);
         return $this->quoteResultBuilder->createSuccessResult($quote);
+    }
+
+    /**
+     * Check if address data has changed.
+     *
+     * @param AddressInterface $originalAddress
+     * @param AddressInterface $newAddress
+     * @return bool
+     */
+    private function addressDataChanged(AddressInterface $originalAddress, AddressInterface $newAddress): bool
+    {
+        return $originalAddress->getFirstname() !== $newAddress->getFirstname()
+            || $originalAddress->getLastname() !== $newAddress->getLastname()
+            || $originalAddress->getStreet() !== $newAddress->getStreet()
+            || $originalAddress->getCity() !== $newAddress->getCity()
+            || $originalAddress->getCompany() !== $newAddress->getCompany()
+            || $originalAddress->getRegion() !== $newAddress->getRegion()
+            || $originalAddress->getRegionCode() !== $newAddress->getRegionCode()
+            || (int)$originalAddress->getRegionId() !== (int)$newAddress->getRegionId()
+            || $originalAddress->getPostcode() !== $newAddress->getPostcode()
+            || $originalAddress->getCountryId() !== $newAddress->getCountryId()
+            || $originalAddress->getTelephone() !== $newAddress->getTelephone();
     }
 }

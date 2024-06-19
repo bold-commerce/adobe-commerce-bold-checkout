@@ -5,9 +5,9 @@ namespace Bold\Checkout\Observer\Checkout;
 
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
-use Bold\Checkout\Model\IsBoldCheckoutAllowedForRequest;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
-use Bold\Checkout\Model\Quote\IsBoldCheckoutAllowedForCart;
+use Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedInterface;
+use Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedInterface;
 use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
@@ -15,20 +15,10 @@ use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Redirect to bold checkout if allowed.
+ * Redirect to Bold checkout if allowed.
  */
 class RedirectToBoldCheckoutObserver implements ObserverInterface
 {
-    /**
-     * @var IsBoldCheckoutAllowedForCart
-     */
-    private $allowedForCart;
-
-    /**
-     * @var IsBoldCheckoutAllowedForRequest
-     */
-    private $allowedForRequest;
-
     /**
      * @var Session
      */
@@ -55,30 +45,40 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $client;
 
     /**
-     * @param IsBoldCheckoutAllowedForCart $allowedForCart
-     * @param IsBoldCheckoutAllowedForRequest $allowedForRequest
+     * @var IsOrderInitializationAllowedInterface
+     */
+    private $isOrderInitializationAllowed;
+
+    /**
+     * @var IsRedirectToBoldCheckoutAllowedInterface
+     */
+    private $isRedirectToBoldCheckoutAllowed;
+
+    /**
      * @param Session $session
      * @param InitOrderFromQuote $initOrderFromQuote
      * @param ConfigInterface $config
      * @param LoggerInterface $logger
      * @param ClientInterface $client
+     * @param IsOrderInitializationAllowedInterface $isOrderInitializationAllowed
+     * @param IsRedirectToBoldCheckoutAllowedInterface $isRedirectToBoldCheckoutAllowed
      */
     public function __construct(
-        IsBoldCheckoutAllowedForCart $allowedForCart,
-        IsBoldCheckoutAllowedForRequest $allowedForRequest,
         Session $session,
         InitOrderFromQuote $initOrderFromQuote,
         ConfigInterface $config,
         LoggerInterface $logger,
-        ClientInterface $client
+        ClientInterface $client,
+        IsOrderInitializationAllowedInterface $isOrderInitializationAllowed,
+        IsRedirectToBoldCheckoutAllowedInterface $isRedirectToBoldCheckoutAllowed
     ) {
-        $this->allowedForCart = $allowedForCart;
-        $this->allowedForRequest = $allowedForRequest;
         $this->session = $session;
         $this->initOrderFromQuote = $initOrderFromQuote;
         $this->config = $config;
         $this->logger = $logger;
         $this->client = $client;
+        $this->isOrderInitializationAllowed = $isOrderInitializationAllowed;
+        $this->isRedirectToBoldCheckoutAllowed = $isRedirectToBoldCheckoutAllowed;
     }
 
     /**
@@ -89,17 +89,14 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         $quote = $this->session->getQuote();
         $request = $observer->getRequest();
         $this->session->setBoldCheckoutData(null);
-        if (!$this->allowedForCart->isAllowed($quote)) {
-            return;
-        }
-        if (!$this->allowedForRequest->isAllowed($quote, $request)) {
-            return;
-        }
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         try {
+            if (!$this->isOrderInitializationAllowed->isAllowed($quote, $request)) {
+                return;
+            }
             $checkoutData = $this->initOrderFromQuote->init($quote);
             $this->session->setBoldCheckoutData($checkoutData);
-            if ($this->config->isCheckoutTypeSelfHosted($websiteId)) {
+            if (!$this->isRedirectToBoldCheckoutAllowed->isAllowed($quote, $request)) {
                 return;
             }
             $this->client->get($websiteId, 'refresh');

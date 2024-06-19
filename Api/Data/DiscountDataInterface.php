@@ -15,26 +15,26 @@ interface DiscountDataInterface
      *
      * @return float
      */
-    public function getAmount();
+    public function getAmount(): float;
 
     /**
      * Get Base Amount
      *
      * @return float
      */
-    public function getBaseAmount();
+    public function getBaseAmount(): float;
 
     /**
      * Get Original Amount
      *
      * @return float
      */
-    public function getOriginalAmount();
+    public function getOriginalAmount(): float;
 
     /**
      * Get Base Original Amount
      *
      * @return float
      */
-    public function getBaseOriginalAmount();
+    public function getBaseOriginalAmount(): float;
 }

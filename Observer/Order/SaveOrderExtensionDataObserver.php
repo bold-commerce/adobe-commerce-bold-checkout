@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Order;
 
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
-use Bold\Checkout\Model\Payment\Gateway\Service;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
 use Magento\Checkout\Model\Session;
@@ -38,21 +37,29 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     private $eventManager;
 
     /**
+     * @var array
+     */
+    private $boldPaymentMethods;
+
+    /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param Session $checkoutSession
      * @param EventManagerInterface $eventManager
+     * @param array $boldPaymentMethods
      */
     public function __construct(
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
         Session $checkoutSession,
-        EventManagerInterface $eventManager
+        EventManagerInterface $eventManager,
+        array $boldPaymentMethods = []
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
         $this->checkoutSession = $checkoutSession;
         $this->eventManager = $eventManager;
+        $this->boldPaymentMethods = $boldPaymentMethods;
     }
 
     /**
@@ -64,7 +71,10 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
-        if ($order->getPayment()->getMethod() !== Service::CODE) {
+        if (!$order) {
+            return;
+        }
+        if (!\in_array($order->getPayment()->getMethod(), \array_values($this->boldPaymentMethods), true)) {
             return;
         }
         $orderId = (int)$order->getEntityId();

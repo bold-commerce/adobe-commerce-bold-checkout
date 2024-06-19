@@ -15,19 +15,19 @@ interface RuleDiscountInterface
      *
      * @return \Bold\Checkout\Api\Data\DiscountDataInterface
      */
-    public function getDiscountData();
+    public function getDiscountData(): DiscountDataInterface;
 
     /**
      * Get Rule Label
      *
      * @return string
      */
-    public function getRuleLabel();
+    public function getRuleLabel(): string;
 
     /**
      * Get Rule ID
      *
      * @return int
      */
-    public function getRuleID();
+    public function getRuleID(): int;
 }
