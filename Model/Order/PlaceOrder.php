@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order;
@@ -18,6 +17,8 @@ use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromPayload;
 use Bold\Checkout\Model\Order\PlaceOrder\ProcessOrder;
 use Bold\Checkout\Model\Order\PlaceOrder\Progress;
 use Bold\Checkout\Model\Quote\LoadAndValidate;
+use Bold\Checkout\Model\Quote\QuoteExtensionDataFactory;
+use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData;
 use Exception;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Exception\LocalizedException;
@@ -63,11 +64,6 @@ class PlaceOrder implements PlaceOrderInterface
     private $orderPayloadValidator;
 
     /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    /**
      * @var CreateOrderFromPayload
      */
     private $createOrderFromPayload;
@@ -88,32 +84,32 @@ class PlaceOrder implements PlaceOrderInterface
     private $loadAndValidate;
 
     /**
-     * @var \Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface
+     * @var MaskedQuoteIdToQuoteIdInterface
      */
     private $maskedQuoteIdToQuoteId;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     private $storeManager;
 
     /**
-     * @var \Bold\Checkout\Api\Http\ClientInterface
+     * @var ClientInterface
      */
     private $client;
 
     /**
-     * @var \Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterfaceFactory
+     * @var OrderDataInterfaceFactory
      */
     private $orderDataFactory;
 
     /**
-     * @var \Magento\Sales\Api\Data\OrderPaymentInterfaceFactory
+     * @var OrderPaymentInterfaceFactory
      */
     private $paymentFactory;
 
     /**
-     * @var \Magento\Sales\Api\Data\TransactionInterfaceFactory
+     * @var TransactionInterfaceFactory
      */
     private $transactionFactory;
 
@@ -123,20 +119,43 @@ class PlaceOrder implements PlaceOrderInterface
     private $checkoutSession;
 
     /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    /**
+     * @var QuoteExtensionDataFactory
+     */
+    private $quoteExtensionDataFactory;
+
+    /**
+     * @var QuoteExtensionData
+     */
+    private $quoteExtensionDataResource;
+
+    /**
      * @param OrderPayloadValidator $orderPayloadValidator
      * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
-     * @param ConfigInterface $config
      * @param CreateOrderFromPayload $createOrderFromPayload
      * @param ProcessOrder $processOrder
      * @param Progress $progress
+     * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      * @param LoadAndValidate $loadAndValidate
+     * @param StoreManagerInterface $storeManager
+     * @param ClientInterface $client
+     * @param OrderDataInterfaceFactory $orderDataFactory
+     * @param OrderPaymentInterfaceFactory $paymentFactory
+     * @param TransactionInterfaceFactory $transactionFactory
+     * @param CheckoutSession $checkoutSession
+     * @param QuoteExtensionDataFactory $quoteExtensionDataFactory
+     * @param QuoteExtensionData $quoteExtensionDataResource
+     * @param ConfigInterface $config
      */
     public function __construct(
         OrderPayloadValidator $orderPayloadValidator,
         ResultInterfaceFactory $responseFactory,
         ErrorInterfaceFactory $errorFactory,
-        ConfigInterface $config,
         CreateOrderFromPayload $createOrderFromPayload,
         ProcessOrder $processOrder,
         Progress $progress,
@@ -147,12 +166,14 @@ class PlaceOrder implements PlaceOrderInterface
         OrderDataInterfaceFactory $orderDataFactory,
         OrderPaymentInterfaceFactory $paymentFactory,
         TransactionInterfaceFactory $transactionFactory,
-        CheckoutSession $checkoutSession
+        CheckoutSession $checkoutSession,
+        QuoteExtensionDataFactory $quoteExtensionDataFactory,
+        QuoteExtensionData $quoteExtensionDataResource,
+        ConfigInterface $config
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
         $this->orderPayloadValidator = $orderPayloadValidator;
-        $this->config = $config;
         $this->createOrderFromPayload = $createOrderFromPayload;
         $this->processOrder = $processOrder;
         $this->progress = $progress;
@@ -164,6 +185,9 @@ class PlaceOrder implements PlaceOrderInterface
         $this->paymentFactory = $paymentFactory;
         $this->transactionFactory = $transactionFactory;
         $this->checkoutSession = $checkoutSession;
+        $this->quoteExtensionDataFactory = $quoteExtensionDataFactory;
+        $this->quoteExtensionDataResource = $quoteExtensionDataResource;
+        $this->config = $config;
     }
 
     /**
@@ -185,8 +209,12 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse($e->getMessage());
         }
         try {
-            $websiteId = (int)$quote->getStore()->getWebsiteId();
-            $magentoOrder = $this->config->isCheckoutTypeSelfHosted($websiteId)
+            $quoteExtensionData = $this->quoteExtensionDataFactory->create();
+            $this->quoteExtensionDataResource->load(
+                $quoteExtensionData,
+                $quote->getId(), QuoteExtensionData::QUOTE_ID
+            );
+            $magentoOrder = $quoteExtensionData->getOrderCreated()
                 ? $this->processOrder->process($order)
                 : $this->createOrderFromPayload->createOrder($order, $quote);
         } catch (Exception $e) {
@@ -257,33 +285,33 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->responseFactory->create(
                 [
                     'errors' => array_map(
-                        /**
-                         * @param array{
-                         *     message: string,
-                         *     type: string,
-                         *     field: string,
-                         *     severity: string,
-                         *     sub_type: string,
-                         *     code?: string,
-                         *     transactions?: array{
-                         *         gateway: string,
-                         *         payment_id: string,
-                         *         amount: int,
-                         *         transaction_id: string,
-                         *         currency: string,
-                         *         step: string,
-                         *         status: 'success'|'failed'|'',
-                         *         tender_type: string,
-                         *         tender_details: array{
-                         *             brand: string,
-                         *             last_four: string,
-                         *             bin: string,
-                         *             expiration: string
-                         *         },
-                         *         gateway_response_data: string[]
-                         *     }[]
-                         * } $error
-                         */
+                    /**
+                     * @param array{
+                     *     message: string,
+                     *     type: string,
+                     *     field: string,
+                     *     severity: string,
+                     *     sub_type: string,
+                     *     code?: string,
+                     *     transactions?: array{
+                     *         gateway: string,
+                     *         payment_id: string,
+                     *         amount: int,
+                     *         transaction_id: string,
+                     *         currency: string,
+                     *         step: string,
+                     *         status: 'success'|'failed'|'',
+                     *         tender_type: string,
+                     *         tender_details: array{
+                     *             brand: string,
+                     *             last_four: string,
+                     *             bin: string,
+                     *             expiration: string
+                     *         },
+                     *         gateway_response_data: string[]
+                     *     }[]
+                     * } $error
+                     */
                         function (array $error): ErrorInterface {
                             return $this->errorFactory->create(
                                 [

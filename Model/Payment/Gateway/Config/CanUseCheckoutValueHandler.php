@@ -29,6 +29,7 @@ class CanUseCheckoutValueHandler implements ValueHandlerInterface
      */
     public function handle(array $subject, $storeId = null): bool
     {
-        return $this->checkoutSession->getBoldCheckoutData() !== null;
+        return $this->checkoutSession->getBoldCheckoutData() !== null
+            && !$this->checkoutSession->getQuote()->getIsMultiShipping();
     }
 }

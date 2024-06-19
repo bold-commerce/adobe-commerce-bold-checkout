@@ -12,7 +12,7 @@
             <argument name="paths" xsi:type="array">
                 <item name="bold_checkout_base" xsi:type="string">checkout/bold_checkout_base/%</item>
                 <item name="bold_checkout_advanced" xsi:type="string">checkout/bold_checkout_advanced/%</item>
-                <item name="bold_checkout_life_elements" xsi:type="string">checkout/bold_checkout_life_elements/%</item>
+                <item name="bold_checkout_custom_elements" xsi:type="string">checkout/bold_checkout_custom_elements/%</item>
                 <item name="latest_version" xsi:type="string">checkout/bold_checkout/latest_version_%</item>
             </argument>
         </arguments>

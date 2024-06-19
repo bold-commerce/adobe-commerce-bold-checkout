@@ -6,6 +6,7 @@ namespace Bold\Checkout\Model\Order\PlaceOrder;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Order\OrderExtensionData;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
+use Bold\Checkout\Model\Order\PlaceOrder\CreateOrderFromPayload\CreateOrderFromQuote;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
