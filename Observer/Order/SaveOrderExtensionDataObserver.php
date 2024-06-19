@@ -6,12 +6,12 @@ namespace Bold\Checkout\Observer\Order;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\Payment\Gateway\Service;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
-use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Save order extension data.
@@ -83,16 +83,16 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
             $this->logger->error('Public order id for order ID = ' . $order->getId() . 'is missing.');
             return;
         }
-        $orderExtensionData = $this->orderExtensionDataFactory->create();
-        $orderExtensionData->setOrderId($orderId);
-        $orderExtensionData->setPublicId($publicOrderId);
-        $this->eventManager->dispatch(
-            'checkout_save_order_extension_data_before',
-            ['order' => $order, 'orderExtensionData' => $orderExtensionData]
-        );
         try {
+            $orderExtensionData = $this->orderExtensionDataFactory->create();
+            $orderExtensionData->setOrderId($orderId);
+            $orderExtensionData->setPublicId($publicOrderId);
+            $this->eventManager->dispatch(
+                'checkout_save_order_extension_data_before',
+                ['order' => $order, 'orderExtensionData' => $orderExtensionData]
+            );
             $this->orderExtensionDataResource->save($orderExtensionData);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
             return;
         }
