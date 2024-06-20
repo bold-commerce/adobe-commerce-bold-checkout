@@ -220,6 +220,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
             $cartItem = $this->productFactory->create()->load($item['id']);
             $item['sku'] = $cartItem->getSku();
             $item['vendor'] = '';
+            $item['weight'] = (int)ceil($item['weight']);
         }
 
         return $cartItems;
