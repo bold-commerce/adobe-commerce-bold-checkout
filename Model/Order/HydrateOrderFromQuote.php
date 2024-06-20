@@ -96,7 +96,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
             $shippingDescription = $quote->getShippingAddress()->getShippingDescription();
         }
 
-        [$fees, $discounts] = $this->getFeesAndDiscounts($totals);
+        list($fees, $discounts) = $this->getFeesAndDiscounts($totals);
         $discountTotal = array_reduce($discounts, function($sum, $discountLine) {
             return $sum + $discountLine['value'];
         });
