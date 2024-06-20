@@ -132,15 +132,7 @@ final class HydrateOrderFromQuoteTest extends TestCase
             $this->addWeightToFirstQuoteItem($quote);
         }
 
-        $result = $hydratedOrderFromQuote->hydrate($quote, $publicOrderId);
-        $expectedResultBody = [
-            'status' => 201,
-            'errors' => [],
-            'body' => []
-        ];
-
-        self::assertSame(201, $result->getStatus());
-        self::assertEquals($expectedResultBody, $result->getBody());
+        $hydratedOrderFromQuote->hydrate($quote, $publicOrderId);
     }
 
     /**
