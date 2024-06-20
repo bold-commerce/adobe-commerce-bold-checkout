@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order;
 
-use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Api\Order\HydrateOrderFromQuoteInterface;
 use Bold\Checkout\Model\Order\Address\Converter;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
 use Magento\Catalog\Model\ProductFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
 
@@ -75,7 +75,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
     /**
      * @inheritDoc
      */
-    public function hydrate(CartInterface $quote, string $publicOrderId): ResultInterface
+    public function hydrate(CartInterface $quote, string $publicOrderId): void
     {
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         $billingAddress = $this->quoteToOrderAddressConverter->convert($quote->getBillingAddress());
@@ -131,7 +131,11 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
         }
 
         $url = sprintf(self::HYDRATE_ORDER_URL, $publicOrderId);
-        return $this->client->put($websiteId, $url, $body);
+        $hydrateResponse = $this->client->put($websiteId, $url, $body);
+
+        if ($hydrateResponse->getStatus() !== 201) {
+            throw new LocalizedException(__('Failed to hydrate order with id="%1"', $publicOrderId));
+        }
     }
 
     /**
