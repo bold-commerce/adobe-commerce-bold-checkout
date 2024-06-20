@@ -7,7 +7,8 @@ use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Api\Order\HydrateOrderFromQuoteInterface;
 use Bold\Checkout\Model\Order\Address\Converter;
 use Bold\Checkout\Model\Quote\GetCartLineItems;
-use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
@@ -47,29 +48,37 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
     private $quoteToOrderAddressConverter;
 
     /**
-     * @var ProductFactory
+     * @var ProductRepositoryInterface
      */
-    private $productFactory;
+    private $productRepository;
+
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
 
     /**
      * @param ClientInterface $client
      * @param GetCartLineItems $getCartLineItems
      * @param Converter $addressConverter
      * @param ToOrderAddress $quoteToOrderAddressConverter
-     * @param ProductFactory $productFactory
+     * @param ProductRepositoryInterface $productRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         ClientInterface $client,
         GetCartLineItems $getCartLineItems,
         Converter $addressConverter,
         ToOrderAddress $quoteToOrderAddressConverter,
-        ProductFactory $productFactory
+        ProductRepositoryInterface $productRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->client = $client;
         $this->getCartLineItems = $getCartLineItems;
         $this->addressConverter = $addressConverter;
         $this->quoteToOrderAddressConverter = $quoteToOrderAddressConverter;
-        $this->productFactory = $productFactory;
+        $this->productRepository = $productRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -87,7 +96,7 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
             $shippingDescription = $quote->getShippingAddress()->getShippingDescription();
         }
 
-        list($fees, $discounts) = $this->getFeesAndDiscounts($totals);
+        [$fees, $discounts] = $this->getFeesAndDiscounts($totals);
         $discountTotal = array_reduce($discounts, function($sum, $discountLine) {
             return $sum + $discountLine['value'];
         });
@@ -216,9 +225,19 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
      */
     private function formatCartItems(array $cartItems): array
     {
+        $cartItemIds = array_column($cartItems, 'id');
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('entity_id', $cartItemIds, 'in')
+            ->create();
+        $products = $this->productRepository
+            ->getList($searchCriteria)
+            ->getItems();
+
         foreach ($cartItems as &$item) {
-            $cartItem = $this->productFactory->create()->load($item['id']);
-            $item['sku'] = $cartItem->getSku();
+            if (array_key_exists($item['id'], $products)) {
+                $item['sku'] = $products[$item['id']]->getSku();
+            }
+
             $item['vendor'] = '';
             $item['weight'] = (int)ceil($item['weight']);
         }
