@@ -247,10 +247,14 @@ class PlaceOrder implements PlaceOrderInterface
         $websiteId = (int)$this->storeManager->getStore()->getWebsiteId();
         $shopId = $this->config->getShopId($websiteId) ?? '';
 
-        try {
-            $quoteId = $this->maskedQuoteIdToQuoteId->execute($quoteMaskId);
-        } catch (NoSuchEntityException $exception) {
-            return $this->getValidationErrorResponse((string)__('Invalid quote mask ID "%1"', $quoteMaskId));
+        if (!is_numeric($quoteMaskId) && strlen($quoteMaskId) === 32) {
+            try {
+                $quoteId = $this->maskedQuoteIdToQuoteId->execute($quoteMaskId);
+            } catch (NoSuchEntityException $exception) {
+                return $this->getValidationErrorResponse((string)__('Invalid quote mask ID "%1"', $quoteMaskId));
+            }
+        } else {
+            $quoteId = $quoteMaskId;
         }
 
         try {
