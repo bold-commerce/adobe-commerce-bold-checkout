@@ -48,6 +48,15 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
+    <route method="POST" url="/V1/orders/:publicOrderId/quote/mine/authorizeAndPlace">
+        <service class="Bold\Checkout\Api\PlaceOrderInterface" method="authorizeAndPlace"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="quoteMaskId" force="true">%quote_mask_id%</parameter>
+        </data>
+    </route>
     <route method="PUT" url="/V1/shops/:shopId/payments">
         <service class="Bold\Checkout\Api\Order\UpdatePaymentInterface" method="update"/>
         <resources>

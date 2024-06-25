@@ -153,4 +153,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Webapi\Controller\Rest\ParamsOverrider">
+        <arguments>
+            <argument name="paramOverriders" xsi:type="array">
+                <item name="%quote_mask_id%" xsi:type="object">Bold\Checkout\Model\WebApi\ParamOverriderQuoteMaskId\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
