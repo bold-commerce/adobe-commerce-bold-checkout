@@ -161,7 +161,7 @@ class BoldClient implements ClientInterface
     {
         $apiUrl = $this->config->getApiUrl($websiteId);
 
-        if (str_contains($apiUrl, 'bold.ninja')) {
+        if (strpos($apiUrl, 'bold.ninja') !== false) {
             $parseApiUrl = parse_url($apiUrl);
             $scheme = $parseApiUrl['scheme'];
             $host = $parseApiUrl['host'];
@@ -173,7 +173,7 @@ class BoldClient implements ClientInterface
                 $apiUrl = $baseApiUrl;
             }
 
-            if (str_contains($url, 'checkout_sidekick')) {
+            if (strpos($url, 'checkout_sidekick') !== false) {
                 $apiUrl = $baseApiUrl.'sidekick-'.$tunnelDomain;
             }
         }
