@@ -59,6 +59,9 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
         $boldCheckoutApiClientMock->method('post')
             ->willReturn($boldCheckoutApiResultMock);
 
+        $boldCheckoutApiClientMock->method('put')
+            ->willReturn($boldCheckoutApiResultMock);
+
         $boldCheckoutApiResultMock->method('getBody')
             ->willReturn(
                 [
@@ -86,6 +89,8 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
             );
         $boldCheckoutApiResultMock->method('getErrors')
             ->willReturn([]);
+        $boldCheckoutApiResultMock->method('getStatus')
+            ->willReturn(201);
 
         /** @var PlaceOrderResultInterface $response */
         $response = $placeOrderService->authorizeAndPlace(
