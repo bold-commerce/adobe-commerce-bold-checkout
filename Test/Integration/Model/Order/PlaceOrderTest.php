@@ -32,9 +32,10 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
     private CartInterface $quote;
 
     /**
+     * @dataProvider authorizesAndPlacesOrderSuccessfullyDataProvider
      * @magentoDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
      */
-    public function testAuthorizesAndPlacesOrderSuccessfully(): void
+    public function testAuthorizesAndPlacesOrderSuccessfully(bool $useQuoteMaskId): void
     {
         $configMock = $this->createMock(ConfigInterface::class);
         $loadAndValidateMock = $this->createMock(LoadAndValidate::class);
@@ -48,13 +49,14 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
                 'client' => $boldCheckoutApiClientMock,
             ]
         );
+        $quote = $this->getQuote();
         $boldCheckoutApiResultMock = $this->createMock(ResultInterface::class);
 
         $configMock->method('getShopId')
             ->willReturn('74e51be84d1643e8a89df356b80bf2b5');
 
         $loadAndValidateMock->method('load')
-            ->willReturn($this->getQuote());
+            ->willReturn($quote);
 
         $boldCheckoutApiClientMock->method('post')
             ->willReturn($boldCheckoutApiResultMock);
@@ -95,7 +97,7 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
         /** @var PlaceOrderResultInterface $response */
         $response = $placeOrderService->authorizeAndPlace(
             'd407dc80-3470-49a4-9969-7a12cf17fd4a',
-            $this->getQuoteMaskId()
+            $useQuoteMaskId ? $this->getQuoteMaskId() : $quote->getId()
         );
 
         /** @var OrderInterface|null $order */
@@ -256,6 +258,21 @@ final class PlaceOrderTest extends TestCase // phpcs:ignore Magento2.PHP.FinalIm
 
         self::assertEquals($expectedErrorData, $actualErrorData);
         self::assertNull($response->getOrder());
+    }
+
+    /**
+     * @return array<string, array<string, boolean>>
+     */
+    public function authorizesAndPlacesOrderSuccessfullyDataProvider(): array
+    {
+        return [
+            'with quote mask id' => [
+                'useQuoteMaskId' => true,
+            ],
+            'with quote id' => [
+                'useQuoteMaskId' => false,
+            ],
+        ];
     }
 
     public function boldAuthorizedPaymentsApiResultDataProvider(): array
