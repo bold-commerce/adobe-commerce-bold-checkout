@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Data;
 
 use Bold\Checkout\Api\Data\DiscountDataInterface;
-use Magento\Framework\Api\AttributeValueFactory;
-use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 
