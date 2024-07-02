@@ -23,7 +23,7 @@ class DiscountData extends AbstractExtensibleModel implements DiscountDataInterf
      */
     public function getAmount(): float
     {
-        return $this->getData(self::AMOUNT);
+        return (float)$this->getData(self::AMOUNT);
     }
 
     /**
@@ -31,7 +31,7 @@ class DiscountData extends AbstractExtensibleModel implements DiscountDataInterf
      */
     public function getBaseAmount(): float
     {
-        return $this->getData(self::BASE_AMOUNT);
+        return (float)$this->getData(self::BASE_AMOUNT);
     }
 
     /**
@@ -39,7 +39,7 @@ class DiscountData extends AbstractExtensibleModel implements DiscountDataInterf
      */
     public function getOriginalAmount(): float
     {
-        return $this->getData(self::ORIGINAL_AMOUNT);
+        return (float)$this->getData(self::ORIGINAL_AMOUNT);
     }
 
     /**
@@ -47,7 +47,7 @@ class DiscountData extends AbstractExtensibleModel implements DiscountDataInterf
      */
     public function getBaseOriginalAmount(): float
     {
-        return $this->getData(self::BASE_ORIGINAL_AMOUNT);
+        return (float)$this->getData(self::BASE_ORIGINAL_AMOUNT);
     }
 
     /**
