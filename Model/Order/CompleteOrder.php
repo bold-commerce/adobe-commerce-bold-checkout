@@ -9,6 +9,7 @@ use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Mark the Order as created on the Bold side.
@@ -33,18 +34,26 @@ class CompleteOrder
     private $orderExtensionDataResource;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param ClientInterface $client
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ClientInterface            $client,
         OrderExtensionDataFactory  $orderExtensionDataFactory,
-        OrderExtensionDataResource $orderExtensionDataResource
+        OrderExtensionDataResource $orderExtensionDataResource,
+        LoggerInterface $logger
     ) {
         $this->client = $client;
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
+        $this->logger = $logger;
     }
 
     /**
@@ -63,18 +72,9 @@ class CompleteOrder
             'platform_order_id' => $orderId,
         ];
         $url = sprintf(self::COMPLETE_URL, $publicOrderId);
-        $attempt = 1;
-        do {
-            $response = $this->client->post($websiteId, $url, $body);
-            $updated = $response->getStatus() === 200;
-            if (!$updated) {
-                $attempt++;
-                sleep(1);
-            }
-        } while (!$updated && ($attempt < 3));
-
-        if (!$updated) {
-            throw new LocalizedException(__('Failed to complete order with id="%1"', $orderId));
+        $response = $this->client->post($websiteId, $url, $body);
+        if ($response->getStatus() !== 200) {
+            $this->logger->error(__('Failed to complete order with id="%1"', $orderId));
         }
     }
 

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Order;
 
+use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Model\Order\CompleteOrder;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
@@ -11,11 +12,12 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
- * Save order extension data.
+ * Perform after order submit actions.
  */
-class SaveOrderExtensionDataObserver implements ObserverInterface
+class CheckoutSubmitAllAfterObserver implements ObserverInterface
 {
     /**
      * @var OrderExtensionDataFactory
@@ -72,10 +74,11 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     }
 
     /**
-     * Save order extension data.
+     * Perform after order submit actions.
      *
      * @param Observer $observer
      * @return void
+     * @throws LocalizedException
      */
     public function execute(Observer $observer)
     {
@@ -89,6 +92,11 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $orderId = (int)$order->getEntityId();
         $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
         $this->checkoutSession->setBoldCheckoutData(null);
+        if (!$publicOrderId) {
+            /** @var OrderDataInterface $orderPayload */
+            $orderPayload = $observer->getEvent()->getOrderPayload();
+            $publicOrderId = $orderPayload ? $orderPayload->getPublicId() : null;
+        }
         if (!$publicOrderId) {
             return;
         }

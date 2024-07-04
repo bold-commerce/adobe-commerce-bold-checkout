@@ -151,7 +151,7 @@
             </argument>
         </arguments>
     </type>
-    <type name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver">
+    <type name="Bold\Checkout\Observer\Order\CheckoutSubmitAllAfterObserver">
         <arguments>
             <argument name="boldPaymentMethods" xsi:type="array">
                 <item name="bold_checkout" xsi:type="string">bold</item>
