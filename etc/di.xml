@@ -62,6 +62,11 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
     </type>
+    <type name="Bold\Checkout\Model\Order\CompleteOrder">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Model\Payment\Gateway\Service">
         <arguments>
             <argument name="httpClient" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
@@ -146,7 +151,7 @@
             </argument>
         </arguments>
     </type>
-    <type name="Bold\Checkout\Observer\Order\SaveOrderExtensionDataObserver">
+    <type name="Bold\Checkout\Observer\Order\CheckoutSubmitAllAfterObserver">
         <arguments>
             <argument name="boldPaymentMethods" xsi:type="array">
                 <item name="bold_checkout" xsi:type="string">bold</item>

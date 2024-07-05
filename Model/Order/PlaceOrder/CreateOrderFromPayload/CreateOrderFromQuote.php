@@ -141,6 +141,7 @@ class CreateOrderFromQuote
             [
                 'order' => $order,
                 'quote' => $quote,
+                'order_payload' => $orderPayload,
             ]
         );
 

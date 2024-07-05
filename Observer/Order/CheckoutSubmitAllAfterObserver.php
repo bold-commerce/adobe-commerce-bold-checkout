@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Order;
 
+use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
+use Bold\Checkout\Model\Order\CompleteOrder;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
@@ -10,11 +12,12 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
- * Save order extension data.
+ * Perform after order submit actions.
  */
-class SaveOrderExtensionDataObserver implements ObserverInterface
+class CheckoutSubmitAllAfterObserver implements ObserverInterface
 {
     /**
      * @var OrderExtensionDataFactory
@@ -42,10 +45,16 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     private $boldPaymentMethods;
 
     /**
+     * @var CompleteOrder
+     */
+    private $completeOrder;
+
+    /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param Session $checkoutSession
      * @param EventManagerInterface $eventManager
+     * @param CompleteOrder $completeOrder
      * @param array $boldPaymentMethods
      */
     public function __construct(
@@ -53,6 +62,7 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         OrderExtensionDataResource $orderExtensionDataResource,
         Session $checkoutSession,
         EventManagerInterface $eventManager,
+        CompleteOrder $completeOrder,
         array $boldPaymentMethods = []
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
@@ -60,13 +70,15 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $this->checkoutSession = $checkoutSession;
         $this->eventManager = $eventManager;
         $this->boldPaymentMethods = $boldPaymentMethods;
+        $this->completeOrder = $completeOrder;
     }
 
     /**
-     * Save order extension data.
+     * Perform after order submit actions.
      *
      * @param Observer $observer
      * @return void
+     * @throws LocalizedException
      */
     public function execute(Observer $observer)
     {
@@ -80,6 +92,11 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         $orderId = (int)$order->getEntityId();
         $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
         $this->checkoutSession->setBoldCheckoutData(null);
+        if (!$publicOrderId) {
+            /** @var OrderDataInterface $orderPayload */
+            $orderPayload = $observer->getEvent()->getOrderPayload();
+            $publicOrderId = $orderPayload ? $orderPayload->getPublicId() : null;
+        }
         if (!$publicOrderId) {
             return;
         }
@@ -95,5 +112,6 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
         } catch (Exception $e) {
             return;
         }
+        $this->completeOrder->execute($order);
     }
 }
