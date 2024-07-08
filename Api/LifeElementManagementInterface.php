@@ -8,7 +8,7 @@ namespace Bold\Checkout\Api;
  */
 interface LifeElementManagementInterface
 {
-    const LIFE_ELEMENTS_API_URI = 'checkout/shop/{shopId}/life_elements';
+    const LIFE_ELEMENTS_API_URI = 'checkout/shop/{{shopId}}/life_elements';
 
     /**
      * Create (LiFE) Element on Bold Platform.
