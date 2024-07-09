@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  */
 class CompleteOrder
 {
-    private const COMPLETE_URL = 'checkout/orders/{{shop_id}}/%s/complete';
+    private const COMPLETE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order/%s/state';
 
     /**
      * @var ClientInterface
@@ -68,13 +68,16 @@ class CompleteOrder
         $websiteId = (int)$order->getStore()->getWebsiteId();
         $publicOrderId = $this->getOrderPublicId($order);
         $orderId = $order->getEntityId();
+        $url = sprintf(self::COMPLETE_ORDER_URL, $publicOrderId);
+
         $body = [
-            'platform_order_id' => $orderId,
+            'state' => 'order_complete',
+            'platform_order_id' => $order->getIncrementId(),
+            'platform_friendly_id' => $order->getEntityId()
         ];
-        $url = sprintf(self::COMPLETE_URL, $publicOrderId);
-        $response = $this->client->post($websiteId, $url, $body);
-        if ($response->getStatus() !== 200) {
-            $this->logger->error(__('Failed to complete order with id="%1"', $orderId));
+        $response = $this->client->put($websiteId, $url, $body);
+        if ($response->getStatus() !== 201) {
+            throw new LocalizedException(__('Failed to post order completion with id="%1"', $$orderId));
         }
     }
 
