@@ -68,10 +68,7 @@ class CompleteOrderPool implements CompleteOrderInterface
             $order->getQuoteId(), QuoteExtensionData::QUOTE_ID
         );
         $flowType = $quoteExtensionData->getFlowType();
-        $processor = $this->pool[InitOrderFromQuote::FLOW_TYPE_DEFAULT] ?? null;
-        if (in_array($flowType, array_keys($this->pool), true)) {
-            $processor = $this->pool[$flowType];
-        }
+        $processor = $this->pool[$flowType] ?? null;
         if ($processor instanceof CompleteOrderInterface) {
             $processor->execute($order);
         } else {
