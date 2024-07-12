@@ -62,4 +62,14 @@ class QuoteExtensionData extends AbstractModel
     {
         return (bool)$this->getData(QuoteExtensionDataResource::ORDER_CREATED);
     }
+
+    /**
+     * Get flow type.
+     *
+     * @return string|null
+     */
+    public function getFlowType(): ?string
+    {
+        return $this->getData(QuoteExtensionDataResource::FLOW_TYPE);
+    }
 }

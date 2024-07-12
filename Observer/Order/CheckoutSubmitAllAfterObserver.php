@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bold\Checkout\Observer\Order;
 
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
-use Bold\Checkout\Model\Order\CompleteOrder;
+use Bold\Checkout\Model\Order\CompleteOrderInterface;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
@@ -45,7 +45,7 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
     private $boldPaymentMethods;
 
     /**
-     * @var CompleteOrder
+     * @var CompleteOrderInterface
      */
     private $completeOrder;
 
@@ -54,7 +54,7 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
      * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param Session $checkoutSession
      * @param EventManagerInterface $eventManager
-     * @param CompleteOrder $completeOrder
+     * @param CompleteOrderInterface $completeOrder
      * @param array $boldPaymentMethods
      */
     public function __construct(
@@ -62,7 +62,7 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
         OrderExtensionDataResource $orderExtensionDataResource,
         Session $checkoutSession,
         EventManagerInterface $eventManager,
-        CompleteOrder $completeOrder,
+        CompleteOrderInterface $completeOrder,
         array $boldPaymentMethods = []
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
