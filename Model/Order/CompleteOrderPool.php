@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order;
 
-use Bold\Checkout\Api\Http\ClientInterface;
+use Bold\Checkout\Model\Quote\QuoteExtensionData;
 use Bold\Checkout\Model\Quote\QuoteExtensionDataFactory;
-use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
-use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData;
+use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData as QuoteExtensionDataResource;
 use Magento\Sales\Api\Data\OrderInterface;
 use Psr\Log\LoggerInterface;
 
@@ -23,7 +22,7 @@ class CompleteOrderPool implements CompleteOrderInterface
     private $quoteExtensionDataFactory;
 
     /**
-     * @var QuoteExtensionData
+     * @var QuoteExtensionDataResource
      */
     private $quoteExtensionDataResource;
 
@@ -38,18 +37,16 @@ class CompleteOrderPool implements CompleteOrderInterface
     private $pool;
 
     /**
-     * @param ClientInterface $client
-     * @param OrderExtensionDataFactory $orderExtensionDataFactory
-     * @param OrderExtensionDataResource $orderExtensionDataResource
      * @param QuoteExtensionDataFactory $quoteExtensionDataFactory
-     * @param QuoteExtensionData $quoteExtensionDataResource
+     * @param QuoteExtensionDataResource $quoteExtensionDataResource
      * @param LoggerInterface $logger
+     * @param array $pool
      */
     public function __construct(
-        QuoteExtensionDataFactory $quoteExtensionDataFactory,
-        QuoteExtensionData        $quoteExtensionDataResource,
-        LoggerInterface           $logger,
-        array                     $pool = []
+        QuoteExtensionDataFactory  $quoteExtensionDataFactory,
+        QuoteExtensionDataResource $quoteExtensionDataResource,
+        LoggerInterface            $logger,
+        array                      $pool = []
     ) {
         $this->quoteExtensionDataFactory = $quoteExtensionDataFactory;
         $this->quoteExtensionDataResource = $quoteExtensionDataResource;
@@ -62,17 +59,20 @@ class CompleteOrderPool implements CompleteOrderInterface
      */
     public function execute(OrderInterface $order): void
     {
+        /** @var QuoteExtensionData $quoteExtensionData */
         $quoteExtensionData = $this->quoteExtensionDataFactory->create();
         $this->quoteExtensionDataResource->load(
             $quoteExtensionData,
-            $order->getQuoteId(), QuoteExtensionData::QUOTE_ID
+            $order->getQuoteId(),
+            QuoteExtensionDataResource::QUOTE_ID
         );
-        $flowType = $quoteExtensionData->getFlowType();
+        $flowType = $quoteExtensionData->getApiType();
         $processor = $this->pool[$flowType] ?? null;
         if (!($processor instanceof CompleteOrderInterface)) {
             $this->logger->error(
                 __('Failed to find complete processor for order with id="%1"', $order->getEntityId())
             );
+
             return;
         }
         $processor->execute($order);
