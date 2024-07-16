@@ -64,12 +64,12 @@ class QuoteExtensionData extends AbstractModel
     }
 
     /**
-     * Get flow type.
+     * Get API type.
      *
      * @return string|null
      */
-    public function getFlowType(): ?string
+    public function getApiType(): ?string
     {
-        return $this->getData(QuoteExtensionDataResource::FLOW_TYPE);
+        return $this->getData(QuoteExtensionDataResource::API_TYPE);
     }
 }

@@ -24,8 +24,8 @@ class InitOrderFromQuote
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
     private const INIT_SIMPLE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order';
     private const FLOW_ID = 'Bold-Magento2';
-    private const FLOW_TYPE_DEFAULT = 'default';
-    private const FLOW_TYPE_SIMPLE = 'simple';
+    private const API_TYPE_DEFAULT = 'default';
+    private const API_TYPE_SIMPLE = 'simple';
 
     /**
      * @var ClientInterface
@@ -138,7 +138,7 @@ class InitOrderFromQuote
             (int)$quote->getId(),
             [
                 QuoteExtensionData::ORDER_CREATED => false,
-                QuoteExtensionData::FLOW_TYPE => InitOrderFromQuote::FLOW_TYPE_DEFAULT,
+                QuoteExtensionData::API_TYPE => InitOrderFromQuote::API_TYPE_DEFAULT,
             ]
         );
 
@@ -175,7 +175,7 @@ class InitOrderFromQuote
             (int)$quote->getId(),
             [
                 QuoteExtensionData::ORDER_CREATED => false,
-                QuoteExtensionData::FLOW_TYPE => InitOrderFromQuote::FLOW_TYPE_SIMPLE,
+                QuoteExtensionData::API_TYPE => InitOrderFromQuote::API_TYPE_SIMPLE,
             ]
         );
 

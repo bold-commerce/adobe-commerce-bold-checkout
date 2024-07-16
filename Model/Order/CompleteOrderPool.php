@@ -69,12 +69,12 @@ class CompleteOrderPool implements CompleteOrderInterface
         );
         $flowType = $quoteExtensionData->getFlowType();
         $processor = $this->pool[$flowType] ?? null;
-        if ($processor instanceof CompleteOrderInterface) {
-            $processor->execute($order);
-        } else {
+        if (!($processor instanceof CompleteOrderInterface)) {
             $this->logger->error(
                 __('Failed to find complete processor for order with id="%1"', $order->getEntityId())
             );
+            return;
         }
+        $processor->execute($order);
     }
 }

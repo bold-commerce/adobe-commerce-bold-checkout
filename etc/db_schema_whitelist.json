@@ -32,7 +32,7 @@
       "id": true,
       "quote_id": true,
       "order_created": true,
-      "flow_type": true
+      "api_type": true
     },
     "constraint": {
       "PRIMARY": true, 

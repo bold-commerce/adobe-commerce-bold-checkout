@@ -14,7 +14,7 @@ class QuoteExtensionData extends AbstractDb
     public const ID = 'id';
     public const QUOTE_ID = 'quote_id';
     public const ORDER_CREATED = 'order_created';
-    public const FLOW_TYPE = 'flow_type';
+    public const API_TYPE = 'api_type';
 
     /**
      * @inheritDoc
