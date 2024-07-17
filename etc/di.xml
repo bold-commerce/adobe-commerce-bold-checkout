@@ -32,6 +32,25 @@
     <preference for="Bold\Checkout\Api\ModuleVersionInterface" type="Bold\Checkout\Model\ModuleVersion"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ResultInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\ModuleVersion"/>
+    <preference for="Bold\Checkout\Model\Order\CompleteOrderInterface" type="Bold\Checkout\Model\Order\CompleteOrderPool"/>
+    <type name="Bold\Checkout\Model\Order\CompleteOrderPool">
+        <arguments>
+            <argument name="pool" xsi:type="array">
+                <item name="default" xsi:type="object">Bold\Checkout\Model\Order\CompleteOrderPool\DefaultCompleteOrder</item>
+                <item name="simple" xsi:type="object">Bold\Checkout\Model\Order\CompleteOrderPool\SimpleCompleteOrder</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Order\CompleteOrderPool\DefaultCompleteOrder">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
+    <type name="Bold\Checkout\Model\Order\CompleteOrderPool\SimpleCompleteOrder">
+        <arguments>
+            <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
+        </arguments>
+    </type>
     <type name="Bold\Checkout\Observer\Order\Shipment\FulfillOrderItemsObserver">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
@@ -62,7 +81,7 @@
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>
     </type>
-    <type name="Bold\Checkout\Model\Order\CompleteOrder">
+    <type name="Bold\Checkout\Model\Order\CompleteOrderPool">
         <arguments>
             <argument name="client" xsi:type="object">Bold\Checkout\Model\Http\BoldClient</argument>
         </arguments>

@@ -62,4 +62,14 @@ class QuoteExtensionData extends AbstractModel
     {
         return (bool)$this->getData(QuoteExtensionDataResource::ORDER_CREATED);
     }
+
+    /**
+     * Get API type.
+     *
+     * @return string|null
+     */
+    public function getApiType(): ?string
+    {
+        return $this->getData(QuoteExtensionDataResource::API_TYPE);
+    }
 }

@@ -24,6 +24,8 @@ class InitOrderFromQuote
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
     private const INIT_SIMPLE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order';
     private const FLOW_ID = 'Bold-Magento2';
+    private const API_TYPE_DEFAULT = 'default';
+    private const API_TYPE_SIMPLE = 'simple';
 
     /**
      * @var ClientInterface
@@ -132,7 +134,13 @@ class InitOrderFromQuote
             throw new LocalizedException(__('Cannot authenticate customer with id="%1"', $quote->getCustomerId()));
         }
 
-        $this->setQuoteExtensionData->execute((int)$quote->getId(), [QuoteExtensionData::ORDER_CREATED => false]);
+        $this->setQuoteExtensionData->execute(
+            (int)$quote->getId(),
+            [
+                QuoteExtensionData::ORDER_CREATED => false,
+                QuoteExtensionData::API_TYPE => InitOrderFromQuote::API_TYPE_DEFAULT,
+            ]
+        );
 
         foreach ($this->orderDataProcessors as $processor) {
             $orderData = $processor->process($orderData, $quote);
@@ -162,6 +170,15 @@ class InitOrderFromQuote
         if (!$publicOrderId) {
             throw new LocalizedException(__('Cannot initialize order for quote with id = "%1"', $quote->getId()));
         }
+
+        $this->setQuoteExtensionData->execute(
+            (int)$quote->getId(),
+            [
+                QuoteExtensionData::ORDER_CREATED => false,
+                QuoteExtensionData::API_TYPE => InitOrderFromQuote::API_TYPE_SIMPLE,
+            ]
+        );
+
         return $orderData;
     }
 
