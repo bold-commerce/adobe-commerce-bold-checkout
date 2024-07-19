@@ -30,7 +30,7 @@ class GetOrderPublicId
      */
     public function __construct(
         OrderExtensionDataFactory  $orderExtensionDataFactory,
-        OrderExtensionDataResource $orderExtensionDataResource,
+        OrderExtensionDataResource $orderExtensionDataResource
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
