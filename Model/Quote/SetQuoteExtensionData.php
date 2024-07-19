@@ -61,10 +61,16 @@ class SetQuoteExtensionData
             if (!$quoteExtensionData->getId()) {
                 $quoteExtensionData->setQuoteId($quoteId);
             }
+            $updated = false;
             foreach ($data as $key => $value) {
-                $quoteExtensionData->setData($key, $value);
+                if ($quoteExtensionData->getData($key) !== $value) {
+                    $quoteExtensionData->setData($key, $value);
+                    $updated = true;
+                }
             }
-            $this->quoteExtensionDataResource->save($quoteExtensionData);
+            if ($updated) {
+                $this->quoteExtensionDataResource->save($quoteExtensionData);
+            }
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
         }

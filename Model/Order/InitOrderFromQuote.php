@@ -24,8 +24,8 @@ class InitOrderFromQuote
     private const INIT_URL = '/checkout/orders/{{shopId}}/init';
     private const INIT_SIMPLE_ORDER_URL = '/checkout_sidekick/{{shopId}}/order';
     private const FLOW_ID = 'Bold-Magento2';
-    private const API_TYPE_DEFAULT = 'default';
-    private const API_TYPE_SIMPLE = 'simple';
+    public const API_TYPE_DEFAULT = 'default';
+    public const API_TYPE_SIMPLE = 'simple';
 
     /**
      * @var ClientInterface
