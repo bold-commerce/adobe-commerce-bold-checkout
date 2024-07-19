@@ -55,8 +55,8 @@ class SimpleCompleteOrder implements CompleteOrderInterface
         $url = sprintf(self::COMPLETE_ORDER_URL, $publicOrderId);
         $params = [
             'state' => 'order_complete',
-            'platform_order_id' => $order->getIncrementId(),
-            'platform_friendly_id' => $order->getEntityId()
+            'platform_order_id' => $order->getEntityId(),
+            'platform_friendly_id' => $order->getIncrementId(),
         ];
         $response = $this->client->put($websiteId, $url, $params);
         if ($response->getStatus() !== 201) {
