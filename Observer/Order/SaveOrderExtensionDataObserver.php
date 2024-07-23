@@ -11,7 +11,7 @@ use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface;
-use Throwable;
+use Exception;
 
 /**
  * Save order extension data.
@@ -72,27 +72,27 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $order = $observer->getEvent()->getOrder();
+        if ($order->getPayment()->getMethod() !== Service::CODE) {
+            return;
+        }
+        $orderId = (int)$order->getEntityId();
+        $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
+        $this->checkoutSession->setBoldCheckoutData(null);
+        if (!$publicOrderId) {
+            $this->logger->error('Public order id for order ID = ' . $order->getId() . 'is missing.');
+            return;
+        }
+        $orderExtensionData = $this->orderExtensionDataFactory->create();
+        $orderExtensionData->setOrderId($orderId);
+        $orderExtensionData->setPublicId($publicOrderId);
+        $this->eventManager->dispatch(
+            'checkout_save_order_extension_data_before',
+            ['order' => $order, 'orderExtensionData' => $orderExtensionData]
+        );
         try {
-            $order = $observer->getEvent()->getOrder();
-            if ($order->getPayment()->getMethod() !== Service::CODE) {
-                return;
-            }
-            $orderId = (int)$order->getEntityId();
-            $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
-            $this->checkoutSession->setBoldCheckoutData(null);
-            if (!$publicOrderId) {
-                $this->logger->error('Public order id for order ID = ' . $order->getId() . 'is missing.');
-                return;
-            }
-            $orderExtensionData = $this->orderExtensionDataFactory->create();
-            $orderExtensionData->setOrderId($orderId);
-            $orderExtensionData->setPublicId($publicOrderId);
-            $this->eventManager->dispatch(
-                'checkout_save_order_extension_data_before',
-                ['order' => $order, 'orderExtensionData' => $orderExtensionData]
-            );
             $this->orderExtensionDataResource->save($orderExtensionData);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             $this->logger->error($e->getMessage());
             return;
         }
