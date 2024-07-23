@@ -74,6 +74,7 @@ class SaveOrderExtensionDataObserver implements ObserverInterface
     {
         $order = $observer->getEvent()->getOrder();
         if ($order->getPayment()->getMethod() !== Service::CODE) {
+            $this->logger->error('Payment Booster payment method is not Bold, payment method was ' . $order->getPayment()->getMethod());
             return;
         }
         $orderId = (int)$order->getEntityId();
