@@ -36,6 +36,7 @@ class Config implements ConfigInterface
     private const PATH_LIFE_ELEMENTS = 'checkout/bold_checkout_custom_elements/life_elements';
     private const PATH_VALIDATE_COUPON_CODES = 'checkout/bold_checkout_advanced/validate_coupon_codes';
     private const PATH_UPDATE_CHECK = 'checkout/bold_checkout_advanced/updates_check';
+    private const PATH_SYSTEM_INFO_HEADERS = 'checkout/bold_checkout_advanced/system_info_headers';
 
     public const INTEGRATION_PATHS = [
         self::PATH_INTEGRATION_EMAIL,
@@ -383,6 +384,17 @@ class Config implements ConfigInterface
     {
         return $this->scopeConfig->isSetFlag(
             self::PATH_UPDATE_CHECK
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isSystemInfoEnabled(int $websiteId): bool
+    {
+        return $this->configManagement->isSetFlag(
+            self::PATH_SYSTEM_INFO_HEADERS,
+            $websiteId
         );
     }
 }
