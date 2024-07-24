@@ -10,6 +10,7 @@ use Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
 use Bold\Checkout\Model\Http\Client\Command\PutCommand;
+use Bold\Checkout\Model\Http\Client\SystemInfoHeaders;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -49,12 +50,18 @@ class BoldStorefrontClient implements ClientInterface
     private $putCommand;
 
     /**
+     * @var SystemInfoHeaders
+     */
+    private $systemInfoHeaders;
+
+    /**
      * @param ConfigInterface $config
      * @param Session $checkoutSession
      * @param GetCommand $getCommand
      * @param PostCommand $postCommand
      * @param DeleteCommand $deleteCommand
      * @param PutCommand $putCommand
+     * @param SystemInfoHeaders $systemInfoHeaders
      */
     public function __construct(
         ConfigInterface $config,
@@ -62,7 +69,8 @@ class BoldStorefrontClient implements ClientInterface
         GetCommand $getCommand,
         PostCommand $postCommand,
         DeleteCommand $deleteCommand,
-        PutCommand $putCommand
+        PutCommand $putCommand,
+        SystemInfoHeaders $systemInfoHeaders
     ) {
         $this->config = $config;
         $this->getCommand = $getCommand;
@@ -70,6 +78,7 @@ class BoldStorefrontClient implements ClientInterface
         $this->checkoutSession = $checkoutSession;
         $this->deleteCommand = $deleteCommand;
         $this->putCommand = $putCommand;
+        $this->systemInfoHeaders = $systemInfoHeaders;
     }
 
     /**
@@ -78,7 +87,7 @@ class BoldStorefrontClient implements ClientInterface
     public function get(int $websiteId, string $url): ResultInterface
     {
         $url = $this->getUrl($websiteId, $url);
-        $headers = $this->getHeaders();
+        $headers = $this->getHeaders($websiteId);
         return $this->getCommand->execute($websiteId, $url, $headers);
     }
 
@@ -88,7 +97,7 @@ class BoldStorefrontClient implements ClientInterface
     public function post(int $websiteId, string $url, array $data): ResultInterface
     {
         $url = $this->getUrl($websiteId, $url);
-        $headers = $this->getHeaders();
+        $headers = $this->getHeaders($websiteId);
         $result = $this->postCommand->execute($websiteId, $url, $headers, $data);
         $applicationState = $result->getBody()['data']['application_state'] ?? null;
         if (!$result->getErrors() && $applicationState) {
@@ -106,7 +115,7 @@ class BoldStorefrontClient implements ClientInterface
     public function put(int $websiteId, string $url, array $data): ResultInterface
     {
         $url = $this->getUrl($websiteId, $url);
-        $headers = $this->getHeaders();
+        $headers = $this->getHeaders($websiteId);
         $result = $this->putCommand->execute($websiteId, $url, $headers, $data);
         $applicationState = $result->getBody()['data']['application_state'] ?? null;
         if (!$result->getErrors() && $applicationState) {
@@ -132,7 +141,7 @@ class BoldStorefrontClient implements ClientInterface
     public function delete(int $websiteId, string $url, array $data): ResultInterface
     {
         $url = $this->getUrl($websiteId, $url);
-        $headers = $this->getHeaders();
+        $headers = $this->getHeaders($websiteId);
         $result = $this->deleteCommand->execute($websiteId, $url, $headers, $data);
         $applicationState = $result->getBody()['data']['application_state'] ?? null;
         if (!$result->getErrors() && $applicationState) {
@@ -147,19 +156,25 @@ class BoldStorefrontClient implements ClientInterface
     /**
      * Get request headers.
      *
+     * @param int $websiteId
      * @return array
      * @throws LocalizedException
      */
-    private function getHeaders(): array
+    private function getHeaders(int $websiteId): array
     {
         $boldCheckoutData = $this->checkoutSession->getBoldCheckoutData();
         if (!$boldCheckoutData) {
             throw new LocalizedException(__('Bold Checkout data is not set.'));
         }
-        return [
-            'Authorization' => 'Bearer ' . $boldCheckoutData['data']['jwt_token'],
-            'Content-Type' => 'application/json',
-        ];
+        $systemInfoHeaders = $this->config->isSystemInfoEnabled($websiteId) ? $this->systemInfoHeaders->getData() : [];
+
+        return array_merge(
+            [
+                'Authorization' => 'Bearer ' . $boldCheckoutData['data']['jwt_token'],
+                'Content-Type' => 'application/json',
+            ],
+            $systemInfoHeaders
+        );
     }
 
     /**

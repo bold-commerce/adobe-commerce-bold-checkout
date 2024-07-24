@@ -206,4 +206,12 @@ interface ConfigInterface
      * @return bool
      */
     public function isUpdatesCheckEnabled(): bool;
+
+    /**
+     * Is system info sending in headers enabled.
+     *
+     * @param int $websiteId
+     * @return bool
+     */
+    public function isSystemInfoEnabled(int $websiteId): bool;
 }
