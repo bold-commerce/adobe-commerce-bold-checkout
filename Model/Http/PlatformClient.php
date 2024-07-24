@@ -8,6 +8,7 @@ use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
+use Bold\Checkout\Model\Http\Client\SystemInfoHeaders;
 use DateTime;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -32,18 +33,26 @@ class PlatformClient implements ClientInterface
     private $postCommand;
 
     /**
+     * @var SystemInfoHeaders
+     */
+    private $systemInfoHeaders;
+
+    /**
      * @param ConfigInterface $config
      * @param GetCommand $getCommand
      * @param PostCommand $postCommand
+     * @param SystemInfoHeaders $systemInfoHeaders
      */
     public function __construct(
         ConfigInterface $config,
         GetCommand $getCommand,
-        PostCommand $postCommand
+        PostCommand $postCommand,
+        SystemInfoHeaders $systemInfoHeaders
     ) {
         $this->config = $config;
         $this->getCommand = $getCommand;
         $this->postCommand = $postCommand;
+        $this->systemInfoHeaders = $systemInfoHeaders;
     }
 
     /**
@@ -114,10 +123,15 @@ class PlatformClient implements ClientInterface
         $secret = $this->config->getSharedSecret($websiteId);
         $timestamp = date(DateTime::RFC3339);
         $hmac = base64_encode(hash_hmac('sha256', $timestamp, $secret, true));
-        return [
-            'X-HMAC-Timestamp' => $timestamp,
-            'X-HMAC' => $hmac,
-            'Content-Type' => 'application/json',
-        ];
+        $systemInfoHeaders = $this->config->isSystemInfoEnabled($websiteId) ? $this->systemInfoHeaders->getData() : [];
+
+        return array_merge(
+            [
+                'X-HMAC-Timestamp' => $timestamp,
+                'X-HMAC' => $hmac,
+                'Content-Type' => 'application/json',
+            ],
+            $systemInfoHeaders
+        );
     }
 }
