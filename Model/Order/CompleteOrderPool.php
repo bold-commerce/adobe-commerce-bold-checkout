@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
  */
 class CompleteOrderPool implements CompleteOrderInterface
 {
-    public const API_TYPE_SIMPLE = 'simple';
+    private const API_TYPE_DEFAULT = 'default';
 
     /**
      * @var QuoteExtensionDataFactory
@@ -72,7 +72,7 @@ class CompleteOrderPool implements CompleteOrderInterface
         // TODO: Remove logic around order pool as we only need to run logic here for simple order types
         // For 'default' order types all order complete processing happens in the platform connector
         // TODO: Update naming around simple/non-simple orders to signal it relates to source of truth instead of order type
-        if ($flowType === self::API_TYPE_SIMPLE) {
+        if ($flowType !== self::API_TYPE_DEFAULT) {
             $processor = $this->pool[$flowType] ?? null;
             if (!($processor instanceof CompleteOrderInterface)) {
                 $this->logger->error(
