@@ -42,7 +42,7 @@ define([
             }
             const billing = registry.get('index = billingAddress');
             if (!street1) {
-                const street1Field = billing && billing.isAddressSameAsShipping()
+                const street1Field = billing && billing.isAddressSameAsShipping && billing.isAddressSameAsShipping()
                     ? registry.get('dataScope = shippingAddress.street.0')
                     : registry.get('dataScope = billingAddress.street.0');
                 if (street1Field) {
@@ -50,7 +50,7 @@ define([
                 }
             }
             if (!street2) {
-                const street2Field = billing && billing.isAddressSameAsShipping()
+                const street2Field = billing && billing.isAddressSameAsShipping && billing.isAddressSameAsShipping()
                     ? registry.get('dataScope = shippingAddress.street.1')
                     : registry.get('dataScope = billingAddress.street.1');
                 if (street2Field) {
