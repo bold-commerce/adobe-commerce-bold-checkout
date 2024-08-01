@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order;
+
+use Psr\Log\LoggerInterface;
 
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
@@ -132,6 +135,12 @@ class PlaceOrder implements PlaceOrderInterface
     private $quoteExtensionDataResource;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+
+    /**
      * @param OrderPayloadValidator $orderPayloadValidator
      * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
@@ -167,7 +176,8 @@ class PlaceOrder implements PlaceOrderInterface
         CheckoutSession $checkoutSession,
         QuoteExtensionDataFactory $quoteExtensionDataFactory,
         QuoteExtensionData $quoteExtensionDataResource,
-        ConfigInterface $config
+        ConfigInterface $config,
+        LoggerInterface $logger
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
@@ -186,6 +196,7 @@ class PlaceOrder implements PlaceOrderInterface
         $this->quoteExtensionDataFactory = $quoteExtensionDataFactory;
         $this->quoteExtensionDataResource = $quoteExtensionDataResource;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -210,7 +221,8 @@ class PlaceOrder implements PlaceOrderInterface
             $quoteExtensionData = $this->quoteExtensionDataFactory->create();
             $this->quoteExtensionDataResource->load(
                 $quoteExtensionData,
-                $quote->getId(), QuoteExtensionData::QUOTE_ID
+                $quote->getId(),
+                QuoteExtensionData::QUOTE_ID
             );
             $magentoOrder = $quoteExtensionData->getOrderCreated()
                 ? $this->processOrder->process($order)
@@ -242,6 +254,7 @@ class PlaceOrder implements PlaceOrderInterface
      */
     public function authorizeAndPlace(string $publicOrderId, string $quoteMaskId): ResultInterface
     {
+        $setupTime = microtime(true);
         $websiteId = (int)$this->storeManager->getStore()->getWebsiteId();
         $shopId = $this->config->getShopId($websiteId) ?? '';
 
@@ -255,6 +268,10 @@ class PlaceOrder implements PlaceOrderInterface
             $quoteId = $quoteMaskId;
         }
 
+        $endSetupTime = microtime(true);
+        $this->logger->info('Time to setup: ' . ($endSetupTime - $setupTime));
+
+        $startValidateTime = microtime(true);
         try {
             $quote = $this->loadAndValidate->load($shopId, (int)$quoteId);
         } catch (LocalizedException $e) {
@@ -264,10 +281,18 @@ class PlaceOrder implements PlaceOrderInterface
         if ($quote->getId() === null) {
             return $this->getValidationErrorResponse((string)__('Could not find quote with ID "%1"', $quoteId));
         }
+        $endValidateTime = microtime(true);
+        $this->logger->info('Time to validate: ' . ($endValidateTime - $startValidateTime));
 
+        $startAuthorization = microtime(true);
         try {
+            $startAPICall = microtime(true);
             $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
-        } catch (Exception $e) {
+            $firstTransaction = $this->getFirstTransAction($authorizedPayments);
+            $this->logger->info('Authorized Payments' . json_encode($authorizedPayments));
+            $endAPICall = microtime(true);
+            $this->logger->info('Time to API call: ' . ($endAPICall - $startAPICall));
+        } catch (LocalizedException | Exception $e) {
             return $this->responseFactory->create(
                 [
                     'errors' => [
@@ -275,7 +300,7 @@ class PlaceOrder implements PlaceOrderInterface
                             [
                                 'message' => $e->getMessage(),
                                 'code' => 500,
-                                'type' => 'server.bold_checkout_api_error'
+                                'type' => 'server.payment_authorization_error'
                             ]
                         )
                     ]
@@ -283,138 +308,15 @@ class PlaceOrder implements PlaceOrderInterface
             );
         }
 
-        if (array_key_exists('errors', $authorizedPayments) && count($authorizedPayments['errors']) > 0) {
-            return $this->responseFactory->create(
-                [
-                    'errors' => array_map(
-                    /**
-                     * @param array{
-                     *     message: string,
-                     *     type: string,
-                     *     field: string,
-                     *     severity: string,
-                     *     sub_type: string,
-                     *     code?: string,
-                     *     transactions?: array{
-                     *         gateway: string,
-                     *         payment_id: string,
-                     *         amount: int,
-                     *         transaction_id: string,
-                     *         currency: string,
-                     *         step: string,
-                     *         status: 'success'|'failed'|'',
-                     *         tender_type: string,
-                     *         tender_details: array{
-                     *             brand: string,
-                     *             last_four: string,
-                     *             bin: string,
-                     *             expiration: string
-                     *         },
-                     *         gateway_response_data: string[]
-                     *     }[]
-                     * } $error
-                     */
-                        function (array $error): ErrorInterface {
-                            return $this->errorFactory->create(
-                                [
-                                    'code' => (int)($error['code'] ?? 0),
-                                    'type' => $error['type'],
-                                    'message' => $error['message']
-                                ]
-                            );
-                        },
-                        $authorizedPayments['errors']
-                    )
-                ]
-            );
-        }
+        $endAuthorization = microtime(true);
+        $this->logger->info('Time to authorize: ' . ($endAuthorization - $startAuthorization));
 
-        if (!array_key_exists('data', $authorizedPayments) || count($authorizedPayments['data']) === 0) {
-            return $this->responseFactory->create(
-                [
-                    'errors' => [
-                        $this->errorFactory->create(
-                            [
-                                'message' => __(
-                                    'There are no authorized payments available for order "%1"',
-                                    $publicOrderId
-                                ),
-                                'code' => 500,
-                                'type' => 'server.bold_checkout_api_error'
-                            ]
-                        )
-                    ]
-                ]
-            );
-        }
-
-        $transactions = array_filter(
-            $authorizedPayments['data']['transactions'],
-            /**
-             * @param array{
-             *     gateway: string,
-             *     payment_id: string,
-             *     amount: int,
-             *     transaction_id: string,
-             *     currency: string,
-             *     step: string,
-             *     status: 'success'|'failed'|'',
-             *     tender_type: string,
-             *     tender_details: array{
-             *         brand: string,
-             *         last_four: string,
-             *         bin: string,
-             *         expiration: string
-             *     },
-             *     gateway_response_data: string[]
-             * } $transaction
-             */
-            static function (array $transaction): bool {
-                return $transaction['status'] !== 'failed';
-            }
-        );
-
-        if (count($transactions) === 0) {
-            return $this->responseFactory->create(
-                [
-                    'errors' => [
-                        $this->errorFactory->create(
-                            [
-                                'message' => __(
-                                    'There are no successful transactions available for order "%1"',
-                                    $publicOrderId
-                                ),
-                                'code' => 500,
-                                'type' => 'server.bold_checkout_api_error'
-                            ]
-                        )
-                    ]
-                ]
-            );
-        }
-
-        /**
-         * @var array{
-         *     gateway: string,
-         *     payment_id: string,
-         *     amount: int,
-         *     transaction_id: string,
-         *     currency: string,
-         *     step: string,
-         *     status: 'success'|'',
-         *     tender_type: string,
-         *     tender_details: array{
-         *         brand: string,
-         *         last_four: string,
-         *         bin: string,
-         *         expiration: string
-         *     },
-         *     gateway_response_data: string[]
-         * } $firstTransaction
-         */
-        $firstTransaction = array_shift($transactions);
+        $buildOrderDataStart = microtime(true);
         $orderData = $this->buildOrderData($firstTransaction, (int)$quoteId, $publicOrderId);
+        $buildOrderDataStart = microtime(true);
+        $this->logger->info('Time to build order data: ' . ($buildOrderDataStart - $buildOrderDataStart));
 
+        $createAndUpdate = microtime(true);
         try {
             $order = $this->createOrderFromPayload->createOrder($orderData, $quote);
         } catch (Exception $e) {
@@ -435,6 +337,8 @@ class PlaceOrder implements PlaceOrderInterface
 
         $this->updateCheckoutSession($quote, $order);
 
+        $endCreateAndUpdate = microtime(true);
+        $this->logger->info('Time to create and update: ' . ($endCreateAndUpdate - $createAndUpdate));
         return $this->responseFactory->create(
             [
                 'order' => $order
@@ -519,20 +423,31 @@ class PlaceOrder implements PlaceOrderInterface
     {
         $url = sprintf('checkout/orders/{{shopId}}/%s/payments/auth/full', $publicOrderId);
         $result = $this->client->post($websiteId, $url, []);
-        $errors = $result->getErrors();
 
-        if (array_key_exists('errors', $errors) && count($errors) > 0) {
-            $errors = [
-                [
-                    'code' => $result->getStatus(),
-                    'type' => 'server.bold_checkout_api_error',
-                    'message' => $errors[0],
-                    'transactions' => []
-                ]
-            ];
+        $this->logger->info('Response: ' . json_encode($result));
+        $response = $result->getBody();
+
+        if (isset($response['errors']) && !empty($response['errors'])) {
+            $error = $response['errors'][0];
+            $errorMessage = isset($error['message']) ? $error['message'] : 'Unknown error occurred';
+            throw new LocalizedException($errorMessage);
+        } else if (!isset($response['data']) || $response['data'] === null) {
+            throw new LocalizedException('No data found');
         }
 
-        return array_merge($result->getBody(), ['errors' => $errors]);
+        return $response;
+    }
+
+    private function getFirstTransAction(array $transactions): array
+    {
+        $firstTransaction = $transactions['data']['transactions'][0] ?? null;
+        if($firstTransaction === null) {
+            throw new LocalizedException('No transactions found');
+        }
+        if($firstTransaction['status'] === 'failed') {
+            throw new LocalizedException('First transaction failed');
+        }
+        return $firstTransaction;
     }
 
     // phpcs:ignore Magento2.Annotation.MethodAnnotationStructure.NoCommentBlock
