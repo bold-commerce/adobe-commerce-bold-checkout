@@ -278,9 +278,6 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse($e->getMessage());
         }
 
-        if ($quote->getId() === null) {
-            return $this->getValidationErrorResponse((string)__('Could not find quote with ID "%1"', $quoteId));
-        }
         $endValidateTime = microtime(true);
         $this->logger->info('Time to validate: ' . ($endValidateTime - $startValidateTime));
 
