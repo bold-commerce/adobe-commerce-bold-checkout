@@ -427,9 +427,9 @@ class PlaceOrder implements PlaceOrderInterface
         if (isset($response['errors']) && !empty($response['errors'])) {
             $error = $response['errors'][0];
             $errorMessage = isset($error['message']) ? $error['message'] : 'Unknown error occurred';
-            throw new LocalizedException($errorMessage);
+            throw new LocalizedException(__($errorMessage));
         } else if (!isset($response['data']) || $response['data'] === null) {
-            throw new LocalizedException('No data found');
+            throw new LocalizedException(__('No data found'));
         }
 
         return $response;
@@ -439,10 +439,10 @@ class PlaceOrder implements PlaceOrderInterface
     {
         $firstTransaction = $transactions['data']['transactions'][0] ?? null;
         if($firstTransaction === null) {
-            throw new LocalizedException('No transactions found');
+            throw new LocalizedException(__('No transactions found'));
         }
         if($firstTransaction['status'] === 'failed') {
-            throw new LocalizedException('First transaction failed');
+            throw new LocalizedException(__('First transaction failed'));
         }
         return $firstTransaction;
     }
