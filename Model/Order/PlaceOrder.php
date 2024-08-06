@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order;
 
-use Psr\Log\LoggerInterface;
-
-use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterfaceFactory;
@@ -36,11 +33,6 @@ use Magento\Sales\Api\Data\TransactionInterfaceFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 use function __;
-use function array_filter;
-use function array_key_exists;
-use function array_map;
-use function array_merge;
-use function count;
 use function explode;
 use function sprintf;
 
@@ -135,12 +127,6 @@ class PlaceOrder implements PlaceOrderInterface
     private $quoteExtensionDataResource;
 
     /**
-     * @var Logger
-     */
-    private $logger;
-
-
-    /**
      * @param OrderPayloadValidator $orderPayloadValidator
      * @param ResultInterfaceFactory $responseFactory
      * @param ErrorInterfaceFactory $errorFactory
@@ -176,8 +162,7 @@ class PlaceOrder implements PlaceOrderInterface
         CheckoutSession $checkoutSession,
         QuoteExtensionDataFactory $quoteExtensionDataFactory,
         QuoteExtensionData $quoteExtensionDataResource,
-        ConfigInterface $config,
-        LoggerInterface $logger
+        ConfigInterface $config
     ) {
         $this->responseFactory = $responseFactory;
         $this->errorFactory = $errorFactory;
@@ -196,7 +181,6 @@ class PlaceOrder implements PlaceOrderInterface
         $this->quoteExtensionDataFactory = $quoteExtensionDataFactory;
         $this->quoteExtensionDataResource = $quoteExtensionDataResource;
         $this->config = $config;
-        $this->logger = $logger;
     }
 
     /**
@@ -268,27 +252,15 @@ class PlaceOrder implements PlaceOrderInterface
             $quoteId = $quoteMaskId;
         }
 
-        $endSetupTime = microtime(true);
-        $this->logger->info('Time to setup: ' . ($endSetupTime - $setupTime));
-
-        $startValidateTime = microtime(true);
         try {
             $quote = $this->loadAndValidate->load($shopId, (int)$quoteId);
         } catch (LocalizedException $e) {
             return $this->getValidationErrorResponse($e->getMessage());
         }
 
-        $endValidateTime = microtime(true);
-        $this->logger->info('Time to validate: ' . ($endValidateTime - $startValidateTime));
-
-        $startAuthorization = microtime(true);
         try {
-            $startAPICall = microtime(true);
             $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
-            $firstTransaction = $this->getFirstTransAction($authorizedPayments);
-            $this->logger->info('Authorized Payments' . json_encode($authorizedPayments));
-            $endAPICall = microtime(true);
-            $this->logger->info('Time to API call: ' . ($endAPICall - $startAPICall));
+            $firstTransaction = $this->getFirstTransaction($authorizedPayments);
         } catch (LocalizedException | Exception $e) {
             return $this->responseFactory->create(
                 [
@@ -305,15 +277,8 @@ class PlaceOrder implements PlaceOrderInterface
             );
         }
 
-        $endAuthorization = microtime(true);
-        $this->logger->info('Time to authorize: ' . ($endAuthorization - $startAuthorization));
-
-        $buildOrderDataStart = microtime(true);
         $orderData = $this->buildOrderData($firstTransaction, (int)$quoteId, $publicOrderId);
-        $buildOrderDataStart = microtime(true);
-        $this->logger->info('Time to build order data: ' . ($buildOrderDataStart - $buildOrderDataStart));
 
-        $createAndUpdate = microtime(true);
         try {
             $order = $this->createOrderFromPayload->createOrder($orderData, $quote);
         } catch (Exception $e) {
@@ -334,8 +299,6 @@ class PlaceOrder implements PlaceOrderInterface
 
         $this->updateCheckoutSession($quote, $order);
 
-        $endCreateAndUpdate = microtime(true);
-        $this->logger->info('Time to create and update: ' . ($endCreateAndUpdate - $createAndUpdate));
         return $this->responseFactory->create(
             [
                 'order' => $order
@@ -420,8 +383,6 @@ class PlaceOrder implements PlaceOrderInterface
     {
         $url = sprintf('checkout/orders/{{shopId}}/%s/payments/auth/full', $publicOrderId);
         $result = $this->client->post($websiteId, $url, []);
-
-        $this->logger->info('Response: ' . json_encode($result));
         $response = $result->getBody();
 
         if (isset($response['errors']) && !empty($response['errors'])) {
