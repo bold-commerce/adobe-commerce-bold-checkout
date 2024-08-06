@@ -396,13 +396,13 @@ class PlaceOrder implements PlaceOrderInterface
         return $response;
     }
 
-    private function getFirstTransAction(array $transactions): array
+    private function getFirstTransaction(array $transactions): array
     {
         $firstTransaction = $transactions['data']['transactions'][0] ?? null;
-        if($firstTransaction === null) {
+        if ($firstTransaction === null) {
             throw new LocalizedException(__('No transactions found'));
         }
-        if($firstTransaction['status'] === 'failed') {
+        if ($firstTransaction['status'] === 'failed') {
             throw new LocalizedException(__('First transaction failed'));
         }
         return $firstTransaction;
