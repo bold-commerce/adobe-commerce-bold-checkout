@@ -440,23 +440,18 @@ class PlaceOrder implements PlaceOrderInterface
     private function buildOrderData(array $firstTransaction, int $quoteId, string $publicOrderId): OrderDataInterface
     {
         /** @var OrderPaymentInterface $orderPayment */
-        $orderPayment = $this->paymentFactory->create();
-        /** @var TransactionInterface $transaction */
-        $transaction = $this->transactionFactory->create();
-        /** @var OrderDataInterface $orderData */
-        $orderData = $this->orderDataFactory->create();
-        [$cardExpirationMonth, $cardExpirationYear] = explode(
-            '/',
-            $firstTransaction['tender_details']['expiration'],
-            2
-        );
+        $orderPayment = $this->paymentFactory->create();        
 
         $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
         $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
         $orderPayment->setCcLast4($firstTransaction['tender_details']['last_four']);
         $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
+
+        $cardExpirationMonth = substr($firstTransaction['tender_details']['expiration'], 0, 2);
+        $cardExpirationYear = substr($firstTransaction['tender_details']['expiration'], 3);
         $orderPayment->setCcExpMonth($cardExpirationMonth);
         $orderPayment->setCcExpYear($cardExpirationYear);
+
         $orderPayment->setAdditionalInformation(
             [
                 'transaction_gateway' => $firstTransaction['gateway'],
@@ -465,9 +460,14 @@ class PlaceOrder implements PlaceOrderInterface
         );
         $orderPayment->setIsTransactionClosed(true); // @phpstan-ignore method.notFound
 
+
+        /** @var TransactionInterface $transaction */
+        $transaction = $this->transactionFactory->create();
         $transaction->setTxnId($firstTransaction['transaction_id']);
         $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
 
+        /** @var OrderDataInterface $orderData */
+        $orderData = $this->orderDataFactory->create();
         $orderData->setQuoteId($quoteId);
         $orderData->setPublicId($publicOrderId);
         $orderData->setPayment($orderPayment);
