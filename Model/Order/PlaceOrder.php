@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Order;
 
-use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterface;
 use Bold\Checkout\Api\Data\Http\Client\Response\ErrorInterfaceFactory;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterface;
 use Bold\Checkout\Api\Data\PlaceOrder\Request\OrderDataInterfaceFactory;
@@ -33,12 +33,6 @@ use Magento\Sales\Api\Data\TransactionInterfaceFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 use function __;
-use function array_filter;
-use function array_key_exists;
-use function array_map;
-use function array_merge;
-use function count;
-use function explode;
 use function sprintf;
 
 /**
@@ -210,7 +204,8 @@ class PlaceOrder implements PlaceOrderInterface
             $quoteExtensionData = $this->quoteExtensionDataFactory->create();
             $this->quoteExtensionDataResource->load(
                 $quoteExtensionData,
-                $quote->getId(), QuoteExtensionData::QUOTE_ID
+                $quote->getId(),
+                QuoteExtensionData::QUOTE_ID
             );
             $magentoOrder = $quoteExtensionData->getOrderCreated()
                 ? $this->processOrder->process($order)
@@ -261,21 +256,17 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse($e->getMessage());
         }
 
-        if ($quote->getId() === null) {
-            return $this->getValidationErrorResponse((string)__('Could not find quote with ID "%1"', $quoteId));
-        }
-
-        try {
-            $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
-        } catch (Exception $e) {
+        $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
+        if (!$authorizedPayments['success']) {
+            $errorType = $authorizedPayments['type'] ?? 'server.payment_authorization_error';
             return $this->responseFactory->create(
                 [
                     'errors' => [
                         $this->errorFactory->create(
                             [
-                                'message' => $e->getMessage(),
-                                'code' => 500,
-                                'type' => 'server.bold_checkout_api_error'
+                                'message' => $authorizedPayments['error'],
+                                'code' => 422,
+                                'type' => $errorType
                             ]
                         )
                     ]
@@ -283,64 +274,16 @@ class PlaceOrder implements PlaceOrderInterface
             );
         }
 
-        if (array_key_exists('errors', $authorizedPayments) && count($authorizedPayments['errors']) > 0) {
-            return $this->responseFactory->create(
-                [
-                    'errors' => array_map(
-                    /**
-                     * @param array{
-                     *     message: string,
-                     *     type: string,
-                     *     field: string,
-                     *     severity: string,
-                     *     sub_type: string,
-                     *     code?: string,
-                     *     transactions?: array{
-                     *         gateway: string,
-                     *         payment_id: string,
-                     *         amount: int,
-                     *         transaction_id: string,
-                     *         currency: string,
-                     *         step: string,
-                     *         status: 'success'|'failed'|'',
-                     *         tender_type: string,
-                     *         tender_details: array{
-                     *             brand: string,
-                     *             last_four: string,
-                     *             bin: string,
-                     *             expiration: string
-                     *         },
-                     *         gateway_response_data: string[]
-                     *     }[]
-                     * } $error
-                     */
-                        function (array $error): ErrorInterface {
-                            return $this->errorFactory->create(
-                                [
-                                    'code' => (int)($error['code'] ?? 0),
-                                    'type' => $error['type'],
-                                    'message' => $error['message']
-                                ]
-                            );
-                        },
-                        $authorizedPayments['errors']
-                    )
-                ]
-            );
-        }
-
-        if (!array_key_exists('data', $authorizedPayments) || count($authorizedPayments['data']) === 0) {
+        $firstTransaction = $authorizedPayments['data']['transactions'][0] ?? [];
+        if (empty($firstTransaction) || $firstTransaction['status'] === 'failed') {
             return $this->responseFactory->create(
                 [
                     'errors' => [
                         $this->errorFactory->create(
                             [
-                                'message' => __(
-                                    'There are no authorized payments available for order "%1"',
-                                    $publicOrderId
-                                ),
-                                'code' => 500,
-                                'type' => 'server.bold_checkout_api_error'
+                                'message' => 'Invalid Transaction',
+                                'code' => 422,
+                                'type' => 'server.payment_authorization_error'
                             ]
                         )
                     ]
@@ -348,71 +291,6 @@ class PlaceOrder implements PlaceOrderInterface
             );
         }
 
-        $transactions = array_filter(
-            $authorizedPayments['data']['transactions'],
-            /**
-             * @param array{
-             *     gateway: string,
-             *     payment_id: string,
-             *     amount: int,
-             *     transaction_id: string,
-             *     currency: string,
-             *     step: string,
-             *     status: 'success'|'failed'|'',
-             *     tender_type: string,
-             *     tender_details: array{
-             *         brand: string,
-             *         last_four: string,
-             *         bin: string,
-             *         expiration: string
-             *     },
-             *     gateway_response_data: string[]
-             * } $transaction
-             */
-            static function (array $transaction): bool {
-                return $transaction['status'] !== 'failed';
-            }
-        );
-
-        if (count($transactions) === 0) {
-            return $this->responseFactory->create(
-                [
-                    'errors' => [
-                        $this->errorFactory->create(
-                            [
-                                'message' => __(
-                                    'There are no successful transactions available for order "%1"',
-                                    $publicOrderId
-                                ),
-                                'code' => 500,
-                                'type' => 'server.bold_checkout_api_error'
-                            ]
-                        )
-                    ]
-                ]
-            );
-        }
-
-        /**
-         * @var array{
-         *     gateway: string,
-         *     payment_id: string,
-         *     amount: int,
-         *     transaction_id: string,
-         *     currency: string,
-         *     step: string,
-         *     status: 'success'|'',
-         *     tender_type: string,
-         *     tender_details: array{
-         *         brand: string,
-         *         last_four: string,
-         *         bin: string,
-         *         expiration: string
-         *     },
-         *     gateway_response_data: string[]
-         * } $firstTransaction
-         */
-        $firstTransaction = array_shift($transactions);
         $orderData = $this->buildOrderData($firstTransaction, (int)$quoteId, $publicOrderId);
 
         try {
@@ -465,74 +343,23 @@ class PlaceOrder implements PlaceOrderInterface
         );
     }
 
-    /**
-     * @return array{
-     *      data?: array{
-     *          total: int,
-     *          transactions: array{
-     *              gateway: string,
-     *              payment_id: string,
-     *              amount: int,
-     *              transaction_id: string,
-     *              currency: string,
-     *              step: string,
-     *              status: 'success'|'failed'|'',
-     *              tender_type: string,
-     *              tender_details: array{
-     *                  brand: string,
-     *                  last_four: string,
-     *                  bin: string,
-     *                  expiration: string
-     *              },
-     *              gateway_response_data: string[]
-     *          }[]
-     *      },
-     *      errors?: array{
-     *          message: string,
-     *          type: string,
-     *          field: string,
-     *          severity: string,
-     *          sub_type: string,
-     *          code?: string,
-     *          transactions?: array{
-     *              gateway: string,
-     *              payment_id: string,
-     *              amount: int,
-     *              transaction_id: string,
-     *              currency: string,
-     *              step: string,
-     *              status: 'success'|'failed'|'',
-     *              tender_type: string,
-     *              tender_details: array{
-     *                  brand: string,
-     *                  last_four: string,
-     *                  bin: string,
-     *                  expiration: string
-     *              },
-     *              gateway_response_data: string[]
-     *          }[]
-     *      }[]
-     *  }
-     * @throws Exception
-     */
     private function getAuthorizedPayments(string $publicOrderId, int $websiteId): array
     {
         $url = sprintf('checkout/orders/{{shopId}}/%s/payments/auth/full', $publicOrderId);
         $result = $this->client->post($websiteId, $url, []);
         $errors = $result->getErrors();
+        $response = $result->getBody();
 
-        if (array_key_exists('errors', $errors) && count($errors) > 0) {
-            $errors = [
-                [
-                    'code' => $result->getStatus(),
-                    'type' => 'server.bold_checkout_api_error',
-                    'message' => $errors[0],
-                    'transactions' => []
-                ]
-            ];
+        if (count($errors) > 0) {
+            $error = $errors[0];
+            $errorMessage = isset($error['message']) ? $error['message'] : 'Unknown error occurred';
+            $errorType = isset($error['type']) ? $error['type'] : null;
+            return ['success' => false, 'error' => $errorMessage, 'type' => $errorType];
+        } else if (!isset($response['data']) || $response['data'] === null) {
+            return ['success' => false, 'error' => 'No data found'];
         }
 
-        return array_merge($result->getBody(), ['errors' => $errors]);
+        return ['success' => true, 'data' => $response['data']];
     }
 
     // phpcs:ignore Magento2.Annotation.MethodAnnotationStructure.NoCommentBlock
@@ -568,22 +395,17 @@ class PlaceOrder implements PlaceOrderInterface
     {
         /** @var OrderPaymentInterface $orderPayment */
         $orderPayment = $this->paymentFactory->create();
-        /** @var TransactionInterface $transaction */
-        $transaction = $this->transactionFactory->create();
-        /** @var OrderDataInterface $orderData */
-        $orderData = $this->orderDataFactory->create();
-        [$cardExpirationMonth, $cardExpirationYear] = explode(
-            '/',
-            $firstTransaction['tender_details']['expiration'],
-            2
-        );
 
         $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
         $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
         $orderPayment->setCcLast4($firstTransaction['tender_details']['last_four']);
         $orderPayment->setCcType($firstTransaction['tender_details']['brand']);
+
+        $cardExpirationMonth = substr($firstTransaction['tender_details']['expiration'], 0, 2);
+        $cardExpirationYear = substr($firstTransaction['tender_details']['expiration'], 3);
         $orderPayment->setCcExpMonth($cardExpirationMonth);
         $orderPayment->setCcExpYear($cardExpirationYear);
+
         $orderPayment->setAdditionalInformation(
             [
                 'transaction_gateway' => $firstTransaction['gateway'],
@@ -592,9 +414,14 @@ class PlaceOrder implements PlaceOrderInterface
         );
         $orderPayment->setIsTransactionClosed(true); // @phpstan-ignore method.notFound
 
+
+        /** @var TransactionInterface $transaction */
+        $transaction = $this->transactionFactory->create();
         $transaction->setTxnId($firstTransaction['transaction_id']);
         $transaction->setTxnType(TransactionInterface::TYPE_PAYMENT); // TODO: verify this transaction type is correct
 
+        /** @var OrderDataInterface $orderData */
+        $orderData = $this->orderDataFactory->create();
         $orderData->setQuoteId($quoteId);
         $orderData->setPublicId($publicOrderId);
         $orderData->setPayment($orderPayment);
