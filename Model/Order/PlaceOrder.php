@@ -33,7 +33,6 @@ use Magento\Sales\Api\Data\TransactionInterfaceFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 use function __;
-use function explode;
 use function sprintf;
 
 /**
@@ -238,7 +237,6 @@ class PlaceOrder implements PlaceOrderInterface
      */
     public function authorizeAndPlace(string $publicOrderId, string $quoteMaskId): ResultInterface
     {
-        $setupTime = microtime(true);
         $websiteId = (int)$this->storeManager->getStore()->getWebsiteId();
         $shopId = $this->config->getShopId($websiteId) ?? '';
 
@@ -258,17 +256,33 @@ class PlaceOrder implements PlaceOrderInterface
             return $this->getValidationErrorResponse($e->getMessage());
         }
 
-        try {
-            $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
-            $firstTransaction = $this->getFirstTransaction($authorizedPayments);
-        } catch (LocalizedException | Exception $e) {
+        $authorizedPayments = $this->getAuthorizedPayments($publicOrderId, $websiteId);
+        if (!$authorizedPayments['success']) {
+            $errorType = $authorizedPayments['type'] ?? 'server.payment_authorization_error';
             return $this->responseFactory->create(
                 [
                     'errors' => [
                         $this->errorFactory->create(
                             [
-                                'message' => $e->getMessage(),
-                                'code' => 500,
+                                'message' => $authorizedPayments['error'],
+                                'code' => 422,
+                                'type' => $errorType
+                            ]
+                        )
+                    ]
+                ]
+            );
+        }
+
+        $firstTransaction = $authorizedPayments['data']['transactions'][0] ?? [];
+        if (empty($firstTransaction) || $firstTransaction['status'] === 'failed') {
+            return $this->responseFactory->create(
+                [
+                    'errors' => [
+                        $this->errorFactory->create(
+                            [
+                                'message' => 'Invalid Transaction',
+                                'code' => 422,
                                 'type' => 'server.payment_authorization_error'
                             ]
                         )
@@ -329,83 +343,23 @@ class PlaceOrder implements PlaceOrderInterface
         );
     }
 
-    /**
-     * @return array{
-     *      data?: array{
-     *          total: int,
-     *          transactions: array{
-     *              gateway: string,
-     *              payment_id: string,
-     *              amount: int,
-     *              transaction_id: string,
-     *              currency: string,
-     *              step: string,
-     *              status: 'success'|'failed'|'',
-     *              tender_type: string,
-     *              tender_details: array{
-     *                  brand: string,
-     *                  last_four: string,
-     *                  bin: string,
-     *                  expiration: string
-     *              },
-     *              gateway_response_data: string[]
-     *          }[]
-     *      },
-     *      errors?: array{
-     *          message: string,
-     *          type: string,
-     *          field: string,
-     *          severity: string,
-     *          sub_type: string,
-     *          code?: string,
-     *          transactions?: array{
-     *              gateway: string,
-     *              payment_id: string,
-     *              amount: int,
-     *              transaction_id: string,
-     *              currency: string,
-     *              step: string,
-     *              status: 'success'|'failed'|'',
-     *              tender_type: string,
-     *              tender_details: array{
-     *                  brand: string,
-     *                  last_four: string,
-     *                  bin: string,
-     *                  expiration: string
-     *              },
-     *              gateway_response_data: string[]
-     *          }[]
-     *      }[]
-     *  }
-     * @throws Exception
-     */
     private function getAuthorizedPayments(string $publicOrderId, int $websiteId): array
     {
         $url = sprintf('checkout/orders/{{shopId}}/%s/payments/auth/full', $publicOrderId);
         $result = $this->client->post($websiteId, $url, []);
+        $errors = $result->getErrors();
         $response = $result->getBody();
 
-        if (isset($response['errors']) && !empty($response['errors'])) {
-            $error = $response['errors'][0];
+        if (count($errors) > 0) {
+            $error = $errors[0];
             $errorMessage = isset($error['message']) ? $error['message'] : 'Unknown error occurred';
-            throw new LocalizedException(__($errorMessage));
+            $errorType = isset($error['type']) ? $error['type'] : null;
+            return ['success' => false, 'error' => $errorMessage, 'type' => $errorType];
         } else if (!isset($response['data']) || $response['data'] === null) {
-            throw new LocalizedException(__('No data found'));
+            return ['success' => false, 'error' => 'No data found'];
         }
 
-        return $response;
-    }
-
-    private function getFirstTransaction(array $transactions): array
-    {
-        $firstTransaction = $transactions['data']['transactions'][0] ?? null;
-        if ($firstTransaction === null) {
-            throw new LocalizedException(__('No transactions found'));
-        }
-        if ($firstTransaction['status'] === 'failed') {
-            throw new LocalizedException(__('First transaction failed'));
-        }
-        return $firstTransaction;
+        return ['success' => true, 'data' => $response['data']];
     }
 
     // phpcs:ignore Magento2.Annotation.MethodAnnotationStructure.NoCommentBlock
@@ -440,7 +394,7 @@ class PlaceOrder implements PlaceOrderInterface
     private function buildOrderData(array $firstTransaction, int $quoteId, string $publicOrderId): OrderDataInterface
     {
         /** @var OrderPaymentInterface $orderPayment */
-        $orderPayment = $this->paymentFactory->create();        
+        $orderPayment = $this->paymentFactory->create();
 
         $orderPayment->setBaseAmountPaid($firstTransaction['amount'] / 100);
         $orderPayment->setAmountPaid($firstTransaction['amount'] / 100);
