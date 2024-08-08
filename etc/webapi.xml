@@ -42,6 +42,12 @@
             <resource ref="Magento_Sales::create"/>
         </resources>
     </route>
+    <route method="GET" url="/V1/orders/quote/:quoteId">
+        <service class="Bold\Checkout\Api\Order\GetOrderFromQuoteIdInterface" method="getOrder"/>
+        <resources>
+            <resource ref="Magento_Cart::manage"/>
+        </resources>
+    </route>
     <route method="GET" url="/V1/orders/:publicOrderId/quote/:quoteMaskId/authorizeAndPlace">
         <service class="Bold\Checkout\Api\PlaceOrderInterface" method="authorizeAndPlace"/>
         <resources>
