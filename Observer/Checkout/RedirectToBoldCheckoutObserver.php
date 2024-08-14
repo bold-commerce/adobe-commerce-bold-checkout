@@ -3,15 +3,21 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Observer\Checkout;
 
+use Bold\Checkout\Api\BoldQuoteRepositoryInterface;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
+use Bold\Checkout\Model\Order\ResumeOrder;
+use Bold\Checkout\Model\Quote\QuoteExtensionDataFactory;
 use Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedInterface;
 use Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedInterface;
 use Exception;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Api\Data\CartInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -55,6 +61,16 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
     private $isRedirectToBoldCheckoutAllowed;
 
     /**
+     * @var BoldQuoteRepositoryInterface
+     */
+    private $boldQuoteRepository;
+
+    /**
+     * @var ResumeOrder
+     */
+    private $resumeOrder;
+
+    /**
      * @param Session $session
      * @param InitOrderFromQuote $initOrderFromQuote
      * @param ConfigInterface $config
@@ -62,6 +78,8 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
      * @param ClientInterface $client
      * @param IsOrderInitializationAllowedInterface $isOrderInitializationAllowed
      * @param IsRedirectToBoldCheckoutAllowedInterface $isRedirectToBoldCheckoutAllowed
+     * @param BoldQuoteRepositoryInterface $boldQuoteRepository
+     * @param ResumeOrder $resumeOrder
      */
     public function __construct(
         Session $session,
@@ -70,7 +88,9 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         LoggerInterface $logger,
         ClientInterface $client,
         IsOrderInitializationAllowedInterface $isOrderInitializationAllowed,
-        IsRedirectToBoldCheckoutAllowedInterface $isRedirectToBoldCheckoutAllowed
+        IsRedirectToBoldCheckoutAllowedInterface $isRedirectToBoldCheckoutAllowed,
+        BoldQuoteRepositoryInterface $boldQuoteRepository,
+        ResumeOrder $resumeOrder
     ) {
         $this->session = $session;
         $this->initOrderFromQuote = $initOrderFromQuote;
@@ -79,6 +99,8 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
         $this->client = $client;
         $this->isOrderInitializationAllowed = $isOrderInitializationAllowed;
         $this->isRedirectToBoldCheckoutAllowed = $isRedirectToBoldCheckoutAllowed;
+        $this->boldQuoteRepository = $boldQuoteRepository;
+        $this->resumeOrder = $resumeOrder;
     }
 
     /**
@@ -94,21 +116,64 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             if (!$this->isOrderInitializationAllowed->isAllowed($quote, $request)) {
                 return;
             }
-            $checkoutData = $this->initOrderFromQuote->init($quote);
+
+            $checkoutData = $this->resumeExistingCart($quote);
+            if ($checkoutData === null) {
+                $checkoutData = $this->initOrderFromQuote->init($quote);
+            }
+
             $this->session->setBoldCheckoutData($checkoutData);
             if (!$this->isRedirectToBoldCheckoutAllowed->isAllowed($quote, $request)) {
                 return;
             }
+
             $this->client->get($websiteId, 'refresh');
-            $orderId = $checkoutData['data']['public_order_id'];
-            $token = $checkoutData['data']['jwt_token'];
-            $shopName = $checkoutData['data']['initial_data']['shop_name'];
-            $checkoutApiUrl = rtrim($this->config->getCheckoutUrl($websiteId), '/') . '/bold_platform/';
-            $checkoutUrl = $checkoutApiUrl . $shopName . '/experience/resume?public_order_id=' . $orderId
-                . '&token=' . $token;
+
+            $orderId = $checkoutData['data']['public_order_id'] ?? '';
+            $token = $checkoutData['data']['jwt_token'] ?? '';
+            $shopName = $checkoutData['data']['initial_data']['shop_name'] ?? '';
+
+            $checkoutUrl = $this->getCheckoutUrl(
+                $websiteId,
+                $shopName,
+                $orderId,
+                $token
+            );
+
             $observer->getControllerAction()->getResponse()->setRedirect($checkoutUrl);
         } catch (Exception $exception) {
             $this->logger->critical($exception);
         }
+    }
+
+    /**
+     * @throws NoSuchEntityException
+     */
+    private function getPublicOrderIdForCart(int $cartId): string
+    {
+        return $this->boldQuoteRepository
+            ->getByCartId($cartId)
+            ->getPublicOrderId() ?? '';
+    }
+
+    private function resumeExistingCart(CartInterface $cart): array|null
+    {
+        try {
+            $publicOrderId = $this->getPublicOrderIdForCart((int) $cart->getId());
+            return $this->resumeOrder->resume($cart, $publicOrderId);
+        } catch (NoSuchEntityException|LocalizedException) {
+            return null;
+        }
+    }
+
+    private function getCheckoutUrl(int $websiteId, string $shopName, string $publicOrderId, string $token): string
+    {
+        return \sprintf(
+            '%s/bold_platform/%s/experience/resume?public_order_id=%s&jwt_token=%s',
+            rtrim($this->config->getCheckoutUrl($websiteId), '/'),
+            $shopName,
+            $publicOrderId,
+            $token
+        );
     }
 }

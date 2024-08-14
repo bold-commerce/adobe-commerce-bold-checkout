@@ -31,11 +31,12 @@
     "column": {
       "id": true,
       "quote_id": true,
+      "public_order_id": true,
       "order_created": true,
       "api_type": true
     },
     "constraint": {
-      "PRIMARY": true, 
+      "PRIMARY": true,
       "BOLD_CHECKOUT_QUOTE_QUOTE_ID": true
     }
   }

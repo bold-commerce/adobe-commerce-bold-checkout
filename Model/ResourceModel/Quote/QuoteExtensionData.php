@@ -13,6 +13,7 @@ class QuoteExtensionData extends AbstractDb
     public const TABLE = 'bold_checkout_quote';
     public const ID = 'id';
     public const QUOTE_ID = 'quote_id';
+    public const PUBLIC_ORDER_ID = 'public_order_id';
     public const ORDER_CREATED = 'order_created';
     public const API_TYPE = 'api_type';
 

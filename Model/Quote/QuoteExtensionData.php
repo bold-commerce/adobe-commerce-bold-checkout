@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Bold\Checkout\Model\Quote;
 
+use Bold\Checkout\Api\Data\BoldQuoteInterface;
 use Bold\Checkout\Model\ResourceModel\Quote\QuoteExtensionData as QuoteExtensionDataResource;
 use Magento\Framework\Model\AbstractModel;
 
 /**
  * Bold quote data entity.
  */
-class QuoteExtensionData extends AbstractModel
+class QuoteExtensionData extends AbstractModel implements BoldQuoteInterface
 {
     /**
      * @inheritDoc
@@ -71,5 +72,20 @@ class QuoteExtensionData extends AbstractModel
     public function getApiType(): ?string
     {
         return $this->getData(QuoteExtensionDataResource::API_TYPE);
+    }
+
+    public function setApiType(string $apiType): void
+    {
+        $this->setData(QuoteExtensionDataResource::API_TYPE, $apiType);
+    }
+
+    public function getPublicOrderId(): ?string
+    {
+        return $this->getData(QuoteExtensionDataResource::PUBLIC_ORDER_ID);
+    }
+
+    public function setPublicOrderId(string $publicOrderId): void
+    {
+        $this->setData(QuoteExtensionDataResource::PUBLIC_ORDER_ID, $publicOrderId);
     }
 }
