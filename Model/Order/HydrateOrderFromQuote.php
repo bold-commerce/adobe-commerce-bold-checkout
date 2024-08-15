@@ -88,12 +88,14 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
     {
         $websiteId = (int)$quote->getStore()->getWebsiteId();
         $billingAddress = $this->quoteToOrderAddressConverter->convert($quote->getBillingAddress());
+        $shippingAddress = null;
 
         if ($quote->getIsVirtual()) {
             $totals = $quote->getBillingAddress()->getTotals();
         } else {
             $totals = $quote->getShippingAddress()->getTotals();
             $shippingDescription = $quote->getShippingAddress()->getShippingDescription();
+            $shippingAddress = $this->quoteToOrderAddressConverter->convert($quote->getShippingAddress());
         }
 
         list($fees, $discounts) = $this->getFeesAndDiscounts($totals);
@@ -122,6 +124,10 @@ class HydrateOrderFromQuote implements HydrateOrderFromQuoteInterface
                 'order_total' => $this->convertToCents($totals['grand_total']['value'])
             ],
         ];
+
+        if ($shippingAddress !== null) {
+            $body['shipping_address'] = $this->addressConverter->convert($shippingAddress);
+        }
 
         if ($quote->getCustomer()->getId()) {
             $body['customer'] = [
