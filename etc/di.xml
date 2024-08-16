@@ -33,6 +33,9 @@
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ResultInterface" type="Bold\Checkout\Model\Data\ModuleVersion\Result"/>
     <preference for="Bold\Checkout\Api\Data\ModuleVersion\ModuleVersionInterface" type="Bold\Checkout\Model\Data\ModuleVersion\ModuleVersion"/>
     <preference for="Bold\Checkout\Model\Order\CompleteOrderInterface" type="Bold\Checkout\Model\Order\CompleteOrderPool"/>
+    <preference for="Bold\Checkout\Api\Data\BoldQuoteInterface" type="Bold\Checkout\Model\Quote\QuoteExtensionData"/>
+    <preference for="Bold\Checkout\Api\BoldQuoteRepositoryInterface" type="Bold\Checkout\Model\BoldQuoteRepository"/>
+
     <type name="Bold\Checkout\Model\Order\CompleteOrderPool">
         <arguments>
             <argument name="pool" xsi:type="array">

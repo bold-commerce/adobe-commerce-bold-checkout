@@ -139,6 +139,7 @@ class InitOrderFromQuote
             [
                 QuoteExtensionData::ORDER_CREATED => false,
                 QuoteExtensionData::API_TYPE => InitOrderFromQuote::API_TYPE_DEFAULT,
+                QuoteExtensionData::PUBLIC_ORDER_ID => $publicOrderId,
             ]
         );
 
