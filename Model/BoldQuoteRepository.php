@@ -27,7 +27,7 @@ class BoldQuoteRepository implements BoldQuoteRepositoryInterface
 
     public function __construct(
         QuoteExtensionDataResource $boldQuoteResource,
-        QuoteExtensionDataFactory $quoteExtensionDataFactory,
+        QuoteExtensionDataFactory $quoteExtensionDataFactory
     ) {
         $this->boldQuoteResource = $boldQuoteResource;
         $this->quoteExtensionDataFactory = $quoteExtensionDataFactory;
