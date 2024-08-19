@@ -8,7 +8,6 @@ use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Order\InitOrderFromQuote;
 use Bold\Checkout\Model\Order\ResumeOrder;
-use Bold\Checkout\Model\Quote\QuoteExtensionDataFactory;
 use Bold\Checkout\Model\RedirectToBoldCheckout\IsOrderInitializationAllowedInterface;
 use Bold\Checkout\Model\RedirectToBoldCheckout\IsRedirectToBoldCheckoutAllowedInterface;
 use Exception;
@@ -156,12 +155,16 @@ class RedirectToBoldCheckoutObserver implements ObserverInterface
             ->getPublicOrderId() ?? '';
     }
 
-    private function resumeExistingCart(CartInterface $cart): array|null
+    /**
+     * @param CartInterface $cart
+     * @return array|null
+     */
+    private function resumeExistingCart(CartInterface $cart): ?array
     {
         try {
             $publicOrderId = $this->getPublicOrderIdForCart((int) $cart->getId());
             return $this->resumeOrder->resume($cart, $publicOrderId);
-        } catch (NoSuchEntityException|LocalizedException) {
+        } catch (NoSuchEntityException|LocalizedException $exception) {
             return null;
         }
     }
