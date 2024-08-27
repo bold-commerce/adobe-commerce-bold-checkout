@@ -51,6 +51,7 @@ class GetCountryData implements GetCountryDataInterface
         $statesOptional = !in_array($countryId, explode(',', $countriesRequiringStates));
         $countryData = $this->countryInformationAcquirer->getCountryInfo($countryId);
 
+        // if states are optional build our own CountryInformation object omitting available_regions
         if ($statesOptional) {
             $customCountryData = $this->countryInformationFactory->create();
             $customCountryData->setId($countryId);
