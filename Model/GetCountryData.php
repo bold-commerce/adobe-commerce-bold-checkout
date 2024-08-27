@@ -5,6 +5,7 @@ namespace Bold\Checkout\Model;
 use Bold\Checkout\Api\GetCountryDataInterface;
 use Magento\Directory\Api\CountryInformationAcquirerInterface;
 use Magento\Directory\Api\Data\CountryInformationInterface;
+use Magento\Directory\Api\Data\CountryInformationInterfaceFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -26,14 +27,21 @@ class GetCountryData implements GetCountryDataInterface
      */
     private $countryInformationAcquirer;
 
+    /**
+     * @var CountryInformationInterfaceFactory
+     */
+    private $countryInformationFactory;
+
     public function __construct(
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $scopeConfig,
-        CountryInformationAcquirerInterface $countryInformationAcquirer
+        CountryInformationAcquirerInterface $countryInformationAcquirer,
+        CountryInformationInterfaceFactory $countryInformationFactory
     ) {
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
         $this->countryInformationAcquirer = $countryInformationAcquirer;
+        $this->countryInformationFactory = $countryInformationFactory;
     }
 
     public function getData(string $countryId): CountryInformationInterface
@@ -44,7 +52,14 @@ class GetCountryData implements GetCountryDataInterface
         $countryData = $this->countryInformationAcquirer->getCountryInfo($countryId);
 
         if ($statesOptional) {
-            $countryData->setAvailableRegions([]);
+            $customCountryData = $this->countryInformationFactory->create();
+            $customCountryData->setId($countryId);
+            $customCountryData->setTwoLetterAbbreviation($countryData->getTwoLetterAbbreviation());
+            $customCountryData->setThreeLetterAbbreviation($countryData->getThreeLetterAbbreviation());
+            $customCountryData->setFullNameLocale($countryData->getFullNameLocale());
+            $customCountryData->setFullNameEnglish($countryData->getFullNameEnglish());
+
+            return $customCountryData;
         }
 
         return $countryData;
