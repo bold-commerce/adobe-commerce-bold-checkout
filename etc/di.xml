@@ -35,6 +35,7 @@
     <preference for="Bold\Checkout\Model\Order\CompleteOrderInterface" type="Bold\Checkout\Model\Order\CompleteOrderPool"/>
     <preference for="Bold\Checkout\Api\Data\BoldQuoteInterface" type="Bold\Checkout\Model\Quote\QuoteExtensionData"/>
     <preference for="Bold\Checkout\Api\BoldQuoteRepositoryInterface" type="Bold\Checkout\Model\BoldQuoteRepository"/>
+    <preference for="Bold\Checkout\Api\GetCountryDataInterface" type="Bold\Checkout\Model\GetCountryData"/>
 
     <type name="Bold\Checkout\Model\Order\CompleteOrderPool">
         <arguments>
