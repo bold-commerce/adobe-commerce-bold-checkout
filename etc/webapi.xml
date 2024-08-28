@@ -93,4 +93,10 @@
             <resource ref="Bold_Checkout::integration" />
         </resources>
     </route>
+    <route method="GET" url="/V1/countries/:countryId">
+        <service class="Bold\Checkout\Api\GetCountryDataInterface" method="getData"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
 </routes>
