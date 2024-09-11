@@ -8,7 +8,6 @@ use Bold\Checkout\Model\Order\CompleteOrderInterface;
 use Bold\Checkout\Model\Order\OrderExtensionDataFactory;
 use Bold\Checkout\Model\ResourceModel\Order\OrderExtensionData as OrderExtensionDataResource;
 use Exception;
-use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -30,11 +29,6 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
     private $orderExtensionDataResource;
 
     /**
-     * @var Session
-     */
-    private $checkoutSession;
-
-    /**
      * @var EventManagerInterface
      */
     private $eventManager;
@@ -52,7 +46,6 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
     /**
      * @param OrderExtensionDataFactory $orderExtensionDataFactory
      * @param OrderExtensionDataResource $orderExtensionDataResource
-     * @param Session $checkoutSession
      * @param EventManagerInterface $eventManager
      * @param CompleteOrderInterface $completeOrder
      * @param array $boldPaymentMethods
@@ -60,14 +53,12 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
     public function __construct(
         OrderExtensionDataFactory $orderExtensionDataFactory,
         OrderExtensionDataResource $orderExtensionDataResource,
-        Session $checkoutSession,
         EventManagerInterface $eventManager,
         CompleteOrderInterface $completeOrder,
         array $boldPaymentMethods = []
     ) {
         $this->orderExtensionDataFactory = $orderExtensionDataFactory;
         $this->orderExtensionDataResource = $orderExtensionDataResource;
-        $this->checkoutSession = $checkoutSession;
         $this->eventManager = $eventManager;
         $this->boldPaymentMethods = $boldPaymentMethods;
         $this->completeOrder = $completeOrder;
@@ -90,13 +81,9 @@ class CheckoutSubmitAllAfterObserver implements ObserverInterface
             return;
         }
         $orderId = (int)$order->getEntityId();
-        $publicOrderId = $this->checkoutSession->getBoldCheckoutData()['data']['public_order_id'] ?? null;
-        $this->checkoutSession->setBoldCheckoutData(null);
-        if (!$publicOrderId) {
-            /** @var OrderDataInterface $orderPayload */
-            $orderPayload = $observer->getEvent()->getOrderPayload();
-            $publicOrderId = $orderPayload ? $orderPayload->getPublicId() : null;
-        }
+        /** @var OrderDataInterface $orderPayload */
+        $orderPayload = $observer->getEvent()->getOrderPayload();
+        $publicOrderId = $orderPayload ? $orderPayload->getPublicId() : null;
         if (!$publicOrderId) {
             return;
         }
