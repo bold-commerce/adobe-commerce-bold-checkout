@@ -31,8 +31,14 @@ jobs:
           PROJECTS=`platform project:list --pipe`
           for PROJECT in $PROJECTS;
           do
-            echo "Updating project $PROJECT"
             platform project:get --no-interaction $PROJECT $PROJECT
+            PLATFORM_TYPE=`platform vget platform:type -p $PROJECT -e main --property value 2>/dev/null`
+            if [[ $PLATFORM_TYPE = opencart ]]; then
+              echo "Skipping opencart project $PROJECT"
+              continue
+            else
+              echo "Updating project $PROJECT"
+            fi
             cd $PROJECT
             date > timestamp
             git add timestamp
