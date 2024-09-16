@@ -28,6 +28,8 @@ jobs:
         env:
           PLATFORMSH_CLI_TOKEN: ${{ secrets.PLATFORMSH_CLI_TOKEN }}
         run: |
+          git config --global user.email "github-ci@boldcommerce.com"
+          git config --global user.name "github-ci"
           PROJECTS=`platform project:list --pipe`
           for PROJECT in $PROJECTS;
           do
@@ -36,6 +38,7 @@ jobs:
             cd $PROJECT
             date > timestamp
             git add timestamp
+            git commit -m "Updating timestamp to force a store deploy"
             platform push --no-wait
             cd ..
           done
