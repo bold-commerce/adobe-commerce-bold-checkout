@@ -200,7 +200,7 @@ class Service
             throw new LocalizedException(__('Cannot capture the order.'));
         }
         $transaction = current($body['data']['capture']['transactions']);
-        return $transaction['transaction_id'];
+        return $transaction['transaction_id'] ?? $transaction['reference_transaction_id'];
     }
 
     /**
