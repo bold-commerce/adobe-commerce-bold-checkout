@@ -135,6 +135,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Check for Bold modules new version availability.]]></comment>
                 </field>
+                <field id="system_info_headers" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1">
+                    <label>Enable Sharing System Data</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, additional information about your Magento installation will be added to each Bold request.]]></comment>
+                </field>
                 <field id="clear_state" translate="label" type="button" sortOrder="1000" showInDefault="1" showInWebsite="1">
                     <label>Clear Bold Extension</label>
                     <frontend_model>Bold\Checkout\Block\System\Config\Form\Field\ClearState</frontend_model>

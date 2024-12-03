@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Bold\Checkout\Model\Http;
 
 use Bold\Checkout\Api\Data\Http\Client\ResultInterface;
-use Bold\Checkout\Api\Data\Http\Client\ResultInterfaceFactory;
 use Bold\Checkout\Api\Http\ClientInterface;
 use Bold\Checkout\Model\ConfigInterface;
 use Bold\Checkout\Model\Http\Client\Command\DeleteCommand;
@@ -12,8 +11,8 @@ use Bold\Checkout\Model\Http\Client\Command\GetCommand;
 use Bold\Checkout\Model\Http\Client\Command\PatchCommand;
 use Bold\Checkout\Model\Http\Client\Command\PostCommand;
 use Bold\Checkout\Model\Http\Client\Command\PutCommand;
+use Bold\Checkout\Model\Http\Client\SystemInfoHeaders;
 use Bold\Checkout\Model\Http\Client\UserAgent;
-use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Client to perform http request to Bold.
@@ -58,6 +57,11 @@ class BoldClient implements ClientInterface
     private $putCommand;
 
     /**
+     * @var SystemInfoHeaders
+     */
+    private $systemInfoHeaders;
+
+    /**
      * @param ConfigInterface $config
      * @param UserAgent $userAgent
      * @param GetCommand $getCommand
@@ -65,6 +69,7 @@ class BoldClient implements ClientInterface
      * @param PatchCommand $patchCommand
      * @param DeleteCommand $deleteCommand
      * @param PutCommand $putCommand
+     * @param SystemInfoHeaders $systemInfoHeaders
      */
     public function __construct(
         ConfigInterface $config,
@@ -73,7 +78,8 @@ class BoldClient implements ClientInterface
         PostCommand $postCommand,
         PatchCommand $patchCommand,
         DeleteCommand $deleteCommand,
-        PutCommand $putCommand
+        PutCommand $putCommand,
+        SystemInfoHeaders $systemInfoHeaders
     ) {
         $this->config = $config;
         $this->userAgent = $userAgent;
@@ -82,6 +88,7 @@ class BoldClient implements ClientInterface
         $this->patchCommand = $patchCommand;
         $this->deleteCommand = $deleteCommand;
         $this->putCommand = $putCommand;
+        $this->systemInfoHeaders = $systemInfoHeaders;
     }
 
     /**
@@ -142,12 +149,17 @@ class BoldClient implements ClientInterface
      */
     private function getHeaders(int $websiteId): array
     {
-        return [
-            'Authorization' => 'Bearer ' . $this->config->getApiToken($websiteId),
-            'Content-Type' => 'application/json',
-            'User-Agent' => $this->userAgent->getUserAgentData(),
-            'Bold-API-Version-Date' => self::BOLD_API_VERSION_DATE,
-        ];
+        $systemInfoHeaders = $this->config->isSystemInfoEnabled($websiteId) ? $this->systemInfoHeaders->getData() : [];
+
+        return array_merge(
+            [
+                'Authorization' => 'Bearer ' . $this->config->getApiToken($websiteId),
+                'Content-Type' => 'application/json',
+                'User-Agent' => $this->userAgent->getUserAgentData(),
+                'Bold-API-Version-Date' => self::BOLD_API_VERSION_DATE,
+            ],
+            $systemInfoHeaders
+        );
     }
 
     /**
