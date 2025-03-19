@@ -114,7 +114,8 @@ class SetQuoteAddresses implements SetQuoteAddressesInterface
      */
     private function addressDataChanged(AddressInterface $originalAddress, AddressInterface $newAddress): bool
     {
-        return $originalAddress->getFirstname() !== $newAddress->getFirstname()
+        return $originalAddress->getEmail() !== $newAddress->getEmail()
+            || $originalAddress->getFirstname() !== $newAddress->getFirstname()
             || $originalAddress->getLastname() !== $newAddress->getLastname()
             || $originalAddress->getStreet() !== $newAddress->getStreet()
             || $originalAddress->getCity() !== $newAddress->getCity()
