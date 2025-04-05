@@ -114,6 +114,7 @@ class RegisterSharedSecret implements RegisterSharedSecretInterface
                 'websiteCode' => $website->getCode(),
                 'websiteId' => $website->getId(),
                 'moduleVersion' => $this->moduleVersion->getVersion($shopId),
+                'websiteBaseUrl' => $website->getDefaultStore()->getBaseUrl(),
             ]
         );
     }
